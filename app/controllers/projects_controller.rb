@@ -17,11 +17,6 @@ class ProjectsController < ApplicationController
 
     def show
         @updates = @project.updates.order(created_at: :desc)
-
-        respond_to do |format|
-            format.html
-            format.turbo_stream
-        end
     end
 
     def edit
@@ -44,38 +39,18 @@ class ProjectsController < ApplicationController
 
     def create
         if current_user.project.present?
-            respond_to do |format|
-                format.html {
-                    redirect_to my_projects_path,
-                    alert: "You can only have one project. Please edit your existing project instead."
-                }
-                format.turbo_stream {
-                    flash[:alert] = "You can only have one project. Please edit your existing project instead."
-                    redirect_to my_projects_path
-                }
-            end
+            redirect_to my_projects_path,
+                alert: "You can only have one project. Please edit your existing project instead."
             return
         end
 
         @project = current_user.build_project(project_params)
 
-        respond_to do |format|
-            if @project.save
-                format.html { redirect_to project_path(@project), notice: "Project was successfully created." }
-                format.turbo_stream {
-                    flash[:notice] = "Project was successfully created."
-                    redirect_to project_path(@project)
-                }
-            else
-                format.html {
-                    flash.now[:alert] = "Could not create project. Please check the form for errors."
-                    render :index, status: :unprocessable_entity
-                }
-                format.turbo_stream {
-                    flash.now[:alert] = "Could not create project. Please check the form for errors."
-                    render :index, status: :unprocessable_entity
-                }
-            end
+        if @project.save
+            redirect_to project_path(@project), notice: "Project was successfully created."
+        else
+            flash.now[:alert] = "Could not create project. Please check the form for errors."
+            render :index, status: :unprocessable_entity
         end
     end
 
