@@ -23,8 +23,11 @@ export default class extends Controller {
   }
   
   handleDocumentClick(event) {
+    if (this.expanded && !this.element.contains(event.target)) {
+      this.toggle()
+    }
   }
-  
+    
   toggle(event) {
     if (event) {
       event.stopPropagation()

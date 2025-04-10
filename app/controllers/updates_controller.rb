@@ -1,4 +1,5 @@
 class UpdatesController < ApplicationController
+    include ActionView::RecordIdentifier
     before_action :authenticate_user!
     before_action :set_project, only: [ :create, :destroy ]
     before_action :set_update, only: [ :destroy ]
@@ -19,15 +20,23 @@ class UpdatesController < ApplicationController
     end
 
     def create
-        @update = @project.updates.build(update_params.merge(user: current_user))
+        @update = @project.updates.build(update_params)
+        @update.user = current_user
 
-        respond_to do |format|
-            if @update.save
-                format.html { redirect_to project_path(@project), notice: "Update was successfully created." }
-                format.turbo_stream
-            else
-                format.html { redirect_to project_path(@project), alert: "Could not create update." }
-                format.turbo_stream { render turbo_stream: turbo_stream.replace("new_update", partial: "updates/form", locals: { update: @update }) }
+        if @update.save
+            respond_to do |format|
+                format.turbo_stream do
+                    render turbo_stream: [
+                        turbo_stream.prepend("updates", partial: "updates/update", locals: { update: @update }),
+                        turbo_stream.replace("update-form", partial: "projects/update_form")
+                    ]
+                end
+                format.html { redirect_to project_path(@project), notice: "Update was successfully posted." }
+            end
+        else
+            respond_to do |format|
+                format.turbo_stream { render turbo_stream: turbo_stream.replace("flash-container", partial: "shared/flash") }
+                format.html { redirect_to project_path(@project), alert: "Failed to post update." }
             end
         end
     end
@@ -35,14 +44,21 @@ class UpdatesController < ApplicationController
     def destroy
         if @update.user == current_user
             @update.destroy
+            flash.now[:notice] = "Update was successfully deleted."
             respond_to do |format|
+                format.turbo_stream do
+                    render turbo_stream: [
+                        turbo_stream.remove(dom_id(@update)),
+                        turbo_stream.replace("flash-container", partial: "shared/flash")
+                    ]
+                end
                 format.html { redirect_to project_path(@project), notice: "Update was successfully deleted." }
-                format.turbo_stream
             end
         else
+            flash.now[:alert] = "You can only delete your own updates."
             respond_to do |format|
-                format.html { redirect_to project_path(@project), alert: "You can only delete your own updates." }
                 format.turbo_stream { render turbo_stream: turbo_stream.replace("flash-container", partial: "shared/flash") }
+                format.html { redirect_to project_path(@project), alert: "You can only delete your own updates." }
             end
         end
     end
