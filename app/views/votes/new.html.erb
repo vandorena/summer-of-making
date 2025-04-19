@@ -1,7 +1,7 @@
 <div class="container mx-auto px-4 sm:px-4 pt-2 md:pt-8">
   <h1 class="text-4xl sm:text-5xl font-steven mb-4 sm:text-center">Vote</h1>
 
-  <% if ENV['VOTING_STATUS'] == 'locked' %>
+  <% if ENV['VOTING_STATUS'] == 'locked' && !ENV['ALLOWED_SLACK_IDS']&.split(',')&.include?(current_user.slack_id) %>
     <div class="bg-soft-bone card-pixel p-6 sm:p-12 text-center mt-8">
       <div class="flex justify-center items-center">
         <%= image_tag 'sad.png', class: 'w-32 h-32 sm:w-48 sm:h-48 2xl:w-64 2xl:h-64 transform scale-x-[-1] mb-4 sm:mb-6' %>
