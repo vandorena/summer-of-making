@@ -7,7 +7,7 @@ class SyncProjectFollowToAirtableJob < ApplicationJob
     return unless project_follow
 
     table = Airrecord.table(ENV["AIRTABLE_API_KEY"], ENV["AIRTABLE_BASE_ID_JOURNEY"], "project_follows")
-    author_slack_id = User.find(project_follow.project.user_id).slack_id
+    author_slack_id = User.find(project_follow.user_id).slack_id
     
     project_follow_data = {
       "following_id" => project_follow.id.to_s,
