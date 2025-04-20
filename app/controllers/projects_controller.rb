@@ -78,6 +78,17 @@ class ProjectsController < ApplicationController
 
     # Gotta say I love turbo frames and turbo streams and flashes in general
     def follow
+        if current_user == @project.user
+            respond_to do |format|
+                format.html { redirect_to request.referer || projects_path, alert: "You cannot follow your own project" }
+                format.turbo_stream do
+                    flash.now[:alert] = "You cannot follow your own project"
+                    render turbo_stream: turbo_stream.update("flash-container", partial: "shared/flash")
+                end
+            end
+            return
+        end
+
         @project_follow = current_user.project_follows.build(project: @project)
 
         respond_to do |format|
