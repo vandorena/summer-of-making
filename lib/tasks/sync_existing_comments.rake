@@ -2,9 +2,9 @@ namespace :sync do
   desc "Sync all existing comments to Airrecord"
   task comments: :environment do
     puts "Starting to sync all comments to Airrecord..."
-    
+
     total_comments = Comment.count
-    synced_count = 0  
+    synced_count = 0
     failed_count = 0
 
     Comment.find_each do |comment|
@@ -23,4 +23,4 @@ namespace :sync do
     puts "Successfully synced: #{synced_count}"
     puts "Failed to sync: #{failed_count}"
   end
-end 
+end

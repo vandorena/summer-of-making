@@ -16,7 +16,7 @@ class Project < ApplicationRecord
 
   after_initialize :set_default_rating, if: :new_record?
 
-  after_commit :sync_to_airtable, on: [:create, :update]
+  after_commit :sync_to_airtable, on: [ :create, :update ]
 
   private
 

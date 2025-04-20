@@ -9,7 +9,7 @@ class User < ApplicationRecord
     validates :email, :first_name, :last_name, :display_name, :timezone, :avatar, presence: true
     validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
 
-    after_commit :sync_to_airtable, on: [:create, :update]
+    after_commit :sync_to_airtable, on: [ :create, :update ]
 
     def self.exchange_slack_token(code, redirect_uri)
         response = Faraday.post("https://slack.com/api/oauth.v2.access",

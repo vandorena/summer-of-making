@@ -2,7 +2,7 @@ namespace :sync do
   desc "Sync all existing users to Airrecord"
   task users: :environment do
     puts "Starting to sync all users to Airrecord..."
-    
+
     total_users = User.count
     synced_count = 0
     failed_count = 0
@@ -23,4 +23,4 @@ namespace :sync do
     puts "Successfully synced: #{synced_count}"
     puts "Failed to sync: #{failed_count}"
   end
-end 
+end

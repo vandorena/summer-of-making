@@ -8,14 +8,14 @@ class SyncProjectFollowToAirtableJob < ApplicationJob
 
     table = Airrecord.table(ENV["AIRTABLE_API_KEY"], ENV["AIRTABLE_BASE_ID_JOURNEY"], "project_follows")
     author_slack_id = User.find(project_follow.user_id).slack_id
-    
+
     project_follow_data = {
       "following_id" => project_follow.id.to_s,
       "author_slack_id" => author_slack_id,
       "project_id" => project_follow.project_id.to_s
     }
 
-    existing_record = table.all(filter: "{following_id} = '#{project_follow.id.to_s}'").first
+    existing_record = table.all(filter: "{following_id} = '#{project_follow.id}'").first
 
     record = existing_record
 
@@ -37,11 +37,11 @@ class SyncProjectFollowToAirtableJob < ApplicationJob
     return unless record&.id
 
     project_table = Airrecord.table(ENV["AIRTABLE_API_KEY"], ENV["AIRTABLE_BASE_ID_JOURNEY"], "projects")
-    project = project_table.all(filter: "{project_id} = '#{project_follow.project_id.to_s}'").first
+    project = project_table.all(filter: "{project_id} = '#{project_follow.project_id}'").first
 
     return unless project
 
-    project["followers"] = Array(project["followers"]).map(&:to_s) + [record.id.to_s]
+    project["followers"] = Array(project["followers"]).map(&:to_s) + [ record.id.to_s ]
     project["followers"].uniq!
     project.save
 
@@ -50,8 +50,8 @@ class SyncProjectFollowToAirtableJob < ApplicationJob
 
     return unless user
 
-    user["following"] = Array(user["following"]).map(&:to_s) + [record.id.to_s]
+    user["following"] = Array(user["following"]).map(&:to_s) + [ record.id.to_s ]
     user["following"].uniq!
     user.save
   end
-end 
+end

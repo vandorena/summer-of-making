@@ -16,7 +16,7 @@ class SyncUserToAirtableJob < ApplicationJob
       "email" => user.email,
       "slack_id" => user.slack_id,
       "avatar_url" => user.avatar,
-      "has_commented" => user.has_commented,
+      "has_commented" => user.has_commented
     }
 
     existing_record = table.all(filter: "{slack_id} = '#{user.slack_id}'").first
@@ -36,4 +36,4 @@ class SyncUserToAirtableJob < ApplicationJob
       record.save
     end
   end
-end 
+end

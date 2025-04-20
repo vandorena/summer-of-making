@@ -7,7 +7,7 @@ class SyncProjectToAirtableJob < ApplicationJob
 
     table = Airrecord.table(ENV["AIRTABLE_API_KEY"], ENV["AIRTABLE_BASE_ID_JOURNEY"], "projects")
     author_slack_id = User.find(project.user_id).slack_id
-    
+
     project_data = {
       "title" => project.title,
       "description" => project.description,
@@ -20,7 +20,7 @@ class SyncProjectToAirtableJob < ApplicationJob
       "project_id" => project.id.to_s
     }
 
-    existing_record = table.all(filter: "{project_id} = '#{project.id.to_s}'").first
+    existing_record = table.all(filter: "{project_id} = '#{project.id}'").first
 
     record = existing_record
 
@@ -46,8 +46,8 @@ class SyncProjectToAirtableJob < ApplicationJob
 
     return unless user
 
-    user["projects"] = Array(user["projects"]).map(&:to_s) + [record.id.to_s]
+    user["projects"] = Array(user["projects"]).map(&:to_s) + [ record.id.to_s ]
     user["projects"].uniq!
     user.save
   end
-end 
+end

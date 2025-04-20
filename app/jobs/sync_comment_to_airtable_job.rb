@@ -8,15 +8,15 @@ class SyncCommentToAirtableJob < ApplicationJob
 
     table = Airrecord.table(ENV["AIRTABLE_API_KEY"], ENV["AIRTABLE_BASE_ID_JOURNEY"], "comments")
     author_slack_id = User.find(comment.user_id).slack_id
-    
+
     comment_data = {
       "comment_id" => comment.id.to_s,
       "author_slack_id" => author_slack_id,
       "update_id" => comment.update_id.to_s,
-      "text" => comment.text,
+      "text" => comment.text
     }
 
-    existing_record = table.all(filter: "{comment_id} = '#{comment.id.to_s}'").first
+    existing_record = table.all(filter: "{comment_id} = '#{comment.id}'").first
 
     record = existing_record
 
@@ -38,11 +38,11 @@ class SyncCommentToAirtableJob < ApplicationJob
     return unless record&.id
 
     update_table = Airrecord.table(ENV["AIRTABLE_API_KEY"], ENV["AIRTABLE_BASE_ID_JOURNEY"], "updates")
-    update = update_table.all(filter: "{update_id} = '#{comment.update_id.to_s}'").first
+    update = update_table.all(filter: "{update_id} = '#{comment.update_id}'").first
 
     return unless update
 
-    update["comments"] = Array(update["comments"]).map(&:to_s) + [record.id.to_s]
+    update["comments"] = Array(update["comments"]).map(&:to_s) + [ record.id.to_s ]
     update["comments"].uniq!
     update.save
 
@@ -51,8 +51,8 @@ class SyncCommentToAirtableJob < ApplicationJob
 
     return unless user
 
-    user["comments"] = Array(user["comments"]).map(&:to_s) + [record.id.to_s]
+    user["comments"] = Array(user["comments"]).map(&:to_s) + [ record.id.to_s ]
     user["comments"].uniq!
     user.save
   end
-end 
+end

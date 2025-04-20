@@ -2,9 +2,9 @@ namespace :sync do
 desc "Sync all existing project follows to Airrecord"
 task project_follows: :environment do
     puts "Starting to sync all project follows to Airrecord..."
-    
+
     total_project_follows = ProjectFollow.count
-    synced_count = 0  
+    synced_count = 0
     failed_count = 0
 
     ProjectFollow.find_each do |project_follow|
@@ -23,4 +23,4 @@ task project_follows: :environment do
     puts "Successfully synced: #{synced_count}"
     puts "Failed to sync: #{failed_count}"
 end
-end 
+end

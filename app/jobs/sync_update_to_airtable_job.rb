@@ -7,7 +7,7 @@ class SyncUpdateToAirtableJob < ApplicationJob
 
     table = Airrecord.table(ENV["AIRTABLE_API_KEY"], ENV["AIRTABLE_BASE_ID_JOURNEY"], "updates")
     author_slack_id = User.find(update.user_id).slack_id
-    
+
     update_data = {
       "text" => update.text,
       "attachment_url" => update.attachment,
@@ -16,7 +16,7 @@ class SyncUpdateToAirtableJob < ApplicationJob
       "update_id" => update.id.to_s
     }
 
-    existing_record = table.all(filter: "{update_id} = '#{update.id.to_s}'").first
+    existing_record = table.all(filter: "{update_id} = '#{update.id}'").first
 
     record = existing_record
 
@@ -36,24 +36,24 @@ class SyncUpdateToAirtableJob < ApplicationJob
     end
 
     return unless record&.id
-    
+
     project_table = Airrecord.table(ENV["AIRTABLE_API_KEY"], ENV["AIRTABLE_BASE_ID_JOURNEY"], "projects")
-    project = project_table.all(filter: "{project_id} = '#{update.project_id.to_s}'").first
-    
+    project = project_table.all(filter: "{project_id} = '#{update.project_id}'").first
+
     return unless project
 
-    project["updates"] = Array(project["updates"]).map(&:to_s) + [record.id.to_s]
+    project["updates"] = Array(project["updates"]).map(&:to_s) + [ record.id.to_s ]
     project["updates"].uniq!
     project.save
-    
+
 
     user_table = Airrecord.table(ENV["AIRTABLE_API_KEY"], ENV["AIRTABLE_BASE_ID_JOURNEY"], "users")
     user = user_table.all(filter: "{slack_id} = '#{author_slack_id}'").first
 
     return unless user
 
-    user["updates"] = Array(user["updates"]).map(&:to_s) + [record.id.to_s]
+    user["updates"] = Array(user["updates"]).map(&:to_s) + [ record.id.to_s ]
     user["updates"].uniq!
     user.save
   end
-end 
+end

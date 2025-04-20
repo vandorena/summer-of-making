@@ -5,7 +5,7 @@ class Comment < ApplicationRecord
   validates :text, presence: true
 
   after_create :notify_update_author
-  after_commit :sync_to_airtable, on: [:create]
+  after_commit :sync_to_airtable, on: [ :create ]
   after_destroy :delete_from_airtable
   private
 

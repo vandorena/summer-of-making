@@ -5,7 +5,7 @@ class ProjectFollow < ApplicationRecord
   validates :user_id, uniqueness: { scope: :project_id, message: "is already following this project" }
   validate :cannot_follow_own_project
 
-  after_commit :sync_to_airtable, on: [:create]
+  after_commit :sync_to_airtable, on: [ :create ]
   after_destroy :delete_from_airtable
 
   private
