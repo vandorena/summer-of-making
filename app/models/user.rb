@@ -9,6 +9,8 @@ class User < ApplicationRecord
     validates :email, :first_name, :last_name, :display_name, :timezone, :avatar, presence: true
     validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
 
+    after_commit :sync_to_airtable, on: [:create, :update]
+
     def self.exchange_slack_token(code, redirect_uri)
         response = Faraday.post("https://slack.com/api/oauth.v2.access",
         {
@@ -92,5 +94,11 @@ class User < ApplicationRecord
     def self.fetch_slack_user_info(slack_id)
         client = Slack::Web::Client.new(token: ENV["SLACK_BOT_TOKEN"])
         client.users_info(user: slack_id)
+    end
+
+    private
+
+    def sync_to_airtable
+        SyncUserToAirtableJob.perform_later(id)
     end
 end

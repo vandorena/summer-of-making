@@ -16,9 +16,15 @@ class Project < ApplicationRecord
 
   after_initialize :set_default_rating, if: :new_record?
 
+  after_commit :sync_to_airtable, on: [:create, :update]
+
   private
 
   def set_default_rating
     self.rating ||= 1100
+  end
+
+  def sync_to_airtable
+    SyncProjectToAirtableJob.perform_later(id)
   end
 end
