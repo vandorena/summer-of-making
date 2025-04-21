@@ -1,4 +1,6 @@
 module ApplicationHelper
+  include MarkdownHelper
+
   def mobile_device?
     request.user_agent&.match?(
       /Mobile|webOS|iPhone|iPad|iPod|Android|BlackBerry|IEMobile|Opera Mini/i

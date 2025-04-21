@@ -77,3 +77,5 @@ gem "airrecord"
 gem "sentry-ruby"
 
 gem "sentry-rails"
+
+gem "redcarpet"

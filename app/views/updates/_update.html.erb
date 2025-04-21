@@ -10,7 +10,7 @@
       </div>
     </div>
 
-    <p class="text-sm md:text-base 2xl:text-lg text-gray-600 mb-3 md:mb-4"><%= update.text %></p>
+    <div class="prose max-w-none text-sm md:text-base 2xl:text-lg text-gray-600 mb-3 md:mb-4"><%= update.formatted_text %></div>
 
     <% if update.attachment.present? %>
       <div class="mt-3 md:mt-4 overflow-hidden rounded-lg">

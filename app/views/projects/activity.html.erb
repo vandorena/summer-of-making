@@ -46,7 +46,7 @@
                 </div>
                 <div class="ml-10 sm:ml-13">
                   <h3 class="text-lg sm:text-xl 2xl:text-2xl font-steven mb-2"><%= update.project.title %></h3>
-                  <p class="text-gray-600 mb-2 sm:mb-3 text-sm sm:text-base 2xl:text-lg"><%= update.text %></p>
+                  <div class="prose max-w-none text-gray-600 mb-2 sm:mb-3 text-sm sm:text-base 2xl:text-lg"><%= update.formatted_text %></div>
                   <% if update.attachment.present? %>
                     <div class="mt-2 sm:mt-3 overflow-hidden rounded-lg">
                       <% attachment_url = update.attachment %>

@@ -11,6 +11,10 @@ class Update < ApplicationRecord
   after_commit :sync_to_airtable, on: [ :create, :update ]
   after_destroy :delete_from_airtable
 
+  def formatted_text
+    ApplicationController.helpers.markdown(text)
+  end
+
   private
 
   def sync_to_airtable
