@@ -4,6 +4,10 @@ module MarkdownHelper
       "<a href='#{link}' title='#{title}' class='text-nice-blue underline'>#{content}</a>"
     end
 
+    def autolink(link, link_type)
+        "<a href='#{link}' class='text-nice-blue underline'>#{link}</a>"
+    end
+
     def block_code(code, language)
       language ||= 'plaintext'
       "<pre class='bg-gray-900 p-4 text-forest overflow-x-auto'><code class='language-#{language}'>#{code}</code></pre>"
