@@ -1,11 +1,11 @@
 module MarkdownHelper
   class CustomRender < Redcarpet::Render::HTML
     def link(link, title, content)
-      "<a href='#{link}' title='#{title}' class='text-nice-blue underline'>#{content}</a>"
+      "<a href='#{link}' title='#{title}' class='text-nice-blue underline' target='_blank'>#{content}</a>"
     end
 
     def autolink(link, link_type)
-        "<a href='#{link}' class='text-nice-blue underline'>#{link}</a>"
+        "<a href='#{link}' class='text-nice-blue underline' target='_blank'>#{link}</a>"
     end
 
     def block_code(code, language)
