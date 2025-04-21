@@ -73,7 +73,6 @@ class ProjectsController < ApplicationController
         @recent_updates = Update.includes(:project, :user)
                               .where(project_id: @followed_projects.pluck(:id))
                               .order(created_at: :desc)
-                              .limit(30)
     end
 
     # Gotta say I love turbo frames and turbo streams and flashes in general
