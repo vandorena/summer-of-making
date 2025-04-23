@@ -39,7 +39,7 @@
                           <h3 class="text-lg md:text-2xl font-steven">Followers</h3>
                         </div>
                       </div>
-                      
+
                       <div class="p-3 md:p-4 overflow-y-auto">
                         <div class="space-y-4">
                           <% if @project.followers.any? %>
@@ -123,7 +123,7 @@
         <div class="absolute left-3 md:left-8 top-0 bottom-0 w-0.5 border-l-2 border-dashed border-saddle-taupe/30"></div>
       <% end %>
 
-      <div id="updates" class="space-y-3 md:space-y-8" data-controller="modal">
+      <div id="updates" class="space-y-3 md:space-y-8">
         <% @updates.reverse.each do |update| %>
           <%= render "updates/update", update: update %>
         <% end %>

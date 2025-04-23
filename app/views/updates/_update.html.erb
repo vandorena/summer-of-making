@@ -1,5 +1,4 @@
-
-<div class="bg-soft-bone card-pixel p-4 md:p-6 ml-6 md:ml-16 relative transform hover:scale-[1.02] transition-transform duration-300" id="<%= dom_id(update) %>">
+<div class="bg-soft-bone card-pixel p-4 md:p-6 ml-6 md:ml-16 relative transform hover:scale-[1.02] transition-transform duration-300" id="<%= dom_id(update) %>" data-controller="modal">
     <div class="flex items-center mb-3 md:mb-4">
       <% if update.user.avatar.present? %>
         <img src="<%= update.user.avatar %>" alt="<%= update.user.display_name %>" class="w-8 h-8 md:w-10 md:h-10 rounded-full mr-2 md:mr-3">
@@ -51,7 +50,7 @@
             data: { controller: "delete-confirmation", action: "click->delete-confirmation#confirm" } %>
       <% end %>
 
-      <button data-action="click->modal#open" class="px-2 md:px-4 py-2 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-large btn-pixel">
+      <button data-action="click->modal#open" data-modal-id="<%= update.id %>" class="px-2 md:px-4 py-2 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-large btn-pixel">
         Add Comment
       </button>
     </div>
@@ -61,7 +60,7 @@
     </div>
   </div>
 
-  <div data-modal-target="modal" class="hidden fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center p-2 md:p-4 min-h-screen">
+  <div class="modal hidden fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center p-2 md:p-4 min-h-screen" id="comment-modal-<%= update.id %>" data-controller="modal" data-modal-target="modal">
     <div class="bg-soft-bone w-full max-w-2xl card-pixel mx-2 md:mx-auto relative" data-modal-target="container" data-controller="comment-modal">
       <div class="absolute -top-6 -right-6 w-12 h-12 md:-top-8 md:-right-8 md:w-16 md:h-16 z-10">
         <%= image_tag "puppyeyes.svg", class: "w-full h-full", alt: "Puppyeyes peeking" %>
@@ -103,7 +102,7 @@
                 <p class="text-xs md:text-sm text-vintage-red hidden" id="textError-#{update.id}" data-comment-form-target="textError"></p>
 
               <div class="flex flex-row justify-end space-x-4">
-                <button type="button" data-action="modal#close" class="px-2 md:px-4 py-2 bg-vintage-red hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-large btn-pixel-sm">
+                <button type="button" class="px-2 md:px-4 py-2 bg-vintage-red hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-large btn-pixel-sm" data-action="click->modal#close">
                   Cancel
                 </button>
                 <%= f.submit "Post Comment", class: "px-2 md:px-4 py-2 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-large btn-pixel-sm" %>
