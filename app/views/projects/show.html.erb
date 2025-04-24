@@ -22,6 +22,9 @@
           <div class="flex items-center space-x-3 md:space-x-4">
             <% if user_signed_in? %>
               <div class="flex items-center space-x-4">
+                <% if current_user != @project.user %>
+                  <%= render "projects/follow_button", project: @project %>
+                <% end %>
                 <div data-controller="modal" class="cursor-pointer">
                   <button data-action="modal#open" class="bg-vintage-red btn-pixel px-4 py-2 flex items-center hover:scale-[1.05] transition-transform">
                     <%= inline_svg "heart.svg", class: "h-5 w-5 md:h-6 md:w-6 2xl:h-7 2xl:w-7 text-white" %>
@@ -69,8 +72,10 @@
                     </div>
                   </div>
                 </div>
-                <%= link_to edit_project_path(@project), class: "px-3 md:px-4 py-2 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-xl btn-pixel" do %>
-                  Edit Project
+                <% if user_signed_in? && current_user == @project.user %>
+                  <%= link_to edit_project_path(@project), class: "px-3 md:px-4 py-2 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-xl btn-pixel" do %>
+                    Edit Project
+                  <% end %>
                 <% end %>
               </div>
             <% else %>
