@@ -2,6 +2,9 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = ["container"]
+  static values = {
+    type: String
+  }
 
   connect() {
     this.escapeHandler = this.escapeHandler.bind(this)
@@ -50,6 +53,10 @@ export default class extends Controller {
     modalElement.classList.remove("hidden")
     document.body.classList.add("overflow-hidden")
     
+    if (modalElement.dataset) {
+      modalElement.dataset.openModalType = modalType
+    }
+    
     setTimeout(() => {
       const firstInput = modalElement.querySelector("input, textarea")
       if (firstInput) firstInput.focus()
@@ -62,8 +69,15 @@ export default class extends Controller {
   }
 
   escapeHandler(event) {
-    if (event.key === "Escape") {
-      this.close()
+    if (event.key === "Escape" && !this.element.classList.contains("hidden")) {
+      if (this.element.id && (
+          this.element.id.startsWith('edit-modal-') || 
+          this.element.id.startsWith('comment-modal-') || 
+          this.element.id.startsWith('follower-modal-') || 
+          this.element.id === 'create-project-modal')) {
+        this.close()
+        event.stopPropagation()
+      }
     }
   }
 
