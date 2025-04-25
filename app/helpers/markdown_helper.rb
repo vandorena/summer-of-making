@@ -9,7 +9,7 @@ module MarkdownHelper
     end
 
     def block_code(code, language)
-      language ||= 'plaintext'
+      language ||= "plaintext"
       "<pre class='bg-gray-900 p-4 text-forest overflow-x-auto'><code class='language-#{language}'>#{code}</code></pre>"
     end
 
@@ -40,7 +40,7 @@ module MarkdownHelper
       quote: true,
       footnotes: true
     )
-    
+
     markdown.render(text).html_safe
   end
-end 
+end
