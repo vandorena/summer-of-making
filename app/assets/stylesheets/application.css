@@ -33,3 +33,43 @@
     scrollbar-color: rgba(150, 133, 115, 0.5) rgba(150, 133, 115, 0.1);
   }
   
+  [data-music-target="toggle"].active {
+    animation: pulse 2s infinite;
+  }
+  
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  
+  [data-controller="music"] {
+    transition: transform 0.8s ease-in-out;
+  }
+  
+  [data-controller="music"].music-playing {
+    transform: translateY(-80px);
+  }
+  
+  [data-music-target="speechBubble"] {
+    animation: bubble-pulse 2.5s ease-in-out infinite;
+  }
+  
+  @keyframes bubble-pulse {
+    0% {
+      transform: rotate(-13deg) scale(1);
+    }
+    50% {
+      transform: rotate(-13deg) scale(1.05);
+    }
+    100% {
+      transform: rotate(-13deg) scale(1);
+    }
+  }
+  
