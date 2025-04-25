@@ -35,9 +35,13 @@ class VotesController < ApplicationController
 
     def set_projects
         voted_project_ids = current_user.votes.pluck(:project_id)
-        projects_with_updates = Project.joins(:updates).distinct.pluck(:id)
+        
+        projects_with_10_plus_updates = Project.joins(:updates)
+                                              .group('projects.id')
+                                              .having('COUNT(updates.id) >= 10')
+                                              .pluck(:id)
 
-        @projects = Project.where(id: projects_with_updates)
+        @projects = Project.where(id: projects_with_10_plus_updates)
                           .where.not(id: voted_project_ids)
                           .where.not(user_id: current_user.id)
                           .where.not(demo_link: [ nil, "" ])
