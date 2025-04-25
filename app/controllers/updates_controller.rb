@@ -1,8 +1,8 @@
 class UpdatesController < ApplicationController
     include ActionView::RecordIdentifier
     before_action :authenticate_user!
-    before_action :set_project, only: [ :create, :destroy ]
-    before_action :set_update, only: [ :destroy ]
+    before_action :set_project, only: [ :create, :destroy, :update ]
+    before_action :set_update, only: [ :destroy, :update ]
     skip_before_action :authenticate_user!, only: [ :api_create ]
     before_action :authenticate_api_key, only: [ :api_create ]
     skip_before_action :verify_authenticity_token, only: [ :api_create ]
@@ -23,11 +23,7 @@ class UpdatesController < ApplicationController
 
     def create
         if ENV["UPDATES_STATUS"] == "locked"
-            flash.now[:alert] = "Posting updates is currently locked. Please check back later when updates are unlocked."
-            respond_to do |format|
-                format.turbo_stream { render turbo_stream: turbo_stream.replace("flash-container", partial: "shared/flash") }
-                format.html { redirect_to project_path(@project), alert: "Posting updates is currently locked. Please check back later when updates are unlocked." }
-            end
+            redirect_to @project, alert: "Posting updates is currently locked. Please check back later when updates are unlocked."
             return
         end
 
@@ -35,42 +31,33 @@ class UpdatesController < ApplicationController
         @update.user = current_user
 
         if @update.save
-            respond_to do |format|
-                format.turbo_stream do
-                    render turbo_stream: [
-                        turbo_stream.prepend("updates", partial: "updates/update", locals: { update: @update }),
-                        turbo_stream.replace("update-form", partial: "projects/update_form")
-                    ]
-                end
-                format.html { redirect_to project_path(@project), notice: "Update was successfully posted." }
-            end
+            redirect_to @update.project, notice: "Update was successfully posted."
         else
-            respond_to do |format|
-                format.turbo_stream { render turbo_stream: turbo_stream.replace("flash-container", partial: "shared/flash") }
-                format.html { redirect_to project_path(@project), alert: "Failed to post update." }
-            end
+            redirect_to @update.project, alert: "Failed to post update."
         end
     end
 
     def destroy
         if @update.user == current_user
             @update.destroy
-            flash.now[:notice] = "Update was successfully deleted."
-            respond_to do |format|
-                format.turbo_stream do
-                    render turbo_stream: [
-                        turbo_stream.remove(dom_id(@update)),
-                        turbo_stream.replace("flash-container", partial: "shared/flash")
-                    ]
-                end
-                format.html { redirect_to project_path(@project), notice: "Update was successfully deleted." }
-            end
+            redirect_to @update.project, notice: "Update was successfully deleted."
         else
-            flash.now[:alert] = "You can only delete your own updates."
-            respond_to do |format|
-                format.turbo_stream { render turbo_stream: turbo_stream.replace("flash-container", partial: "shared/flash") }
-                format.html { redirect_to project_path(@project), alert: "You can only delete your own updates." }
-            end
+            redirect_to @update.project, alert: "You can only delete your own updates."
+        end
+    end
+
+    def update
+        if @update.user != current_user
+            flash.now[:alert] = "You can only edit your own updates."
+            redirect_to @update.project, alert: "You can only edit your own updates."
+            return
+        end
+
+        # Only allow editing the text field
+        if @update.update(update_params.slice(:text))
+            redirect_to @update.project, notice: "Update was successfully edited."
+        else
+            redirect_to @update.project, alert: "Failed to edit update."
         end
     end
 
