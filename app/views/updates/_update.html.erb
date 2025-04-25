@@ -44,15 +44,21 @@
 
     <div class="mt-3 md:mt-4 flex justify-end items-center space-x-4">
       <% if user_signed_in? && current_user == update.user %>
+        <button data-action="click->modal#open" data-modal-id="<%= update.id %>" data-modal-type="edit" class="px-2 md:px-4 py-2 bg-forest hover:scale-[1.05] text-white transition-all duration-300 text-sm md:text-base 2xl:text-large btn-pixel edit-update-btn">
+          Edit
+        </button>
+      <% end %>
+
+      <button data-action="click->modal#open" data-modal-id="<%= update.id %>" data-modal-type="comment" class="px-2 md:px-4 py-2 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-large btn-pixel">
+        Add Comment
+      </button>
+
+      <% if user_signed_in? && current_user == update.user %>
         <%= button_to "Delete", project_update_path(@project, update),
             method: :delete,
             class: "px-2 md:px-4 py-2 bg-vintage-red hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-large btn-pixel delete-button cursor-pointer",
             data: { controller: "delete-confirmation", action: "click->delete-confirmation#confirm" } %>
       <% end %>
-
-      <button data-action="click->modal#open" data-modal-id="<%= update.id %>" class="px-2 md:px-4 py-2 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-large btn-pixel">
-        Add Comment
-      </button>
     </div>
 
     <div id="comments-<%= update.id %>" class="mt-4 space-y-3">
@@ -60,14 +66,15 @@
     </div>
   </div>
 
-  <div class="modal hidden fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center p-2 md:p-4 min-h-screen" id="comment-modal-<%= update.id %>" data-controller="modal" data-modal-target="modal">
-    <div class="bg-soft-bone w-full max-w-2xl card-pixel mx-2 md:mx-auto relative" data-modal-target="container" data-controller="comment-modal">
-      <div class="absolute -top-6 -right-6 w-12 h-12 md:-top-8 md:-right-8 md:w-16 md:h-16 z-10">
-        <%= image_tag "puppyeyes.svg", class: "w-full h-full", alt: "Puppyeyes peeking" %>
-      </div>
+  <!-- Comment Modal -->
+  <div class="modal hidden fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center p-2 md:p-4 min-h-screen" id="comment-modal-<%= update.id %>" data-controller="modal comment-modal">
+    <div class="bg-soft-bone w-full max-w-2xl card-pixel mx-2 md:mx-auto relative" data-modal-target="container">
       <div class="p-3 md:p-4 border-b border-saddle-taupe border-opacity-30">
         <div class="flex justify-between items-center">
           <h3 class="text-lg md:text-2xl font-steven">Add a Comment</h3>
+          <button type="button" class="text-gray-600 hover:text-vintage-red cursor-pointer" data-action="click->modal#close">
+            <%= inline_svg_tag "close.svg", class: "h-6 w-6 2xl:h-8 2xl:w-8" %>
+          </button>
         </div>
       </div>
 
@@ -89,8 +96,7 @@
                 id: "comment-form-#{update.id}",
                 class: "space-y-3",
                 data: {
-                  controller: "comment-form",
-                  action: "submit->comment-form#validateForm"
+                  action: "submit->comment-modal#validateForm"
                 } do |f| %>
               <div class="space-y-2">
                 <%= f.text_area :text,
@@ -98,8 +104,8 @@
                     class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm md:text-base rounded-none",
                     rows: 4,
                     placeholder: "Write your comment here... (be nice)",
-                    data: { comment_form_target: "text" } %>
-                <p class="text-xs md:text-sm text-vintage-red hidden" id="textError-#{update.id}" data-comment-form-target="textError"></p>
+                    data: { comment_modal_target: "text" } %>
+                <p class="text-xs md:text-sm text-vintage-red hidden" id="textError-#{update.id}" data-comment-modal-target="textError"></p>
 
               <div class="flex flex-row justify-end space-x-4">
                 <button type="button" class="px-2 md:px-4 py-2 bg-vintage-red hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-large btn-pixel-sm" data-action="click->modal#close">
@@ -114,3 +120,57 @@
     </div>
   </div>
 </div>
+
+<%# Have to keep the Edit Modal out because inside the container it gets nested inside the Comment Modal %>
+
+<!-- Edit Update Modal -->
+<% if user_signed_in? && current_user == update.user %>
+  <div class="modal hidden fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center p-2 md:p-4 min-h-screen" id="edit-modal-<%= update.id %>" data-controller="modal edit-modal">
+    <div class="bg-soft-bone w-full max-w-2xl card-pixel mx-2 md:mx-auto relative" data-modal-target="container">
+      <div class="p-3 md:p-4 border-b border-saddle-taupe border-opacity-30">
+        <div class="flex justify-between items-center">
+          <h3 class="text-lg md:text-2xl font-steven">Edit Your Update</h3>
+          <button type="button" class="text-gray-600 hover:text-vintage-red cursor-pointer" data-action="click->modal#close">
+            <%= inline_svg_tag "close.svg", class: "h-6 w-6 2xl:h-8 2xl:w-8" %>
+          </button>
+        </div>
+      </div>
+
+      <div class="p-3 md:p-4">
+        <div class="text-center mb-4">
+          <h4 class="text-lg md:text-xl font-steven mb-2">Edit Guidelines</h4>
+          <p class="text-sm md:text-base mb-4 text-gray-600">
+            You can only edit the formatting of your update (markdown, spaces, line breaks).
+            <br>
+            <span class="text-vintage-red">You cannot add or remove text content.</span>
+          </p>
+        </div>
+
+        <%= form_with model: update,
+            url: project_update_path(@project, update),
+            method: :patch,
+            id: "edit-form-#{update.id}",
+            class: "space-y-3",
+            data: {
+              turbo: true,
+              edit_modal_target: "form"
+            } do |f| %>
+          <div class="space-y-2">
+            <%= f.text_area :text,
+                class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm md:text-base rounded-none",
+                rows: 6,
+                data: { edit_modal_target: "text", original_text: update.text } %>
+            <p class="text-xs md:text-sm text-vintage-red hidden edit-error-message" data-edit-modal-target="error"></p>
+          </div>
+
+          <div class="flex flex-row justify-end space-x-4">
+            <button type="button" class="px-2 md:px-4 py-2 bg-vintage-red hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-large btn-pixel-sm" data-action="click->modal#close">
+              Cancel
+            </button>
+            <%= f.submit "Save Changes", class: "px-2 md:px-4 py-2 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-large btn-pixel-sm" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

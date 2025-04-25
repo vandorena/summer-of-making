@@ -26,7 +26,7 @@ Rails.application.routes.draw do
   get "my_projects", to: "projects#my_projects"
 
   resources :projects do
-    resources :updates, only: [ :create, :destroy ]
+    resources :updates, only: [ :create, :destroy, :update ]
     member do
       post :follow
       delete :unfollow
