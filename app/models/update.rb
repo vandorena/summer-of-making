@@ -11,6 +11,8 @@ class Update < ApplicationRecord
   # Validates if only MD changes are made
   validate :only_formatting_changes, on: :update
 
+  validate :updates_not_locked, on: :create
+
   after_commit :sync_to_airtable, on: [ :create, :update ]
   after_destroy :delete_from_airtable
 
@@ -19,6 +21,12 @@ class Update < ApplicationRecord
   end
 
   private
+
+  def updates_not_locked
+    if ENV["UPDATES_STATUS"] == "locked"
+      errors.add(:base, "Posting updates is currently locked")
+    end
+  end
 
   def only_formatting_changes
     if text_changed? && persisted?

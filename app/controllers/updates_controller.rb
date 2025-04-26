@@ -62,6 +62,10 @@ class UpdatesController < ApplicationController
     end
 
     def api_create
+        if ENV["UPDATES_STATUS"] == "locked"
+            return render json: { error: "Posting updates is currently locked" }, status: :forbidden
+        end
+
         user = User.find_by(slack_id: params[:slack_id])
         return render json: { error: "User not found" }, status: :not_found unless user
 
