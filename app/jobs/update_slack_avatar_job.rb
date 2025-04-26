@@ -12,11 +12,11 @@ class UpdateSlackAvatarJob < ApplicationJob
   def update_avatar_if_needed(user)
     slack_id = user.slack_id
     current_avatar = user.avatar
-    
+
     begin
       user_info = User.fetch_slack_user_info(slack_id)
       new_avatar = user_info.user.profile.image_original.presence || user_info.user.profile.image_512
-      
+
       if new_avatar != current_avatar
         Rails.logger.tagged("AvatarUpdate") do
           Rails.logger.info({
@@ -27,7 +27,7 @@ class UpdateSlackAvatarJob < ApplicationJob
             new_avatar: new_avatar
           }.to_json)
         end
-        
+
         user.update!(avatar: new_avatar)
       end
     rescue StandardError => e
@@ -41,4 +41,4 @@ class UpdateSlackAvatarJob < ApplicationJob
       end
     end
   end
-end 
+end

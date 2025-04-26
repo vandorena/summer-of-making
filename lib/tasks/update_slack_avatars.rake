@@ -5,4 +5,4 @@ namespace :users do
     UpdateSlackAvatarJob.perform_now
     puts "Slack avatar update completed."
   end
-end 
+end
