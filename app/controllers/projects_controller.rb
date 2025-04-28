@@ -201,30 +201,16 @@ class ProjectsController < ApplicationController
         end
 
         if errors.any?
-            respond_to do |format|
-                format.html { redirect_to project_path(@project), alert: "Cannot ship project: #{errors.join(' ')}" }
-                format.turbo_stream do
-                    flash.now[:alert] = "Cannot ship project: #{errors.join(' ')}"
-                    render turbo_stream: turbo_stream.update("flash-container", partial: "shared/flash")
-                end
-            end
+            redirect_to project_path(@project), alert: "Cannot ship project: #{errors.join(' ')}"
             return
         end
+        if @project.update(is_shipped: true)
+            redirect_to project_path(@project), notice: "Your project has been shipped!"
 
-        respond_to do |format|
-            if @project.update(is_shipped: true)
-                redirect_to project_path(@project), notice: "Your project has been shipped!"
-
-                message = "Congratulations on shipping your project! Now thy project shall fight for blood :ultrafastparrot:"
-                SendSlackDmJob.perform_later(@project.user.slack_id, message) if @project.user.slack_id.present?
-
-            else
-                format.html { redirect_to project_path(@project), alert: "Could not ship project." }
-                format.turbo_stream do
-                    flash.now[:alert] = "Could not ship project."
-                    render turbo_stream: turbo_stream.update("flash-container", partial: "shared/flash")
-                end
-            end
+            message = "Congratulations on shipping your project! Now thy project shall fight for blood :ultrafastparrot:"
+            SendSlackDmJob.perform_later(@project.user.slack_id, message) if @project.user.slack_id.present?
+        else
+            redirect_to project_path(@project), alert: "Could not ship project."
         end
     end
 
