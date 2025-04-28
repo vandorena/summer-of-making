@@ -20,4 +20,25 @@ namespace :projects do
       puts "----------------------------------------\n"
     end
   end
+
+  desc "DM authors of active projects to ship their projects"
+  task dm_active_authors: :environment do
+    active_project_ids = Project.joins(:updates)
+      .group('projects.id')
+      .having('COUNT(updates.id) > 10')
+      .having('COUNT(DISTINCT DATE(updates.created_at)) >= 5')
+      .pluck('projects.id')
+
+    active_projects = Project.where(id: active_project_ids).includes(:updates, :user)
+
+    puts "\nSending DMs to authors of #{active_projects.count} active projects:\n\n"
+    
+    active_projects.each do |project|
+      next unless project.user.slack_id.present?
+      
+      message = "Heya! You're receiving this DM because your project fulfills the primary criteria to be eligible for the giftcard. However, for your project to enter matchmaking, you need to ship it! Just click the Ship button on [My Projects](https://www.pixelprojects.fun/projects/my) and make sure everything is valid. Then you're good to go"      
+      SendSlackDmJob.perform_later(project.user.slack_id, message)
+      puts "Sent DM to #{project.user.display_name} about project: #{project.title}"
+    end
+  end
 end 
