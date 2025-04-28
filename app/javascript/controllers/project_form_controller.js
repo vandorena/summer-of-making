@@ -30,7 +30,7 @@ export default class extends Controller {
 
     const urlFields = [
       { field: this.bannerTarget, error: this.bannerErrorTarget, name: "Banner" },
-      { field: this.readmeTarget, error: this.readmeErrorTarget, name: "Documentation link" },
+      { field: this.readmeTarget, error: this.readmeErrorTarget, name: "Readme link" },
       { field: this.demoTarget, error: this.demoErrorTarget, name: "Demo link" },
       { field: this.repoTarget, error: this.repoErrorTarget, name: "Repository link" }
     ]

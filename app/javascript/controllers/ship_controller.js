@@ -96,7 +96,7 @@ export default class extends Controller {
     
     const links = [
       { url: repoLink, name: "Repository" },
-      { url: readmeLink, name: "Documentation" },
+      { url: readmeLink, name: "Readme" },
       { url: demoLink, name: "Demo" }
     ]
     

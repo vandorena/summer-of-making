@@ -76,7 +76,7 @@
           <% if @project.readme_link.present? %>
             <a href="<%= @project.readme_link %>" target="_blank"
                class="px-3 md:px-4 py-3 md:py-2 bg-saddle-taupe hover:scale-[1.05] text-white transition-transform duration-300 flex-1 text-center btn-pixel text-base md:text-lg 2xl:text-2xl">
-              Documentation
+              Readme
             </a>
           <% end %>
         </div>
@@ -401,10 +401,10 @@
           <% if @project.readme_link.present? %>
             <div class="flex justify-between items-center border-b border-saddle-taupe/30 pb-2">
               <div class="max-w-[70%]">
-                <p class="font-medium">Documentation Link:</p>
+                <p class="font-medium">Readme Link:</p>
                 <p class="text-sm text-gray-600 break-all"><%= @project.readme_link %></p>
               </div>
-              <div data-ship-target="linkStatus" data-link-name="Documentation" class="text-gray-600 text-sm font-medium">
+              <div data-ship-target="linkStatus" data-link-name="Readme" class="text-gray-600 text-sm font-medium">
                 Not checked
               </div>
             </div>
