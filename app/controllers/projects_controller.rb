@@ -215,7 +215,7 @@ class ProjectsController < ApplicationController
             if @project.update(is_shipped: true)
                 redirect_to project_path(@project), notice: "Your project has been shipped!"
 
-                message = "Congratulations on shipping your project. Now thy project shall fight for blood!"
+                message = "Congratulations on shipping your project! Now thy project shall fight for blood :ultrafastparrot:"
                 SendSlackDmJob.perform_later(@project.user.slack_id, message) if @project.user.slack_id.present?
 
             else
