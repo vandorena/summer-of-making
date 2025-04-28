@@ -3,6 +3,7 @@ class UpdatesController < ApplicationController
     before_action :authenticate_user!
     before_action :set_project, only: [ :create, :destroy, :update ]
     before_action :set_update, only: [ :destroy, :update ]
+    before_action :check_if_shipped, only: [ :create, :destroy, :update ]
     skip_before_action :authenticate_user!, only: [ :api_create ]
     before_action :authenticate_api_key, only: [ :api_create ]
     skip_before_action :verify_authenticity_token, only: [ :api_create ]
@@ -90,6 +91,12 @@ class UpdatesController < ApplicationController
 
     def set_update
         @update = @project.updates.find(params[:id])
+    end
+
+    def check_if_shipped
+        if @project.is_shipped?
+            redirect_to @project, alert: "This project has been shipped and cannot be modified."
+        end
     end
 
     def authenticate_api_key

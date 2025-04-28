@@ -44,7 +44,7 @@
 
     <div class="mt-3 md:mt-4 flex justify-end items-center space-x-4">
       <% if user_signed_in? && current_user == update.user %>
-        <button data-action="click->modal#open" data-modal-id="<%= update.id %>" data-modal-type="edit" class="px-2 md:px-4 py-2 bg-forest hover:scale-[1.05] text-white transition-all duration-300 text-sm md:text-base 2xl:text-large btn-pixel edit-update-btn">
+        <button data-action="click->modal#open" data-modal-id="<%= update.id %>" data-modal-type="edit" class="px-2 md:px-4 py-2 <%= @project.is_shipped? ? 'hidden' : 'bg-forest hover:scale-[1.05]' %> text-white transition-all duration-300 text-sm md:text-base 2xl:text-large btn-pixel edit-update-btn" <%= 'disabled' if @project.is_shipped? %>>
           Edit
         </button>
       <% end %>
@@ -56,8 +56,9 @@
       <% if user_signed_in? && current_user == update.user %>
         <%= button_to "Delete", project_update_path(@project, update),
             method: :delete,
-            class: "px-2 md:px-4 py-2 bg-vintage-red hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-large btn-pixel delete-button cursor-pointer",
-            data: { controller: "delete-confirmation", action: "click->delete-confirmation#confirm" } %>
+            class: "px-2 md:px-4 py-2 #{@project.is_shipped? ? 'hidden' : 'bg-vintage-red hover:scale-[1.05]'} text-white transition-transform duration-300 text-sm md:text-base 2xl:text-large btn-pixel delete-button",
+            data: { controller: "delete-confirmation", action: "click->delete-confirmation#confirm" },
+            disabled: @project.is_shipped? %>
       <% end %>
     </div>
 

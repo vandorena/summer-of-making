@@ -45,6 +45,9 @@ export default class extends Controller {
       case 'follower':
         modalElement = document.getElementById(`follower-modal-${modalId}`)
         break
+      case 'is_shipped':
+        modalElement = document.getElementById(`ship-modal-${modalId}`)
+        break
     }
     
     if (!modalElement) {
@@ -74,6 +77,7 @@ export default class extends Controller {
           this.element.id.startsWith('edit-modal-') || 
           this.element.id.startsWith('comment-modal-') || 
           this.element.id.startsWith('follower-modal-') || 
+          this.element.id.startsWith('ship-modal-') ||
           this.element.id === 'create-project-modal')) {
         this.close()
         event.stopPropagation()

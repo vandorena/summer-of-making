@@ -24,12 +24,14 @@ Rails.application.routes.draw do
   get "explore", to: "projects#index"
   get "activity", to: "projects#activity"
   get "my_projects", to: "projects#my_projects"
+  post "check_link", to: "projects#check_link"
 
   resources :projects do
     resources :updates, only: [ :create, :destroy, :update ]
     member do
       post :follow
       delete :unfollow
+      patch :ship
     end
   end
 
