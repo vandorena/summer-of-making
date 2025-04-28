@@ -17,7 +17,8 @@ class SyncProjectToAirtableJob < ApplicationJob
       "banner_link" => project.banner,
       "category" => project.category,
       "author_slack_id" => author_slack_id,
-      "project_id" => project.id.to_s
+      "project_id" => project.id.to_s,
+      "is_shipped" => project.is_shipped
     }
 
     existing_record = table.all(filter: "{project_id} = '#{project.id}'").first
