@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_29_195846) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_29_201913) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -220,6 +220,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_29_195846) do
     t.boolean "loser_demo_opened", default: false
     t.boolean "loser_readme_opened", default: false
     t.boolean "loser_repo_opened", default: false
+    t.integer "time_spent_voting_ms"
+    t.boolean "music_played"
     t.index ["loser_id"], name: "index_votes_on_loser_id"
     t.index ["user_id", "winner_id"], name: "index_votes_on_user_id_and_winner_id", unique: true
     t.index ["user_id"], name: "index_votes_on_user_id"

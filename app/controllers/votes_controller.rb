@@ -65,6 +65,6 @@ class VotesController < ApplicationController
         params.require(:vote).permit(:winner_id, :explanation, 
                                       :winner_demo_opened, :winner_readme_opened, :winner_repo_opened,
                                       :loser_demo_opened, :loser_readme_opened, :loser_repo_opened,
-                                      :time_spent_voting_ms)
+                                      :time_spent_voting_ms, :music_played)
     end
 end

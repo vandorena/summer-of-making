@@ -7,6 +7,7 @@ export default class extends Controller {
     this.tracks = this.audioTracksTarget.querySelectorAll('audio.music-track')
     this.currentTrack = null
     this.isPlaying = false
+    this.musicHasPlayed = false
   }
   
   toggleMusic() {
@@ -22,6 +23,11 @@ export default class extends Controller {
   }
   
   playMusic(trackIndex = null) {
+    if (!this.musicHasPlayed) {
+      this.dispatch("played", { bubbles: true })
+      this.musicHasPlayed = true;
+    }
+    
     if (this.currentTrack) {
       this.currentTrack.pause()
       this.currentTrack.removeEventListener('ended', this.handleTrackEnded)

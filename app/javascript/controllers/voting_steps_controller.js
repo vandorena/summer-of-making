@@ -5,7 +5,7 @@ export default class extends Controller {
     "step1", "step2", "loadingIndicator", "project", "form",
     "winnerDemoOpenedInput", "winnerReadmeOpenedInput", "winnerRepoOpenedInput",
     "loserDemoOpenedInput", "loserReadmeOpenedInput", "loserRepoOpenedInput",
-    "timeSpentVotingInput"
+    "timeSpentVotingInput", "musicPlayedInput"
   ]
   
   selectedProject = null
@@ -159,6 +159,14 @@ export default class extends Controller {
         }
       }
     });
+  }
+
+  handleMusicPlayed() {
+    if (this.hasMusicPlayedInputTarget) {
+      this.musicPlayedInputTargets.forEach(input => {
+        input.value = 'true';
+      });
+    }
   }
 
   disconnect() {

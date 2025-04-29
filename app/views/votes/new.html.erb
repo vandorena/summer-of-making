@@ -22,7 +22,9 @@
       <% end %>
     </div>
   <% else %>
-    <div data-controller="voting-steps" class="space-y-6 sm:space-y-8">
+    <div data-controller="voting-steps" 
+         data-action="music:played@window->voting-steps#handleMusicPlayed" 
+         class="space-y-6 sm:space-y-8">
       <!-- Step 1: Journeys -->
       <div data-voting-steps-target="step1" class="space-y-6 sm:space-y-8">
         <h2 class="text-xl sm:text-2xl font-steven mb-6 sm:mb-8 text-center text-gray-600"> A good ship is technical, creative, and presented well so that
