@@ -19,6 +19,8 @@
     <%= f.hidden_field :loser_readme_opened, value: false, data: { voting_steps_target: "loserReadmeOpenedInput" } %>
     <%= f.hidden_field :loser_repo_opened, value: false, data: { voting_steps_target: "loserRepoOpenedInput" } %>
 
+    <%= f.hidden_field :time_spent_voting_ms, data: { voting_steps_target: "timeSpentVotingInput" } %>
+
     <% token = session[:vote_tokens].keys.find { |k| session[:vote_tokens][k]["project_id"] == project.id } %>
     <%= hidden_field_tag :vote_token, token %>
 

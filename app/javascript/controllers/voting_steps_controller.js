@@ -4,10 +4,13 @@ export default class extends Controller {
   static targets = [
     "step1", "step2", "loadingIndicator", "project", "form",
     "winnerDemoOpenedInput", "winnerReadmeOpenedInput", "winnerRepoOpenedInput",
-    "loserDemoOpenedInput", "loserReadmeOpenedInput", "loserRepoOpenedInput"
+    "loserDemoOpenedInput", "loserReadmeOpenedInput", "loserRepoOpenedInput",
+    "timeSpentVotingInput"
   ]
   
   selectedProject = null
+  votingStartTime = null
+  formSubmitListener = null
 
   async connect() {
     this.step1Target.classList.add("hidden")
@@ -18,6 +21,8 @@ export default class extends Controller {
     
     this.loadingIndicatorTarget.classList.add("hidden")
     this.step1Target.classList.remove("hidden")
+    
+    this.votingStartTime = Date.now();
     
     if (this.hasFormTarget) {
       this.formTargets.forEach(form => {
@@ -47,6 +52,7 @@ export default class extends Controller {
   
   selectProject(event) {
     const projectId = event.currentTarget.dataset.projectId
+    let selectedForm = null;
     
     if (this.selectedProject === projectId) {
       this.resetSelection()
@@ -67,18 +73,38 @@ export default class extends Controller {
       }
     })
     
+    if (this.formSubmitListener) {
+        this.formTargets.forEach(form => {
+            form.removeEventListener('submit', this.formSubmitListener);
+        });
+        this.formSubmitListener = null;
+    }
+
     this.formTargets.forEach(form => {
       if (form.dataset.projectId === projectId) {
         form.classList.remove("hidden")
+        selectedForm = form;
       } else {
         form.classList.add("hidden")
       }
     })
+
+    if (selectedForm) {
+        this.formSubmitListener = this.handleFormSubmit.bind(this);
+        selectedForm.addEventListener('submit', this.formSubmitListener, { once: true }); 
+    }
   }
   
   resetSelection() {
     this.selectedProject = null
     
+    if (this.formSubmitListener) {
+        this.formTargets.forEach(form => {
+            form.removeEventListener('submit', this.formSubmitListener);
+        });
+        this.formSubmitListener = null;
+    }
+
     this.projectTargets.forEach(project => {
       project.classList.remove("opacity-50", "scale-95", "scale-105", "z-10")
     })
@@ -86,6 +112,17 @@ export default class extends Controller {
     this.formTargets.forEach(form => {
       form.classList.add("hidden")
     })
+  }
+  
+  handleFormSubmit(event) {
+      const form = event.currentTarget;
+      if (this.votingStartTime) {
+          const duration = Date.now() - this.votingStartTime;
+          const hiddenInput = form.querySelector('[data-voting-steps-target="timeSpentVotingInput"]');
+          if (hiddenInput) {
+              hiddenInput.value = duration;
+          }
+      } 
   }
 
   trackLinkClick(event) {
@@ -96,7 +133,6 @@ export default class extends Controller {
     const projectCard = link.closest('[data-project-id]');
     
     if (!projectCard || !linkType) {
-        console.warn("Could not find project card or link type for analytics tracking.");
         return;
     }
 
@@ -123,5 +159,13 @@ export default class extends Controller {
         }
       }
     });
+  }
+
+  disconnect() {
+      if (this.formSubmitListener) {
+          this.formTargets.forEach(form => {
+              form.removeEventListener('submit', this.formSubmitListener);
+          });
+      }
   }
 } 

@@ -53,7 +53,7 @@ class VotesController < ApplicationController
         voted_loser_ids = current_user.votes.pluck(:loser_id)
         voted_project_ids = voted_winner_ids + voted_loser_ids
         
-        @projects = Project.where(is_shipped: true)
+        @projects = Project.where(is_shipped: false)
                           .where.not(id: voted_project_ids)
                           .where.not(user_id: current_user.id)
                           .where.not(demo_link: [ nil, "" ])
@@ -64,6 +64,7 @@ class VotesController < ApplicationController
     def vote_params
         params.require(:vote).permit(:winner_id, :explanation, 
                                       :winner_demo_opened, :winner_readme_opened, :winner_repo_opened,
-                                      :loser_demo_opened, :loser_readme_opened, :loser_repo_opened)
+                                      :loser_demo_opened, :loser_readme_opened, :loser_repo_opened,
+                                      :time_spent_voting_ms)
     end
 end
