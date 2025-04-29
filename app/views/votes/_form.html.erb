@@ -2,8 +2,8 @@
              url: votes_path,
              class: "space-y-3 sm:space-y-4",
              id: "vote_form_#{project.id}",
-             data: { 
-               controller: "form", 
+             data: {
+               controller: "form",
                action: "submit->form#preventDoubleSubmission",
                voting_steps_target: "form",
                project_id: project.id,
@@ -11,7 +11,7 @@
              },
              onclick: "event.stopPropagation()") do |f| %>
     <%= f.hidden_field :winner_id, value: project.id %>
-    
+
     <%= f.hidden_field :winner_demo_opened, value: false, data: { voting_steps_target: "winnerDemoOpenedInput" } %>
     <%= f.hidden_field :winner_readme_opened, value: false, data: { voting_steps_target: "winnerReadmeOpenedInput" } %>
     <%= f.hidden_field :winner_repo_opened, value: false, data: { voting_steps_target: "winnerRepoOpenedInput" } %>
@@ -48,4 +48,3 @@
             onclick: "event.stopPropagation()" %>
     </div>
 <% end %>
-

@@ -23,8 +23,8 @@
       <% end %>
     </div>
   <% else %>
-    <div data-controller="voting-steps" 
-         data-action="music:played@window->voting-steps#handleMusicPlayed" 
+    <div data-controller="voting-steps"
+         data-action="music:played@window->voting-steps#handleMusicPlayed"
          class="space-y-6 sm:space-y-8">
       <!-- Step 1: Journeys -->
       <div data-voting-steps-target="step1" class="space-y-6 sm:space-y-8">
@@ -149,7 +149,7 @@
         <h2 class="text-xl sm:text-2xl font-steven mb-6 sm:mb-8 text-center text-gray-600"> A good ship is technical, creative, and presented well so that
             others can understand and experience it. By that definition, which
             of these two projects is better?</h2>
-        
+
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
           <% @projects.each do |project| %>
             <div class="bg-soft-bone card-pixel p-6 sm:p-12 cursor-pointer transition-all duration-300"

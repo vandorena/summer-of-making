@@ -6,19 +6,19 @@ class VotesController < ApplicationController
         @vote = Vote.new
         @user_vote_count = current_user.votes.count
         session[:vote_tokens] ||= {}
-        
+
         current_project_ids = @projects.map(&:id)
-        
+
         session[:vote_tokens].delete_if do |token, data|
             current_project_ids.include?(data["project_id"])
         end
-        
+
         @projects.each do |project|
             token = SecureRandom.hex(16)
             session[:vote_tokens][token] = {
                 "project_id" => project.id,
                 "user_id" => current_user.id,
-                "expires_at" => 2.hours.from_now.iso8601 
+                "expires_at" => 2.hours.from_now.iso8601
             }
         end
     end
@@ -26,9 +26,9 @@ class VotesController < ApplicationController
     def create
         token = params[:vote_token]
         token_data = session[:vote_tokens]&.[](token)
-        
+
         @vote = current_user.votes.build(vote_params)
-        
+
         if @projects.size == 2
             @vote.loser_id = @projects.find { |p| p.id != @vote.winner_id }.id
         end
@@ -40,7 +40,7 @@ class VotesController < ApplicationController
 
         if @vote.save
             session[:vote_tokens].delete(token)
-            
+
             redirect_to new_vote_path, notice: "Vote Submitted!"
         else
              redirect_to new_vote_path, alert: @vote.errors.full_messages.join(", ")
@@ -53,7 +53,7 @@ class VotesController < ApplicationController
         voted_winner_ids = current_user.votes.pluck(:winner_id)
         voted_loser_ids = current_user.votes.pluck(:loser_id)
         voted_project_ids = voted_winner_ids + voted_loser_ids
-        
+
         @projects = Project.where(is_shipped: true)
                           .where.not(id: voted_project_ids)
                           .where.not(user_id: current_user.id)
@@ -63,7 +63,7 @@ class VotesController < ApplicationController
     end
 
     def vote_params
-        params.require(:vote).permit(:winner_id, :explanation, 
+        params.require(:vote).permit(:winner_id, :explanation,
                                       :winner_demo_opened, :winner_readme_opened, :winner_repo_opened,
                                       :loser_demo_opened, :loser_readme_opened, :loser_repo_opened,
                                       :time_spent_voting_ms, :music_played)
