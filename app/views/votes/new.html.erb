@@ -25,6 +25,9 @@
     <div data-controller="voting-steps" class="space-y-6 sm:space-y-8">
       <!-- Step 1: Journeys -->
       <div data-voting-steps-target="step1" class="space-y-6 sm:space-y-8">
+        <h2 class="text-xl sm:text-2xl font-steven mb-6 sm:mb-8 text-center text-gray-600"> A good ship is technical, creative, and presented well so that
+            others can understand and experience it. By that definition, which
+            of these two projects is better?</h2>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
           <% @projects.each do |project| %>
@@ -38,6 +41,33 @@
                   <div class="flex-grow min-w-0">
                     <h3 class="text-xl sm:text-3xl font-steven mb-1 sm:mb-2 truncate"><%= project.title %></h3>
                     <p class="text-base sm:text-lg text-gray-600 line-clamp-2"><%= project.description %></p>
+                  </div>
+                </div>
+
+                <div class="space-y-4 sm:space-y-6">
+                  <h4 class="text-lg sm:text-xl font-steven">Project Links</h4>
+                  <div class="grid grid-cols-1 sm:flex sm:flex-wrap gap-3 sm:gap-4">
+                    <% if project.demo_link.present? %>
+                      <a href="<%= project.demo_link %>" target="_blank"
+                         class="px-4 sm:px-6 py-2.5 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
+                         onclick="event.stopPropagation()">
+                        Demo
+                      </a>
+                    <% end %>
+                    <% if project.repo_link.present? %>
+                      <a href="<%= project.repo_link %>" target="_blank"
+                         class="px-4 sm:px-6 py-2.5 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
+                         onclick="event.stopPropagation()">
+                        Repository
+                      </a>
+                    <% end %>
+                    <% if project.readme_link.present? %>
+                      <a href="<%= project.readme_link %>" target="_blank"
+                         class="px-4 sm:px-6 py-2.5 bg-saddle-taupe hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
+                         onclick="event.stopPropagation()">
+                        Readme
+                      </a>
+                    <% end %>
                   </div>
                 </div>
 
@@ -108,9 +138,16 @@
 
       <!-- Step 2: Voting -->
       <div data-voting-steps-target="step2" class="hidden">
+        <h2 class="text-xl sm:text-2xl font-steven mb-6 sm:mb-8 text-center text-gray-600"> A good ship is technical, creative, and presented well so that
+            others can understand and experience it. By that definition, which
+            of these two projects is better?</h2>
+        
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
           <% @projects.each do |project| %>
-            <div class="bg-soft-bone card-pixel p-6 sm:p-12">
+            <div class="bg-soft-bone card-pixel p-6 sm:p-12 cursor-pointer transition-all duration-300"
+                 data-voting-steps-target="project"
+                 data-project-id="<%= project.id %>"
+                 data-action="click->voting-steps#selectProject">
               <div class="space-y-6 sm:space-y-8">
                 <div class="flex items-start gap-3 sm:gap-4">
                   <div class="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 overflow-hidden rounded-lg">
@@ -128,19 +165,22 @@
                   <div class="grid grid-cols-1 sm:flex sm:flex-wrap gap-3 sm:gap-4">
                     <% if project.demo_link.present? %>
                       <a href="<%= project.demo_link %>" target="_blank"
-                         class="px-4 sm:px-6 py-2.5 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center">
+                         class="px-4 sm:px-6 py-2.5 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
+                         onclick="event.stopPropagation()">
                         Demo
                       </a>
                     <% end %>
                     <% if project.repo_link.present? %>
                       <a href="<%= project.repo_link %>" target="_blank"
-                         class="px-4 sm:px-6 py-2.5 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center">
+                         class="px-4 sm:px-6 py-2.5 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
+                         onclick="event.stopPropagation()">
                         Repository
                       </a>
                     <% end %>
                     <% if project.readme_link.present? %>
                       <a href="<%= project.readme_link %>" target="_blank"
-                         class="px-4 sm:px-6 py-2.5 bg-saddle-taupe hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center">
+                         class="px-4 sm:px-6 py-2.5 bg-saddle-taupe hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
+                         onclick="event.stopPropagation()">
                         Readme
                       </a>
                     <% end %>

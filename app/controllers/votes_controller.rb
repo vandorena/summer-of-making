@@ -4,44 +4,56 @@ class VotesController < ApplicationController
 
     def new
         @vote = Vote.new
+        session[:vote_tokens] ||= {}
+        
+        current_project_ids = @projects.map(&:id)
+        
+        session[:vote_tokens].delete_if do |token, data|
+            current_project_ids.include?(data["project_id"])
+        end
+        
+        @projects.each do |project|
+            token = SecureRandom.hex(16)
+            session[:vote_tokens][token] = {
+                "project_id" => project.id,
+                "user_id" => current_user.id,
+                "expires_at" => 2.hours.from_now.iso8601 
+            }
+        end
     end
 
     def create
+        token = params[:vote_token]
+        token_data = session[:vote_tokens]&.[](token)
+        
         @vote = current_user.votes.build(vote_params)
+        
+        if @projects.size == 2
+            @vote.loser_id = @projects.find { |p| p.id != @vote.winner_id }.id
+        end
 
-        respond_to do |format|
-            if @vote.save
-                format.turbo_stream {
-                    flash.now[:notice] = "Vote Submitted!"
-                    redirect_to new_vote_path
-                }
-                format.html { redirect_to new_vote_path, notice: "Vote Submitted!" }
-            else
-                format.turbo_stream {
-                    flash.now[:alert] = @vote.errors.full_messages.join(", ")
-                    render turbo_stream: turbo_stream.update("vote_form_#{@vote.project_id}",
-                        partial: "votes/form",
-                        locals: { project: Project.find(@vote.project_id), vote: @vote })
-                }
-                format.html {
-                    flash.now[:alert] = @vote.errors.full_messages.join(", ")
-                    render :new, status: :unprocessable_entity
-                }
-            end
+        unless @vote.authorized_with_token?(token_data)
+            redirect_to new_vote_path, alert: "Vote validation failed"
+            return
+        end
+
+        if @vote.save
+            session[:vote_tokens].delete(token)
+            
+            redirect_to new_vote_path, notice: "Vote Submitted!"
+        else
+             redirect_to new_vote_path, alert: @vote.errors.full_messages.join(", ")
         end
     end
 
     private
 
     def set_projects
-        voted_project_ids = current_user.votes.pluck(:project_id)
+        voted_winner_ids = current_user.votes.pluck(:winner_id)
+        voted_loser_ids = current_user.votes.pluck(:loser_id)
+        voted_project_ids = voted_winner_ids + voted_loser_ids
         
-        projects_with_10_plus_updates = Project.joins(:updates)
-                                              .group('projects.id')
-                                              .having('COUNT(updates.id) >= 10')
-                                              .pluck(:id)
-
-        @projects = Project.where(id: projects_with_10_plus_updates)
+        @projects = Project.where(is_shipped: true)
                           .where.not(id: voted_project_ids)
                           .where.not(user_id: current_user.id)
                           .where.not(demo_link: [ nil, "" ])
@@ -50,6 +62,6 @@ class VotesController < ApplicationController
     end
 
     def vote_params
-        params.require(:vote).permit(:project_id, :explanation)
+        params.require(:vote).permit(:winner_id, :explanation)
     end
 end

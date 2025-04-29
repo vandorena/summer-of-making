@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_28_201007) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_29_190437) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -44,7 +44,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_28_201007) do
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "banner"
+    t.string "banner", null: false
     t.string "category"
     t.boolean "is_shipped", default: false
     t.index ["user_id"], name: "index_projects_on_user_id"
@@ -209,13 +209,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_28_201007) do
 
   create_table "votes", force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.bigint "project_id", null: false
+    t.bigint "winner_id", null: false
     t.text "explanation", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["project_id"], name: "index_votes_on_project_id"
-    t.index ["user_id", "project_id"], name: "index_votes_on_user_id_and_project_id", unique: true
+    t.bigint "loser_id"
+    t.index ["loser_id"], name: "index_votes_on_loser_id"
+    t.index ["user_id", "winner_id"], name: "index_votes_on_user_id_and_winner_id", unique: true
     t.index ["user_id"], name: "index_votes_on_user_id"
+    t.index ["winner_id"], name: "index_votes_on_winner_id"
   end
 
   add_foreign_key "comments", "updates"
@@ -231,6 +233,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_28_201007) do
   add_foreign_key "solid_queue_scheduled_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "updates", "projects"
   add_foreign_key "updates", "users"
-  add_foreign_key "votes", "projects"
+  add_foreign_key "votes", "projects", column: "loser_id"
+  add_foreign_key "votes", "projects", column: "winner_id"
   add_foreign_key "votes", "users"
 end
