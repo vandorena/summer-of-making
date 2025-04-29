@@ -126,6 +126,10 @@ export default class extends Controller {
   }
 
   trackLinkClick(event) {
+    if (event.type === 'keydown' && ![13, 32].includes(event.keyCode)) {
+      return;
+    }
+    
     event.stopPropagation(); 
 
     const link = event.currentTarget;

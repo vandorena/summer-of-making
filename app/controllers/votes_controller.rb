@@ -4,6 +4,7 @@ class VotesController < ApplicationController
 
     def new
         @vote = Vote.new
+        @user_vote_count = current_user.votes.count
         session[:vote_tokens] ||= {}
         
         current_project_ids = @projects.map(&:id)

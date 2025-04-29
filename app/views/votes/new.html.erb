@@ -1,5 +1,6 @@
 <div class="container mx-auto px-4 sm:px-4 pt-2 md:pt-8">
   <h1 class="text-4xl sm:text-5xl font-steven mb-4 sm:text-center">Vote</h1>
+  <p class="text-center text-nice-blue text-lg mb-6">You have voted <%= @user_vote_count %> times.</p>
 
   <% if ENV['VOTING_STATUS'] == 'locked' && !ENV['ALLOWED_SLACK_IDS']&.split(',')&.include?(current_user.slack_id) %>
     <div class="bg-soft-bone card-pixel p-6 sm:p-12 text-center mt-8">
@@ -53,7 +54,7 @@
                          class="px-4 sm:px-6 py-2.5 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
                          onclick="event.stopPropagation()"
                          data-analytics-link="demo"
-                         data-action="click->voting-steps#trackLinkClick">
+                         data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
                         Demo
                       </a>
                     <% end %>
@@ -62,7 +63,7 @@
                          class="px-4 sm:px-6 py-2.5 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
                          onclick="event.stopPropagation()"
                          data-analytics-link="repo"
-                         data-action="click->voting-steps#trackLinkClick">
+                         data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
                         Repository
                       </a>
                     <% end %>
@@ -71,7 +72,7 @@
                          class="px-4 sm:px-6 py-2.5 bg-saddle-taupe hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
                          onclick="event.stopPropagation()"
                          data-analytics-link="readme"
-                         data-action="click->voting-steps#trackLinkClick">
+                         data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
                         Readme
                       </a>
                     <% end %>
@@ -174,7 +175,7 @@
                          class="px-4 sm:px-6 py-2.5 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
                          onclick="event.stopPropagation()"
                          data-analytics-link="demo"
-                         data-action="click->voting-steps#trackLinkClick">
+                         data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
                         Demo
                       </a>
                     <% end %>
@@ -183,7 +184,7 @@
                          class="px-4 sm:px-6 py-2.5 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
                          onclick="event.stopPropagation()"
                          data-analytics-link="repo"
-                         data-action="click->voting-steps#trackLinkClick">
+                         data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
                         Repository
                       </a>
                     <% end %>
@@ -192,7 +193,7 @@
                          class="px-4 sm:px-6 py-2.5 bg-saddle-taupe hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
                          onclick="event.stopPropagation()"
                          data-analytics-link="readme"
-                         data-action="click->voting-steps#trackLinkClick">
+                         data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
                         Readme
                       </a>
                     <% end %>
