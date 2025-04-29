@@ -53,7 +53,7 @@ class VotesController < ApplicationController
         voted_loser_ids = current_user.votes.pluck(:loser_id)
         voted_project_ids = voted_winner_ids + voted_loser_ids
         
-        @projects = Project.where(is_shipped: false)
+        @projects = Project.where(is_shipped: true)
                           .where.not(id: voted_project_ids)
                           .where.not(user_id: current_user.id)
                           .where.not(demo_link: [ nil, "" ])
