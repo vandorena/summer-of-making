@@ -6,11 +6,19 @@
                controller: "form", 
                action: "submit->form#preventDoubleSubmission",
                voting_steps_target: "form",
-               project_id: project.id
+               project_id: project.id,
+               "data-analytics-form": ""
              },
              onclick: "event.stopPropagation()") do |f| %>
     <%= f.hidden_field :winner_id, value: project.id %>
     
+    <%= f.hidden_field :winner_demo_opened, value: false, data: { voting_steps_target: "winnerDemoOpenedInput" } %>
+    <%= f.hidden_field :winner_readme_opened, value: false, data: { voting_steps_target: "winnerReadmeOpenedInput" } %>
+    <%= f.hidden_field :winner_repo_opened, value: false, data: { voting_steps_target: "winnerRepoOpenedInput" } %>
+    <%= f.hidden_field :loser_demo_opened, value: false, data: { voting_steps_target: "loserDemoOpenedInput" } %>
+    <%= f.hidden_field :loser_readme_opened, value: false, data: { voting_steps_target: "loserReadmeOpenedInput" } %>
+    <%= f.hidden_field :loser_repo_opened, value: false, data: { voting_steps_target: "loserRepoOpenedInput" } %>
+
     <% token = session[:vote_tokens].keys.find { |k| session[:vote_tokens][k]["project_id"] == project.id } %>
     <%= hidden_field_tag :vote_token, token %>
 
@@ -37,3 +45,4 @@
             onclick: "event.stopPropagation()" %>
     </div>
 <% end %>
+

@@ -1,7 +1,11 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["step1", "step2", "loadingIndicator", "project", "form"]
+  static targets = [
+    "step1", "step2", "loadingIndicator", "project", "form",
+    "winnerDemoOpenedInput", "winnerReadmeOpenedInput", "winnerRepoOpenedInput",
+    "loserDemoOpenedInput", "loserReadmeOpenedInput", "loserRepoOpenedInput"
+  ]
   
   selectedProject = null
 
@@ -82,5 +86,42 @@ export default class extends Controller {
     this.formTargets.forEach(form => {
       form.classList.add("hidden")
     })
+  }
+
+  trackLinkClick(event) {
+    event.stopPropagation(); 
+
+    const link = event.currentTarget;
+    const linkType = link.dataset.analyticsLink;
+    const projectCard = link.closest('[data-project-id]');
+    
+    if (!projectCard || !linkType) {
+        console.warn("Could not find project card or link type for analytics tracking.");
+        return;
+    }
+
+    const clickedProjectId = projectCard.dataset.projectId;
+
+    this.formTargets.forEach(form => {
+      const winnerInput = form.querySelector('input[name="vote[winner_id]"]');
+      if (!winnerInput) {
+          return;
+      }
+
+      const formWinnerId = winnerInput.value;
+      
+      const isWinnerClick = clickedProjectId === formWinnerId; 
+      const prefix = isWinnerClick ? 'winner' : 'loser';
+
+      const targetName = `${prefix}${linkType.charAt(0).toUpperCase() + linkType.slice(1)}OpenedInput`;
+
+      const hiddenInput = form.querySelector(`[data-voting-steps-target="${targetName}"]`);
+
+      if (hiddenInput) {
+        if (hiddenInput.value !== 'true') {
+          hiddenInput.value = 'true';
+        }
+      }
+    });
   }
 } 

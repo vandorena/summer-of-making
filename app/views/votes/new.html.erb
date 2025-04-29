@@ -31,7 +31,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
           <% @projects.each do |project| %>
-            <div class="bg-soft-bone card-pixel p-6 sm:p-12">
+            <div class="bg-soft-bone card-pixel p-6 sm:p-12" data-project-id="<%= project.id %>">
               <div class="space-y-6 sm:space-y-8">
                 <div class="flex items-start gap-3 sm:gap-4">
                   <div class="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 overflow-hidden rounded-lg">
@@ -49,21 +49,27 @@
                     <% if project.demo_link.present? %>
                       <a href="<%= project.demo_link %>" target="_blank"
                          class="px-4 sm:px-6 py-2.5 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
-                         onclick="event.stopPropagation()">
+                         onclick="event.stopPropagation()"
+                         data-analytics-link="demo"
+                         data-action="click->voting-steps#trackLinkClick">
                         Demo
                       </a>
                     <% end %>
                     <% if project.repo_link.present? %>
                       <a href="<%= project.repo_link %>" target="_blank"
                          class="px-4 sm:px-6 py-2.5 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
-                         onclick="event.stopPropagation()">
+                         onclick="event.stopPropagation()"
+                         data-analytics-link="repo"
+                         data-action="click->voting-steps#trackLinkClick">
                         Repository
                       </a>
                     <% end %>
                     <% if project.readme_link.present? %>
                       <a href="<%= project.readme_link %>" target="_blank"
                          class="px-4 sm:px-6 py-2.5 bg-saddle-taupe hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
-                         onclick="event.stopPropagation()">
+                         onclick="event.stopPropagation()"
+                         data-analytics-link="readme"
+                         data-action="click->voting-steps#trackLinkClick">
                         Readme
                       </a>
                     <% end %>
@@ -164,21 +170,27 @@
                     <% if project.demo_link.present? %>
                       <a href="<%= project.demo_link %>" target="_blank"
                          class="px-4 sm:px-6 py-2.5 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
-                         onclick="event.stopPropagation()">
+                         onclick="event.stopPropagation()"
+                         data-analytics-link="demo"
+                         data-action="click->voting-steps#trackLinkClick">
                         Demo
                       </a>
                     <% end %>
                     <% if project.repo_link.present? %>
                       <a href="<%= project.repo_link %>" target="_blank"
                          class="px-4 sm:px-6 py-2.5 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
-                         onclick="event.stopPropagation()">
+                         onclick="event.stopPropagation()"
+                         data-analytics-link="repo"
+                         data-action="click->voting-steps#trackLinkClick">
                         Repository
                       </a>
                     <% end %>
                     <% if project.readme_link.present? %>
                       <a href="<%= project.readme_link %>" target="_blank"
                          class="px-4 sm:px-6 py-2.5 bg-saddle-taupe hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
-                         onclick="event.stopPropagation()">
+                         onclick="event.stopPropagation()"
+                         data-analytics-link="readme"
+                         data-action="click->voting-steps#trackLinkClick">
                         Readme
                       </a>
                     <% end %>
