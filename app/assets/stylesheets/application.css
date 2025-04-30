@@ -72,4 +72,30 @@
       transform: rotate(-13deg) scale(1);
     }
   }
+
+  body {
+    cursor: url("cursor.svg") 0 0, auto;
+  }
+  
+  a,
+  button,
+  [role="button"],
+  input[type="submit"],
+  input[type="button"],
+  input[type="reset"] {
+    cursor: url("cursorPointer.svg") 6 2, pointer;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="number"],
+  textarea,
+  [contenteditable="true"] {
+    cursor: url("cursorText.svg") 6 12, text;
+  }
+  
   
