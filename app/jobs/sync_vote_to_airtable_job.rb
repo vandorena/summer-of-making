@@ -26,8 +26,23 @@ class SyncVoteToAirtableJob < ApplicationJob
       "music_played" => vote.music_played
     }
 
-    record = table.new(vote_data)
-    record.save
+    existing_record = table.all(filter: "{vote_id} = '#{vote.id}'").first
+
+    record = existing_record
+
+    if existing_record
+      updated = false
+      vote_data.each do |field, new_value|
+        if existing_record[field] != new_value
+          existing_record[field] = new_value
+          updated = true
+        end
+      end
+      existing_record.save if updated
+    else
+      record = table.new(vote_data)
+      record.save
+    end
 
     return unless record&.id
 
