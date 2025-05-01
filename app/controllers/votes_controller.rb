@@ -5,13 +5,8 @@ class VotesController < ApplicationController
     def new
         @vote = Vote.new
         @user_vote_count = current_user.votes.count
-        session[:vote_tokens] ||= {}
 
-        current_project_ids = @projects.map(&:id)
-
-        session[:vote_tokens].delete_if do |token, data|
-            current_project_ids.include?(data["project_id"])
-        end
+        session[:vote_tokens] = {}
 
         @projects.each do |project|
             token = SecureRandom.hex(16)
