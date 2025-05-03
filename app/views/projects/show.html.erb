@@ -33,6 +33,15 @@
                     </span>
                   </button>
                 </div>
+                <% if @project.user == current_user %>
+                  <div>
+                    <div class="bg-nice-blue btn-pixel px-4 py-2 flex items-center">
+                      <span class="text-white font-steven text-sm md:text-base 2xl:text-xl">
+                        <%= @project.total_votes %> votes
+                      </span>
+                    </div>
+                  </div>
+                <% end %>
                 <% if user_signed_in? && current_user == @project.user %>
                   <% if !@project.is_shipped %>
                     <div data-controller="modal" class="cursor-pointer">

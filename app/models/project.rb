@@ -3,6 +3,9 @@ class Project < ApplicationRecord
   has_many :updates, dependent: :destroy
   has_many :project_follows, dependent: :destroy
   has_many :followers, through: :project_follows, source: :user
+  
+  has_many :won_votes, class_name: 'Vote', foreign_key: 'winner_id'
+  has_many :lost_votes, class_name: 'Vote', foreign_key: 'loser_id'
 
   validates :title, :description, :category, presence: true
 
@@ -17,6 +20,18 @@ class Project < ApplicationRecord
   after_initialize :set_default_rating, if: :new_record?
 
   after_commit :sync_to_airtable, on: [ :create, :update ]
+
+  def total_votes
+    won_votes.count + lost_votes.count
+  end
+
+  def won_votes_count
+    won_votes.count
+  end
+
+  def lost_votes_count
+    lost_votes.count
+  end
 
   private
 
