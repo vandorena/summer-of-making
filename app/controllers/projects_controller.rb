@@ -42,13 +42,7 @@ class ProjectsController < ApplicationController
     end
 
     def create
-        if current_user.project.present?
-            redirect_to my_projects_path,
-                alert: "You can only have one project. Please edit your existing project instead."
-            return
-        end
-
-        @project = current_user.build_project(project_params)
+        @project = current_user.projects.build(project_params)
 
         if @project.save
             redirect_to project_path(@project), notice: "Project was successfully created."
@@ -59,14 +53,9 @@ class ProjectsController < ApplicationController
     end
 
     def my_projects
-        @project = current_user.project
-        if @project.nil?
-            @projects = []
-            @show_create_project = true
-            render :index
-        else
-            redirect_to project_path(@project)
-        end
+        @projects = current_user.projects.order(created_at: :desc)
+        @show_create_project = true
+        render :index
     end
 
     def activity

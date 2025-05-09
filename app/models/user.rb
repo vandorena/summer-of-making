@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-    has_one :project
+    has_many :projects
     has_many :updates
     has_many :votes
     has_many :project_follows
