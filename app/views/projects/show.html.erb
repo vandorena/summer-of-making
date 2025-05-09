@@ -158,8 +158,8 @@
               <div>
                 <p class="font-steven text-black"><%= follower.display_name %></p>
                 <p class="text-sm text-gray-600">
-                  <% if follower.project.present? %>
-                    Check their project out: <%= link_to follower.project.title, project_path(follower.project), class: "text-nice-blue underline" %>
+                  <% if follower.projects.present? %>
+                    Check their project out: <%= link_to follower.projects.first.title, project_path(follower.projects.first), class: "text-nice-blue underline" %>
                   <% else %>
                     Whoops! Looks like they don't have a project yet. Maybe ask them to start one?
                   <% end %>
