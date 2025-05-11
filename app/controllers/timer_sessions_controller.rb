@@ -2,6 +2,7 @@ class TimerSessionsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_project
   before_action :set_timer_session, only: [ :update, :show, :destroy ]
+  before_action :ensure_timer_not_stopped, only: [ :update, :destroy ]
 
   def create
     active_session = TimerSession.where(user: current_user, status: [ :running, :paused ]).first
@@ -61,12 +62,16 @@ class TimerSessionsController < ApplicationController
       @timer_session.update(stopped_at: end_time, net_time: net_time.to_i, status: :stopped)
     end
 
-    render json: {
-      id: @timer_session.id,
-      status: @timer_session.status,
-      net_time: @timer_session.net_time,
-      accumulated_paused: @timer_session.accumulated_paused
-    }
+    if @timer_session.errors.any?
+      render json: { error: @timer_session.errors.full_messages.join(", ") }, status: :unprocessable_entity
+    else
+      render json: {
+        id: @timer_session.id,
+        status: @timer_session.status,
+        net_time: @timer_session.net_time,
+        accumulated_paused: @timer_session.accumulated_paused
+      }
+    end
   end
 
   def active
@@ -87,8 +92,11 @@ class TimerSessionsController < ApplicationController
 
   def destroy
     if @timer_session.user == current_user
-      @timer_session.destroy
-      render json: { success: true }, status: :ok
+      if @timer_session.destroy
+        render json: { success: true }, status: :ok
+      else
+        render json: { error: @timer_session.errors.full_messages.join(", ") }, status: :unprocessable_entity
+      end
     else
       render json: { error: "Unauthorized" }, status: :unauthorized
     end
@@ -102,5 +110,12 @@ class TimerSessionsController < ApplicationController
 
   def set_timer_session
     @timer_session = @project.timer_sessions.find(params[:id])
+  end
+
+  def ensure_timer_not_stopped
+    if @timer_session.stopped?
+      render json: { error: "Stopped timer sessions cannot be modified" }, status: :unprocessable_entity
+      false
+    end
   end
 end
