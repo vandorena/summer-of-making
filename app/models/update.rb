@@ -2,7 +2,7 @@ class Update < ApplicationRecord
   belongs_to :user
   belongs_to :project
   has_many :comments, -> { order(created_at: :desc) }, dependent: :destroy
-  has_many :timer_sessions
+  has_many :timer_sessions, foreign_key: "update_id", dependent: :nullify
 
   attr_accessor :timer_session_id
 
