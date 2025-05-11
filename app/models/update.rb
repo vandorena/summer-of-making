@@ -15,6 +15,8 @@ class Update < ApplicationRecord
   validate :only_formatting_changes, on: :update
 
   validate :updates_not_locked, on: :create
+  validate :validate_timer_session_not_linked, on: :create
+  validate :validate_timer_session_required, on: :create
 
   after_commit :sync_to_airtable, on: [ :create, :update ]
   after_commit :associate_timer_session, on: :create
@@ -26,11 +28,29 @@ class Update < ApplicationRecord
 
   private
 
+  def validate_timer_session_required
+    return if project.category == "Hardware" || project.category == "Something else"
+
+    if timer_session_id.blank?
+      errors.add(:timer_session_id, "must be linked to a timer session")
+    end
+  end
+
+  def validate_timer_session_not_linked
+    return unless timer_session_id.present?
+
+    timer_session = TimerSession.find_by(id: timer_session_id)
+    if timer_session && timer_session.update_id.present?
+      errors.add(:timer_session_id, "This timer session is already linked to another update")
+    end
+  end
+
   def associate_timer_session
     return unless timer_session_id.present?
 
     timer_session = project.timer_sessions.find_by(id: timer_session_id)
     return unless timer_session
+    return if timer_session.update_id.present?
 
     timer_session.update(update_record: self)
   end
