@@ -7,6 +7,8 @@ class Project < ApplicationRecord
   has_many :won_votes, class_name: "Vote", foreign_key: "winner_id"
   has_many :lost_votes, class_name: "Vote", foreign_key: "loser_id"
 
+  has_many :timer_sessions
+
   validates :title, :description, :category, presence: true
 
   validates :readme_link, :demo_link, :repo_link, :banner,

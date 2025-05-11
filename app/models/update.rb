@@ -2,6 +2,9 @@ class Update < ApplicationRecord
   belongs_to :user
   belongs_to :project
   has_many :comments, -> { order(created_at: :desc) }, dependent: :destroy
+  has_many :timer_sessions
+
+  attr_accessor :timer_session_id
 
   validates :text, presence: true
 
@@ -14,6 +17,7 @@ class Update < ApplicationRecord
   validate :updates_not_locked, on: :create
 
   after_commit :sync_to_airtable, on: [ :create, :update ]
+  after_commit :associate_timer_session, on: :create
   after_destroy :delete_from_airtable
 
   def formatted_text
@@ -21,6 +25,15 @@ class Update < ApplicationRecord
   end
 
   private
+
+  def associate_timer_session
+    return unless timer_session_id.present?
+
+    timer_session = project.timer_sessions.find_by(id: timer_session_id)
+    return unless timer_session
+
+    timer_session.update(update_record: self)
+  end
 
   def updates_not_locked
     if ENV["UPDATES_STATUS"] == "locked"

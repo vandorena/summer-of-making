@@ -28,6 +28,11 @@ Rails.application.routes.draw do
 
   resources :projects do
     resources :updates, only: [ :create, :destroy, :update ]
+    resources :timer_sessions, only: [ :create, :update, :show, :destroy ] do
+      collection do
+        get :active
+      end
+    end
     member do
       post :follow
       delete :unfollow

@@ -1,0 +1,106 @@
+class TimerSessionsController < ApplicationController
+  before_action :authenticate_user!
+  before_action :set_project
+  before_action :set_timer_session, only: [ :update, :show, :destroy ]
+
+  def create
+    active_session = TimerSession.where(user: current_user, status: [ :running, :paused ]).first
+
+    if active_session
+      project = active_session.project
+      error_message = "You already have an active timer session for the project '#{project.title}'. Please finish or stop that session first."
+      redirect_to project_path(@project), alert: error_message
+      return
+    end
+
+    @timer_session = @project.timer_sessions.build(
+      user: current_user,
+      started_at: Time.current,
+      status: :running
+    )
+
+    if @timer_session.save
+      render json: {
+        id: @timer_session.id,
+        started_at: @timer_session.started_at,
+        status: @timer_session.status
+      }
+    else
+      error_message = @timer_session.errors.full_messages.join(", ")
+      redirect_to project_path(@project), alert: error_message
+    end
+  end
+
+  def show
+    if @timer_session
+      render json: {
+        id: @timer_session.id,
+        started_at: @timer_session.started_at,
+        last_paused_at: @timer_session.last_paused_at,
+        accumulated_paused: @timer_session.accumulated_paused,
+        status: @timer_session.status,
+        net_time: @timer_session.net_time
+      }
+    else
+      render json: { error: "No active timer session found" }, status: :not_found
+    end
+  end
+
+  def update
+    case params[:action_type]
+    when "pause"
+      @timer_session.update(last_paused_at: Time.current, status: :paused)
+    when "resume"
+      paused_duration = Time.current - @timer_session.last_paused_at
+      new_accumulated = @timer_session.accumulated_paused + paused_duration.to_i
+      @timer_session.update(accumulated_paused: new_accumulated, status: :running)
+    when "stop"
+      end_time = Time.current
+      elapsed = end_time - @timer_session.started_at
+      net_time = elapsed - @timer_session.accumulated_paused
+      @timer_session.update(stopped_at: end_time, net_time: net_time.to_i, status: :stopped)
+    end
+
+    render json: {
+      id: @timer_session.id,
+      status: @timer_session.status,
+      net_time: @timer_session.net_time,
+      accumulated_paused: @timer_session.accumulated_paused
+    }
+  end
+
+  def active
+    @timer_session = @project.timer_sessions.where(user: current_user, status: [ :running, :paused ]).order(created_at: :desc).first
+
+    if @timer_session
+      render json: {
+        id: @timer_session.id,
+        started_at: @timer_session.started_at,
+        last_paused_at: @timer_session.last_paused_at,
+        accumulated_paused: @timer_session.accumulated_paused,
+        status: @timer_session.status
+      }
+    else
+      render json: { active: false }, status: :ok
+    end
+  end
+
+  def destroy
+    if @timer_session.user == current_user
+      @timer_session.destroy
+      render json: { success: true }, status: :ok
+    else
+      render json: { error: "Unauthorized" }, status: :unauthorized
+    end
+  end
+
+  private
+
+  def set_project
+    @project = Project.find(params[:project_id])
+  end
+
+  def set_timer_session
+    @timer_session = @project.timer_sessions.find(params[:id])
+  end
+end

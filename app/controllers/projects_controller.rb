@@ -21,6 +21,11 @@ class ProjectsController < ApplicationController
 
     def show
         @updates = @project.updates.order(created_at: :asc)
+        if current_user && (@project.category == "Hardware" || @project.category == "Something else")
+            @unlinked_timer_sessions = @project.timer_sessions
+                .where(user: current_user, update_id: nil, status: :stopped)
+                .order(created_at: :desc)
+        end
     end
 
     def edit

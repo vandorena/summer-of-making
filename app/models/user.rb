@@ -4,6 +4,7 @@ class User < ApplicationRecord
     has_many :votes
     has_many :project_follows
     has_many :followed_projects, through: :project_follows, source: :project
+    has_many :timer_sessions
 
     validates :slack_id, presence: true, uniqueness: true
     validates :email, :first_name, :last_name, :display_name, :timezone, :avatar, presence: true
