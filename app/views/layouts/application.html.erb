@@ -66,12 +66,12 @@
             </div>
           </div>
 
-          <div class="p-4 md:p-6 overflow-y-auto">
+          <div class="p-4 md:p-6 overflow-y-auto" data-hackatime-modal-target="modalContent">
             <div class="text-center mb-6">
               <%= image_tag "orpheustimer.png", class: "w-32 h-32 md:w-48 md:h-48 2xl:w-64 2xl:h-64 mx-auto mb-4", alt: "Hackatime" %>
               <h4 class="text-xl md:text-2xl 2xl:text-3xl font-steven mb-2">Connect Hackatime</h4>
               <p class="text-base md:text-lg mb-4 text-gray-600">
-                Hackatime helps you track your coding time and progress. Connect your account to enhance your Journey experience!
+                Hackatime helps you track your time and progress. Connect your account to embark on a journey!
               </p>
             </div>
 
@@ -79,9 +79,119 @@
               <button type="button" class="px-4 py-2 btn-pixel bg-vintage-red text-white hover:scale-[1.05] transition-transform 2xl:text-xl" data-action="hackatime-modal#skip">
                 Skip for now
               </button>
-              <a href="https://hackatime.hackclub.com/" target="_blank" type="button" class="px-4 py-2 btn-pixel bg-forest text-white hover:scale-[1.05] transition-transform 2xl:text-xl">
+              <button type="button" class="px-4 py-2 btn-pixel bg-forest text-white hover:scale-[1.05] transition-transform 2xl:text-xl" data-action="hackatime-modal#connectHackatime">
                 Connect Hackatime
-              </a>
+              </button>
+            </div>
+          </div>
+
+          <div class="p-4 md:p-6 overflow-y-auto hidden" data-hackatime-modal-target="countdownContent">
+            <div class="text-center mb-6">
+              <%= image_tag "orpheustimer.png", class: "w-32 h-32 md:w-48 md:h-48 2xl:w-64 2xl:h-64 mx-auto mb-4", alt: "Hackatime" %>
+              <h4 class="text-xl md:text-2xl 2xl:text-3xl font-steven mb-2">Redirecting to Hackatime</h4>
+              <p class="text-base md:text-lg mb-4 text-gray-600">
+                You'll be redirected to Hackatime in <span data-hackatime-modal-target="countdown" class="font-bold text-vintage-red">3</span> seconds...
+              </p>
+            </div>
+          </div>
+
+          <div class="p-4 md:p-6 overflow-y-auto hidden" data-hackatime-modal-target="instructionsContent">
+            <div class="text-center mb-6">
+              <%= image_tag "orpheustimer.png", class: "w-32 h-32 md:w-48 md:h-48 2xl:w-64 2xl:h-64 mx-auto mb-4", alt: "Hackatime" %>
+              <h4 class="text-xl md:text-2xl 2xl:text-3xl font-steven mb-2">Complete Hackatime Setup</h4>
+              <p class="text-base md:text-lg mb-4 text-gray-600">
+                On Hackatime:
+              </p>
+              <ol class="text-left text-base mb-6 space-y-2">
+                <li>1. Sign in with your Slack account</li>
+                <li>2. Follow the setup instructions</li>
+                <li>3. Return here when complete</li>
+              </ol>
+              <p class="text-base text-gray-600 mb-4">
+                After setting up, come back and click "Check Connection" to verify your Hackatime account.
+              </p>
+            </div>
+
+            <div class="flex justify-center space-x-4 pt-2">
+              <button type="button" class="px-4 py-2 btn-pixel bg-vintage-red text-white hover:scale-[1.05] transition-transform 2xl:text-xl" data-action="hackatime-modal#skip">
+                Close for now
+              </button>
+              <%= form_tag users_check_hackatime_connection_path, method: :post, data: { turbo: false } do %>
+                <button type="submit" class="px-4 py-2 btn-pixel bg-forest text-white hover:scale-[1.05] transition-transform 2xl:text-xl">
+                  Check Connection
+                </button>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <% if user_signed_in? && current_user.has_hackatime %>
+      <div id="hackatime-modal" data-controller="modal" class="hidden fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center p-2 md:p-4">
+        <div class="bg-soft-bone w-full max-w-md card-pixel mx-2 md:mx-auto relative max-h-[80vh] flex flex-col" data-modal-target="container">
+          <div class="p-3 md:p-4 border-b border-saddle-taupe border-opacity-30 flex-shrink-0">
+            <div class="flex justify-between items-center">
+              <h3 class="text-lg md:text-2xl font-steven">Sync Hackatime</h3>
+              <button type="button" class="text-gray-600 hover:text-vintage-red cursor-pointer" data-action="modal#close">
+                <%= inline_svg_tag "close.svg", class: "h-6 w-6 2xl:h-8 2xl:w-8" %>
+              </button>
+            </div>
+          </div>
+
+          <div class="p-4 md:p-6 overflow-y-auto">
+            <div class="text-center mb-6">
+              <%= image_tag "orpheustimer.png", class: "w-32 h-32 md:w-48 md:h-48 2xl:w-64 2xl:h-64 mx-auto mb-4", alt: "Hackatime" %>
+              <h4 class="text-xl md:text-2xl 2xl:text-3xl font-steven mb-2">Sync Hackatime Data</h4>
+              <p class="text-base md:text-lg mb-4 text-gray-600">
+                Your Hackatime account is already connected. Would you like to manually sync your activity data?
+              </p>
+            </div>
+
+            <div class="flex justify-center space-x-4 pt-2">
+              <button type="button" class="px-4 py-2 btn-pixel bg-vintage-red text-white hover:scale-[1.05] transition-transform 2xl:text-xl" data-action="modal#close">
+                Cancel
+              </button>
+              <%= form_tag users_refresh_hackatime_path, method: :post, data: { turbo: false } do %>
+                <button type="submit" class="px-4 py-2 btn-pixel bg-nice-blue text-white hover:scale-[1.05] transition-transform 2xl:text-xl">
+                  Sync Now
+                </button>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <% if user_signed_in? && current_user.has_hackatime && !current_user.hackatime_confirmation_shown %>
+      <div id="hackatime-confirmation-modal" data-controller="modal" class="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center p-2 md:p-4">
+        <div class="bg-soft-bone w-full max-w-md card-pixel mx-2 md:mx-auto relative max-h-[80vh] flex flex-col" data-modal-target="container">
+          <div class="p-3 md:p-4 border-b border-saddle-taupe border-opacity-30 flex-shrink-0">
+            <div class="flex justify-between items-center">
+              <h3 class="text-lg md:text-2xl font-steven">Hackatime Connected</h3>
+              <%= form_tag users_update_hackatime_confirmation_path, method: :post, data: { turbo: false } do %>
+                <button type="submit" class="text-gray-600 hover:text-vintage-red cursor-pointer">
+                  <%= inline_svg_tag "close.svg", class: "h-6 w-6 2xl:h-8 2xl:w-8" %>
+                </button>
+              <% end %>
+            </div>
+          </div>
+
+          <div class="p-4 md:p-6 overflow-y-auto">
+            <div class="text-center mb-6">
+              <%= image_tag "orpheustimer.png", class: "w-32 h-32 md:w-48 md:h-48 2xl:w-64 2xl:h-64 mx-auto mb-4", alt: "Hackatime" %>
+              <h4 class="text-xl md:text-2xl 2xl:text-3xl font-steven mb-2">You're All Set!</h4>
+              <p class="text-base md:text-lg mb-4 text-gray-600">
+                Your Hackatime account is already connected. You're all set to embark on a journey!
+              </p>
+            </div>
+
+            <div class="flex justify-center pt-2">
+              <%= form_tag users_update_hackatime_confirmation_path, method: :post, data: { turbo: false } do %>
+                <button type="submit" class="px-4 py-2 btn-pixel bg-forest text-white hover:scale-[1.05] transition-transform 2xl:text-xl">
+                  Great!
+                </button>
+              <% end %>
             </div>
           </div>
         </div>

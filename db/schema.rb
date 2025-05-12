@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_12_135355) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_12_200159) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -237,6 +237,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_12_135355) do
     t.string "avatar"
     t.boolean "has_commented", default: false
     t.boolean "has_hackatime", default: false
+    t.boolean "hackatime_confirmation_shown", default: false
   end
 
   create_table "votes", force: :cascade do |t|

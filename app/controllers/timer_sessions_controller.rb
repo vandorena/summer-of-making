@@ -57,12 +57,12 @@ class TimerSessionsController < ApplicationController
       @timer_session.update(accumulated_paused: new_accumulated, status: :running)
     when "stop"
       end_time = Time.current
-      
+
       if @timer_session.paused? && @timer_session.last_paused_at.present?
         paused_duration = end_time - @timer_session.last_paused_at
         @timer_session.accumulated_paused += paused_duration.to_i
       end
-      
+
       elapsed = end_time - @timer_session.started_at
       net_time = elapsed - @timer_session.accumulated_paused
       @timer_session.update(stopped_at: end_time, net_time: net_time.to_i, status: :stopped)

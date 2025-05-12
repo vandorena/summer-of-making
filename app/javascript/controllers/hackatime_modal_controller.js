@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["container"]
+  static targets = ["container", "modalContent", "countdownContent", "instructionsContent", "countdown"]
   
   connect() {
     const hasSkippedHackatimeModal = localStorage.getItem('hasSkippedHackatimeModal');
@@ -24,5 +24,27 @@ export default class extends Controller {
   close() {
     this.element.classList.add('hidden');
     document.body.classList.remove('overflow-hidden');
+  }
+  
+  connectHackatime() {
+    this.modalContentTarget.classList.add('hidden');
+    this.countdownContentTarget.classList.remove('hidden');
+    
+    let count = 3;
+    this.countdownTarget.textContent = count;
+    
+    const countdownInterval = setInterval(() => {
+      count--;
+      this.countdownTarget.textContent = count;
+      
+      if (count <= 0) {
+        clearInterval(countdownInterval);
+        
+        window.open('https://hackatime.hackclub.com/', '_blank');
+        
+        this.countdownContentTarget.classList.add('hidden');
+        this.instructionsContentTarget.classList.remove('hidden');
+      }
+    }, 1000);
   }
 } 
