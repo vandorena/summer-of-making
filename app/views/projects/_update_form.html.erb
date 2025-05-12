@@ -16,7 +16,7 @@
       <% if show_timer_prompt %>
         <div class="flex flex-col items-center justify-center space-y-6">
           <%= image_tag 'orpheustimer.png', class: 'w-48 h-48 md:w-64 md:h-64 2xl:w-80 2xl:h-80 mb-4' %>
-          <p class="text-base md:text-lg 2xl:text-xl">
+          <p class="text-base md:text-lg 2xl:text-xl text-center">
             To post an update, you need to start a Timer Session. skibdidi suggest better text please
           </p>
           <button type="button" data-controller="modal" data-action="modal#open" data-modal-id="<%= @project.id %>" data-modal-type="timer" class="px-4 md:px-6 py-2 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-xl btn-pixel cursor-pointer">
