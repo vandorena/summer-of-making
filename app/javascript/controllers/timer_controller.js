@@ -233,7 +233,7 @@ export default class extends Controller {
     const stopButton = event.currentTarget
     const originalText = stopButton.textContent.trim()
     
-    if (stopButton.textContent.trim() === originalText) {
+    if (originalText !== "Confirm Stop & Post") {
       event.preventDefault()
       
       this.isCountingDown = true
@@ -253,7 +253,7 @@ export default class extends Controller {
           stopButton.textContent = `Wait (${timeLeft})`
         }
       }, 1000)
-    } else if (stopButton.textContent.trim() === "Confirm Stop & Post") {
+    } else if (originalText === "Confirm Stop & Post") {
       this.executeStopAndPost()
     }
   }
