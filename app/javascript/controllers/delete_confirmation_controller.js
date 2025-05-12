@@ -50,19 +50,23 @@ export default class extends Controller {
   }
 
   confirm(event) {
-    if (this.element.textContent.trim() === "Delete" || this.element.textContent.trim() === "Discard") {
-      event.preventDefault()
-      this.element.textContent = "Sure?"
-    } else if (this.element.textContent.trim() === "Sure?" && !this.isCountingDown) {
-      event.preventDefault()
-      
+    const currentText = this.element.textContent.trim();
+    
+    if (currentText === "Delete" || currentText === "Discard") {
+      event.preventDefault();
+      this.element.textContent = "Sure?";
+      return;
+    } 
+    
+    if (currentText === "Sure?" && !this.isCountingDown) {
       if (this.originalTextValue === "Discard") {
-        this.startCountdown()
+        event.preventDefault();
+        this.startCountdown();
       } else {
-        this.proceedWithAction(event)
+        return this.proceedWithAction(event);
       }
     } else if (!this.isCountingDown) {
-      this.proceedWithAction(event)
+      return this.proceedWithAction(event);
     }
   }
   
@@ -89,12 +93,14 @@ export default class extends Controller {
     const timerController = this.application.getControllerForElementAndIdentifier(
       this.element.closest('[data-controller~="timer"]'),
       'timer'
-    )
+    );
     
     if (timerController) {
-      timerController.discardSession(event)
+      event.preventDefault();
+      timerController.discardSession(event);
+      return false;
     }
     
-    return true
+    return true;
   }
 } 
