@@ -7,6 +7,10 @@ export default class extends Controller {
     "pauseButton", "resumeButton", "closeButton"
   ]
 
+  static values = {
+    countdownTime: { type: Number, default: 3 }
+  }
+
   connect() {
     this.timer = null
     this.timerSessionId = null
@@ -14,6 +18,7 @@ export default class extends Controller {
     this.elapsedTime = 0
     this.accumulatedPaused = 0
     this.isPaused = false
+    this.isCountingDown = false
     this.projectId = this.element.id.replace('timer-modal-', '')
     
     this.checkForActiveSession()
@@ -21,6 +26,7 @@ export default class extends Controller {
 
   disconnect() {
     this.clearTimer()
+    this.clearCountdown()
   }
   
   async checkForActiveSession() {
@@ -219,9 +225,40 @@ export default class extends Controller {
     }
   }
 
-  async stopAndPost() {
+  async stopAndPost(event) {
     if (!this.timerSessionId) return
     
+    if (this.isCountingDown) return
+    
+    const stopButton = event.currentTarget
+    const originalText = stopButton.textContent.trim()
+    
+    if (stopButton.textContent.trim() === originalText) {
+      event.preventDefault()
+      
+      this.isCountingDown = true
+      let timeLeft = this.countdownTimeValue
+      
+      stopButton.textContent = `Wait (${timeLeft})`
+      stopButton.disabled = true
+      
+      this.countdownTimer = setInterval(() => {
+        timeLeft -= 1
+        if (timeLeft <= 0) {
+          this.clearCountdown()
+          stopButton.textContent = "Confirm Stop & Post"
+          stopButton.disabled = false
+          this.isCountingDown = false
+        } else {
+          stopButton.textContent = `Wait (${timeLeft})`
+        }
+      }, 1000)
+    } else if (stopButton.textContent.trim() === "Confirm Stop & Post") {
+      this.executeStopAndPost()
+    }
+  }
+  
+  async executeStopAndPost() {
     this.clearTimer()
     
     try {
@@ -256,8 +293,16 @@ export default class extends Controller {
     }
   }
 
+  clearCountdown() {
+    if (this.countdownTimer) {
+      clearInterval(this.countdownTimer)
+      this.countdownTimer = null
+    }
+  }
+
   resetTimerState() {
     this.clearTimer()
+    this.clearCountdown()
     this.titleTarget.textContent = "Start Timer Session"
     this.initialStateTarget.classList.remove("hidden")
     this.activeStateTarget.classList.add("hidden")
@@ -274,5 +319,6 @@ export default class extends Controller {
     this.elapsedTime = 0
     this.accumulatedPaused = 0
     this.isPaused = false
+    this.isCountingDown = false
   }
 } 
