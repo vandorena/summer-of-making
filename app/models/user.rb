@@ -5,6 +5,7 @@ class User < ApplicationRecord
     has_many :project_follows
     has_many :followed_projects, through: :project_follows, source: :project
     has_many :timer_sessions
+    has_one :hackatime_stat
 
     validates :slack_id, presence: true, uniqueness: true
     validates :email, :first_name, :last_name, :display_name, :timezone, :avatar, presence: true
@@ -96,16 +97,23 @@ class User < ApplicationRecord
         response = Faraday.get("https://hackatime.hackclub.com/api/summary?user=#{slack_id}")
         result = JSON.parse(response.body)
         if result["user_id"] == slack_id
-            puts "User found"
             user = User.find_by(slack_id: slack_id)
             user.has_hackatime = true
             user.save!
+            
+            stats = user.hackatime_stat || user.build_hackatime_stat
+            stats.update(data: result, last_updated_at: Time.current)
         end
     end
 
     def self.fetch_slack_user_info(slack_id)
         client = Slack::Web::Client.new(token: ENV["SLACK_BOT_TOKEN"])
         client.users_info(user: slack_id)
+    end
+    
+    # Force refresh Hackatime data
+    def refresh_hackatime_data(from: nil, to: nil)
+      RefreshHackatimeStatsJob.perform_later(id, from: from, to: to)
     end
 
     private

@@ -13,7 +13,7 @@ class TimerSession < ApplicationRecord
   private
 
   def validate_no_changes_if_stopped
-    if status_was == "stopped" && changed? && (changed - ["update_id"]).present?
+    if status_was == "stopped" && changed? && (changed - [ "update_id" ]).present?
       errors.add(:base, "Stopped timer sessions cannot be modified")
     end
   end
