@@ -30,7 +30,7 @@ class User < ApplicationRecord
         end
 
         slack_id = result["authed_user"]["id"]
-
+        check_hackatime(slack_id)
         user = User.find_by(slack_id: slack_id)
         if user.present?
             Rails.logger.tagged("UserCreation") do
@@ -90,6 +90,17 @@ class User < ApplicationRecord
         end
 
         eligible_record
+    end
+
+    def self.check_hackatime(slack_id)
+        response = Faraday.get("https://hackatime.hackclub.com/api/summary?user=#{slack_id}")
+        result = JSON.parse(response.body)
+        if result["user_id"] == slack_id
+            puts "User found"
+            user = User.find_by(slack_id: slack_id)
+            user.has_hackatime = true
+            user.save!
+        end
     end
 
     def self.fetch_slack_user_info(slack_id)

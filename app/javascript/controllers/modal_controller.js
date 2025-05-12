@@ -28,6 +28,8 @@ export default class extends Controller {
 
     if (modalType === 'create-project') {
       modalElement = document.getElementById('create-project-modal')
+    } else if (modalType === 'hackatime') {
+      modalElement = document.getElementById('hackatime-modal')
     } else {
       if (!modalId) {
         console.error("No modalId provided")
@@ -72,6 +74,11 @@ export default class extends Controller {
   close() {
     this.element.classList.add("hidden")
     document.body.classList.remove("overflow-hidden")
+    
+    // Check if this is the hackatime modal and set localStorage
+    if (this.element.id === 'hackatime-modal') {
+      localStorage.setItem('hasSkippedHackatimeModal', 'true')
+    }
   }
 
   escapeHandler(event) {
@@ -82,7 +89,8 @@ export default class extends Controller {
           this.element.id.startsWith('follower-modal-') || 
           this.element.id.startsWith('ship-modal-') ||
           this.element.id.startsWith('timer-modal-') || 
-          this.element.id === 'create-project-modal')) {
+          this.element.id === 'create-project-modal' ||
+          this.element.id === 'hackatime-modal')) {
         this.close()
         event.stopPropagation()
       }
