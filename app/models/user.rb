@@ -94,7 +94,7 @@ class User < ApplicationRecord
     end
 
     def self.check_hackatime(slack_id)
-        response = Faraday.get("https://hackatime.hackclub.com/api/summary?user=#{slack_id}&from=2025-05-12&to=#{Date.today.strftime('%Y-%m-%d')}")
+        response = Faraday.get("https://hackatime.hackclub.com/api/summary?user=#{slack_id}&from=2025-05-16&to=#{Date.today.strftime('%Y-%m-%d')}")
         result = JSON.parse(response.body)
         if result["user_id"] == slack_id
             user = User.find_by(slack_id: slack_id)
@@ -136,9 +136,9 @@ class User < ApplicationRecord
       "#{hours}h #{minutes}m"
     end
 
-    def refresh_hackatime_data()
-      from = "2025-05-12"
-      to = Date.today.strftime('%Y-%m-%d')
+    def refresh_hackatime_data
+      from = "2025-05-16"
+      to = Date.today.strftime("%Y-%m-%d")
       RefreshHackatimeStatsJob.perform_later(id, from: from, to: to)
     end
 
