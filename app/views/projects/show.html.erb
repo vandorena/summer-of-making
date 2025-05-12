@@ -43,6 +43,8 @@
                     </div>
                   </div>
                   -->
+                <% end %>
+                <% if @project.timer_sessions.any? %>
                   <div>
                     <div class="bg-forest btn-pixel px-4 py-2 flex items-center cursor-pointer hover:scale-[1.05] transition-transform duration-300">
                       <span class="text-white font-steven text-sm md:text-base 2xl:text-xl">
@@ -50,6 +52,14 @@
                         <% hours = total_time / 3600 %>
                         <% minutes = (total_time % 3600) / 60 %>
                         <%= image_tag "hourglass.png", class: "w-5 h-5 2xl:w-7 2xl:h-7 inline-block mr-1" %> <%= hours %>h <%= minutes %>m
+                      </span>
+                    </div>
+                  </div>
+                <% else %>
+                  <div>
+                    <div class="bg-forest btn-pixel px-4 py-2 flex items-center cursor-pointer hover:scale-[1.05] transition-transform duration-300">
+                      <span class="text-white font-steven text-sm md:text-base 2xl:text-xl">
+                        <%= image_tag "hourglass.png", class: "w-5 h-5 2xl:w-7 2xl:h-7 inline-block mr-1" %> 00h 00m
                       </span>
                     </div>
                   </div>
