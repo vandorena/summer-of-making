@@ -3,11 +3,11 @@ namespace :sync do
   task projects: :environment do
     puts "Starting to sync all projects to Airrecord..."
 
-    total_projects = Project.count
+    total_projects = Projects.count
     synced_count = 0
     failed_count = 0
 
-    Project.find_each do |project|
+    Projects.find_each do |project|
       begin
         SyncProjectToAirtableJob.perform_now(project.id)
         synced_count += 1
