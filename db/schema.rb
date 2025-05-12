@@ -56,10 +56,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_12_200159) do
     t.string "banner", null: false
     t.string "category"
     t.boolean "is_shipped", default: false
-    t.bigint "total_time_spent_ms", default: 0
-    t.datetime "last_timer_started_at"
-    t.boolean "is_timer_running", default: false
-    t.datetime "last_update_at"
     t.string "hackatime_project_keys", default: [], array: true
     t.index ["user_id"], name: "index_projects_on_user_id"
   end
