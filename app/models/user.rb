@@ -31,7 +31,6 @@ class User < ApplicationRecord
         end
 
         slack_id = result["authed_user"]["id"]
-        check_hackatime(slack_id)
         user = User.find_by(slack_id: slack_id)
         if user.present?
             Rails.logger.tagged("UserCreation") do
@@ -45,7 +44,9 @@ class User < ApplicationRecord
             return user
         end
 
-        create_from_slack(slack_id)
+        user = create_from_slack(slack_id)
+        check_hackatime(slack_id)
+        user
     end
 
     def self.create_from_slack(slack_id)
