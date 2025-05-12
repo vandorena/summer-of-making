@@ -36,7 +36,13 @@ class ProjectsController < ApplicationController
 
     def update
         if current_user == @project.user
-            if @project.update(project_params)
+            update_params = project_params
+
+            if update_params[:hackatime_project_keys].present?
+              update_params[:hackatime_project_keys] = update_params[:hackatime_project_keys].reject(&:blank?).uniq
+            end
+
+            if @project.update(update_params)
                 redirect_to project_path(@project), notice: "Project was successfully updated."
             else
                 render :edit, status: :unprocessable_entity
@@ -48,6 +54,10 @@ class ProjectsController < ApplicationController
 
     def create
         @project = current_user.projects.build(project_params)
+
+        if @project.hackatime_project_keys.present?
+          @project.hackatime_project_keys = @project.hackatime_project_keys.reject(&:blank?).uniq
+        end
 
         if @project.save
             redirect_to project_path(@project), notice: "Project was successfully created."
@@ -333,6 +343,6 @@ class ProjectsController < ApplicationController
     end
 
     def project_params
-        params.require(:project).permit(:title, :description, :readme_link, :demo_link, :repo_link, :banner, :category)
+        params.require(:project).permit(:title, :description, :readme_link, :demo_link, :repo_link, :banner, :category, hackatime_project_keys: [])
     end
 end

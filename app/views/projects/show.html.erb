@@ -44,14 +44,31 @@
                   </div>
                   -->
                 <% end %>
-                <% if @project.timer_sessions.any? %>
+                <% if @project.timer_sessions.any? || (@project.hackatime_project_keys.present? && @project.user.has_hackatime) %>
                   <div>
                     <div class="bg-forest btn-pixel px-4 py-2 flex items-center cursor-pointer hover:scale-[1.05] transition-transform duration-300">
-                      <span class="text-white font-steven text-sm md:text-base 2xl:text-xl">
-                        <% total_time = @project.timer_sessions.sum(:net_time) %>
-                        <% hours = total_time / 3600 %>
-                        <% minutes = (total_time % 3600) / 60 %>
-                        <%= image_tag "hourglass.png", class: "w-5 h-5 2xl:w-7 2xl:h-7 inline-block mr-1" %> <%= hours %>h <%= minutes %>m
+                      <span class="text-white font-steven text-sm md:text-base 2xl:text-xl flex items-center">
+                        <%
+                          timer_time = @project.timer_sessions.sum(:net_time)
+                          timer_hours = timer_time / 3600
+                          timer_minutes = (timer_time % 3600) / 60
+
+                          hackatime_time = 0
+                          if @project.hackatime_project_keys.present? && @project.user.has_hackatime
+                            hackatime_time = @project.hackatime_total_time
+                          end
+                          hackatime_hours = hackatime_time / 3600
+                          hackatime_minutes = (hackatime_time % 3600) / 60
+
+                          total_time = timer_time + hackatime_time
+                          total_hours = total_time / 3600
+                          total_minutes = (total_time % 3600) / 60
+                        %>
+
+                        <%= image_tag "hourglass.png", class: "w-5 h-5 2xl:w-7 2xl:h-7 inline-block mr-1" %>
+                        <div class="flex flex-col">
+                          <span class="text-white"><%= total_hours %>h <%= total_minutes %>m</span>
+                        </div>
                       </span>
                     </div>
                   </div>
@@ -59,7 +76,7 @@
                   <div>
                     <div class="bg-forest btn-pixel px-4 py-2 flex items-center cursor-pointer hover:scale-[1.05] transition-transform duration-300">
                       <span class="text-white font-steven text-sm md:text-base 2xl:text-xl">
-                        <%= image_tag "hourglass.png", class: "w-5 h-5 2xl:w-7 2xl:h-7 inline-block mr-1" %> 00h 00m
+                        <%= image_tag "hourglass.png", class: "w-5 h-5 2xl:w-7 2xl:h-7 inline-block mr-1" %> 0h 0m
                       </span>
                     </div>
                   </div>

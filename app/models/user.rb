@@ -94,13 +94,13 @@ class User < ApplicationRecord
     end
 
     def self.check_hackatime(slack_id)
-        response = Faraday.get("https://hackatime.hackclub.com/api/summary?user=#{slack_id}")
+        response = Faraday.get("https://hackatime.hackclub.com/api/summary?user=#{slack_id}&from=2025-05-12&to=#{Date.today.strftime('%Y-%m-%d')}")
         result = JSON.parse(response.body)
         if result["user_id"] == slack_id
             user = User.find_by(slack_id: slack_id)
             user.has_hackatime = true
             user.save!
-            
+
             stats = user.hackatime_stat || user.build_hackatime_stat
             stats.update(data: result, last_updated_at: Time.current)
         end
@@ -110,10 +110,46 @@ class User < ApplicationRecord
         client = Slack::Web::Client.new(token: ENV["SLACK_BOT_TOKEN"])
         client.users_info(user: slack_id)
     end
-    
-    # Force refresh Hackatime data
-    def refresh_hackatime_data(from: nil, to: nil)
+
+    def hackatime_projects
+      return [] unless has_hackatime?
+
+      data = hackatime_stat&.data
+      projects = data.dig("projects") || []
+
+      projects.map do |project|
+        {
+          key: project["key"],
+          name: project["name"] || project["key"],
+          total_seconds: project["total"] || 0,
+          formatted_time: format_seconds(project["total"] || 0)
+        }
+      end.sort_by { |p| p[:name] }
+    end
+
+    def format_seconds(seconds)
+      return "0h 0m" if seconds.nil? || seconds == 0
+
+      hours = seconds / 3600
+      minutes = (seconds % 3600) / 60
+
+      "#{hours}h #{minutes}m"
+    end
+
+    def refresh_hackatime_data()
+      from = "2025-05-12"
+      to = Date.today.strftime('%Y-%m-%d')
       RefreshHackatimeStatsJob.perform_later(id, from: from, to: to)
+    end
+
+    def project_time_from_hackatime(project_key)
+      data = hackatime_stat&.data
+      project_stats = data.dig("projects")&.find { |p| p["key"] == project_key }
+      project_stats&.dig("total") || 0
+    end
+
+    def has_hackatime?
+      has_hackatime
     end
 
     private
