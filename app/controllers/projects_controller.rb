@@ -343,6 +343,10 @@ class ProjectsController < ApplicationController
     end
 
     def project_params
-        params.require(:project).permit(:title, :description, :readme_link, :demo_link, :repo_link, :banner, :category, hackatime_project_keys: [])
+        permitted_params = params.require(:project).permit(:title, :description, :readme_link, :demo_link, :repo_link, :banner, hackatime_project_keys: [])
+
+        permitted_params.merge!(params.require(:project).permit(:category)) if action_name == "create"
+
+        permitted_params
     end
 end

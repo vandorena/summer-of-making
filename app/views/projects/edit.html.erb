@@ -16,12 +16,6 @@
       </div>
 
       <div class="space-y-1 sm:space-y-2">
-        <%= f.label :category, class: "block text-base sm:text-lg font-medium" %>
-        <%= f.select :category, ["Software", "Hardware", "Both Software & Hardware", "Something else"], {}, id: "category", class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm sm:text-base ", data: { project_form_target: "category" } %>
-        <p class="text-xs sm:text-sm text-vintage-red hidden" id="categoryError" data-project-form-target="categoryError"></p>
-      </div>
-
-      <div class="space-y-1 sm:space-y-2">
         <%= f.label :banner, "Project Banner", class: "block text-base sm:text-lg font-medium" %>
         <%= f.url_field :banner, id: "banner", class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm sm:text-base ", data: { project_form_target: "banner" } %>
         <p class="text-xs sm:text-sm text-vintage-red hidden" id="bannerError" data-project-form-target="bannerError"></p>

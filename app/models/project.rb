@@ -17,6 +17,8 @@ class Project < ApplicationRecord
 
   validates :category, inclusion: { in: [ "Software", "Hardware", "Both Software & Hardware", "Something else" ], message: "%{value} is not a valid category" }
 
+  validate :cannot_change_category, on: :update
+
   before_save :filter_hackatime_keys
 
   before_save :remove_duplicate_hackatime_keys
@@ -49,6 +51,12 @@ class Project < ApplicationRecord
 
   def set_default_rating
     self.rating ||= 1100
+  end
+
+  def cannot_change_category
+    if category_changed? && persisted?
+      errors.add(:category, "cannot be changed after project creation")
+    end
   end
 
   def filter_hackatime_keys
