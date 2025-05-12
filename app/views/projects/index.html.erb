@@ -8,7 +8,20 @@
     </div>
 
     <div class="flex flex-col justify-between items-start mb-4 md:mb-6 px-4 md:px-8 pt-2 md:pt-8 pb-2 hidden" data-project-loader-target="title">
-      <h1 class="text-4xl sm:text-5xl font-steven mb-0"><%= params[:action] == 'my_projects' ? 'My Project' : 'Explore Projects' %></h1>
+      <div class="flex justify-between items-center w-full">
+        <h1 class="text-4xl sm:text-5xl font-steven mb-0"><%= params[:action] == 'my_projects' ? 'My Projects' : 'Explore Projects' %></h1>
+        <% if user_signed_in? && params[:action] == 'my_projects' %>
+          <% if current_user.has_hackatime %>
+            <button data-controller="modal" data-action="click->modal#open" data-modal-type="hackatime" class="px-4 py-2 btn-pixel bg-nice-blue text-white hover:scale-[1.05] transition-transform text-base md:text-lg">
+              Manually Sync Hackatime
+            </button>
+          <% else %>
+            <button data-controller="modal" data-action="click->modal#open" data-modal-type="hackatime" class="px-4 py-2 btn-pixel bg-vintage-red text-white hover:scale-[1.05] transition-transform text-base md:text-lg">
+              Connect Hackatime
+            </button>
+          <% end %>
+        <% end %>
+      </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 md:gap-8 px-4 md:px-8 hidden" data-project-loader-target="content">
@@ -42,6 +55,14 @@
             </div>
           </div>
         <% end %>
+
+        <% if params[:action] == 'my_projects' %>
+          <div class="bg-soft-bone card-pixel transform hover:scale-[1.02] transition-transform duration-300 flex flex-col h-full items-center justify-center p-6">
+            <button data-action="click->modal#open" data-modal-type="create-project" class="px-6 md:px-8 py-3 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 text-center btn-pixel text-lg md:text-xl 2xl:text-2xl">
+              Create Project
+            </button>
+          </div>
+        <% end %>
       <% elsif params[:action] == 'my_projects' || @show_create_project %>
         <div class="col-span-full flex flex-col items-center justify-center bg-soft-bone p-6 md:p-8 card-pixel mt-2 md:mt-0">
           <div class="flex justify-center items-center">
@@ -66,7 +87,7 @@
     </div>
   </div>
 
-  <div id="create-project-modal" data-controller="modal" class="hidden fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center p-2 md:p-4">
+  <div id="create-project-modal" data-controller="modal" class="hidden fixed inset-0 z-50 overflow-auto bg-black/30 flex items-center justify-center p-2 md:p-4">
     <div class="bg-soft-bone w-full max-w-2xl card-pixel mx-2 md:mx-auto relative" data-modal-target="container">
       <div class="p-3 md:p-6 border-b border-saddle-taupe border-opacity-30">
         <div class="flex justify-between items-center">
@@ -112,7 +133,7 @@
                 </div>
               </div>
               <div class="flex justify-end">
-                <p class="mt-1 text-xs md:text-sm text-vintage-red">Required</p>
+                <p class="mt-1 text-xs md:text-sm text-vintage-red">Required. You cannot change this later.</p>
               </div>
               <p class="mt-1 text-xs md:text-sm text-vintage-red hidden" id="categoryError" data-project-form-target="categoryError"></p>
             </div>
@@ -152,6 +173,43 @@
               </div>
               <p class="mt-1 text-xs md:text-sm text-vintage-red hidden" id="repoError" data-project-form-target="repoError"></p>
             </div>
+
+            <% if current_user&.has_hackatime %>
+              <div class="mb-3 md:mb-6 border-t border-saddle-taupe border-opacity-30 pt-3">
+                <div class="flex items-center mb-2">
+                  <h4 class="text-base md:text-lg font-steven">Link HackaTime Projects</h4>
+                </div>
+
+                <div id="hackatime-projects" data-project-form-target="hackatimeProjects" class="space-y-2">
+                  <% hackatime_projects = current_user.hackatime_projects %>
+                  <% if hackatime_projects.present? %>
+                    <div class="hackatime-project-field mb-2">
+                      <select name="__temp_hackatime_select" class="w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm md:text-base" data-project-form-target="hackatimeSelect">
+                        <option value="">Select a project...</option>
+                        <% hackatime_projects.each do |project| %>
+                          <option value="<%= project[:key] %>">
+                            <%= project[:name] %> (<%= project[:formatted_time] %>)
+                          </option>
+                        <% end %>
+                      </select>
+                    </div>
+
+                    <div class="selected-hackatime-projects space-y-2" data-project-form-target="selectedProjects">
+                    </div>
+
+                  <% else %>
+                    <%# <div class="p-3 rounded">
+                      <p class="text-sm text-gray-700">
+                        No HackaTime projects found. Make sure your HackaTime account is connected and has projects.
+                      </p>
+                    </div> %>
+                  <% end %>
+                </div>
+                <div class="flex justify-end">
+                  <p class="mt-1 text-xs md:text-sm text-gray-700">You'll see your HackaTime projects from May 16th onwards. You can always add them later.</p>
+                </div>
+              </div>
+            <% end %>
 
             <p class="text-xs md:text-base text-gray-800 border-t border-saddle-taupe border-opacity-30 pt-3">
               Only Title, Description, and Category are required. All other fields can be added later when you're ready to ship.

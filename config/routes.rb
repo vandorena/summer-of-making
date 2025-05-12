@@ -28,6 +28,11 @@ Rails.application.routes.draw do
 
   resources :projects do
     resources :updates, only: [ :create, :destroy, :update ]
+    resources :timer_sessions, only: [ :create, :update, :show, :destroy ] do
+      collection do
+        get :active
+      end
+    end
     member do
       post :follow
       delete :unfollow
@@ -65,4 +70,9 @@ Rails.application.routes.draw do
   end
   get "api/check_user", to: "users#check_user"
   post "api/updates", to: "updates#api_create"
+
+  # User Hackatime routes
+  post "users/update_hackatime_confirmation", to: "users#update_hackatime_confirmation"
+  post "users/refresh_hackatime", to: "users#refresh_hackatime"
+  post "users/check_hackatime_connection", to: "users#check_hackatime_connection"
 end

@@ -21,6 +21,11 @@ class ProjectsController < ApplicationController
 
     def show
         @updates = @project.updates.order(created_at: :asc)
+        if current_user && (@project.category == "Hardware" || @project.category == "Something else")
+            @unlinked_timer_sessions = @project.timer_sessions
+                .where(user: current_user, update_id: nil, status: :stopped)
+                .order(created_at: :desc)
+        end
     end
 
     def edit
@@ -31,7 +36,13 @@ class ProjectsController < ApplicationController
 
     def update
         if current_user == @project.user
-            if @project.update(project_params)
+            update_params = project_params
+
+            if update_params[:hackatime_project_keys].present?
+              update_params[:hackatime_project_keys] = update_params[:hackatime_project_keys].reject(&:blank?).uniq
+            end
+
+            if @project.update(update_params)
                 redirect_to project_path(@project), notice: "Project was successfully updated."
             else
                 render :edit, status: :unprocessable_entity
@@ -42,13 +53,11 @@ class ProjectsController < ApplicationController
     end
 
     def create
-        if current_user.project.present?
-            redirect_to my_projects_path,
-                alert: "You can only have one project. Please edit your existing project instead."
-            return
-        end
+        @project = current_user.projects.build(project_params)
 
-        @project = current_user.build_project(project_params)
+        if @project.hackatime_project_keys.present?
+          @project.hackatime_project_keys = @project.hackatime_project_keys.reject(&:blank?).uniq
+        end
 
         if @project.save
             redirect_to project_path(@project), notice: "Project was successfully created."
@@ -59,14 +68,9 @@ class ProjectsController < ApplicationController
     end
 
     def my_projects
-        @project = current_user.project
-        if @project.nil?
-            @projects = []
-            @show_create_project = true
-            render :index
-        else
-            redirect_to project_path(@project)
-        end
+        @projects = current_user.projects.order(created_at: :desc)
+        @show_create_project = true
+        render :index
     end
 
     def activity
@@ -339,6 +343,10 @@ class ProjectsController < ApplicationController
     end
 
     def project_params
-        params.require(:project).permit(:title, :description, :readme_link, :demo_link, :repo_link, :banner, :category)
+        permitted_params = params.require(:project).permit(:title, :description, :readme_link, :demo_link, :repo_link, :banner, hackatime_project_keys: [])
+
+        permitted_params.merge!(params.require(:project).permit(:category)) if action_name == "create"
+
+        permitted_params
     end
 end

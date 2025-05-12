@@ -10,4 +10,4 @@ class DeleteVoteFromAirtableJob < ApplicationJob
       record.destroy
     end
   end
-end 
+end

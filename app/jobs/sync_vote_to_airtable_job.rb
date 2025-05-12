@@ -49,23 +49,23 @@ class SyncVoteToAirtableJob < ApplicationJob
     user_table = Airrecord.table(ENV["AIRTABLE_API_KEY"], ENV["AIRTABLE_BASE_ID_JOURNEY"], "users")
     user_record = user_table.all(filter: "{slack_id} = '#{user_slack_id}'").first
     if user_record
-      user_record["votes"] = (Array(user_record["votes"]) + [record.id]).uniq
+      user_record["votes"] = (Array(user_record["votes"]) + [ record.id ]).uniq
       user_record.save
     end
 
     project_table = Airrecord.table(ENV["AIRTABLE_API_KEY"], ENV["AIRTABLE_BASE_ID_JOURNEY"], "projects")
     winner_project_record = project_table.all(filter: "{project_id} = '#{winner_project_id}'").first
     if winner_project_record
-      winner_project_record["votes_won"] = (Array(winner_project_record["votes_won"]) + [record.id]).uniq
+      winner_project_record["votes_won"] = (Array(winner_project_record["votes_won"]) + [ record.id ]).uniq
       winner_project_record.save
     end
 
     if loser_project_id
       loser_project_record = project_table.all(filter: "{project_id} = '#{loser_project_id}'").first
       if loser_project_record
-        loser_project_record["votes_lost"] = (Array(loser_project_record["votes_lost"]) + [record.id]).uniq
+        loser_project_record["votes_lost"] = (Array(loser_project_record["votes_lost"]) + [ record.id ]).uniq
         loser_project_record.save
       end
     end
   end
-end 
+end

@@ -107,6 +107,6 @@ class UpdatesController < ApplicationController
     end
 
     def update_params
-        params.require(:update).permit(:text, :attachment)
+        params.require(:update).permit(:text, :attachment, :timer_session_id)
     end
 end

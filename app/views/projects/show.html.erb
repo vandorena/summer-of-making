@@ -21,7 +21,7 @@
           <h1 class="text-2xl md:text-3xl 2xl:text-4xl text-black md:flex-grow font-steven"><%= @project.title %></h1>
           <div class="flex items-center space-x-3 md:space-x-4">
             <% if user_signed_in? %>
-              <div class="flex items-center space-x-4">
+              <div class="flex flex-wrap items-center gap-3 md:gap-4">
                 <% if current_user != @project.user %>
                   <%= render "projects/follow_button", project: @project %>
                 <% end %>
@@ -34,10 +34,49 @@
                   </button>
                 </div>
                 <% if @project.user == current_user %>
+                <!--
                   <div>
                     <div class="bg-nice-blue btn-pixel px-4 py-2 flex items-center">
                       <span class="text-white font-steven text-sm md:text-base 2xl:text-xl">
                         <%= @project.total_votes %> votes
+                      </span>
+                    </div>
+                  </div>
+                  -->
+                <% end %>
+                <% if @project.timer_sessions.any? || (@project.hackatime_project_keys.present? && @project.user.has_hackatime) %>
+                  <div>
+                    <div class="bg-forest btn-pixel px-4 py-2 flex items-center cursor-pointer hover:scale-[1.05] transition-transform duration-300">
+                      <span class="text-white font-steven text-sm md:text-base 2xl:text-xl flex items-center">
+                        <%
+                          timer_time = @project.timer_sessions.sum(:net_time)
+                          timer_hours = timer_time / 3600
+                          timer_minutes = (timer_time % 3600) / 60
+
+                          hackatime_time = 0
+                          if @project.hackatime_project_keys.present? && @project.user.has_hackatime
+                            hackatime_time = @project.hackatime_total_time
+                          end
+                          hackatime_hours = hackatime_time / 3600
+                          hackatime_minutes = (hackatime_time % 3600) / 60
+
+                          total_time = timer_time + hackatime_time
+                          total_hours = total_time / 3600
+                          total_minutes = (total_time % 3600) / 60
+                        %>
+
+                        <%= image_tag "hourglass.png", class: "w-5 h-5 2xl:w-7 2xl:h-7 inline-block mr-1" %>
+                        <div class="flex flex-col">
+                          <span class="text-white"><%= total_hours %>h <%= total_minutes %>m</span>
+                        </div>
+                      </span>
+                    </div>
+                  </div>
+                <% else %>
+                  <div>
+                    <div class="bg-forest btn-pixel px-4 py-2 flex items-center cursor-pointer hover:scale-[1.05] transition-transform duration-300">
+                      <span class="text-white font-steven text-sm md:text-base 2xl:text-xl">
+                        <%= image_tag "hourglass.png", class: "w-5 h-5 2xl:w-7 2xl:h-7 inline-block mr-1" %> 0h 0m
                       </span>
                     </div>
                   </div>
@@ -138,7 +177,7 @@
   </div>
 </div>
 
-<div id="follower-modal-<%= @project.id %>" data-controller="modal" class="hidden fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center p-2 md:p-4">
+<div id="follower-modal-<%= @project.id %>" data-controller="modal" class="hidden fixed inset-0 z-50 overflow-auto bg-black/30 flex items-center justify-center p-2 md:p-4">
   <div class="bg-soft-bone w-full max-w-md card-pixel mx-2 md:mx-auto relative max-h-[80vh] flex flex-col" data-modal-target="container">
     <div class="p-3 md:p-4 border-b border-saddle-taupe border-opacity-30 flex-shrink-0">
       <div class="flex justify-between items-center">
@@ -158,8 +197,8 @@
               <div>
                 <p class="font-steven text-black"><%= follower.display_name %></p>
                 <p class="text-sm text-gray-600">
-                  <% if follower.project.present? %>
-                    Check their project out: <%= link_to follower.project.title, project_path(follower.project), class: "text-nice-blue underline" %>
+                  <% if follower.projects.present? %>
+                    Check their project out: <%= link_to follower.projects.first.title, project_path(follower.projects.first), class: "text-nice-blue underline" %>
                   <% else %>
                     Whoops! Looks like they don't have a project yet. Maybe ask them to start one?
                   <% end %>
@@ -185,7 +224,7 @@
 </div>
 
 <!-- Ship Modal -->
-<div id="ship-modal-<%= @project.id %>" data-controller="ship" class="hidden fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center p-2 md:p-4" data-ship-target="modal" data-action="click->ship#closeBackground">
+<div id="ship-modal-<%= @project.id %>" data-controller="ship" class="hidden fixed inset-0 z-50 overflow-auto bg-black/30 flex items-center justify-center p-2 md:p-4" data-ship-target="modal" data-action="click->ship#closeBackground">
   <div class="bg-soft-bone w-full max-w-2xl card-pixel mx-2 md:mx-auto relative max-h-[90vh] flex flex-col overflow-hidden">
     <div class="p-3 md:p-4 border-b border-saddle-taupe border-opacity-30 flex-shrink-0">
       <div class="flex justify-between items-center">

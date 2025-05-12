@@ -4,63 +4,170 @@
       <div class="flex justify-center items-center">
         <%= image_tag 'sad.png', class: 'w-16 h-16 sm:w-48 sm:h-48 2xl:w-64 2xl:h-64 transform scale-x-[-1] mb-4 sm:mb-6' %>
       </div>
-      <p class="mb-6 sm:mb-8 text-black text-large sm:text-xl 2xl:text-2xl">Posting updates is now locked. Thanks for participating!</p>
+      <p class="mb-6 sm:mb-8 text-black text-large sm:text-xl 2xl:text-2xl">Posting updates is current locked. It'll open on May 16th!</p>
     </div>
   <% else %>
     <h3 class="text-xl md:text-2xl 2xl:text-3xl font-steven mb-3 md:mb-4">Add Update</h3>
+
+    <% show_timer_prompt = (@project.category == 'Hardware' || @project.category == 'Something else') && (!@unlinked_timer_sessions || @unlinked_timer_sessions.empty?) %>
+
     <%= form_with(model: [@project, @project.updates.build], class: "space-y-3 md:space-y-4", data: { controller: "form", action: "submit->form#preventDoubleSubmission" }) do |f| %>
-      <div class="space-y-1.5 md:space-y-2">
-        <%= f.label :text, "Update Text", class: "block text-base md:text-lg 2xl:text-xl" %>
-        <%= f.text_area :text, class: "w-full p-2 border-2 border-black focus:outline-none focus:border-forest text-base md:text-lg 2xl:text-xl", rows: 4, required: true %>
-      </div>
 
-      <div class="space-y-1.5 md:space-y-2">
-        <%= f.label :attachment, "Attachment (Optional)", class: "block text-base md:text-lg 2xl:text-xl" %>
-        <div class="w-full border-2 border-dashed border-black p-4 md:p-6 flex flex-col items-center justify-center space-y-4 transition-all duration-300"
-             data-controller="attachment"
-             data-action="dragover->attachment#highlight dragleave->attachment#unhighlight drop->attachment#handleDrop click->attachment#handleClick"
-             data-attachment-target="dropzone">
-
-          <div data-attachment-target="initial" class="flex flex-col items-center space-y-4">
-            <%= inline_svg_tag "attachment.svg", class: "w-12 h-12 md:w-16 md:h-16" %>
-            <p class="text-base md:text-lg 2xl:text-xl text-center">Drag and drop files here or click to select</p>
-            <p class="text-sm text-gray-600">Supports images, audio, video, and GIFs</p>
-          </div>
-
-          <div data-attachment-target="uploading" class="hidden flex flex-col items-center space-y-4">
-            <%= inline_svg_tag "lollipop.svg", class: "w-16 h-16 2xl:w-20 2xl:h-20 animate-spin" %>
-            <p class="text-base md:text-lg 2xl:text-xl">Uploading...</p>
-          </div>
-
-          <div data-attachment-target="preview" class="hidden w-full">
-            <div data-attachment-target="imagePreview" class="hidden">
-              <img class="w-full h-48 md:h-64 object-contain" data-attachment-target="previewImage">
-            </div>
-
-            <div data-attachment-target="videoPreview" class="hidden">
-              <video class="w-full h-48 md:h-64 object-contain" controls data-attachment-target="previewVideo"></video>
-            </div>
-
-            <div data-attachment-target="audioPreview" class="hidden">
-              <audio class="w-[90%]" controls data-attachment-target="previewAudio"></audio>
-            </div>
-
-            <div class="flex justify-end mt-4">
-              <button type="button"
-                      class="px-2 md:px-4 py-2 bg-vintage-red hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-xl btn-pixel cursor-pointer"
-                      data-action="click->attachment#removeFile">
-                Remove
-              </button>
-            </div>
-          </div>
-
-          <%= f.hidden_field :attachment, data: { attachment_target: "input" } %>
+      <% if show_timer_prompt %>
+        <div class="flex flex-col items-center justify-center space-y-6">
+          <%= image_tag 'orpheustimer.png', class: 'w-48 h-48 md:w-64 md:h-64 2xl:w-80 2xl:h-80 mb-4' %>
+          <p class="text-base md:text-lg 2xl:text-xl text-center">
+            To post an update, you need to start a Timer Session. skibdidi suggest better text please
+          </p>
+          <button type="button" data-controller="modal" data-action="modal#open" data-modal-id="<%= @project.id %>" data-modal-type="timer" class="px-4 md:px-6 py-2 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-xl btn-pixel cursor-pointer">
+            Start a Timer
+          </button>
         </div>
-      </div>
+      <% end %>
 
-      <div class="flex justify-end">
-        <%= f.submit "Post Update", class: "px-4 md:px-6 py-2 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-xl btn-pixel cursor-pointer", data: { form_target: "submitButton" } %>
+      <!-- This will be shown for projects with unlinked timer sessions. I have to handle hackatime shomehow  -->
+      <div class="<%= 'hidden' if show_timer_prompt %>">
+        <% if @unlinked_timer_sessions && @unlinked_timer_sessions.any? %>
+          <div class="mb-6">
+            <label class="block text-base md:text-lg 2xl:text-xl mb-2">Select Timer Session</label>
+            <div class="space-y-3">
+              <% @unlinked_timer_sessions.each do |session| %>
+                <div class="flex items-center p-3 border border-saddle-taupe">
+                  <input type="radio" id="timer_session_<%= session.id %>" name="update[timer_session_id]" value="<%= session.id %>"
+                         class="mr-3" <%= 'checked' if @unlinked_timer_sessions.first.id == session.id %>>
+                  <label for="timer_session_<%= session.id %>" class="flex-grow cursor-pointer">
+                    <div class="text-base md:text-lg">
+                      <% hours = session.net_time / 3600 %>
+                      <% minutes = (session.net_time % 3600) / 60 %>
+                      <% seconds = session.net_time % 60 %>
+                      <div>Duration: <%= "#{hours}h #{minutes}m #{seconds}s" %></div>
+                      <div class="text-xs md:text-sm text-gray-600">
+                        Created: <%= session.created_at.in_time_zone(current_user.timezone).strftime("%b %d, %Y at %I:%M %p") %>
+                      </div>
+                    </div>
+                  </label>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="space-y-1.5 md:space-y-2">
+          <%= f.label :text, "Update Text", class: "block text-base md:text-lg 2xl:text-xl" %>
+          <%= f.text_area :text, class: "w-full p-2 border-2 border-black focus:outline-none focus:border-forest text-base md:text-lg 2xl:text-xl", rows: 4, required: true %>
+        </div>
+
+        <div class="space-y-1.5 md:space-y-2">
+          <%= f.label :attachment, "Attachment (Optional)", class: "block text-base md:text-lg 2xl:text-xl" %>
+          <div class="w-full border-2 border-dashed border-black p-4 md:p-6 flex flex-col items-center justify-center space-y-4 transition-all duration-300"
+               data-controller="attachment"
+               data-action="dragover->attachment#highlight dragleave->attachment#unhighlight drop->attachment#handleDrop click->attachment#handleClick"
+               data-attachment-target="dropzone">
+
+            <div data-attachment-target="initial" class="flex flex-col items-center space-y-4">
+              <%= inline_svg_tag "attachment.svg", class: "w-12 h-12 md:w-16 md:h-16" %>
+              <p class="text-base md:text-lg 2xl:text-xl text-center">Drag and drop files here or click to select</p>
+              <p class="text-sm text-gray-600">Supports images, audio, video, and GIFs</p>
+            </div>
+
+            <div data-attachment-target="uploading" class="hidden flex flex-col items-center space-y-4">
+              <%= inline_svg_tag "lollipop.svg", class: "w-16 h-16 2xl:w-20 2xl:h-20 animate-spin" %>
+              <p class="text-base md:text-lg 2xl:text-xl">Uploading...</p>
+            </div>
+
+            <div data-attachment-target="preview" class="hidden w-full">
+              <div data-attachment-target="imagePreview" class="hidden">
+                <img class="w-full h-48 md:h-64 object-contain" data-attachment-target="previewImage">
+              </div>
+
+              <div data-attachment-target="videoPreview" class="hidden">
+                <video class="w-full h-48 md:h-64 object-contain" controls data-attachment-target="previewVideo"></video>
+              </div>
+
+              <div data-attachment-target="audioPreview" class="hidden">
+                <audio class="w-[90%]" controls data-attachment-target="previewAudio"></audio>
+              </div>
+
+              <div class="flex justify-end mt-4">
+                <button type="button"
+                        class="px-2 md:px-4 py-2 bg-vintage-red hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-xl btn-pixel cursor-pointer"
+                        data-action="click->attachment#removeFile">
+                  Remove
+                </button>
+              </div>
+            </div>
+
+            <%= f.hidden_field :attachment, data: { attachment_target: "input" } %>
+          </div>
+        </div>
+
+        <%= f.hidden_field :timer_session_id if !@unlinked_timer_sessions || @unlinked_timer_sessions.empty? %>
+
+        <div class="flex justify-end space-x-4 pt-6">
+          <% if @project.category == 'Hardware' || @project.category == 'Something else' %>
+            <button type="button" data-controller="modal" data-action="modal#open" data-modal-id="<%= @project.id %>" data-modal-type="timer" class="px-4 md:px-6 py-2 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-xl btn-pixel cursor-pointer">
+              <%= TimerSession.where(user_id: current_user.id, project_id: @project.id, status: ['running', 'paused']).exists? ? "View Timer" : "New Timer Session" %>
+            </button>
+          <% end %>
+          <%= f.submit "Post Update", class: "px-4 md:px-6 py-2 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-xl btn-pixel cursor-pointer", data: { form_target: "submitButton" } %>
+        </div>
       </div>
     <% end %>
   <% end %>
+</div>
+
+<!-- Timer Modal -->
+<div id="timer-modal-<%= @project.id %>" data-controller="timer modal" class="hidden fixed inset-0 z-50 overflow-auto bg-black/30 flex items-center justify-center p-2 md:p-4">
+  <div class="bg-soft-bone w-full max-w-md card-pixel mx-2 md:mx-auto relative max-h-[80vh] flex flex-col" data-modal-target="container">
+    <div class="p-3 md:p-4 border-b border-saddle-taupe border-opacity-30 flex-shrink-0">
+      <div class="flex justify-between items-center">
+        <h3 class="text-lg md:text-2xl font-steven" data-timer-target="title">Start Timer Session</h3>
+        <button type="button" class="text-gray-600 hover:text-vintage-red cursor-pointer" data-action="click->modal#close">
+          <%= inline_svg_tag "close.svg", class: "h-6 w-6 2xl:h-8 2xl:w-8" %>
+        </button>
+      </div>
+    </div>
+
+    <div class="overflow-y-auto">
+      <div data-timer-target="initialState" class="text-center mb-6">
+        <%= image_tag "orpheustimer.png", class: "w-32 h-32 md:w-48 md:h-48 2xl:w-64 2xl:h-64 mx-auto mb-4 mt-4", alt: "Timer" %>
+        <p class="text-base md:text-lg 2xl:text-xl mb-4">Ready to start your timer session?</p>
+
+        <div class="flex justify-center space-x-4 pt-2">
+          <button type="button" class="px-4 py-2 btn-pixel bg-vintage-red text-white hover:scale-[1.05] transition-transform 2xl:text-xl" data-action="click->modal#close">
+            Cancel
+          </button>
+          <button type="button" class="px-4 py-2 btn-pixel bg-forest text-white hover:scale-[1.05] transition-transform 2xl:text-xl" data-action="timer#startTimer">
+            Start Timer
+          </button>
+        </div>
+      </div>
+
+      <div data-timer-target="activeState" class="hidden text-center mb-6">
+        <%= image_tag "timer.gif", class: "w-32 h-32 md:w-48 md:h-48 2xl:w-64 2xl:h-64 mx-auto mb-4 mt-4", alt: "Timer" %>
+
+        <div class="text-3xl md:text-4xl font-steven mb-6 text-forest">
+          <span data-timer-target="hours">00</span>:<span data-timer-target="minutes">00</span>:<span data-timer-target="seconds">00</span>
+        </div>
+
+        <div class="flex justify-center space-x-4 pt-2"">
+          <button type=" button " class=" px-4 py-2 btn-pixel bg-nice-blue text-white hover:scale-[1.05] transition-transform 2xl:text-xl" data-action="timer#pauseTimer" data-timer-target="pauseButton">
+            Pause
+          </button>
+          <button type="button" class="hidden px-4 py-2 btn-pixel bg-nice-blue text-white hover:scale-[1.05] transition-transform 2xl:text-xl" data-action="timer#resumeTimer" data-timer-target="resumeButton">
+            Resume
+          </button>
+        </div>
+
+        <div class="flex justify-center space-x-4 pt-4">
+          <button type="button" class="px-4 py-2 btn-pixel bg-vintage-red text-white hover:scale-[1.05] transition-transform 2xl:text-xl" data-controller="delete-confirmation" data-action="click->delete-confirmation#confirm" data-timer-target="discardButton">
+            Discard
+          </button>
+          <button type="button" class="px-4 py-2 btn-pixel bg-forest text-white hover:scale-[1.05] transition-transform 2xl:text-xl" data-action="timer#stopAndPost">
+            Stop & Post Update
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
