@@ -77,7 +77,7 @@
   </div>
 
   <!-- Comment Modal -->
-  <div class="modal hidden fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center p-2 md:p-4 min-h-screen" id="comment-modal-<%= update.id %>" data-controller="modal comment-modal">
+  <div class="modal hidden fixed inset-0 z-50 overflow-auto bg-black/30 flex items-center justify-center p-2 md:p-4 min-h-screen" id="comment-modal-<%= update.id %>" data-controller="modal comment-modal">
     <div class="bg-soft-bone w-full max-w-2xl card-pixel mx-2 md:mx-auto relative" data-modal-target="container">
       <div class="p-3 md:p-4 border-b border-saddle-taupe border-opacity-30">
         <div class="flex justify-between items-center">
@@ -135,7 +135,7 @@
 
 <!-- Edit Update Modal -->
 <% if user_signed_in? && current_user == update.user %>
-  <div class="modal hidden fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center p-2 md:p-4 min-h-screen" id="edit-modal-<%= update.id %>" data-controller="modal edit-modal">
+  <div class="modal hidden fixed inset-0 z-50 overflow-auto bg-black/30 flex items-center justify-center p-2 md:p-4 min-h-screen" id="edit-modal-<%= update.id %>" data-controller="modal edit-modal">
     <div class="bg-soft-bone w-full max-w-2xl card-pixel mx-2 md:mx-auto relative" data-modal-target="container">
       <div class="p-3 md:p-4 border-b border-saddle-taupe border-opacity-30">
         <div class="flex justify-between items-center">

@@ -177,7 +177,7 @@
   </div>
 </div>
 
-<div id="follower-modal-<%= @project.id %>" data-controller="modal" class="hidden fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center p-2 md:p-4">
+<div id="follower-modal-<%= @project.id %>" data-controller="modal" class="hidden fixed inset-0 z-50 overflow-auto bg-black/30 flex items-center justify-center p-2 md:p-4">
   <div class="bg-soft-bone w-full max-w-md card-pixel mx-2 md:mx-auto relative max-h-[80vh] flex flex-col" data-modal-target="container">
     <div class="p-3 md:p-4 border-b border-saddle-taupe border-opacity-30 flex-shrink-0">
       <div class="flex justify-between items-center">
@@ -224,7 +224,7 @@
 </div>
 
 <!-- Ship Modal -->
-<div id="ship-modal-<%= @project.id %>" data-controller="ship" class="hidden fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center p-2 md:p-4" data-ship-target="modal" data-action="click->ship#closeBackground">
+<div id="ship-modal-<%= @project.id %>" data-controller="ship" class="hidden fixed inset-0 z-50 overflow-auto bg-black/30 flex items-center justify-center p-2 md:p-4" data-ship-target="modal" data-action="click->ship#closeBackground">
   <div class="bg-soft-bone w-full max-w-2xl card-pixel mx-2 md:mx-auto relative max-h-[90vh] flex flex-col overflow-hidden">
     <div class="p-3 md:p-4 border-b border-saddle-taupe border-opacity-30 flex-shrink-0">
       <div class="flex justify-between items-center">
