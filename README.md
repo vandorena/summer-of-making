@@ -2,7 +2,7 @@
 A 3 week journey into making!
 
 ## Developing locally
-1. Make sure you have postgresSQL running locally.
+1. Make sure you have PostgreSQL running locally.
 2. Run `bin/rails db:prepare` to prepare the database.
 3. Copy `.env.example` to `.env` and populate the values
 NOTE: You have to give the bot the following scopes: \
