@@ -150,6 +150,15 @@
           <span data-timer-target="hours">00</span>:<span data-timer-target="minutes">00</span>:<span data-timer-target="seconds">00</span>
         </div>
 
+        <div class="mb-6 px-4">
+          <label for="timer_notes" class="block text-base md:text-lg 2xl:text-xl mb-2">Notes & ToDos</label>
+          <textarea id="timer_notes"
+                    data-timer-target="notes"
+                    class="w-full p-3 border-2 border-black focus:outline-none focus:border-forest text-base md:text-lg 2xl:text-xl placeholder:text-base"
+                    rows="3"
+                    placeholder="Add your notes, todos, or thoughts here... (These are not saved)"></textarea>
+        </div>
+
         <div class="flex justify-center space-x-4 pt-2"">
           <button type=" button " class=" px-4 py-2 btn-pixel bg-nice-blue text-white hover:scale-[1.05] transition-transform 2xl:text-xl" data-action="timer#pauseTimer" data-timer-target="pauseButton">
             Pause
