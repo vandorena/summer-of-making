@@ -14,20 +14,11 @@ export default class extends Controller {
         this.collapseIconTarget.classList.add("rotate-180")
       }
     }
-    
-    document.addEventListener('click', this.handleDocumentClick.bind(this))
   }
   
   disconnect() {
-    document.removeEventListener('click', this.handleDocumentClick.bind(this))
   }
   
-  handleDocumentClick(event) {
-    if (this.expanded && !this.element.contains(event.target)) {
-      this.toggle()
-    }
-  }
-    
   toggle(event) {
     if (event) {
       event.stopPropagation()
