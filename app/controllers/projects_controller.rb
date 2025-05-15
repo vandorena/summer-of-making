@@ -1,7 +1,7 @@
 class ProjectsController < ApplicationController
     include ActionView::RecordIdentifier
     before_action :authenticate_user!
-    before_action :set_project, only: [ :show, :edit, :update, :follow, :unfollow, :ship ]
+    before_action :set_project, only: [ :show, :edit, :update, :follow, :unfollow, :ship, :stake_stonks, :unstake_stonks ]
     before_action :check_if_shipped, only: [ :edit, :update ]
 
     def index
@@ -25,6 +25,12 @@ class ProjectsController < ApplicationController
             @unlinked_timer_sessions = @project.timer_sessions
                 .where(user: current_user, update_id: nil, status: :stopped)
                 .order(created_at: :desc)
+        end
+
+        @stonks = @project.stonks.includes(:user).order(amount: :desc)
+
+        if current_user
+            @user_stonk = @project.stonks.find_by(user: current_user)
         end
     end
 
@@ -327,6 +333,47 @@ class ProjectsController < ApplicationController
             render json: { valid: false, error: "Connection timed out. The server might be slow or down." }
         rescue StandardError => e
             render json: { valid: false, error: e.message }
+        end
+    end
+
+    def stake_stonks
+        @project = Project.find(params[:id])
+
+        existing_stonk = current_user.stonks.find_by(project: @project)
+
+        if existing_stonk.nil? && !current_user.can_stake_more_projects?
+            redirect_to project_path(@project), alert: "You can only stake in a maximum of 5 projects"
+            return
+        end
+
+        @stonk = Stonk.find_or_initialize_by(
+            user: current_user,
+            project: @project
+        )
+
+        @stonk.amount = Stonk::DEFAULT_AMOUNT
+
+        if @stonk.save
+            redirect_to project_path(@project), notice: "Successfully staked stonks!"
+        else
+            redirect_to project_path(@project), alert: "Failed to stake stonks"
+        end
+    end
+
+    def unstake_stonks
+        @project = Project.find(params[:id])
+
+        @stonk = Stonk.find_by(user: current_user, project: @project)
+
+        if @stonk.nil?
+            redirect_to project_path(@project), alert: "You do not have any stonks to unstake"
+            return
+        end
+
+        if @stonk.destroy
+            redirect_to project_path(@project), notice: "Successfully unstaked all your stonks"
+        else
+            redirect_to project_path(@project), alert: "Failed to unstake stonks"
         end
     end
 

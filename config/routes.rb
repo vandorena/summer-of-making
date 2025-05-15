@@ -37,6 +37,8 @@ Rails.application.routes.draw do
       post :follow
       delete :unfollow
       patch :ship
+      post :stake_stonks
+      delete :unstake_stonks
     end
   end
 
