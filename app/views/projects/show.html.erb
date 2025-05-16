@@ -200,7 +200,12 @@
               <div>
                 <p class="font-steven text-black"><%= follower.display_name %></p>
                 <p class="text-sm text-gray-600">
-                  <% if follower.projects.present? %>
+                  <% if follower.projects.length() > 1 %>
+                    Check their projects out: 
+                    <% follower.projects.each do |project| %>
+                      <%= link_to project.title, project_path(project), class: "text-nice-blue underline" %><%= ", " unless project == follower.projects.last %>
+                    <% end %>
+                  <% elsif follower.projects.present? %>
                     Check their project out: <%= link_to follower.projects.first.title, project_path(follower.projects.first), class: "text-nice-blue underline" %>
                   <% else %>
                     Whoops! Looks like they don't have a project yet. Maybe ask them to start one?
