@@ -544,7 +544,10 @@
         <h4 class="text-xl md:text-2xl 2xl:text-3xl font-steven mb-2">Stonks Stonks Stonks</h4>
         <p class="text-base md:text-lg mb-4 text-gray-600">
           Stonks are a way to invest in a project's success. The better the project does in voting, and the earlier you are to invest, the more you earn!
-          <span class="block mt-2 text-vintage-red">You can stake in up to 5 different projects.</span>
+          <span class="block mt-2 text-vintage-red">You have used <%= current_user.stonks.count %>/5 stonk tokens.</span>
+          <% if current_user != @project.user && @project.user_stonks(current_user) == 0 && current_user.can_stake_more_projects? %>
+            <span class="block mt-2 text-forest">You would get a <%= @project.stonks.count == 0 ? 100 : (100 / (@project.stonks.count + 1)) %>% earlybird bonus as stonker #<%= @project.stonks.count + 1 %>!</span>
+          <% end %>
         </p>
       </div>
 
@@ -553,7 +556,7 @@
           <% if @project.user_stonks(current_user) == 0 %>
             <% if current_user.can_stake_more_projects? %>
               <%= form_with url: stake_stonks_project_path(@project), method: :post, data: { action: "submit->stonks#stake" }, class: "inline-block" do |f| %>
-                <%= f.submit "Invest/Stonks", class: "px-4 py-2 btn-pixel bg-forest text-white hover:scale-[1.05] transition-transform 2xl:text-xl", data: { stonks_target: "stakeButton" } %>
+                <%= f.submit "Stonk!", class: "px-4 py-2 btn-pixel bg-forest text-white hover:scale-[1.05] transition-transform 2xl:text-xl", data: { stonks_target: "stakeButton" } %>
               <% end %>
             <% else %>
               <button type="button" class="px-4 py-2 btn-pixel bg-forest/70 text-white cursor-not-allowed 2xl:text-xl" disabled>
@@ -562,20 +565,17 @@
             <% end %>
           <% else %>
             <%= form_with url: unstake_stonks_project_path(@project), method: :delete, data: { action: "submit->stonks#unstake" }, class: "inline-block" do |f| %>
-              <%= f.submit "Withdraw Investment", class: "px-4 py-2 btn-pixel bg-vintage-red text-white hover:scale-[1.05] transition-transform 2xl:text-xl", data: { stonks_target: "unstakeButton" } %>
+              <%= f.submit "Withdraw Stonks", class: "px-4 py-2 btn-pixel bg-vintage-red text-white hover:scale-[1.05] transition-transform 2xl:text-xl", data: { stonks_target: "unstakeButton" } %>
             <% end %>
           <% end %>
-          <button type="button" class="px-4 py-2 btn-pixel bg-nice-blue text-white hover:scale-[1.05] transition-transform 2xl:text-xl" data-action="click->stonks#toggleLeaderboard">
-            <span data-stonks-target="leaderboardButtonText">Show Stonkers</span>
-          </button>
         </div>
 
-        <div data-stonks-target="leaderboard" class="hidden border-t border-saddle-taupe/30 pt-4 mt-4">
+        <div class="border-t border-saddle-taupe/30 pt-4 mt-4">
           <h4 class="text-lg md:text-xl font-steven mb-3 text-center">Stonkers</h4>
-          <div class="border-2 border-saddle-taupe/30 bg-soft-bone/50 card-pixel p-4">
+          <div class="card-pixel p-4">
             <% if @project.stonks.any? %>
               <% @project.stonks.order(created_at: :asc).each_with_index do |stonk, index| %>
-                <div class="flex items-center justify-between py-2 <%= index < @project.stonks.count - 1 ? 'border-b border-saddle-taupe/20' : '' %> <%= user_signed_in? && stonk.user_id == current_user.id ? 'px-2' : '' %>">
+                <div class="flex items-center justify-between py-2 <%= index < @project.stonks.count - 1 ? 'border-b border-saddle-taupe/20' : '' %> <%= stonk.user_id == current_user.id ? 'px-2' : '' %>">
                   <div class="flex items-center">
                     <span class="font-bold mr-2 <%= index < 3 ? 'text-vintage-red' : 'text-gray-600' %>">#<%= index + 1 %></span>
                     <img src="<%= stonk.user.avatar %>" alt="<%= stonk.user.display_name %>" class="w-8 h-8 mr-2 rounded-full">
@@ -585,12 +585,13 @@
                 </div>
               <% end %>
             <% else %>
+              <%= image_tag "sadjourneypheus.png", class: "w-auto h-96 mx-auto mb-4", alt: "No Stonkers" %>
               <div class="text-center text-gray-600 py-4">No stonkers yet</div>
             <% end %>
           </div>
         </div>
       <% else %>
-        <div class="mb-6 p-4 border-2 border-saddle-taupe/30 bg-soft-bone/50 card-pixel">
+        <div class="mb-6 p-4 card-pixel">
           <div class="text-center">
             <p class="text-2xl font-steven mb-2">$<%= @project.stonks.count * 3 %> Total Investment</p>
             <p class="text-gray-600">from <%= @project.stonks.count %> investors</p>
