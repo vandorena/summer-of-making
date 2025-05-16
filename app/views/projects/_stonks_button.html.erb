@@ -1,15 +1,9 @@
-<% if user_signed_in? %>
-  <div data-controller="modal" class="cursor-pointer">
-    <button data-action="modal#open" data-modal-id="<%= project.id %>" data-modal-type="stonks" class="bg-forest btn-pixel px-4 py-2 flex items-center hover:scale-[1.05] transition-transform">
-      <span class="ml-2 text-white font-steven text-sm md:text-base 2xl:text-xl">
-        <%= project.stonks.count * 3 %> stonks
-      </span>
-    </button>
-  </div>
-<% else %>
-  <div class="bg-forest btn-pixel px-4 py-2 flex items-center opacity-80">
+<div data-controller="modal" class="cursor-pointer">
+  <button data-action="modal#open" data-modal-id="<%= project.id %>" data-modal-type="stonks" class="bg-saddle-taupe btn-pixel px-4 py-2 flex items-center hover:scale-[1.05] transition-transform">
+  <%= image_tag "stonkcoin.png", class: "w-6 h-6 mr-2", alt: "Stonks" %>
     <span class="ml-2 text-white font-steven text-sm md:text-base 2xl:text-xl">
       <%= project.stonks.count * 3 %> stonks
     </span>
-  </div>
-<% end %>
+  </button>
+</div>
+
