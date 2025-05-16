@@ -68,7 +68,7 @@ export default class extends Controller {
 
     // Adjust main content margin when sidebar is collapsed
     if (this.hasMainContentTarget) {
-      this.mainContentTarget.classList.remove("ml-64", "2xl:ml-96")
+      this.mainContentTarget.classList.remove("ml-64", "lg:ml-74", "2xl:ml-96")
       this.mainContentTarget.classList.add("ml-32")
     }
   }
@@ -99,7 +99,7 @@ export default class extends Controller {
     
     if (this.hasMainContentTarget) {
       this.mainContentTarget.classList.remove("ml-32")
-      this.mainContentTarget.classList.add("ml-64", "2xl:ml-96")
+      this.mainContentTarget.classList.add("ml-64", "lg:ml-74", "2xl:ml-96")
     }
   }
 } 
