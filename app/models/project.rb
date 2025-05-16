@@ -58,6 +58,10 @@ class Project < ApplicationRecord
     stonk ? stonk.amount : 0
   end
 
+  def hackatime_keys
+    hackatime_project_keys || []
+  end
+
   private
 
   def set_default_rating
