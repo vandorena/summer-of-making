@@ -1,6 +1,6 @@
 class TimerSessionsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_project
+  before_action :set_project, except: [ :global_active ]
   before_action :set_timer_session, only: [ :update, :show, :destroy ]
   before_action :ensure_timer_not_stopped, only: [ :update, :destroy ]
 
@@ -86,6 +86,23 @@ class TimerSessionsController < ApplicationController
     if @timer_session
       render json: {
         id: @timer_session.id,
+        started_at: @timer_session.started_at,
+        last_paused_at: @timer_session.last_paused_at,
+        accumulated_paused: @timer_session.accumulated_paused,
+        status: @timer_session.status
+      }
+    else
+      render json: { active: false }, status: :ok
+    end
+  end
+
+  def global_active
+    @timer_session = TimerSession.where(user: current_user, status: [ :running, :paused ]).order(created_at: :desc).first
+
+    if @timer_session
+      render json: {
+        id: @timer_session.id,
+        project_id: @timer_session.project_id,
         started_at: @timer_session.started_at,
         last_paused_at: @timer_session.last_paused_at,
         accumulated_paused: @timer_session.accumulated_paused,
