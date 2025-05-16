@@ -1,0 +1,96 @@
+<div class="container mx-auto px-4 pt-2 md:pt-8">
+  <div class="flex flex-col justify-between items-start mb-4 sm:mb-6">
+    <h1 class="text-4xl sm:text-5xl font-steven mb-0">Your Stonks</h1>
+  </div>
+
+  <% if @stonked_projects.any? %>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8 pt-2">
+      <div class="lg:col-span-1">
+        <div class="bg-soft-bone card-pixel p-4 sm:p-6 sticky top-4">
+          <h2 class="text-2xl sm:text-3xl 2xl:text-4xl font-steven mb-4 sm:mb-6">Projects You've Stonked</h2>
+          <div class="space-y-3 sm:space-y-4 max-h-[calc(100vh-12rem)] overflow-y-auto pr-2">
+            <% @stonked_projects.each do |project| %>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2 sm:space-x-4">
+                  <div class="h-12 w-12 sm:h-24 sm:w-24 overflow-hidden rounded-lg bg-white flex-shrink-0">
+                    <img src="<%= project.banner.presence || project.updates.find { |u| u.attachment.present? }&.attachment || 'https://raw.githubusercontent.com/hackclub/dinosaurs/main/confused_dinosaur.png' %>" alt="<%= project.title %>" class="w-full h-full object-cover">
+                  </div>
+                  <div class="min-w-0">
+                    <div class="font-steven text-xl mb-1 font-bold"><%= project.title %></div>
+                    <div class="text-gray-700 text-sm mb-1 font-bold"><%= project.description %></div>
+                    <div class="text-vintage-red text-base font-bold">Total investment: <%= project.user_stonks(current_user) %> stonks</div>
+                  </div>
+                </div>
+                <div class="flex flex-col ml-6 space-y-4 py-2">
+                  <%= link_to project_path(project), class: "block w-full text-center bg-forest text-white font-steven py-3 2xl:px-4 px-2 btn-pixel text-base 2xl:text-lg leading-none transition-transform duration-150 hover:scale-105" do %>
+                    View
+                  <% end %>
+                  <%= form_with url: unstake_stonks_project_path(project), method: :delete, data: { action: "submit->stonks#unstake" }, class: "block w-full" do |f| %>
+                    <%= f.submit "Unstake", class: "w-full text-center bg-vintage-red text-white font-steven py-3 2xl:px-4 px-2 btn-pixel text-base 2xl:text-lg leading-none transition-transform duration-150 hover:scale-105" %>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-2">
+        <div class="bg-soft-bone card-pixel p-4 sm:p-6">
+          <h2 class="text-2xl sm:text-3xl 2xl:text-4xl font-steven mb-4 sm:mb-6">Recent Updates</h2>
+          <div class="space-y-4 sm:space-y-6">
+            <% @recent_updates.each do |update| %>
+              <div class="transform transition-transform duration-300 mb-4 sm:mb-6">
+                <div class="flex items-center mb-2 sm:mb-3">
+                  <% if update.user.avatar.present? %>
+                    <img src="<%= update.user.avatar %>" alt="<%= update.user.display_name %>" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3">
+                  <% end %>
+                  <div>
+                    <span class="font-medium text-base sm:text-lg 2xl:text-xl"><%= update.user.display_name %></span>
+                    <span class="text-gray-600 text-xs sm:text-sm 2xl:text-base ml-2"><%= time_ago_in_words(update.created_at) %> ago</span>
+                  </div>
+                </div>
+                <div class="ml-10 sm:ml-13">
+                  <h3 class="text-lg sm:text-xl 2xl:text-2xl font-steven mb-2"><%= update.project.title %></h3>
+                  <div class="prose max-w-none text-gray-600 mb-2 sm:mb-3 text-sm sm:text-base 2xl:text-lg"><%= update.formatted_text %></div>
+                  <% if update.attachment.present? %>
+                    <div class="mt-2 sm:mt-3 overflow-hidden">
+                      <% attachment_url = update.attachment %>
+                      <% clean_url = attachment_url.gsub(/\?pub_secret=.*$/, '') %>
+                      <% if clean_url.match?(/\.(jpg|jpeg|png|gif)$/i) %>
+                        <img src="<%= attachment_url %>" alt="Update attachment" class="w-full h-48 sm:h-64 object-contain cursor-pointer hover:opacity-90 transition-opacity" data-action="click->image-viewer#open">
+                      <% elsif clean_url.match?(/\.(mp4|webm)$/i) %>
+                        <div class="h-48 sm:h-64 flex items-center justify-center bg-black">
+                          <video src="<%= attachment_url %>" class="w-full h-full object-contain" playsinline controls>
+                            Your browser does not support the video tag.
+                          </video>
+                        </div>
+                      <% elsif update.attachment.match?(/\.(mp3|wavmak)$/i) %>
+                        <div class="w-full h-48 sm:h-64 flex items-center justify-center">
+                          <audio src="<%= update.attachment %>" class="w-[50%]" controls controlsList="nodownload">
+                            Your browser does not support the audio tag.
+                          </audio>
+                        </div>
+                      <% end %>
+                    </div>
+                  <% end %>
+                  <%= link_to project_path(update.project), class: "mt-2 sm:mt-3 inline-block px-3 sm:px-4 py-1.5 sm:py-2 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 text-base sm:text-lg 2xl:text-xl btn-pixel" do %>
+                    View Project
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <div class="bg-soft-bone card-pixel p-6 sm:p-12 text-center mt-8">
+      <%= image_tag "stonks.png", class: "mx-auto w-96 lg:w-112 2xl:w-128 mb-4 sm:mb-6", alt: "Stonks" %>
+      <p class="mb-6 sm:mb-8 text-black text-large sm:text-xl 2xl:text-2xl">No stonks yet. Start investing in some projects to get rich!!!!</p>
+      <%= link_to explore_path, class: "px-4 sm:px-6 py-2 sm:py-3 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 text-base sm:text-lg 2xl:text-xl btn-pixel" do %>
+        Explore Projects
+      <% end %>
+    </div>
+  <% end %>
+</div>

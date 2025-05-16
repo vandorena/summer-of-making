@@ -86,6 +86,13 @@ class ProjectsController < ApplicationController
                               .order(created_at: :desc)
     end
 
+    def stonks
+        @stonked_projects = current_user.staked_projects.includes(:user)
+        @recent_updates = Update.includes(:project, :user)
+                              .where(project_id: @stonked_projects.pluck(:id))
+                              .order(created_at: :desc)
+    end
+
     # Gotta say I love turbo frames and turbo streams and flashes in general
     def follow
         if current_user == @project.user
