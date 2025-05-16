@@ -293,6 +293,14 @@ export default class extends Controller {
       })
       
       if (!stopResponse.ok) {
+        const errorData = await stopResponse.json()
+        
+        if (errorData && errorData.error && errorData.error.includes("5 minutes")) {
+          alert("Timer sessions must be at least 5 minutes long. Please continue timing or discard this session.")
+          this.checkForActiveSession()
+          return
+        }
+        
         throw new Error('Failed to stop timer session')
       }
       

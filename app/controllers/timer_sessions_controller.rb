@@ -65,7 +65,12 @@ class TimerSessionsController < ApplicationController
 
       elapsed = end_time - @timer_session.started_at
       net_time = elapsed - @timer_session.accumulated_paused
-      @timer_session.update(stopped_at: end_time, net_time: net_time.to_i, status: :stopped)
+
+      if net_time.to_i < TimerSession::MINIMUM_DURATION
+        @timer_session.errors.add(:base, "Timer sessions must be at least 5 minutes long")
+      else
+        @timer_session.update(stopped_at: end_time, net_time: net_time.to_i, status: :stopped)
+      end
     end
 
     if @timer_session.errors.any?
