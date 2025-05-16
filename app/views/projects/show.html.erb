@@ -546,7 +546,7 @@
           Stonks are a way to invest in a project's success. The better the project does in voting, and the earlier you are to invest, the more you earn!
           <span class="block mt-2 text-vintage-red">You have used <%= current_user.stonks.count %>/5 stonk tokens.</span>
           <% if current_user != @project.user && @project.user_stonks(current_user) == 0 && current_user.can_stake_more_projects? %>
-            <span class="block mt-2 text-forest">You would get a <%= @project.stonks.count == 0 ? 100 : (100 / (@project.stonks.count + 1)) %>% earlybird bonus as stonker #<%= @project.stonks.count + 1 %>!</span>
+            <span class="block mt-2 text-forest">You would get a <%= @project.stonks.count == 0 ? 100 : (100 / (@project.stonks.count + 1)) %>% earlybird bonus as stonker <%= @project.stonks.count + 1 %>!</span>
           <% end %>
         </p>
       </div>
