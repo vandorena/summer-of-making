@@ -31,6 +31,15 @@ export default class extends Controller {
       this.notesTarget.addEventListener('input', this.handleNotesChange.bind(this))
     }
     
+    const urlParams = new URLSearchParams(window.location.search)
+    if (urlParams.get('open_timer') === 'true') {
+      const newUrl = window.location.pathname + window.location.hash
+      window.history.replaceState({}, '', newUrl)
+      
+      this.element.classList.remove('hidden')
+      document.body.classList.add('overflow-hidden')
+    }
+    
     this.checkForActiveSession()
   }
 

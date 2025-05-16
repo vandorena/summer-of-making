@@ -64,6 +64,8 @@ export default class extends Controller {
       if (modal) {
         modal.classList.remove('hidden')
         document.body.classList.add('overflow-hidden')
+      } else {
+        window.location.href = `/projects/${this.activeProjectIdValue}?open_timer=true`
       }
     }
   }
