@@ -3,6 +3,8 @@ class Project < ApplicationRecord
   has_many :updates, dependent: :destroy
   has_many :project_follows, dependent: :destroy
   has_many :followers, through: :project_follows, source: :user
+  has_many :stonks, dependent: :destroy
+  has_many :stakers, through: :stonks, source: :user
 
   has_many :won_votes, class_name: "Vote", foreign_key: "winner_id"
   has_many :lost_votes, class_name: "Vote", foreign_key: "loser_id"
@@ -45,6 +47,19 @@ class Project < ApplicationRecord
     hackatime_project_keys.sum do |project_key|
       user.project_time_from_hackatime(project_key)
     end
+  end
+
+  def total_stonks
+    stonks.sum(:amount)
+  end
+
+  def user_stonks(user)
+    stonk = stonks.find_by(user: user)
+    stonk ? stonk.amount : 0
+  end
+
+  def hackatime_keys
+    hackatime_project_keys || []
   end
 
   private

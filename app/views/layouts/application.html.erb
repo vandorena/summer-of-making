@@ -39,7 +39,7 @@
           </main>
         <% else %>
           <%= render "shared/sidebar" %>
-          <main class="ml-64 2xl:ml-96 pt-12 py-8 pl-8" data-sidebar-target="mainContent">
+          <main class="ml-64 lg:ml-74 2xl:ml-96 pt-12 py-8 pl-8" data-sidebar-target="mainContent">
             <div id="flash-container">
               <%= render "shared/flash" %>
             </div>
@@ -69,9 +69,9 @@
           <div class="p-4 md:p-6 overflow-y-auto" data-hackatime-modal-target="modalContent">
             <div class="text-center mb-6">
               <%= image_tag "orpheustimer.png", class: "w-32 h-32 md:w-48 md:h-48 2xl:w-64 2xl:h-64 mx-auto mb-4", alt: "Hackatime" %>
-              <h4 class="text-xl md:text-2xl 2xl:text-3xl font-steven mb-2">Connect Hackatime</h4>
+              <h4 class="text-xl md:text-2xl 2xl:text-3xl font-steven mb-2">Set up Hackatime</h4>
               <p class="text-base md:text-lg mb-4 text-gray-600">
-                Hackatime helps you track your time and progress. Connect your account to embark on a journey!
+                Hackatime helps you track your time and progress. Set it up to embark on a journey!
               </p>
             </div>
 
@@ -80,7 +80,7 @@
                 Skip for now
               </button>
               <button type="button" class="px-4 py-2 btn-pixel bg-forest text-white hover:scale-[1.05] transition-transform 2xl:text-xl" data-action="hackatime-modal#connectHackatime">
-                Connect Hackatime
+                Set it up
               </button>
             </div>
           </div>
@@ -196,6 +196,10 @@
           </div>
         </div>
       </div>
+    <% end %>
+
+    <% if user_signed_in? && current_user.has_hackatime %>
+      <%= render "shared/timer_indicator" %>
     <% end %>
 
   </body>

@@ -81,6 +81,9 @@
                     </div>
                   </div>
                 <% end %>
+
+                <%= render "projects/stonks_button", project: @project %>
+
                 <% if user_signed_in? && current_user == @project.user %>
                   <% if !@project.is_shipped %>
                     <div data-controller="modal" class="cursor-pointer">
@@ -197,7 +200,12 @@
               <div>
                 <p class="font-steven text-black"><%= follower.display_name %></p>
                 <p class="text-sm text-gray-600">
-                  <% if follower.projects.present? %>
+                  <% if follower.projects.length() > 1 %>
+                    Check their projects out:
+                    <% follower.projects.each do |project| %>
+                      <%= link_to project.title, project_path(project), class: "text-nice-blue underline" %><%= ", " unless project == follower.projects.last %>
+                    <% end %>
+                  <% elsif follower.projects.present? %>
                     Check their project out: <%= link_to follower.projects.first.title, project_path(follower.projects.first), class: "text-nice-blue underline" %>
                   <% else %>
                     Whoops! Looks like they don't have a project yet. Maybe ask them to start one?
@@ -238,7 +246,7 @@
     <!-- Page 1: Introduction -->
     <div data-ship-target="page1" class="p-4 md:p-6 overflow-y-auto">
       <div class="text-center mb-8">
-        <%= image_tag "orpheusyap1.png", class: "w-64 h-64 mx-auto mb-4", alt: "Rocket" %>
+        <%= image_tag "orpheusyap1.png", class: "w-64 h-64 mx-auto mb-4", alt: "Orpheus Yap" %>
         <h4 class="text-xl md:text-2xl 2xl:text-3xl font-steven mb-2">HOLD UP</h4>
         <p class="text-base md:text-lg mb-4 text-gray-600">By shipping your project, you're marking it as complete and it'll enter matchmaking. <span class="text-vintage-red">However, you will NOT be able to edit it anymore.</span></p>
       </div>
@@ -512,6 +520,80 @@
           <button type="submit" class="px-4 py-2 btn-pixel bg-forest/70 cursor-not-allowed text-white hover:scale-[1.05] transition-transform 2xl:text-xl" data-ship-target="submitButton" disabled>
             Ship It!
           </button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<!-- Stonks Modal -->
+<div id="stonks-modal-<%= @project.id %>" data-controller="modal stonks" class="hidden fixed inset-0 z-50 overflow-auto bg-black/30 flex items-center justify-center p-2 md:p-4" data-action="click->modal#clickOutsideHandler">
+  <div class="bg-soft-bone w-full max-w-2xl card-pixel mx-2 md:mx-auto relative max-h-[90vh] flex flex-col overflow-hidden" data-modal-target="container">
+    <div class="p-3 md:p-4 border-b border-saddle-taupe border-opacity-30 flex-shrink-0">
+      <div class="flex justify-between items-center">
+        <h3 class="text-lg md:text-2xl font-steven">Project Stonks</h3>
+        <button type="button" class="text-gray-600 hover:text-vintage-red cursor-pointer" data-action="modal#close">
+          <%= inline_svg_tag "close.svg", class: "h-6 w-6 2xl:h-8 2xl:w-8" %>
+        </button>
+      </div>
+    </div>
+
+    <div class="p-4 md:p-6 overflow-y-auto">
+      <div class="text-center mb-8">
+        <%= image_tag "stonks.png", class: "w-auto h-96 mx-auto mb-4", alt: "Stonks" %>
+        <h4 class="text-xl md:text-2xl 2xl:text-3xl font-steven mb-2">Stonks Stonks Stonks</h4>
+        <p class="text-base md:text-lg mb-4 text-gray-600">
+          Stonks are a way to invest in a project's success. The better the project does in voting, and the earlier you are to invest, the more you earn!
+          <span class="block mt-2 text-vintage-red">You have used <%= current_user.stonks.count %>/5 stonk tokens.</span>
+          <% if current_user != @project.user && @project.user_stonks(current_user) == 0 && current_user.can_stake_more_projects? %>
+            <span class="block mt-2 text-forest">You would get a <%= @project.stonks.count == 0 ? 100 : (100 / (@project.stonks.count + 1)) %>% earlybird bonus as stonker <%= @project.stonks.count + 1 %>!</span>
+          <% end %>
+        </p>
+      </div>
+
+      <% if current_user != @project.user %>
+        <div class="flex justify-center space-x-4 mb-6">
+          <% if @project.user_stonks(current_user) == 0 %>
+            <% if current_user.can_stake_more_projects? %>
+              <%= form_with url: stake_stonks_project_path(@project), method: :post, data: { action: "submit->stonks#stake" }, class: "inline-block" do |f| %>
+                <%= f.submit "Stonk!", class: "px-4 py-2 btn-pixel bg-forest text-white hover:scale-[1.05] transition-transform 2xl:text-xl", data: { stonks_target: "stakeButton" } %>
+              <% end %>
+            <% else %>
+              <button type="button" class="px-4 py-2 btn-pixel bg-forest/70 text-white cursor-not-allowed 2xl:text-xl" disabled>
+                Max Projects Reached
+              </button>
+            <% end %>
+          <% else %>
+            <%= form_with url: unstake_stonks_project_path(@project), method: :delete, data: { action: "submit->stonks#unstake" }, class: "inline-block" do |f| %>
+              <%= f.submit "Withdraw Stonks", class: "px-4 py-2 btn-pixel bg-vintage-red text-white hover:scale-[1.05] transition-transform 2xl:text-xl", data: { stonks_target: "unstakeButton" } %>
+            <% end %>
+          <% end %>
+        </div>
+
+        <div class="border-t border-saddle-taupe/30 pt-4 mt-4">
+          <h4 class="text-lg md:text-xl font-steven mb-3 text-center">Stonkers</h4>
+          <div class="card-pixel p-4">
+            <% if @project.stonks.any? %>
+              <% @project.stonks.order(created_at: :asc).each_with_index do |stonk, index| %>
+                <div class="flex items-center justify-between py-2 <%= index < @project.stonks.count - 1 ? 'border-b border-saddle-taupe/20' : '' %> <%= stonk.user_id == current_user.id ? 'px-2' : '' %>">
+                  <div class="flex items-center">
+                    <span class="font-bold mr-2 <%= index < 3 ? 'text-vintage-red' : 'text-gray-600' %>">#<%= index + 1 %></span>
+                    <img src="<%= stonk.user.avatar %>" alt="<%= stonk.user.display_name %>" class="w-8 h-8 mr-2 rounded-full">
+                    <span class="font-steven"><%= stonk.user.display_name %></span>
+                  </div>
+                </div>
+              <% end %>
+            <% else %>
+              <%= image_tag "sadjourneypheus.png", class: "w-auto h-96 mx-auto mb-4", alt: "No Stonkers" %>
+              <div class="text-center text-gray-600 py-4">No stonkers yet</div>
+            <% end %>
+          </div>
+        </div>
+      <% else %>
+        <div class="mb-6 p-4 card-pixel">
+          <div class="text-center">
+            <p class="text-gray-600">In development</p>
+          </div>
         </div>
       <% end %>
     </div>
