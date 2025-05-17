@@ -33,7 +33,7 @@
                     </span>
                   </button>
                 </div>
-                
+
                 <%= render "projects/stonks_button", project: @project %>
 
                 <% if @project.user == current_user %>
@@ -91,7 +91,7 @@
                       Actions
                       <%= inline_svg "chevron-down.svg", class: "h-4 w-4 ml-2 text-white" %>
                     </button>
-                    
+
                     <!-- Dropdown menu -->
                     <div data-dropdown-target="menu" class="hidden fixed mt-4 ml-2 w-auto bg-soft-bone card-pixel shadow-lg z-50" style="max-height: none; overflow: visible;" data-dropdown-target="menu">
                       <div class="py-1">
@@ -101,7 +101,7 @@
                               Ship It!
                             </button>
                           </div>
-                          
+
                           <%= link_to edit_project_path(@project), class: "block w-full text-left px-4 py-2 text-base 2xl:text-lg hover:bg-saddle-taupe/10 transition-colors text-nice-blue font-medium", data: { turbo: true } do %>
                             Edit Project
                           <% end %>
@@ -110,7 +110,7 @@
                             Shipped!
                           </div>
                         <% end %>
-                        
+
                         <div data-controller="modal" class="cursor-pointer">
                           <button data-action="modal#open dropdown#close" data-modal-id="<%= @project.id %>" data-modal-type="delete" class="block w-full text-left px-4 py-2 text-base 2xl:text-lg hover:bg-saddle-taupe/10 transition-colors text-vintage-red font-medium">
                             Delete Project
@@ -595,7 +595,7 @@
           <div class="card-pixel p-4">
             <% if @project.stonks.any? %>
               <% @project.stonks.order(created_at: :asc).each_with_index do |stonk, index| %>
-                <div class="flex items-center justify-between py-2 <%= index < @project.stonks.count - 1 ? 'border-b border-saddle-taupe/20' : '' %> <%= stonk.user_id == current_user.id ? 'px-2' : '' %>">
+                <div class="flex items-center justify-between py-2 <%= index < @project.stonks.count - 1 ? 'border-b border-saddle-taupe/20' : '' %>">
                   <div class="flex items-center">
                     <span class="font-bold mr-2 <%= index < 3 ? 'text-vintage-red' : 'text-gray-600' %>">#<%= index + 1 %></span>
                     <img src="<%= stonk.user.avatar %>" alt="<%= stonk.user.display_name %>" class="w-8 h-8 mr-2 rounded-full">
