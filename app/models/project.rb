@@ -1,15 +1,25 @@
 class Project < ApplicationRecord
   belongs_to :user
-  has_many :updates, dependent: :destroy
-  has_many :project_follows, dependent: :destroy
+  has_many :updates
+  has_many :project_follows
   has_many :followers, through: :project_follows, source: :user
-  has_many :stonks, dependent: :destroy
+  has_many :stonks
   has_many :stakers, through: :stonks, source: :user
 
   has_many :won_votes, class_name: "Vote", foreign_key: "winner_id"
   has_many :lost_votes, class_name: "Vote", foreign_key: "loser_id"
 
   has_many :timer_sessions
+
+  default_scope { where(is_deleted: false) }
+
+  def self.with_deleted
+    unscoped
+  end
+
+  def self.find_with_deleted(id)
+    with_deleted.find(id)
+  end
 
   validates :title, :description, :category, presence: true
 

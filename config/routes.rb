@@ -43,6 +43,7 @@ Rails.application.routes.draw do
       patch :ship
       post :stake_stonks
       delete :unstake_stonks
+      # patch :recover
     end
   end
 

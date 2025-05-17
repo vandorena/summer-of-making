@@ -1,8 +1,9 @@
 class ProjectsController < ApplicationController
     include ActionView::RecordIdentifier
     before_action :authenticate_user!
-    before_action :set_project, only: [ :show, :edit, :update, :follow, :unfollow, :ship, :stake_stonks, :unstake_stonks ]
+    before_action :set_project, only: [ :show, :edit, :update, :follow, :unfollow, :ship, :stake_stonks, :unstake_stonks, :destroy ]
     before_action :check_if_shipped, only: [ :edit, :update ]
+    before_action :authorize_user, only: [ :destroy ]
 
     def index
         @projects = Project.includes(:user)
@@ -384,15 +385,50 @@ class ProjectsController < ApplicationController
         end
     end
 
+    def destroy
+        if @project.update(is_deleted: true)
+            redirect_to my_projects_path, notice: "Project was successfully deleted."
+        else
+            redirect_to project_path(@project), alert: "Could not delete project."
+        end
+    end
+
+    # Admin methods
+    # def recover
+    #     deleted_project = Project.with_deleted.find_by(id: params[:id])
+    #     if deleted_project && deleted_project.is_deleted? && current_user.admin?
+    #         if deleted_project.update(is_deleted: false)
+    #             redirect_to project_path(deleted_project), notice: "Project has been recovered."
+    #         else
+    #             redirect_to projects_path, alert: "Could not recover project."
+    #         end
+    #     else
+    #         redirect_to projects_path, alert: "Project not found or cannot be recovered."
+    #     end
+    # end
+
     private
 
     def set_project
         @project = Project.includes(:user, updates: :user).find(params[:id])
+    rescue ActiveRecord::RecordNotFound
+        deleted_project = Project.with_deleted.find_by(id: params[:id])
+        if deleted_project && deleted_project.is_deleted?
+            redirect_to projects_path, alert: "This project has been deleted by its owner."
+        else
+            redirect_to projects_path, alert: "Project not found."
+        end
     end
 
     def check_if_shipped
         if @project.is_shipped?
             redirect_to project_path(@project), alert: "This project has been shipped and cannot be edited."
+        end
+    end
+
+    def authorize_user
+        unless current_user == @project.user
+            redirect_to project_path(@project), alert: "You can only delete your own projects."
         end
     end
 
