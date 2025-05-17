@@ -33,6 +33,9 @@
                     </span>
                   </button>
                 </div>
+                
+                <%= render "projects/stonks_button", project: @project %>
+
                 <% if @project.user == current_user %>
                 <!--
                   <div>
@@ -81,8 +84,6 @@
                     </div>
                   </div>
                 <% end %>
-
-                <%= render "projects/stonks_button", project: @project %>
 
                 <% if user_signed_in? && current_user == @project.user %>
                   <% if !@project.is_shipped %>
