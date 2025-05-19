@@ -25,13 +25,7 @@ class UpdatesController < ApplicationController
     def create
         @project = Project.find(params[:project_id])
 
-        if @project.hackatime_keys.present? && current_user.has_hackatime? &&
-           current_user.hackatime_stat.present? &&
-           !current_user.hackatime_stat.has_enough_time_since_last_update?(@project)
-            seconds_needed = current_user.hackatime_stat.seconds_needed_since_last_update(@project)
-            redirect_to project_path(@project), alert: "You need to spend more time on this project before posting an update. #{helpers.format_seconds(seconds_needed)} more needed since your last update."
-            return
-        end
+      
 
         if ENV["UPDATES_STATUS"] == "locked"
             redirect_to @project, alert: "Posting updates is currently locked. Please check back later when updates are unlocked."
