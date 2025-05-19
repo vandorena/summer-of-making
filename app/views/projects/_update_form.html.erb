@@ -38,10 +38,9 @@
               Start a Timer
             </button>
             <% if @project.hackatime_project_keys.present? && @project.user.has_hackatime %>
-              <%= button_to "Refresh Hackatime",
-                  users_refresh_hackatime_path,
-                  method: :post,
-                  class: "px-4 md:px-6 py-2 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-xl btn-pixel cursor-pointer" %>
+              <button data-controller="modal" data-action="click->modal#open" data-modal-type="hackatime" class="px-4 py-2 btn-pixel bg-nice-blue text-white hover:scale-[1.05] transition-transform text-base md:text-lg mt-2 md:mt-0">
+                Manually Sync Hackatime
+              </button>
             <% end %>
           </div>
         </div>
