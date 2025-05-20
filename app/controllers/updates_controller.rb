@@ -25,12 +25,12 @@ class UpdatesController < ApplicationController
     def create
         @project = Project.find(params[:project_id])
 
-        if @project.hackatime_keys.present? && current_user.has_hackatime? && params[:update] && params[:update][:timer_session_id].blank?
+        if @project.hackatime_keys.present? && current_user.has_hackatime? && params[:update][:timer_session_id].blank?
             current_user.refresh_hackatime_data_now
         end
 
         # Skip time verification if user is linking a timer session
-        if params[:update] && params[:update][:timer_session_id].blank? &&
+        if params[:update][:timer_session_id].blank? &&
            @project.hackatime_keys.present? && current_user.has_hackatime? &&
            current_user.hackatime_stat.present? &&
            !current_user.hackatime_stat.has_enough_time_since_last_update?(@project)
@@ -47,7 +47,7 @@ class UpdatesController < ApplicationController
         @update = @project.updates.build(update_params)
         @update.user = current_user
 
-        if @project.hackatime_keys.present? && @project.user.has_hackatime?
+        if @project.hackatime_keys.present? && @project.user.has_hackatime? && params[:update][:timer_session_id].blank?
             @update.last_hackatime_time = @project.hackatime_total_time
         end
 
