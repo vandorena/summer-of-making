@@ -25,7 +25,7 @@ class UpdatesController < ApplicationController
     def create
         @project = Project.find(params[:project_id])
 
-        if @project.hackatime_keys.present? && current_user.has_hackatime?
+        if @project.hackatime_keys.present? && current_user.has_hackatime? && params[:update] && params[:update][:timer_session_id].blank?
             current_user.refresh_hackatime_data_now
         end
 
