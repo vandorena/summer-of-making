@@ -131,6 +131,9 @@
                   timerSessionsSection.classList.remove('hidden');
                   hackatimeSection.classList.add('hidden');
                   hackatimeInput.disabled = true;
+                  document.querySelectorAll('input[name="update[timer_session_id]"]').forEach(function(input) {
+                    input.disabled = false;
+                  });
                 }
               });
 
@@ -139,6 +142,9 @@
                   timerSessionsSection.classList.add('hidden');
                   hackatimeSection.classList.remove('hidden');
                   hackatimeInput.disabled = false;
+                  document.querySelectorAll('input[name="update[timer_session_id]"]').forEach(function(input) {
+                    input.disabled = true;
+                  });
                 }
               });
             });
