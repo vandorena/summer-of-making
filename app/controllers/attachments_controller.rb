@@ -34,7 +34,7 @@ class AttachmentsController < ApplicationController
 
   def download
     filename = params[:filename]
-    temp_path = Rails.root.join("tmp", "uploads", sanitized_filename filename)
+    temp_path = Rails.root.join("tmp", "uploads", filename)
 
     if File.exist?(temp_path)
       send_file temp_path, disposition: "inline"
