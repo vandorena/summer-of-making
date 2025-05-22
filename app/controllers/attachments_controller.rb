@@ -2,7 +2,8 @@ class AttachmentsController < ApplicationController
   def upload
     file = params[:file]
 
-    filename = "#{SecureRandom.hex(10)}_#{sanitized_filename file.original_filename}"
+    ext = File.extname(uploaded_file.original_filename).downcase
+    filename = "#{SecureRandom.hex(32).to_s}#{ext}"
     temp_path = Rails.root.join("tmp", "uploads", filename)
 
     FileUtils.mkdir_p(File.dirname(temp_path))
@@ -44,8 +45,4 @@ class AttachmentsController < ApplicationController
   end
 
   private
-
-  def sanitized_filename(filename)
-    filename.gsub(/[^\w\.\-]/, '_')
-  end
 end
