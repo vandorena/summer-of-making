@@ -2,7 +2,7 @@ class AttachmentsController < ApplicationController
   def upload
     file = params[:file]
 
-    filename = "#{SecureRandom.hex(10)}_#{file.original_filename}"
+    filename = "#{SecureRandom.hex(10)}_#{sanitized_filename file.original_filename}"
     temp_path = Rails.root.join("tmp", "uploads", filename)
 
     FileUtils.mkdir_p(File.dirname(temp_path))
@@ -34,12 +34,18 @@ class AttachmentsController < ApplicationController
 
   def download
     filename = params[:filename]
-    temp_path = Rails.root.join("tmp", "uploads", filename)
+    temp_path = Rails.root.join("tmp", "uploads", sanitized_filename filename)
 
     if File.exist?(temp_path)
       send_file temp_path, disposition: "inline"
     else
       head :not_found
     end
+  end
+
+  private
+
+  def sanitized_filename(filename)
+    filename.gsub(/[^\w\.\-]/, '_')
   end
 end
