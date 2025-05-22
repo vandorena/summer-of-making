@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_22_183303) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_22_210348) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -22,6 +22,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_22_183303) do
     t.datetime "updated_at", null: false
     t.index ["update_id"], name: "index_comments_on_update_id"
     t.index ["user_id"], name: "index_comments_on_user_id"
+  end
+
+  create_table "daily_stonk_reports", force: :cascade do |t|
+    t.text "report", null: false
+    t.date "date", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["date"], name: "index_daily_stonk_reports_on_date", unique: true
   end
 
   create_table "hackatime_stats", force: :cascade do |t|
