@@ -2,7 +2,7 @@ class AttachmentsController < ApplicationController
   def upload
     file = params[:file]
 
-    ext = File.extname(uploaded_file.original_filename).downcase
+    ext = File.extname(file.original_filename).downcase
     filename = "#{SecureRandom.hex(32).to_s}#{ext}"
     temp_path = Rails.root.join("tmp", "uploads", filename)
 
