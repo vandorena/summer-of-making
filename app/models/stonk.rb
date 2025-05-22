@@ -10,6 +10,7 @@ class Stonk < ApplicationRecord
 
   scope :today, -> { where(created_at: Time.current.beginning_of_day..Time.current.end_of_day) }
   scope :recent, -> { where(created_at: 24.hours.ago..Time.current) }
+  scope :days_ago, ->(n) { where(created_at: (n+1).days.ago..n.days.ago) }
 
   private
 
