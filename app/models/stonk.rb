@@ -8,6 +8,9 @@ class Stonk < ApplicationRecord
 
   before_validation :set_default_amount, on: :create
 
+  scope :today, -> { where(created_at: Time.current.beginning_of_day..Time.current.end_of_day) }
+  scope :recent, -> { where(created_at: 24.hours.ago..Time.current) }
+
   private
 
   def set_default_amount
