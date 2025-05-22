@@ -7,13 +7,14 @@ class HourlyHackatimeRefreshJob < ApplicationJob
     users.find_each do |user|
       RefreshHackatimeStatsJob.perform_later(user.id)
     end
-
+    puts "Hourly Hackatime refresh job performed for #{users.count} users"
     message = "Hourly Hackatime refresh job performed for #{users.count} users"
 
     begin
       client = Slack::Web::Client.new(token: ENV["SLACK_BOT_TOKEN"])
+      puts "Sending Slack message: #{message}"
       client.chat_postMessage(
-        channel: "#C08TRKC44UU",
+        channel: "C08TRKC44UU",
         text: message,
         as_user: true
       )
