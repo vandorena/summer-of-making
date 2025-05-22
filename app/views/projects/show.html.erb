@@ -612,6 +612,12 @@
           <% end %>
         </div>
 
+        <% admin_tool do %>
+          <div class="mt-4 flex justify-center">
+            <%= line_chart @cumulative_stonk_dollars, width: "60%", height: "200px", prefix: "$", colors: ["#573C28"] %>
+          </div>
+        <% end %>
+
         <div class="border-t border-saddle-taupe/30 pt-4 mt-4">
           <h4 class="text-lg md:text-xl font-steven mb-3 text-center">Stonkers</h4>
           <div class="card-pixel p-4">
