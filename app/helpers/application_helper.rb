@@ -18,6 +18,6 @@ module ApplicationHelper
 
   def admin_tool(class_name = "", element = "div", **options, &block)
     return unless current_user&.is_admin?
-    concat content_tag(element, class: "border-4 border-dashed border-orange-500 bg-orange-500/10 #{class_name}", **options, &block)
+    concat content_tag(element, class: "p-2 border-4 border-dashed border-orange-500 bg-orange-500/10 #{class_name}", **options, &block)
   end
 end
