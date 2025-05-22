@@ -36,7 +36,7 @@ class Stonk < ApplicationRecord
     # 2.  order those projects by their total stonk amount (DESC)
     nested.sort_by { |_, buckets| -buckets.values.sum }.to_h
 
-    nested.to_s
+    nested
   end
 
   private

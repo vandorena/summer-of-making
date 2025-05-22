@@ -4,47 +4,57 @@ require "openai"
 class GenerateStonkReportJob < ApplicationJob
   queue_as :default
 
-  def perform(*args)
-    stonks_data = Stonk.report
-
-    prompt = <<~PROMPT
-    **Role**: You are “The Exchange Desk”, an objective financial‑markets analyst.
-    **Audience**: Investors tracking the Hack Club Stonks exchange.
-    **Task**: Write a 250‑to‑300‑word end‑of‑day market report (UTC) covering the last 24 hours only.
-
-    In the following JSON:
-    Outer keys = [title, description, category, is_shipped, rating, project_created_at].
-    Inner keys = day_bucket where 0 is the last 24h, 1 is 24‑48h ago, etc.
-    Inner values = the sum of stonks created only during that bucket — they are not cumulative totals.
-
-    How to use it:
-    Focus on bucket 0 totals to determine today’s gainers / losers.
-    Rank projects by today’s stonk amount; highlight the top 3 movers.
-    Summarize overall market tone (bullish / bearish / mixed) and any notable sector trends (e.g., “Both Software & Hardware” vs. “Software”).
-    Include a brief note on investor sentiment (e.g., “risk‑on appetite returns”, “profit‑taking in legacy categories”).
-    Where useful, reference yesterday’s bucket 1 totals to frame percentage or absolute changes.
-    Close with an outlook for the next trading session in one sentence.
-
-    Style guide:
-    Professional, finance‑desk tone (think Bloomberg or Financial Times).
-    Use active voice, concise sentences, and specific numbers (“Hackatime led with 36 stonks, up 20% from yesterday”).
-    No first‑person; write in the third person.
-    Do not list every project—aggregate or pick exemplars unless they are major movers.
-    PROMPT
+  def perform
+    report_data = Stonk.report.to_s
 
     OpenAI.configure { |c| c.access_token = ENV.fetch("OPENAI_KEY") }
-    client = OpenAI::Client.new
+    client = OpenAI::Client.new(request_timeout: 60 * 5, log_errors: true)
 
-    response = client.chat(
-      parameters: {
-        model: "o3",
-        messages: [
-          { role: "system", content: prompt },
-          { role: "user", content: stonks_data }
-        ]
-      }
-    )
+    # response = client.responses.create(
+    #   parameters: {
+    #     model: "o3",
+    #     reasoning: { effort: "high" },
+    #     messages: [
+    #       { role: "system", content: system_msg },
+    #       { role: "user",   content: user_msg }
+    #     ],
+    #   }
+    # )
+    response = client.responses.create(parameters: {
+      "model": "o3",
+      "input": [
+        {
+          "role": "developer",
+          "content": [
+            {
+              "type": "input_text",
+              "text": "Write a 250-to-300-word end-of-day market report (UTC) covering the last 24 hours, using a professional, objective, Bloomberg-style perspective.\n\nEnsure the report adheres to the following JSON schema guidelines:\n- Outer keys: `title`, `description`, `category`, `is_shipped`, `rating`, `project_created_at`\n- Inner keys: Day bucket (0 = last 24h, 1 = 24–48h, etc.)\n- Inner values: Number of Stonk investments during that day for that project, not cumulative.\n\nInclude detailed analysis:\n- Rank projects by today's (bucket 0) totals and highlight the top 3 movers.\n- Summarize the overall market tone as bullish, bearish, or mixed, and discuss notable sector flows.\n- Reference data from yesterday (bucket 1) where useful for illustrating percentage changes.\n- Conclude with a one-sentence market outlook.\n\n# Steps\n\n1. Analyze today's (day bucket 0) stocks investment data to identify the top three projects by totals.\n2. Compare today's (bucket 0) data with yesterday's (bucket 1) to articulate percentage changes and trends.\n3. Summarize the overall market tone and describe significant sector movements.\n4. Draft the report with a coherent flow, stating key findings and future insights.\n\n# Output Format\n\nThe report should be a coherent narrative of 250 to 300 words as HTML. Use professional financial language and a third-person point of view. Conclude with a one-sentence market outlook.\n\n# Notes\n\n- Ensure all analysis and narrative are objective and data-driven.\n- Use financial terminology and professional language suitable for a market analysis audience.\n- Avoid speculative language unless backed by data trends."
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "input_text",
+              "text": report_data
+            }
+          ]
+        }
+      ],
+      "text": {
+        "format": {
+          "type": "text"
+        }
+      },
+      "reasoning": {
+        "effort": "high"
+      },
+      "tools": [],
+      "store": false
+    })
 
-    report = response.dig("choices", 0, "message", "content")
+    report_text = response.dig("output", 1, "content", 0, "text").strip
+    DailyStonkReport.find_or_initialize_by(date: Date.current).update!(report: report_text)
   end
 end
