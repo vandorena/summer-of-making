@@ -8,13 +8,17 @@ class HourlyHackatimeRefreshJob < ApplicationJob
       RefreshHackatimeStatsJob.perform_later(user.id)
     end
 
-    HourlyHackatimeRefreshJob.set(wait: 1.hour).perform_later
-  end
+    message = "Hourly Hackatime refresh job performed for #{users.count} users"
 
-  # Init recurring job if it's not already scheduled
-  def self.schedule_if_needed
-    return if SolidQueue::Job.where(class_name: self.name).where("finished_at IS NULL").exists?
-
-    perform_later
+    begin
+      client = Slack::Web::Client.new(token: ENV["SLACK_BOT_TOKEN"])
+      client.chat_postMessage(
+        channel: "#C08TRKC44UU",
+        text: message,
+        as_user: true
+      )
+    rescue Slack::Web::Api::Errors::SlackError => e
+      Rails.logger.error("Failed to send Slack message: #{e.message}")
+    end
   end
 end
