@@ -81,3 +81,5 @@ gem "sentry-rails"
 gem "redcarpet"
 
 gem "chartkick", "~> 5.1"
+
+gem "groupdate", "~> 6.6"

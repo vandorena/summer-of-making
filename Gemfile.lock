@@ -136,6 +136,8 @@ GEM
       ostruct
     globalid (1.2.1)
       activesupport (>= 6.1)
+    groupdate (6.6.0)
+      activesupport (>= 7.1)
     hashie (5.0.0)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
@@ -420,6 +422,7 @@ DEPENDENCIES
   chartkick (~> 5.1)
   debug
   dotenv-rails
+  groupdate (~> 6.6)
   importmap-rails
   inline_svg
   jbuilder
