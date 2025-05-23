@@ -21,6 +21,7 @@ class Update < ApplicationRecord
 
   after_commit :sync_to_airtable, on: [ :create, :update ]
   after_commit :associate_timer_session, on: :create
+  after_commit :notify_followers_and_stakers, on: :create
   after_destroy :delete_from_airtable
 
   def formatted_text
@@ -96,5 +97,9 @@ class Update < ApplicationRecord
 
   def delete_from_airtable
     DeleteUpdateFromAirtableJob.perform_later(id)
+  end
+
+  def notify_followers_and_stakers
+    NotifyProjectUpdateJob.perform_later(id)
   end
 end
