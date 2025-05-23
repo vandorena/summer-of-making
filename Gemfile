@@ -88,3 +88,5 @@ gem "chartkick", "~> 5.1"
 gem "groupdate", "~> 6.6"
 
 gem "ruby-openai", "~> 8.1"
+
+gem "whenever", "~> 1.0"
