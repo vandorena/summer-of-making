@@ -17,17 +17,17 @@ class NotifyProjectUpdateJob < ApplicationJob
     only_stonk_slack_ids = stonk_slack_ids - follower_slack_ids
 
     both_slack_ids.each do |slack_id|
-      message = "New update on a project you follow AND have stonked! :heart: :stonksss: Check it out at! Show some love and engage with the author!"
+      message = "New update on a project you follow AND have stonked! :heart: :stonksss: Check it out at #{project_url(project)}! Show some love and engage with the author!"
       SendSlackDmJob.perform_later(slack_id, message)
     end
 
     only_follower_slack_ids.each do |slack_id|
-      message = "New update on a project you follow! :heart: Check it out at! Show some love and engage with the author!"
+      message = "New update on a project you follow! :heart: Check it out at #{project_url(project)}! Show some love and engage with the author!"
       SendSlackDmJob.perform_later(slack_id, message)
     end
 
     only_stonk_slack_ids.each do |slack_id|
-      message = "New update on a project you have stonked! :stonksss: Check it out at! Show some love and engage with the author!"
+      message = "New update on a project you have stonked! :stonksss: Check it out at #{project_url(project)}! Show some love and engage with the author!"
       SendSlackDmJob.perform_later(slack_id, message)
     end
   end
