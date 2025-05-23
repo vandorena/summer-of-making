@@ -48,7 +48,7 @@ class UpdatesController < ApplicationController
         @update.user = current_user
 
         if @project.hackatime_keys.present? && @project.user.has_hackatime? && params[:update][:timer_session_id].blank?
-            @update.last_hackatime_time = @project.hackatime_total_time
+            @update.last_hackatime_time = @project.user.hackatime_stat.time_since_last_update_for_project(@project)
         end
 
         if @update.save
