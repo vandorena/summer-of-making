@@ -614,7 +614,7 @@
 
         <% admin_tool do %>
           <div class="mt-4 flex justify-center">
-            <%= line_chart @cumulative_stonk_dollars, width: "60%", height: "200px", prefix: "$", colors: ["#573C28"] %>
+            <%= line_chart @project.cumulative_stonk_dollars, width: "60%", height: "200px", prefix: "$", colors: ["#573C28"] %>
           </div>
         <% end %>
 

@@ -5,6 +5,7 @@ class Project < ApplicationRecord
   has_many :followers, through: :project_follows, source: :user
   has_many :stonks
   has_many :stakers, through: :stonks, source: :user
+  has_one :stonk_tickler
 
   has_many :won_votes, class_name: "Vote", foreign_key: "winner_id"
   has_many :lost_votes, class_name: "Vote", foreign_key: "loser_id"
@@ -70,6 +71,19 @@ class Project < ApplicationRecord
 
   def hackatime_keys
     hackatime_project_keys || []
+  end
+
+  def cumulative_stonk_dollars
+    stonk_dollars_by_day = stonks.group_by_day(:created_at).sum(:amount)
+
+    stonk_dollars_by_day.each_with_object({}) { |(date, count), result|
+      previous = result.empty? ? 0 : result.values.last
+      result[date] = previous + count
+    }
+  end
+
+  def create_tickler
+    StonkTickler.create(project: self)
   end
 
   private

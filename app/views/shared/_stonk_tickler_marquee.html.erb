@@ -1,0 +1,18 @@
+<marquee class="fixed top-0 w-full h-fit z-[100000] flex">
+  <% StonkTickler.all.each do |st| %>
+    <% @dollaz = st.project.cumulative_stonk_dollars %>
+    <% next if @dollaz.size < 2 %>
+
+    <div class="bg-white w-32 border h-fit pointer-events-none">
+      <%= area_chart @dollaz,
+        points: false,
+        legend: false,
+        library: { scales: { x: {display: false }, y: { display: false }}},
+        width: "80px",
+        height: "60px"
+      %>
+      <p><%= st.tickler %></p>
+      <p>$<%= st.project.total_stonks %>
+    </div>
+  <% end %>
+</marquee>
