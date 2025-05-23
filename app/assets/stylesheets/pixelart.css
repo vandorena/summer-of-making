@@ -1,9 +1,9 @@
 .btn-pixel {
     box-shadow: 
-      0px 5px #2e2e1f,
-      0px -5px #2e2e1f,
-      5px 0px #2e2e1f,
-      -5px 0px #2e2e1f;
+      0px 4px #2e2e1f,
+      0px -4px #2e2e1f,
+      4px 0px #2e2e1f,
+      -4px 0px #2e2e1f;
   }
 
   .btn-pixel-sm {
