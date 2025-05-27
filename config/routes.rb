@@ -22,6 +22,7 @@ Rails.application.routes.draw do
   # get "dashboard", to: "dashboard#index"
 
   get "explore", to: "projects#index"
+  get "projects_feed", to: "projects#projects_feed"
   get "activity", to: "projects#activity"
   get "stonks", to: "projects#stonks"
   get "my_projects", to: "projects#my_projects"
