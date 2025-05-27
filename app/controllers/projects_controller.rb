@@ -110,6 +110,18 @@ class ProjectsController < ApplicationController
                               .order(created_at: :desc)
     end
 
+    def projects_feed
+        @projects = Project.includes(:user)
+                          .where(is_deleted: false)
+                          .order(created_at: :desc)
+        
+        @projects = @projects.joins(:updates).distinct
+        
+        @feed_type = "projects"
+        
+        render :index
+    end
+
     # Gotta say I love turbo frames and turbo streams and flashes in general
     def follow
         if current_user == @project.user
