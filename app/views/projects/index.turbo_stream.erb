@@ -33,7 +33,7 @@
         </div>
         <div class="ml-10 sm:ml-13">
           <h3 class="text-lg sm:text-xl 2xl:text-2xl font-steven mb-2"><%= update.project.title %></h3>
-          <div class="prose max-w-none text-gray-600 mb-2 sm:mb-3 text-sm sm:text-base 2xl:text-lg"><%= update.formatted_text %></div>
+          <div class="prose max-w-none text-gray-600 mb-2 sm:mb-3 text-sm sm:text-base 2xl:text-lg break-words overflow-wrap-anywhere"><%= update.formatted_text %></div>
           <% if update.attachment.present? %>
             <div class="mt-2 sm:mt-3 overflow-hidden rounded-lg">
               <% attachment_url = update.attachment %>
@@ -75,14 +75,14 @@
               <div class="space-y-3">
                 <% update.comments.order(created_at: :asc).first(3).each do |comment| %>
                   <div class="bg-soft-bone border border-saddle-taupe border-opacity-30 p-3">
-                    <div class="flex items-center mb-1">
+                    <div class="flex items-center mb-1 flex-wrap">
                       <% if comment.user.avatar.present? %>
-                        <img src="<%= comment.user.avatar %>" alt="<%= comment.user.display_name %>" class="w-6 h-6 sm:w-7 sm:h-7 rounded-full mr-2">
+                        <img src="<%= comment.user.avatar %>" alt="<%= comment.user.display_name %>" class="w-6 h-6 sm:w-7 sm:h-7 rounded-full mr-2 flex-shrink-0">
                       <% end %>
-                      <span class="font-medium text-sm sm:text-base"><%= comment.user.display_name %></span>
-                      <span class="text-gray-600 text-xs sm:text-sm ml-2"><%= time_ago_in_words(comment.created_at) %> ago</span>
+                      <span class="font-medium text-sm sm:text-base mr-2"><%= comment.user.display_name %></span>
+                      <span class="text-gray-600 text-xs sm:text-sm"><%= time_ago_in_words(comment.created_at) %> ago</span>
                     </div>
-                    <div class="text-gray-700 text-sm sm:text-base">
+                    <div class="text-gray-700 text-sm sm:text-base break-words overflow-wrap-anywhere">
                       <% if comment.rich_content? %>
                         <%= raw comment.display_content %>
                       <% else %>
