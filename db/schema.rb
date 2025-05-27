@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_27_030348) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_27_184711) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -40,6 +40,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_27_030348) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_hackatime_stats_on_user_id"
+  end
+
+  create_table "likes", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "likeable_type", null: false
+    t.bigint "likeable_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["likeable_type", "likeable_id"], name: "index_likes_on_likeable"
+    t.index ["user_id", "likeable_type", "likeable_id"], name: "index_likes_on_user_id_and_likeable_type_and_likeable_id", unique: true
+    t.index ["user_id"], name: "index_likes_on_user_id"
   end
 
   create_table "project_follows", force: :cascade do |t|
@@ -303,6 +314,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_27_030348) do
   add_foreign_key "comments", "updates"
   add_foreign_key "comments", "users"
   add_foreign_key "hackatime_stats", "users"
+  add_foreign_key "likes", "users"
   add_foreign_key "project_follows", "projects"
   add_foreign_key "project_follows", "users"
   add_foreign_key "projects", "users"

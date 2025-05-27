@@ -32,7 +32,11 @@ Rails.application.routes.draw do
   get "timer_sessions/active", to: "timer_sessions#global_active"
 
   resources :projects do
-    resources :updates, only: [ :create, :destroy, :update ]
+    resources :updates, only: [ :create, :destroy, :update ] do
+      member do
+        post :toggle_like, to: "likes#toggle"
+      end
+    end
     resources :timer_sessions, only: [ :create, :update, :show, :destroy ] do
       collection do
         get :active
@@ -66,6 +70,9 @@ Rails.application.routes.draw do
 
   resources :updates do
     resources :comments, only: [ :create, :destroy ]
+    member do
+      post :toggle_like, to: "likes#toggle"
+    end
   end
 
   # API routes

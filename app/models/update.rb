@@ -3,6 +3,7 @@ class Update < ApplicationRecord
   belongs_to :project
   has_many :comments, -> { order(created_at: :desc) }, dependent: :destroy
   has_many :timer_sessions, foreign_key: "update_id", dependent: :nullify
+  has_many :likes, as: :likeable, dependent: :destroy
 
   attr_accessor :timer_session_id
 
@@ -26,6 +27,15 @@ class Update < ApplicationRecord
 
   def formatted_text
     ApplicationController.helpers.markdown(text)
+  end
+
+  def liked_by?(user)
+    return false unless user
+    likes.exists?(user: user)
+  end
+
+  def likes_count
+    likes.count
   end
 
   private
