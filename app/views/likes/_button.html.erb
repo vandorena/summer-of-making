@@ -6,7 +6,7 @@
           onclick: "event.stopPropagation()",
           data: { turbo_method: :post } do %>
       <% is_liked = defined?(liked) ? liked : likeable.liked_by?(current_user) %>
-      <%= inline_svg_tag "heart.svg", class: "w-4 h-4 sm:w-10 sm:h-10 mr-2 #{is_liked ? 'text-vintage-red' : ''}" %>
+      <%= inline_svg_tag "heart.svg", class: "w-6 h-6 sm:w-10 sm:h-10 mr-2 #{is_liked ? 'text-vintage-red' : ''}" %>
       <%= likeable.likes_count %>
     <% end %>
   <% end %>
