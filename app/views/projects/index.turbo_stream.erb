@@ -60,9 +60,9 @@
             <div class="flex items-center space-x-4">
               <% if user_signed_in? %>
                 <%= render "likes/button", likeable: update %>
-                
+
                 <button data-action="click->modal#open" data-modal-id="<%= update.id %>" data-modal-type="comment" class="inline-flex items-center py-1 sm:py-1.5 text-gray-600 hover:text-forest transition-colors duration-300 text-sm sm:text-base" onclick="event.stopPropagation()">
-                  <%= inline_svg_tag "comment.svg", class: "w-4 h-4 sm:w-8 sm:h-8 mr-2" %>
+                  <%= inline_svg_tag "comment.svg", class: "w-6 h-6 sm:w-10 sm:h-10 mr-2" %>
                   <%= update.comments.count %>
                 </button>
               <% end %>
