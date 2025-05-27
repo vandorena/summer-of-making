@@ -1,4 +1,6 @@
 class Comment < ApplicationRecord
+  include EmotesHelper
+
   belongs_to :user
   belongs_to :update_record, class_name: "Update", foreign_key: "update_id"
 
@@ -12,11 +14,13 @@ class Comment < ApplicationRecord
 
   # I'm not in the mood to migrate everything to rich content, so we'll just use this for now, but eventually we'll migrate everything to rich content, or just drop the text column when we for flagship
   def display_content
-    if rich_content.present?
+    content = if rich_content.present?
       render_rich_content
     else
       text
     end
+
+    parse_emotes(content)
   end
 
   def rich_content?

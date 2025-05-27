@@ -73,6 +73,7 @@ Rails.application.routes.draw do
       resources :projects, only: [ :index, :show ]
       resources :updates, only: [ :index, :show ]
       resources :comments, only: [ :index, :show ]
+      resources :emotes, only: [ :show ]
     end
   end
   get "api/check_user", to: "users#check_user"

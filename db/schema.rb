@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema[8.0].define(version: 2025_05_23_155314) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_27_030348) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -69,6 +68,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_23_155314) do
     t.string "hackatime_project_keys", default: [], array: true
     t.boolean "is_deleted", default: false
     t.index ["user_id"], name: "index_projects_on_user_id"
+  end
+
+  create_table "slack_emotes", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "url", null: false
+    t.string "slack_id", null: false
+    t.boolean "is_active", default: true, null: false
+    t.string "created_by"
+    t.datetime "last_synced_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_slack_emotes_on_name", unique: true
+    t.index ["slack_id"], name: "index_slack_emotes_on_slack_id", unique: true
   end
 
   create_table "solid_cache_entries", force: :cascade do |t|

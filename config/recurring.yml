@@ -19,3 +19,9 @@ production:
   generate_stonk_reports:
     class: GenerateStonkReportJob
     schedule: every day
+
+  sync_slack_emotes:
+    class: SyncSlackEmotesJob
+    queue: default
+    schedule: every day
+    description: "Sync emotes from Slack :yay:"
