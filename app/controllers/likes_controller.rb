@@ -13,17 +13,18 @@ class LikesController < ApplicationController
       @liked = true
     end
 
+    @likeable.reload
+
     respond_to do |format|
       format.turbo_stream
-      format.json { render json: { liked: @liked, likes_count: @likeable.likes_count } }
     end
   end
 
   private
 
   def set_likeable
-    if params[:update_id]
-      @likeable = Update.find(params[:update_id])
+    if params[:id]
+      @likeable = Update.find(params[:id])
     else
       head :not_found
     end
