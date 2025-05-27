@@ -20,7 +20,10 @@ class ProjectsController < ApplicationController
                 @show_create_project = true
             end
         else
-            updates_query = Update.includes(:project, :user, comments: :user).order(created_at: :desc)
+            updates_query = Update.joins(:project)
+                                 .includes(:project, :user, comments: :user)
+                                 .where(projects: { is_deleted: false })
+                                 .order(created_at: :desc)
 
             @pagy, @recent_updates = pagy(updates_query, items: 5)
         end
@@ -91,15 +94,19 @@ class ProjectsController < ApplicationController
 
     def activity
         @followed_projects = current_user.followed_projects.includes(:user)
-        @recent_updates = Update.includes(:project, :user)
+        @recent_updates = Update.joins(:project)
+                              .includes(:project, :user)
                               .where(project_id: @followed_projects.pluck(:id))
+                              .where(projects: { is_deleted: false })
                               .order(created_at: :desc)
     end
 
     def stonks
         @stonked_projects = current_user.staked_projects.includes(:user)
-        @recent_updates = Update.includes(:project, :user)
+        @recent_updates = Update.joins(:project)
+                              .includes(:project, :user)
                               .where(project_id: @stonked_projects.pluck(:id))
+                              .where(projects: { is_deleted: false })
                               .order(created_at: :desc)
     end
 
