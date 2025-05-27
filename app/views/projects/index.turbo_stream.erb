@@ -1,7 +1,7 @@
 <% if @recent_updates.any? %>
   <% @recent_updates.each do |update| %>
     <%= turbo_stream.append "updates-list" do %>
-      <div class="bg-soft-bone card-pixel p-4 sm:p-6 transform hover:scale-[1.01] transition-transform duration-300 cursor-pointer" data-controller="modal" onclick="window.location.href='<%= project_path(update.project) %>'">
+      <div class="bg-soft-bone card-pixel p-4 sm:p-6 transform hover:scale-[1.01] transition-transform duration-300 cursor-pointer max-w-4xl mx-auto" data-controller="modal" onclick="window.location.href='<%= project_path(update.project) %>'">
         <div class="flex items-center mb-2 sm:mb-3">
           <% if update.user.avatar.present? %>
             <img src="<%= update.user.avatar %>" alt="<%= update.user.display_name %>" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3">
@@ -35,14 +35,14 @@
           <h3 class="text-lg sm:text-xl 2xl:text-2xl font-steven mb-2"><%= update.project.title %></h3>
           <div class="prose max-w-none text-gray-600 mb-2 sm:mb-3 text-sm sm:text-base 2xl:text-lg break-words overflow-wrap-anywhere"><%= update.formatted_text %></div>
           <% if update.attachment.present? %>
-            <div class="mt-2 sm:mt-3 overflow-hidden rounded-lg">
+            <div class="mt-2 sm:mt-3 flex justify-center">
               <% attachment_url = update.attachment %>
               <% clean_url = attachment_url.gsub(/\?pub_secret=.*$/, '') %>
               <% if clean_url.match?(/\.(jpg|jpeg|png|gif|heic|heif|webp)$/i) %>
-                <img src="<%= attachment_url %>" alt="Update attachment" class="w-full h-48 sm:h-64 object-contain cursor-pointer hover:opacity-90 transition-opacity" data-action="click->image-viewer#open">
+                <img src="<%= attachment_url %>" alt="Update attachment" class="max-w-full max-h-96 object-contain cursor-pointer hover:opacity-90 transition-opacity rounded-lg" data-action="click->image-viewer#open">
               <% elsif clean_url.match?(/\.(mp4|webm|mov)$/i) %>
-                <div class="h-48 sm:h-64 flex items-center justify-center bg-black">
-                  <video src="<%= attachment_url %>" class="w-full h-full object-contain" playsinline controls>
+                <div class="h-48 sm:h-64 flex items-center justify-center bg-black rounded-lg">
+                  <video src="<%= attachment_url %>" class="w-full h-full object-contain rounded-lg" playsinline controls>
                     Your browser does not support the video tag.
                   </video>
                 </div>
