@@ -1,7 +1,7 @@
 <% if @recent_updates.any? %>
   <% @recent_updates.each do |update| %>
     <%= turbo_stream.append "updates-list" do %>
-      <div class="bg-soft-bone card-pixel p-4 sm:p-6 transform hover:scale-[1.01] transition-transform duration-300 cursor-pointer max-w-4xl mx-auto" data-controller="modal" onclick="window.location.href='<%= project_path(update.project) %>'">
+      <div class="bg-soft-bone card-pixel p-4 sm:p-6 transform hover:scale-[1.01] transition-transform duration-300 cursor-pointer max-w-4xl 2xl:max-w-6xl mx-auto" data-controller="modal" onclick="window.location.href='<%= project_path(update.project) %>'">
         <div class="flex items-center mb-2 sm:mb-3">
           <% if update.user.avatar.present? %>
             <img src="<%= update.user.avatar %>" alt="<%= update.user.display_name %>" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3">
