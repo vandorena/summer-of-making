@@ -92,3 +92,7 @@ gem "ruby-openai", "~> 8.1"
 gem "ferrum_pdf", "~> 0.3.0"
 
 gem "streamio-ffmpeg", "~> 3.0"
+
+gem "image_processing", "~> 1.14"
+
+gem "aws-sdk-s3", require: false
