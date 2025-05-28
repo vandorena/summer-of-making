@@ -27,7 +27,7 @@ export default class extends Controller {
     
     const editorController = this.application.getControllerForElementAndIdentifier(
       this.editorTarget, 
-      "editor"
+      "tiptap-comment"
     )
     
     const hasContent = await editorController.validateContent()
