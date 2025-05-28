@@ -4,7 +4,7 @@ class LikesController < ApplicationController
 
   def toggle
     @like = @likeable.likes.find_by(user: current_user)
-    
+
     if @like
       @like.destroy
       @liked = false
@@ -29,4 +29,4 @@ class LikesController < ApplicationController
       head :not_found
     end
   end
-end 
+end

@@ -16,12 +16,12 @@ class Stonk < ApplicationRecord
     per_bucket = Stonk
       .joins(:project)
       .group(
-        'projects.title',
-        'projects.description',
-        'projects.category',
-        'projects.is_shipped',
-        'projects.rating',
-        'projects.created_at'
+        "projects.title",
+        "projects.description",
+        "projects.category",
+        "projects.is_shipped",
+        "projects.rating",
+        "projects.created_at"
       )
       .group("FLOOR(EXTRACT(EPOCH FROM (NOW() AT TIME ZONE 'UTC') - stonks.created_at) / 86400)::int")
       .sum(:amount)                               # {[title, desc, …, bucket] => sum}
@@ -29,7 +29,7 @@ class Stonk < ApplicationRecord
     # 1. reshape so outer key = the six project attrs
     nested = per_bucket.each_with_object(Hash.new { |h, k| h[k] = {} }) do
       |((title, desc, cat, shipped, rating, proj_created, bucket), amt), h|
-      key = [title, desc, cat, shipped, rating, proj_created]
+      key = [ title, desc, cat, shipped, rating, proj_created ]
       h[key][bucket] = amt
     end
 

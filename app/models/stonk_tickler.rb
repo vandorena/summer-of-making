@@ -44,5 +44,4 @@ class StonkTickler < ApplicationRecord
 
     self.tickler = response.dig("output", 0, "content", 0, "text").strip
   end
-
 end

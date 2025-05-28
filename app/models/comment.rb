@@ -39,11 +39,11 @@ class Comment < ApplicationRecord
 
   def render_rich_content
     parsed_rich_content = JSON.parse(rich_content)
-    
+
     if parsed_rich_content["type"] == "tiptap"
       return parsed_rich_content["content"] || ""
     end
-    
+
     # Handling legacy format, but can't wait to ditch it!
     if parsed_rich_content["blocks"]
       return parsed_rich_content["blocks"].map do |block|
@@ -57,7 +57,7 @@ class Comment < ApplicationRecord
         end
       end.join("")
     end
-    
+
     # Fallback for unknown formats
     parsed_rich_content.to_s
   end

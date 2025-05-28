@@ -3,7 +3,7 @@ class AttachmentsController < ApplicationController
     file = params[:file]
 
     ext = File.extname(file.original_filename).downcase
-    filename = "#{SecureRandom.hex(32).to_s}#{ext}"
+    filename = "#{SecureRandom.hex(32)}#{ext}"
     temp_path = Rails.root.join("tmp", "uploads", filename)
 
     FileUtils.mkdir_p(File.dirname(temp_path))

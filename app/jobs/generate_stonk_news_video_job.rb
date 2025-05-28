@@ -1,7 +1,7 @@
 require "streamio-ffmpeg"
 require "open3"
-require 'uri'
-require 'net/http'
+require "uri"
+require "net/http"
 
 ASSETS_DIR = Rails.root.join("app", "assets", "images", "stonk_news")
 IMG_SOUND  = ASSETS_DIR.join("talking.png").to_s
@@ -60,7 +60,7 @@ class GenerateStonkNewsVideoJob < ApplicationJob
     http.use_ssl = true
 
     request = Net::HTTP::Post.new(url)
-    request["Content-Type"] = 'application/json'
+    request["Content-Type"] = "application/json"
     request["xi-api-key"] = "#{ENV["E11_KEY"]}"
     request.body = "{\n  \"text\": \"#{report}\",\n  \"model_id\": \"eleven_multilingual_v2\"\n}"
 

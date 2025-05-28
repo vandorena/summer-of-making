@@ -28,9 +28,9 @@ class HackatimeStat < ApplicationRecord
 
   def time_since_last_update_for_project(project)
     current_total = total_seconds_for_project(project)
-    
+
     previous_hackatime_total = project.updates.where.not(last_hackatime_time: nil).sum(:last_hackatime_time)
-    
+
     current_total - previous_hackatime_total
   end
 
