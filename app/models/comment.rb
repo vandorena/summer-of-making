@@ -39,16 +39,27 @@ class Comment < ApplicationRecord
 
   def render_rich_content
     parsed_rich_content = JSON.parse(rich_content)
-    parsed_rich_content["blocks"].map do |block|
-      case block["type"]
-      when "paragraph"
-        block.dig("data", "text")
-      when "code"
-        "<pre><code>#{block.dig('data', 'code')}</code></pre>"
-      else
-        block.dig("data", "text")
-      end
-    end.join("")
+    
+    if parsed_rich_content["type"] == "tiptap"
+      return parsed_rich_content["content"] || ""
+    end
+    
+    # Handling legacy format, but can't wait to ditch it!
+    if parsed_rich_content["blocks"]
+      return parsed_rich_content["blocks"].map do |block|
+        case block["type"]
+        when "paragraph"
+          block.dig("data", "text")
+        when "code"
+          "<pre><code>#{block.dig('data', 'code')}</code></pre>"
+        else
+          block.dig("data", "text")
+        end
+      end.join("")
+    end
+    
+    # Fallback for unknown formats
+    parsed_rich_content.to_s
   end
 
   def notify_update_author

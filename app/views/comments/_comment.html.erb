@@ -12,7 +12,7 @@
           </div>
         </div>
         <div class="space-y-2">
-          <div class="text-xs sm:text-sm md:text-base text-gray-600 break-words overflow-wrap-anywhere pr-2">
+          <div class="text-xs sm:text-sm md:text-base text-gray-600 break-words overflow-wrap-anywhere pr-2 <%= 'tiptap-content' if comment.rich_content? %>">
             <% if comment.rich_content? %>
               <%= raw comment.display_content %>
             <% else %>
