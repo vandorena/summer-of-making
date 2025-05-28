@@ -1,5 +1,6 @@
 class Comment < ApplicationRecord
   include EmotesHelper
+  include ActionView::Helpers::SanitizeHelper
 
   belongs_to :user
   belongs_to :update_record, class_name: "Update", foreign_key: "update_id"
@@ -20,7 +21,10 @@ class Comment < ApplicationRecord
       text
     end
 
-    parse_emotes(content)
+    sanitized_content = sanitize(content, tags: %w[a br code pre p em strong h1 h2 h3 h4 h5 h6 ul ol li blockquote span],
+                                         attributes: %w[href title class target])
+
+    parse_emotes(sanitized_content)
   end
 
   def rich_content?
