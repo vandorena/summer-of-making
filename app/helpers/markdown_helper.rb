@@ -41,6 +41,9 @@ module MarkdownHelper
       footnotes: true
     )
 
-    markdown.render(text).html_safe
+    rendered = markdown.render(text)
+
+    sanitize(rendered, tags: %w[a br code pre p em strong h1 h2 h3 h4 h5 h6 ul ol li blockquote span],
+                            attributes: %w[href title class target])
   end
 end
