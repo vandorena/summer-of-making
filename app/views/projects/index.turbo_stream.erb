@@ -1,79 +1,14 @@
 <% if @recent_updates.any? %>
   <% @recent_updates.each do |update| %>
     <%= turbo_stream.append "updates-list" do %>
-      <div class="bg-soft-bone card-pixel p-4 sm:p-6 transform hover:scale-[1.01] transition-transform duration-300 cursor-pointer max-w-4xl 2xl:max-w-6xl mx-auto" data-controller="modal" onclick="window.location.href='<%= project_path(update.project) %>'">
-        <div class="flex items-center mb-2 sm:mb-3">
-          <% if update.user.avatar.present? %>
-            <img src="<%= update.user.avatar %>" alt="<%= update.user.display_name %>" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3">
-          <% end %>
-          <div>
-            <span class="font-medium text-base sm:text-lg 2xl:text-xl"><%= update.user.display_name %></span>
-            <span class="text-gray-600 text-xs sm:text-sm 2xl:text-base ml-2"><%= time_ago_in_words(update.created_at) %> ago</span>
-            <% if update.timer_sessions.any? %>
-              <% timer_session = update.timer_sessions.first %>
-              <span class="text-forest text-xs sm:text-sm 2xl:text-base ml-2 block sm:inline">
-                <% hours = timer_session.net_time / 3600 %>
-                <% minutes = (timer_session.net_time % 3600) / 60 %>
-                <% seconds = timer_session.net_time % 60 %>
-                <%= image_tag "hourglass.png", class: "w-4 h-4 inline-block" %> Time spent: <%= hours > 0 ? "#{hours}h " : "" %><%= minutes > 0 ? "#{minutes}m " : "" %><%= seconds > 0 ? "#{seconds}s" : "" %>
-              </span>
-            <% elsif update.last_hackatime_time.present? && update.last_hackatime_time > 0 %>
-              <span class="text-forest text-xs sm:text-sm 2xl:text-base ml-2 block sm:inline">
-                <% hours = update.last_hackatime_time / 3600 %>
-                <% minutes = (update.last_hackatime_time % 3600) / 60 %>
-                <% seconds = update.last_hackatime_time % 60 %>
-                <%= image_tag "hourglass.png", class: "w-4 h-4 inline-block" %> Time spent: <%= hours > 0 ? "#{hours}h " : "" %><%= minutes > 0 ? "#{minutes}m " : "" %><%= seconds > 0 ? "#{seconds}s" : "" %>
-              </span>
-            <% end %>
-            <span class="text-saddle-taupe text-xs sm:text-sm 2xl:text-base ml-2 block sm:inline">
-              <%= image_tag "stonkcoin.png", class: "w-4 h-4 inline-block mr-1", alt: "Stonks" %>
-              <%= update.project.stonks.count %> stonkers
-            </span>
-          </div>
-        </div>
-        <div class="ml-10 sm:ml-13">
-          <h3 class="text-lg sm:text-xl 2xl:text-2xl font-steven mb-2"><%= update.project.title %></h3>
-          <div class="prose max-w-none text-gray-600 mb-2 sm:mb-3 text-sm sm:text-base 2xl:text-lg break-words overflow-wrap-anywhere"><%= update.formatted_text %></div>
-          <% if update.attachment.present? %>
-            <div class="mt-2 sm:mt-3 flex justify-center">
-              <% attachment_url = update.attachment %>
-              <% clean_url = attachment_url.gsub(/\?pub_secret=.*$/, '') %>
-              <% if clean_url.match?(/\.(jpg|jpeg|png|gif|heic|heif|webp)$/i) %>
-                <img src="<%= attachment_url %>" alt="Update attachment" class="max-w-full max-h-96 object-contain cursor-pointer hover:opacity-90 transition-opacity rounded-lg" data-action="click->image-viewer#open">
-              <% elsif clean_url.match?(/\.(mp4|webm|mov)$/i) %>
-                <div class="h-48 sm:h-64 flex items-center justify-center bg-black rounded-lg">
-                  <video src="<%= attachment_url %>" class="w-full h-full object-contain rounded-lg" playsinline controls>
-                    Your browser does not support the video tag.
-                  </video>
-                </div>
-              <% elsif update.attachment.match?(/\.(mp3|wav|m4a|ogg|flac)$/i) %>
-                <div class="w-full h-48 sm:h-64 flex items-center justify-center">
-                  <audio src="<%= update.attachment %>" class="w-[50%]" controls controlsList="nodownload">
-                    Your browser does not support the audio tag.
-                  </audio>
-                </div>
-              <% end %>
-            </div>
-          <% end %>
-
-          <div class="mt-3 sm:mt-4 flex justify-between items-center">
-            <div class="flex items-center space-x-4">
-              <% if user_signed_in? %>
-                <%= render "likes/button", likeable: update %>
-
-                <button data-action="click->modal#open" data-modal-id="<%= update.id %>" data-modal-type="comment" class="inline-flex items-center py-1 sm:py-1.5 text-gray-600 hover:text-forest transition-colors duration-300 text-sm sm:text-base" onclick="event.stopPropagation()">
-                  <%= inline_svg_tag "comment.svg", class: "w-6 h-6 sm:w-10 sm:h-10 mr-2" %>
-                  <%= update.comments.count %>
-                </button>
-              <% end %>
-            </div>
-          </div>
-
-
-        </div>
-      </div>
-      
-      <%= render "comments/modal", update: update %>
+      <%= render "updates/update_card", 
+          update: update,
+          context: 'explore',
+          show_project_title: true,
+          show_project_navigation: true,
+          show_likes: true,
+          show_comment_modal: true,
+          show_stonks: true %>
     <% end %>
   <% end %>
 <% end %>
