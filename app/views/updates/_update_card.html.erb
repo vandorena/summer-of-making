@@ -11,7 +11,7 @@
   content_margin ||= ''                    # Content margin/padding classes
 %>
 
-<div class="bg-soft-bone <%= context == 'explore' || context == 'project' ? 'card-pixel' : '' %> <%= context == 'project' ? 'p-3 sm:p-4' : 'p-4 sm:p-6' %> <%= container_classes %> transform <%= 'hover:scale-[1.01]' if context != 'project' %> transition-transform duration-300 <%= 'cursor-pointer' if show_project_navigation %> <%= 'max-w-4xl 2xl:max-w-6xl mx-auto' if context == 'explore' %>"
+<div class="bg-soft-bone <%= context == 'explore' || context == 'project' ? 'card-pixel' : '' %> <%= context == 'project' ? 'p-2 sm:p-3' : 'p-3 sm:p-4' %> <%= container_classes %> transform <%= 'hover:scale-[1.01]' if context != 'project' %> transition-transform duration-300 <%= 'cursor-pointer' if show_project_navigation %> <%= 'max-w-4xl 2xl:max-w-6xl mx-auto' if context == 'explore' %>"
      id="<%= dom_id(update) %>"
      data-controller="modal dropdown"
      <% if show_project_navigation %> onclick="window.location.href='<%= project_path(update.project) %>'"<% end %>>
@@ -75,14 +75,14 @@
     <% end %>
   </div>
 
-  <div class="<%= content_margin.present? ? content_margin : 'ml-10 sm:ml-13' %>">
+  <div class="<%= content_margin.present? ? content_margin : 'ml-8 sm:ml-10' %>">
     <!-- Project title-->
     <% if show_project_title %>
       <h3 class="text-lg sm:text-xl 2xl:text-2xl font-steven mb-2"><%= update.project.title %></h3>
     <% end %>
 
     <!-- Update content -->
-    <div class="prose max-w-none text-gray-600 mb-2 sm:mb-3 text-sm sm:text-base 2xl:text-lg break-words overflow-wrap-anywhere">
+    <div class="prose max-w-none text-gray-600 mb-2 sm:mb-3 text-base sm:text-lg 2xl:text-xl break-words overflow-wrap-anywhere">
       <%= update.formatted_text %>
     </div>
 
