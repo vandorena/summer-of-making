@@ -40,45 +40,14 @@
           <h2 class="text-2xl sm:text-3xl 2xl:text-4xl font-steven mb-4 sm:mb-6">Recent Updates</h2>
           <div class="space-y-4 sm:space-y-6">
             <% @recent_updates.each do |update| %>
-              <div class="transform transition-transform duration-300 mb-4 sm:mb-6">
-                <div class="flex items-center mb-2 sm:mb-3">
-                  <% if update.user.avatar.present? %>
-                    <img src="<%= update.user.avatar %>" alt="<%= update.user.display_name %>" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3">
-                  <% end %>
-                  <div>
-                    <span class="font-medium text-base sm:text-lg 2xl:text-xl"><%= update.user.display_name %></span>
-                    <span class="text-gray-600 text-xs sm:text-sm 2xl:text-base ml-2"><%= time_ago_in_words(update.created_at) %> ago</span>
-                  </div>
-                </div>
-                <div class="ml-10 sm:ml-13">
-                  <h3 class="text-lg sm:text-xl 2xl:text-2xl font-steven mb-2"><%= update.project.title %></h3>
-                  <div class="prose max-w-none text-gray-600 mb-2 sm:mb-3 text-sm sm:text-base 2xl:text-lg"><%= update.formatted_text %></div>
-                  <% if update.attachment.present? %>
-                    <div class="mt-2 sm:mt-3 overflow-hidden rounded-lg">
-                      <% attachment_url = update.attachment %>
-                      <% clean_url = attachment_url.gsub(/\?pub_secret=.*$/, '') %>
-                      <% if clean_url.match?(/\.(jpg|jpeg|png|gif)$/i) %>
-                        <img src="<%= attachment_url %>" alt="Update attachment" class="w-full h-48 sm:h-64 object-contain cursor-pointer hover:opacity-90 transition-opacity" data-action="click->image-viewer#open">
-                      <% elsif clean_url.match?(/\.(mp4|webm)$/i) %>
-                        <div class="h-48 sm:h-64 flex items-center justify-center bg-black">
-                          <video src="<%= attachment_url %>" class="w-full h-full object-contain" playsinline controls>
-                            Your browser does not support the video tag.
-                          </video>
-                        </div>
-                      <% elsif update.attachment.match?(/\.(mp3|wavmak)$/i) %>
-                        <div class="w-full h-48 sm:h-64 flex items-center justify-center">
-                          <audio src="<%= update.attachment %>" class="w-[50%]" controls controlsList="nodownload">
-                            Your browser does not support the audio tag.
-                          </audio>
-                        </div>
-                      <% end %>
-                    </div>
-                  <% end %>
-                  <%= link_to project_path(update.project), class: "mt-2 sm:mt-3 inline-block px-3 sm:px-4 py-1.5 sm:py-2 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 text-base sm:text-lg 2xl:text-xl btn-pixel" do %>
-                    View Project
-                  <% end %>
-                </div>
-              </div>
+              <%= render "updates/update_card",
+                  update: update,
+                  context: 'activity',
+                  show_project_title: true,
+                  show_project_navigation: true,
+                  show_likes: true,
+                  show_comment_modal: true,
+                  content_margin: 'ml-10 sm:ml-13' %>
             <% end %>
           </div>
         </div>

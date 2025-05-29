@@ -115,8 +115,6 @@ class ProjectsController < ApplicationController
                           .where(is_deleted: false)
                           .order(created_at: :desc)
 
-        @projects = @projects.joins(:updates).distinct
-
         @feed_type = "projects"
 
         render :index
