@@ -112,8 +112,13 @@ class ProjectsController < ApplicationController
 
     def projects_feed
         @projects = Project.includes(:user)
-                          .where(is_deleted: false)
-                          .order(created_at: :desc)
+        .where.not(user_id: current_user.id)
+        .order(rating: :asc)
+
+        @projects = @projects.sort_by do |project|
+        weight = rand + (project.updates.count > 0 ? 1.5 : 0)
+        -weight
+        end
 
         @feed_type = "projects"
 
