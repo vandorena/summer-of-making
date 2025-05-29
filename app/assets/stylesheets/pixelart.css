@@ -30,9 +30,9 @@
       -4px 0px #583c28,
       
       /* Internal shadows */
-      inset 5px 5px #d49d50,
-      inset -5px -5px #d49d50,
-      inset 9px 9px #f5d9a5,
-      inset -9px -9px #f5d9a5;
+      inset 4px 4px #d49d50,
+      inset -4px -4px #d49d50,
+      inset 8px 8px #f5d9a5,
+      inset -8px -8px #f5d9a5;
   }
   
