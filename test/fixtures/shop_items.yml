@@ -1,0 +1,29 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  type: 
+  name: MyString
+  description: MyString
+  internal_description: MyString
+  actual_irl_fr_cost: 9.99
+  cost: 9.99
+  hacker_score{1.2}: MyString
+  requires_black_market: false
+  hcb_merchant_lock: MyString
+  hcb_category_lock: MyString
+  hcb_keyword_lock: MyString
+  agh_contents: 
+
+two:
+  type: 
+  name: MyString
+  description: MyString
+  internal_description: MyString
+  actual_irl_fr_cost: 9.99
+  cost: 9.99
+  hacker_score{1.2}: MyString
+  requires_black_market: false
+  hcb_merchant_lock: MyString
+  hcb_category_lock: MyString
+  hcb_keyword_lock: MyString
+  agh_contents: 
