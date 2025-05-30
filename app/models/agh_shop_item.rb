@@ -1,2 +1,0 @@
-class AghShopItem < ShopItem
-end

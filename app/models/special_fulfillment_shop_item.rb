@@ -1,2 +1,0 @@
-class SpecialFulfillmentShopItem < ShopItem
-end

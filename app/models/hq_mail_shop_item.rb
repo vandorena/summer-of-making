@@ -1,2 +1,0 @@
-class HqMailShopItem < ShopItem
-end
