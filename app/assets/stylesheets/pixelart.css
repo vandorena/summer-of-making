@@ -21,18 +21,18 @@
       5px 0px #2e2e1f,
       -5px 0px #2e2e1f;
 }
-  
+
 .card-pixel {
     box-shadow: 
-      0px 4px #583c28,
-      0px -4px #583c28,
-      4px 0px #583c28,
-      -4px 0px #583c28,
+      0px 3px #583c28,
+      0px -3px #583c28,
+      3px 0px #583c28,
+      -3px 0px #583c28,
       
       /* Internal shadows */
-      inset 4px 4px #d49d50,
-      inset -4px -4px #d49d50,
-      inset 8px 8px #f5d9a5,
-      inset -8px -8px #f5d9a5;
+      inset 3px 3px #d49d50,
+      inset -3px -3px #d49d50,
+      inset 6px 6px #f5d9a5,
+      inset -6px -6px #f5d9a5;
   }
   
