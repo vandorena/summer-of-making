@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_28_180051) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_29_165219) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -107,6 +107,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_28_180051) do
     t.string "hackatime_project_keys", default: [], array: true
     t.boolean "is_deleted", default: false
     t.index ["user_id"], name: "index_projects_on_user_id"
+  end
+
+  create_table "shop_items", force: :cascade do |t|
+    t.string "type"
+    t.string "name"
+    t.string "description"
+    t.string "internal_description"
+    t.decimal "actual_irl_fr_cost", precision: 6, scale: 2
+    t.decimal "cost", precision: 6, scale: 2
+    t.string "hacker_score"
+    t.boolean "requires_black_market"
+    t.string "hcb_merchant_lock"
+    t.string "hcb_category_lock"
+    t.string "hcb_keyword_lock"
+    t.jsonb "agh_contents"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "slack_emotes", force: :cascade do |t|
