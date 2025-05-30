@@ -1,0 +1,2 @@
+class HqMailShopItem < ShopItem
+end

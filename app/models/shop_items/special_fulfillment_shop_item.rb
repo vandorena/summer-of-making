@@ -1,0 +1,2 @@
+class SpecialFulfillmentShopItem < ShopItem
+end

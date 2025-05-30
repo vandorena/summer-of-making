@@ -1,0 +1,2 @@
+class HcbGrantShopItem < ShopItem
+end

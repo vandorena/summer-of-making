@@ -1,0 +1,2 @@
+class AghShopItem < ShopItem
+end
