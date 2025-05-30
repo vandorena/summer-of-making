@@ -31,13 +31,13 @@
           <span class="text-gray-600 text-xs sm:text-sm 2xl:text-base">
             <% hours = timer_session.net_time / 3600 %>
             <% minutes = (timer_session.net_time % 3600) / 60 %>
-            <%= hours > 0 ? "#{hours}h spent" : "#{minutes}m spent" %>
+            <%= hours > 0 ? "#{hours}h spent working" : "#{minutes}m spent working" %>
           </span>
         <% elsif update.last_hackatime_time.present? && update.last_hackatime_time > 0 %>
           <span class="text-gray-600 text-xs sm:text-sm 2xl:text-base">
             <% hours = update.last_hackatime_time / 3600 %>
             <% minutes = (update.last_hackatime_time % 3600) / 60 %>
-            <%= hours > 0 ? "#{hours}h spent" : "#{minutes}m spent" %>
+            <%= hours > 0 ? "#{hours}h spent working" : "#{minutes}m spent working" %>
           </span>
         <% end %>
 
