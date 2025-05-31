@@ -4,7 +4,6 @@ export default class extends Controller {
   static targets = ["content"]
   static values = { 
     maxLength: { type: Number, default: 200 },
-    truncateAt: { type: String, default: "word" }
   }
 
   connect() {
@@ -13,32 +12,71 @@ export default class extends Controller {
   }
 
   truncateText() {
-    const text = this.contentTarget.textContent || this.contentTarget.innerText
-    
-    if (text.length <= this.maxLengthValue) {
-      return
+    // walk the dom to get specifically the text
+    let text = [];
+
+    let walk = (el) => {
+      for (let child of el.childNodes) {
+        if (child instanceof Text) {
+          let content = child.textContent.trim();
+          if (content.length)
+            text.push({ text: content, node: child });
+        } else if (child instanceof HTMLElement) {
+          walk(child);
+        }
+      }
     }
 
-    let truncatedText
-    if (this.truncateAtValue === "word") {
-      const words = text.split(' ')
-      let currentLength = 0
-      let wordIndex = 0
+    walk(this.contentTarget);
+
+    // split based on aggregated text nodes
+    let length = 0;
+    let splitAt;
+    outer: for (let [nodeIdx, node] of text.map((x, i) => [i, x])) {
+      for (let [idx, word] of node.text.split(" ").map((x, i) => [i, x])) {
+        length += word.length;
+        if (nodeIdx != text.length - 1)
+          length += 1;
+  
+        if (length > this.maxLengthValue) {
+          splitAt = { node: node.node, idx, };
+          break outer;
+        }
+      }
+    }
+
+    // apply split to dom
+    if (splitAt) {
+      splitAt.node.textContent = splitAt.node.textContent.split(" ").filter((_, i) => i < splitAt.idx).join(" ");
       
-      while (wordIndex < words.length && currentLength + words[wordIndex].length <= this.maxLengthValue) {
-        currentLength += words[wordIndex].length + 1
-        wordIndex++
+      let node = splitAt.node.parentNode;
+      let anchor = splitAt.node;
+      while (node != this.contentTarget.parentNode) {
+        let reachedAnchor = false;
+        for (let child of [...node.childNodes]) {
+          if (reachedAnchor) {
+            child.remove();
+          } else {
+            reachedAnchor = child === anchor;
+          }
+        }
+        node = node.parentNode;
+        anchor = anchor.parentNode;
+      }
+
+      // append read more button
+      let splitParent = splitAt.node;
+      while (!(splitParent instanceof HTMLElement && ["DIV", "P"].includes(splitParent.tagName))) {
+        console.log("searching", splitParent, splitParent.tagName);
+        splitParent = splitParent.parentNode;
       }
       
-      truncatedText = words.slice(0, wordIndex).join(' ')
-    } else {
-      truncatedText = text.substring(0, this.maxLengthValue)
+      splitParent.appendChild(new Text("..."));
+      let temp = document.createElement("temp");
+      temp.innerHTML = `<button class="text-nice-blue hover:text-dark-blue font-medium transition-colors duration-200 cursor-pointer hover:underline" data-action="click->read-more#expand">Read more</button>`;
+      splitParent.appendChild(temp.firstChild);
     }
-
-    this.truncatedHTML = this.contentTarget.innerHTML.substring(0, truncatedText.length) + 
-      '... <button class="text-nice-blue hover:text-dark-blue font-medium transition-colors duration-200 cursor-pointer hover:underline" data-action="click->read-more#expand">Read more</button>'
     
-    this.contentTarget.innerHTML = this.truncatedHTML
     this.isExpanded = false
   }
 
