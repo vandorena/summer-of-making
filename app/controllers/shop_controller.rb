@@ -1,2 +1,0 @@
-class ShopController < ApplicationController
-end
