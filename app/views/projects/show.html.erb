@@ -22,67 +22,10 @@
           <div class="flex items-center space-x-3 md:space-x-4">
             <% if user_signed_in? %>
               <div class="ml-4 flex flex-wrap items-center gap-3 md:gap-4">
+
                 <% if current_user != @project.user %>
                   <%= render "projects/follow_button", project: @project %>
-                <% end %>
-                <div data-controller="modal" class="cursor-pointer">
-                  <button data-action="modal#open" data-modal-id="<%= @project.id %>" data-modal-type="follower" class="bg-vintage-red btn-pixel px-4 py-2 flex items-center hover:scale-[1.05] transition-transform">
-                    <%= inline_svg "heart.svg", class: "h-5 w-5 md:h-6 md:w-6 2xl:h-7 2xl:w-7 text-white" %>
-                    <span class="ml-2 text-white font-steven text-sm md:text-base 2xl:text-xl">
-                      <%= @project.followers.count %> <%= 'follower'.pluralize(@project.followers.count) %>
-                    </span>
-                  </button>
-                </div>
-
-                <%= render "projects/stonks_button", project: @project %>
-
-                <% if @project.user == current_user %>
-                <!--
-                  <div>
-                    <div class="bg-nice-blue btn-pixel px-4 py-2 flex items-center">
-                      <span class="text-white font-steven text-sm md:text-base 2xl:text-xl">
-                        <%= @project.total_votes %> votes
-                      </span>
-                    </div>
-                  </div>
-                  -->
-                <% end %>
-                <% if @project.timer_sessions.any? || (@project.hackatime_project_keys.present? && @project.user.has_hackatime) %>
-                  <div>
-                    <div class="bg-forest btn-pixel px-4 py-2 flex items-center cursor-pointer hover:scale-[1.05] transition-transform duration-300">
-                      <span class="text-white font-steven text-sm md:text-base 2xl:text-xl flex items-center">
-                        <%
-                          timer_time = @project.timer_sessions.sum(:net_time)
-                          timer_hours = timer_time / 3600
-                          timer_minutes = (timer_time % 3600) / 60
-
-                          hackatime_time = 0
-                          if @project.hackatime_project_keys.present? && @project.user.has_hackatime
-                            hackatime_time = @project.hackatime_total_time
-                          end
-                          hackatime_hours = hackatime_time / 3600
-                          hackatime_minutes = (hackatime_time % 3600) / 60
-
-                          total_time = timer_time + hackatime_time
-                          total_hours = total_time / 3600
-                          total_minutes = (total_time % 3600) / 60
-                        %>
-
-                        <%= image_tag "hourglass.png", class: "w-5 h-5 2xl:w-7 2xl:h-7 inline-block mr-1" %>
-                        <div class="flex flex-col">
-                          <span class="text-white"><%= total_hours %>h <%= total_minutes %>m</span>
-                        </div>
-                      </span>
-                    </div>
-                  </div>
-                <% else %>
-                  <div>
-                    <div class="bg-forest btn-pixel px-4 py-2 flex items-center cursor-pointer hover:scale-[1.05] transition-transform duration-300">
-                      <span class="text-white font-steven text-sm md:text-base 2xl:text-xl">
-                        <%= image_tag "hourglass.png", class: "w-5 h-5 2xl:w-7 2xl:h-7 inline-block mr-1" %> 0h 0m
-                      </span>
-                    </div>
-                  </div>
+                  <%= render "projects/stonks_button", project: @project %>
                 <% end %>
 
                 <% if user_signed_in? && current_user == @project.user %>
@@ -129,24 +72,29 @@
           </div>
         </div>
 
-        <div class="flex items-center space-x-2 mb-3 md:mb-4">
-          <img src="<%= @project.user.avatar %>" alt="<%= @project.user.display_name %>" class="w-8 h-8 md:w-10 md:h-10 rounded-full flex-shrink-0">
-          <div class="flex-grow min-w-0">
-            <div class="flex flex-wrap items-center gap-2">
-              <span class="text-gray-800 font-steven text-sm md:text-base">by <%= @project.user.display_name %></span>
-              <% if @project.user.slack_id.present? %>
-                <a href="https://hackclub.slack.com/team/<%= @project.user.slack_id %>" target="_blank" class="ml-2 btn-pixel-sm bg-forest text-white px-1.5 md:px-2 py-0.5 md:py-1 inline-flex items-center hover:scale-[1.05] transition-transform whitespace-nowrap">
-                  <%= inline_svg "slack.svg", class: "ml-2 h-3 w-3 md:h-4 md:w-4 mr-0.5 md:mr-1" %>
-                  <span class="ml-2 mr-1 text-xs md:text-sm 2xl:text-base w-fit">Message on Slack</span>
-                </a>
-              <% end %>
-            </div>
-            <p class="text-xs md:text-sm text-gray-600 mt-0.5 md:mt-1">Want to help or have questions? Reach out to them! DFTBA</p>
-          </div>
+        <div class="flex items-center space-x-2 mb-3 md:mb-4 text-sm md:text-base 2xl:text-lg text-gray-600">
+          <span class="text-gray-800"><%= @project.followers.count %> </span> <%= "follower".pluralize(@project.followers.count) %>
+          •&nbsp;
+          <span class="text-gray-800"><%= @project.stonks.count %> </span> <%= "stonk".pluralize(@project.stonks.count) %>
+          •&nbsp;
+          <span class="text-gray-800"><%= @project.updates.count %> </span> <%= "update".pluralize(@project.updates.count) %>
+          •&nbsp;
+          <%
+            timer_total_time = @project.timer_sessions.where(status: :stopped).sum(:net_time)
+
+            hackatime_total_time = @project.hackatime_total_time
+
+            total_time_seconds = timer_total_time + hackatime_total_time
+          %>
+          <span class="text-gray-800"><%= format_seconds(total_time_seconds) %></span>
         </div>
 
-        <div class="text-black mb-4 md:mb-6 text-gray-600 text-base md:text-lg 2xl:text-xl [p]:text-inherit">
+        <div class="text-black mb-3 md:mb-4 text-base md:text-lg 2xl:text-xl [p]:text-inherit">
           <%= simple_format(@project.description) %>
+        </div>
+
+        <div class="flex items-center space-x-2 mb-3 md:mb-4 text-sm md:text-base 2xl:text-lg text-gray-600">
+          By <%= @project.user.display_name %>
         </div>
 
         <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
