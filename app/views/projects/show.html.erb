@@ -36,7 +36,7 @@
                     </button>
 
                     <!-- Dropdown menu -->
-                    <div data-dropdown-target="menu" class="hidden fixed mt-4 ml-2 w-auto bg-soft-bone card-pixel shadow-lg z-50" style="max-height: none; overflow: visible;" data-dropdown-target="menu">
+                    <div data-dropdown-target="menu" class="hidden absolute mt-4 -right-3 w-max bg-soft-bone card-pixel shadow-lg z-100 whitespace-nowrap" style="max-height: none; overflow: visible;" data-dropdown-target="menu">
                       <div class="py-1">
                         <% if !@project.is_shipped %>
                           <div data-controller="modal" class="cursor-pointer">
@@ -72,7 +72,7 @@
           </div>
         </div>
 
-        <div class="flex items-center space-x-2 mb-3 md:mb-4 text-sm md:text-base 2xl:text-lg text-gray-600">
+        <div class="flex flex-wrap items-center space-x-2 mb-3 md:mb-4 text-sm md:text-base 2xl:text-lg text-gray-600">
           <span class="text-gray-800"><%= @project.followers.count %> </span> <%= "follower".pluralize(@project.followers.count) %>
           •&nbsp;
           <span class="text-gray-800"><%= @project.stonks.count %> </span> <%= "stonk".pluralize(@project.stonks.count) %>
