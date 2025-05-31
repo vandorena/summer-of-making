@@ -67,7 +67,6 @@ export default class extends Controller {
       // append read more button
       let splitParent = splitAt.node;
       while (!(splitParent instanceof HTMLElement && ["DIV", "P"].includes(splitParent.tagName))) {
-        console.log("searching", splitParent, splitParent.tagName);
         splitParent = splitParent.parentNode;
       }
       
