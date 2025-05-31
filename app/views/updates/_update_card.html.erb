@@ -2,7 +2,7 @@
   # Default parameter values
   context ||= 'default'                    # 'explore', 'project', 'activity', 'stonk'
   show_project_title ||= false             # Whether to show project title
-  show_project_navigation ||= false        # Whether the card should navigate to project (onClick)
+  show_project_navigation ||= false        # Whether the card should navigate to project
   show_likes ||= false                     # Whether to show like button
   show_comment_modal ||= false             # Whether to show comment button/icon (w/ number of comments)
   show_comments_inline ||= false           # Whether to show comments inline
@@ -13,8 +13,11 @@
 
 <div class="bg-soft-bone <%= context == 'explore' || context == 'project' ? 'card-pixel' : '' %> <%= context == 'project' ? 'p-2 sm:p-3' : 'p-3 sm:p-4' %> <%= container_classes %> transform <%= 'hover:scale-[1.01]' if context != 'project' %> transition-transform duration-300 <%= 'cursor-pointer' if show_project_navigation %> <%= 'max-w-2xl mx-auto' if context == 'explore' %>"
      id="<%= dom_id(update) %>"
-     data-controller="modal dropdown"
-     <% if show_project_navigation %> onclick="window.location.href='<%= project_path(update.project) %>'"<% end %>>
+     data-controller="modal dropdown update-card"
+     data-update-card-project-path-value="<%= project_path(update.project) if show_project_navigation %>"
+     data-update-card-show-project-navigation-value="<%= show_project_navigation %>"
+     data-update-card-max-length-value="200"
+     data-action="<%= 'click->update-card#navigateToProject' if show_project_navigation %>">
 
   <div class="flex items-center justify-between mb-2 sm:mb-3">
     <div class="flex items-center">
@@ -51,7 +54,7 @@
 
   <div class="<%= content_margin.present? ? content_margin : 'ml-10 sm:ml-13' %> max-w-4xl">
     <!-- Update content -->
-    <div data-controller="read-more" data-read-more-max-length-value="200" data-read-more-truncate-at-value="word" data-read-more-target="content" class="prose max-w-[32em] text-black mb-2 sm:mb-3 text-base sm:text-lg 2xl:text-xl break-words overflow-wrap-anywhere" onclick="event.stopPropagation()">
+    <div data-update-card-target="content" class="prose max-w-[32em] text-black mb-2 sm:mb-3 text-base sm:text-lg 2xl:text-xl break-words overflow-wrap-anywhere">
       <%= update.formatted_text %>
     </div>
 
@@ -93,7 +96,7 @@
       <!-- More button -->
       <% if user_signed_in? %>
       <div class="relative" data-controller="dropdown">
-        <button data-action="click->dropdown#toggle" class="text-gray-600 hover:text-nice-blue transition-colors duration-200 p-2" onclick="event.stopPropagation()">
+        <button data-action="click->dropdown#toggle" class="text-gray-600 hover:text-nice-blue transition-colors duration-200 p-2">
           <%= inline_svg_tag "more.svg", class: "w-5 h-5 sm:w-6 sm:h-6" %>
         </button>
         <% if current_user == update.user %>

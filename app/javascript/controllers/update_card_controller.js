@@ -4,11 +4,39 @@ export default class extends Controller {
   static targets = ["content"]
   static values = { 
     maxLength: { type: Number, default: 200 },
+    projectPath: { type: String, default: "" },
+    showProjectNavigation: { type: Boolean, default: false }
   }
 
   connect() {
     this.originalText = this.contentTarget.innerHTML
     this.truncateText()
+    this.isExpanded = false
+  }
+
+  navigateToProject(event) {
+    if (this.showProjectNavigationValue && this.projectPathValue) {
+      // only navigate if we're not clicking on interactive elements (before that we had inline JS with preventPropagation which was kinda jank)
+      if (!this.isInteractiveElement(event.target)) {
+        window.location.href = this.projectPathValue
+      }
+    }
+  }
+
+  isInteractiveElement(element) {
+    const interactiveSelectors = [
+      'button', 'a', 'input', 'textarea', 'select',
+      '[data-action]', '[onclick]', '.cursor-pointer'
+    ]
+    
+    let current = element
+    while (current && current !== this.element) {
+      if (interactiveSelectors.some(selector => current.matches && current.matches(selector))) {
+        return true
+      }
+      current = current.parentElement
+    }
+    return false
   }
 
   truncateText() {
@@ -72,11 +100,9 @@ export default class extends Controller {
       
       splitParent.appendChild(new Text("..."));
       let temp = document.createElement("temp");
-      temp.innerHTML = `<button class="text-nice-blue hover:text-dark-blue font-medium transition-colors duration-200 cursor-pointer hover:underline" data-action="click->read-more#expand">Read more</button>`;
+      temp.innerHTML = `<button class="text-nice-blue hover:text-dark-blue font-medium transition-colors duration-200 cursor-pointer hover:underline" data-action="click->update-card#expand">Read more</button>`;
       splitParent.appendChild(temp.firstChild);
     }
-    
-    this.isExpanded = false
   }
 
   expand() {
