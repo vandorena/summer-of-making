@@ -1,0 +1,27 @@
+<h1>New shop item!</h1>
+
+<%= form_with model: @shop_item do |f| %>
+    <div>
+        <%= f.label :name %>:
+        <%= f.text_field :name %>
+    </div>
+
+    <div>
+        <%= f.label :description %>:
+        <%= f.text_field :description %>
+    </div>
+
+    <div>
+        <%= f.label :internal_description %>:
+        <%= f.text_field :internal_description %>
+    </div>
+
+    <div>
+        <%= f.label :image %>:
+        <%= f.file_field :image %>
+    </div>
+
+    <div>
+        <%= f.submit %>
+    </div>
+<% end %>

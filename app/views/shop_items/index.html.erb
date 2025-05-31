@@ -1,0 +1,15 @@
+<h1>Shop</h1>
+
+<% admin_tool do %>
+    <%= link_to "New shop item", new_shop_item_path %>
+<% end %>
+
+<p><%= @shop_items.count %> items</p>
+
+<% @shop_items.each do |item| %>
+    <div class="border w-fit p-2">
+        <h2><%= item.name %></h2>
+        <p><%= item.description %></p>
+        <%= image_tag item.image.variant(:thumb) %>
+    </div>
+<% end %>
