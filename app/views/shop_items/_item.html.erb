@@ -1,35 +1,23 @@
 <div class="border w-fit p-2">
   <p><%= item.type %></p>
 
-  <div class="item-container">
-    <div class="item" style="display: flex;">
-        <p><%= item.name %></p>
+  <%= text_field_editable(item, :name) %>
+  <%= text_field_editable(item, :description) %>
 
-        <% admin_tool do %>
-            <button class="edit">Edit</button>
-        <% end %>
-    </div>
-
-    <%= form_with model: item do |f| %>
-        <%= f.text_field :name %>
-        <%= f.submit %>
-    <% end %>
-  <div>
-
-  <p><%= item.description %></p>
   <% admin_tool do %>
-    <p><%= item.internal_description %></p>
+      <%= text_field_editable(item, :internal_description) %>
   <% end %>
 
   <%= image_tag item.image.variant(:thumb) %>
 
   <p>$<%= item.cost %></p>
+
   <% admin_tool do %>
       <p>$<%= item.actual_irl_fr_cost %></p>
   <% end %>
 </div>
 
-<script>
+<!-- <script>
 document.addEventListener('DOMContentLoaded', () => {
   for (const itemContainer of document.querySelectorAll(".item-container")) {
     const item = itemContainer.querySelector(".item")
@@ -63,4 +51,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 })
-</script>
+</script> -->
