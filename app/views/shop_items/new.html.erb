@@ -2,6 +2,10 @@
 
 <%= form_with model: @shop_item do |f| %>
     <div>
+        <%= f.label :type %>:
+        <%= f.select :type, @shop_item_types %>
+    </div>
+    <div>
         <%= f.label :name %>:
         <%= f.text_field :name %>
     </div>
