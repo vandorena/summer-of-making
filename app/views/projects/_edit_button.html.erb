@@ -1,0 +1,5 @@
+<% if !project.is_shipped %>
+  <%= link_to edit_project_path(project), class: "px-3 py-2 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-xl btn-pixel", data: { turbo: true } do %>
+    Edit Project
+  <% end %>
+<% end %>
