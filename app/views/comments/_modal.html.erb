@@ -17,7 +17,7 @@
             <%= image_tag "journeypheus.png", class: "w-32 h-32 2xl:w-64 2xl:h-64 mx-auto mb-4", alt: "Journeypheus" %>
             <h4 class="text-xl md:text-2xl 2xl:text-3xl font-steven mb-2">HOLD UP</h4>
             <p class="text-base md:text-lg mb-4 text-gray-600">Be nice in the comments! <a href="https://hackclub.com/conduct/" class="text-nice-blue underline">Hack Club's Code of Conduct</a> still applies here, so don't be naughty, or Journeypheus might just come and kidnap you. <br> (& don't give Kartikey an excuse to ban :P)</p>
-            <button data-action="click->comment-modal#next" class="px-2 md:px-4 py-2 bg-vintage-red hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-large btn-pixel-sm">
+            <button data-action="click->comment-modal#next" class="px-2 md:px-4 py-2 bg-vintage-red hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-large btn-pixel">
               Next
             </button>
           </div>
@@ -97,10 +97,10 @@
             </div>
 
             <div class="flex flex-row justify-end space-x-4">
-              <button type="button" class="px-2 md:px-4 py-2 bg-vintage-red hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-large btn-pixel-sm" data-action="click->modal#close">
+              <button type="button" class="px-2 md:px-4 py-2 bg-vintage-red hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-large btn-pixel" data-action="click->modal#close">
                 Cancel
               </button>
-              <%= f.submit "Post Comment", class: "px-2 md:px-4 py-2 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-large btn-pixel-sm" %>
+              <%= f.submit "Post Comment", class: "px-2 md:px-4 py-2 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-large btn-pixel" %>
             </div>
           <% end %>
         </div>
