@@ -9,127 +9,18 @@
   </div>
 
   <div class="container mx-auto px-4 py-4 md:py-8 max-w-4xl">
-    <div class="bg-soft-bone card-pixel shadow-lg overflow-hidden mb-4 md:mb-8">
-      <div class="h-48 md:h-64 overflow-hidden relative">
-        <% project_image = @project.banner.presence || @project.updates.find { |u| u.attachment.present? }&.attachment || "https://raw.githubusercontent.com/hackclub/dinosaurs/main/confused_dinosaur.png" %>
-        <img src="<%= project_image %>" alt="<%= @project.title %>" class="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity" data-action="click->image-viewer#open">
-        <div class="absolute inset-0 bg-gradient-to-t from-soft-bone/30 to-transparent pointer-events-none"></div>
-      </div>
-
-      <div class="p-4 md:p-6">
-        <div class="flex flex-col md:flex-row md:items-center mb-4 space-y-3 md:space-y-0">
-          <h1 class="text-2xl md:text-3xl 2xl:text-4xl text-black md:flex-grow font-steven"><%= @project.title %></h1>
-          <div class="flex items-center space-x-3 md:space-x-4">
-            <% if user_signed_in? %>
-              <div class="ml-4 flex flex-wrap items-center gap-3 md:gap-4">
-
-                <% if current_user != @project.user %>
-                  <%= render "projects/follow_button", project: @project %>
-                  <%= render "projects/stonks_button", project: @project %>
-                <% end %>
-
-                <% if user_signed_in? && current_user == @project.user %>
-                  <div data-controller="dropdown" class="relative">
-                    <button data-action="dropdown#toggle" class="px-3 md:px-4 py-2 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-xl btn-pixel flex items-center">
-                      Actions
-                      <%= inline_svg "chevron-down.svg", class: "h-4 w-4 ml-2 text-white" %>
-                    </button>
-
-                    <!-- Dropdown menu -->
-                    <div data-dropdown-target="menu" class="hidden absolute mt-4 -right-3 w-max bg-soft-bone card-pixel shadow-lg z-100 whitespace-nowrap" style="max-height: none; overflow: visible;" data-dropdown-target="menu">
-                      <div class="py-1">
-                        <% if !@project.is_shipped %>
-                          <div data-controller="modal" class="cursor-pointer">
-                            <button data-action="modal#open dropdown#close" data-modal-id="<%= @project.id %>" data-modal-type="is_shipped" class="block w-full text-left px-4 py-2 text-base 2xl:text-lg hover:bg-saddle-taupe/10 transition-colors text-forest font-medium">
-                              Ship It!
-                            </button>
-                          </div>
-
-                          <%= link_to edit_project_path(@project), class: "block w-full text-left px-4 py-2 text-base 2xl:text-lg hover:bg-saddle-taupe/10 transition-colors text-nice-blue font-medium", data: { turbo: true } do %>
-                            Edit Project
-                          <% end %>
-                        <% else %>
-                          <div class="block w-full text-left px-4 py-2 text-sm text-forest/70 font-medium cursor-not-allowed">
-                            Shipped!
-                          </div>
-                        <% end %>
-
-                        <div data-controller="modal" class="cursor-pointer">
-                          <button data-action="modal#open dropdown#close" data-modal-id="<%= @project.id %>" data-modal-type="delete" class="block w-full text-left px-4 py-2 text-base 2xl:text-lg hover:bg-saddle-taupe/10 transition-colors text-vintage-red font-medium">
-                            Delete Project
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                <% end %>
-              </div>
-            <% else %>
-              <% if user_signed_in? %>
-                <%= render "projects/follow_button", project: @project %>
-              <% end %>
-            <% end %>
-          </div>
-        </div>
-
-        <div class="flex flex-wrap items-center space-x-2 mb-3 md:mb-4 text-sm md:text-base 2xl:text-lg text-gray-600">
-          <span class="text-gray-800"><%= @project.followers.count %> </span> <%= "follower".pluralize(@project.followers.count) %>
-          •&nbsp;
-          <span class="text-gray-800"><%= @project.stonks.count %> </span> <%= "stonk".pluralize(@project.stonks.count) %>
-          •&nbsp;
-          <span class="text-gray-800"><%= @project.updates.count %> </span> <%= "update".pluralize(@project.updates.count) %>
-          •&nbsp;
-          <%
-            timer_total_time = @project.timer_sessions.where(status: :stopped).sum(:net_time)
-
-            hackatime_total_time = @project.hackatime_total_time
-
-            total_time_seconds = timer_total_time + hackatime_total_time
-          %>
-          <span class="text-gray-800"><%= format_seconds(total_time_seconds) %></span>
-        </div>
-
-        <div class="text-black mb-3 md:mb-4 text-base md:text-lg 2xl:text-xl [p]:text-inherit">
-          <%= simple_format(@project.description) %>
-        </div>
-
-        <div class="flex items-center space-x-2 mb-3 md:mb-4 text-sm md:text-base 2xl:text-lg text-gray-600">
-          By <%= @project.user.display_name %>
-        </div>
-
-        <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
-          <% if @project.demo_link.present? %>
-            <a href="<%= @project.demo_link %>" target="_blank"
-               class="px-3 md:px-4 py-3 md:py-2 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 flex-1 text-center btn-pixel text-base md:text-lg 2xl:text-2xl">
-              Demo
-            </a>
-          <% end %>
-          <% if @project.repo_link.present? %>
-            <a href="<%= @project.repo_link %>" target="_blank"
-               class="px-3 md:px-4 py-3 md:py-2 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 flex-1 text-center btn-pixel text-base md:text-lg 2xl:text-2xl">
-              Repository
-            </a>
-          <% end %>
-          <% if @project.readme_link.present? %>
-            <a href="<%= @project.readme_link %>" target="_blank"
-               class="px-3 md:px-4 py-3 md:py-2 bg-saddle-taupe hover:scale-[1.05] text-white transition-transform duration-300 flex-1 text-center btn-pixel text-base md:text-lg 2xl:text-2xl">
-              Readme
-            </a>
-          <% end %>
-        </div>
-      </div>
-    </div>
-
-    <% if !@updates.empty? && current_user != @project.user %>
-    <div class="flex flex-col justify-between items-start mb-2 md:mb-6">
-      <h2 class="text-3xl md:text-5xl font-steven">Project Timeline</h2>
-    </div>
-    <% end %>
+    <%= render "projects/project_card" %>
 
     <% if user_signed_in? && current_user == @project.user %>
       <div id="update-form" class="mb-4 md:mb-6">
         <%= render "projects/update_form" %>
       </div>
+    <% end %>
+
+    <% if !@updates.empty? %>
+    <div class="flex flex-col justify-between items-start mb-2 md:mb-6">
+      <h2 class="text-3xl md:text-5xl font-steven">Timeline</h2>
+    </div>
     <% end %>
 
     <div class="relative">
@@ -166,6 +57,13 @@
   </div>
 </div>
 
+<div class="hidden">
+  <div id="valid-check-icon" class="inline-block">
+    <%= inline_svg "check.svg", class: "h-4 w-4 text-forest inline" %>
+  </div>
+</div>
+
+<!-- Follower Modal -->
 <div id="follower-modal-<%= @project.id %>" data-controller="modal" class="hidden fixed inset-0 z-50 overflow-auto bg-black/30 flex items-center justify-center p-2 md:p-4">
   <div class="bg-soft-bone w-full max-w-md card-pixel mx-2 md:mx-auto relative max-h-[80vh] flex flex-col" data-modal-target="container">
     <div class="p-3 md:p-4 border-b border-saddle-taupe border-opacity-30 flex-shrink-0">
@@ -208,12 +106,6 @@
         <% end %>
       </div>
     </div>
-  </div>
-</div>
-
-<div class="hidden">
-  <div id="valid-check-icon" class="inline-block">
-    <%= inline_svg "check.svg", class: "h-4 w-4 text-forest inline" %>
   </div>
 </div>
 

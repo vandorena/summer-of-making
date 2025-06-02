@@ -1,0 +1,80 @@
+<div class="bg-soft-bone card-pixel shadow-lg overflow-hidden mb-4 md:mb-8">
+  <div class="h-48 md:h-64 overflow-hidden relative">
+    <% project_image = @project.banner.presence || @project.updates.find { |u| u.attachment.present? }&.attachment || "https://raw.githubusercontent.com/hackclub/dinosaurs/main/confused_dinosaur.png" %>
+    <img src="<%= project_image %>" alt="<%= @project.title %>" class="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity" data-action="click->image-viewer#open">
+    <div class="absolute inset-0 bg-gradient-to-t from-soft-bone/30 to-transparent pointer-events-none"></div>
+  </div>
+
+  <div class="p-4 md:p-6">
+    <div class="flex flex-col md:flex-row md:items-center mb-4 space-y-3 md:space-y-0">
+      <h1 class="text-2xl md:text-3xl 2xl:text-4xl text-black md:flex-grow font-steven"><%= @project.title %></h1>
+      <div class="flex items-center space-x-3 md:space-x-4">
+        <% if user_signed_in? %>
+          <div class="ml-4 flex flex-wrap items-center gap-3 md:gap-4">
+
+            <% if current_user != @project.user %>
+              <%= render "projects/follow_button", project: @project %>
+              <%= render "projects/stonks_button", project: @project %>
+            <% end %>
+
+            <% if current_user == @project.user %>
+              <%= render "projects/ship_button", project: @project %>
+              <%= render "projects/edit_button", project: @project %>
+
+            <% end %>
+          </div>
+        <% else %>
+          <% if user_signed_in? %>
+            <%= render "projects/follow_button", project: @project %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap items-center space-x-2 mb-3 md:mb-4 text-sm md:text-base 2xl:text-lg text-gray-600">
+      <span class="text-gray-800"><%= @project.followers.count %> </span> <%= "follower".pluralize(@project.followers.count) %>
+      •&nbsp;
+      <span class="text-gray-800"><%= @project.stonks.count %> </span> <%= "stonk".pluralize(@project.stonks.count) %>
+      •&nbsp;
+      <span class="text-gray-800"><%= @project.updates.count %> </span> <%= "update".pluralize(@project.updates.count) %>
+      •&nbsp;
+      <%
+        timer_total_time = @project.timer_sessions.where(status: :stopped).sum(:net_time)
+
+        hackatime_total_time = @project.hackatime_total_time
+
+        total_time_seconds = timer_total_time + hackatime_total_time
+      %>
+      <span class="text-gray-800"><%= format_seconds(total_time_seconds) %></span>
+    </div>
+
+    <div class="text-black mb-3 md:mb-4 text-base md:text-lg 2xl:text-xl [p]:text-inherit">
+      <%= simple_format(@project.description) %>
+    </div>
+
+    <div class="flex items-center space-x-2 mb-3 md:mb-4 text-sm md:text-base 2xl:text-lg text-gray-600">
+      By <%= @project.user.display_name %>
+    </div>
+
+    <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
+      <% if @project.demo_link.present? %>
+        <a href="<%= @project.demo_link %>" target="_blank"
+           class="px-3 md:px-4 py-3 md:py-2 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 flex-1 text-center btn-pixel text-base md:text-lg 2xl:text-2xl">
+          Demo
+        </a>
+      <% end %>
+      <% if @project.repo_link.present? %>
+        <a href="<%= @project.repo_link %>" target="_blank"
+           class="px-3 md:px-4 py-3 md:py-2 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 flex-1 text-center btn-pixel text-base md:text-lg 2xl:text-2xl">
+          Repository
+        </a>
+      <% end %>
+      <% if @project.readme_link.present? %>
+        <a href="<%= @project.readme_link %>" target="_blank"
+           class="px-3 md:px-4 py-3 md:py-2 bg-saddle-taupe hover:scale-[1.05] text-white transition-transform duration-300 flex-1 text-center btn-pixel text-base md:text-lg 2xl:text-2xl">
+          Readme
+        </a>
+      <% end %>
+    </div>
+  </div>
+</div>
