@@ -20,7 +20,8 @@
             <% if current_user == @project.user %>
               <%= render "projects/ship_button", project: @project %>
               <%= render "projects/edit_button", project: @project %>
-
+              <!-- TODO: Move delete button to actions dropdown + share button -->
+              <%= render "projects/delete_button", project: @project %>
             <% end %>
           </div>
         <% else %>
@@ -77,4 +78,4 @@
       <% end %>
     </div>
   </div>
-</div>
+</div> 
