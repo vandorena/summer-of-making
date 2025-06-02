@@ -23,6 +23,10 @@ class ShopItemsController < ApplicationController
     end
   end
 
+  def update
+    ShopItem.find(params[:id]).update!(shop_item_params)
+  end
+
   private
 
   def require_admin!
