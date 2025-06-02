@@ -1,0 +1,66 @@
+<div class="border w-fit p-2">
+  <p><%= item.type %></p>
+
+  <div class="item-container">
+    <div class="item" style="display: flex;">
+        <p><%= item.name %></p>
+
+        <% admin_tool do %>
+            <button class="edit">Edit</button>
+        <% end %>
+    </div>
+
+    <%= form_with model: item do |f| %>
+        <%= f.text_field :name %>
+        <%= f.submit %>
+    <% end %>
+  <div>
+
+  <p><%= item.description %></p>
+  <% admin_tool do %>
+    <p><%= item.internal_description %></p>
+  <% end %>
+
+  <%= image_tag item.image.variant(:thumb) %>
+
+  <p>$<%= item.cost %></p>
+  <% admin_tool do %>
+      <p>$<%= item.actual_irl_fr_cost %></p>
+  <% end %>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  for (const itemContainer of document.querySelectorAll(".item-container")) {
+    const item = itemContainer.querySelector(".item")
+    const form = itemContainer.querySelector("form")
+
+    form.style.display = "none";
+
+    item.querySelector("button.edit").onclick = () => {
+      item.style.display = "none";
+      form.style.display = "block"
+    }
+
+    form.onsubmit = (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+
+      fetch("<%= shop_item_path(item.id) %>", {
+        method: 'PATCH',
+        body: formData,
+        headers: {
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
+          'Accept': 'application/json'
+        },
+        credentials: 'same-origin'
+      })
+      .then(res => {
+        // if (res.ok)
+        location.reload()
+      })
+    }
+  }
+})
+</script>
