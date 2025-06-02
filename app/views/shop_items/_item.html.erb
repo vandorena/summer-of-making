@@ -1,4 +1,4 @@
-<div class="border w-fit p-2">
+<div class="bg-soft-bone card-pixel p-2 sm:p-4 w-fit    ">
   <p><%= item.type %></p>
 
   <%= text_field_editable(item, :name) %>
@@ -10,10 +10,11 @@
 
   <%= image_tag item.image.variant(:thumb) %>
 
-  <p>$<%= item.cost %></p>
+  <%= number_field_editable(item, :cost, display_prefix: "$") %>
 
   <% admin_tool do %>
-      <p>$<%= item.actual_irl_fr_cost %></p>
+      <p>Actual IRL FR HC cost</p>
+      <%= number_field_editable(item, :actual_irl_fr_cost, display_prefix: "$") %>
   <% end %>
 </div>
 
