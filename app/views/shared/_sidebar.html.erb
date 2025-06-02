@@ -42,6 +42,14 @@
           <span data-sidebar-target="content" class="ml-2">Vote</span>
         <% end %>
       </li>
+      <% admin_tool do %>
+        <li class="flex justify-start">
+            <%= link_to shop_path, class: "px-4 py-2 block hover:bg-saddle-taupe hover-btn-pixel #{'bg-saddle-taupe btn-pixel' if current_page?(shop_path)}" do %>
+            <%= inline_svg "plus.svg", class: "2xl:h-12 2xl:w-12 inline h-10 w-10", data: { 'sidebar-target': 'icon' } %>
+            <span data-sidebar-target="content" class="ml-2">Shop</span>
+            <% end %>
+        </li>
+      <% end %>
     </ul>
   </nav>
 
