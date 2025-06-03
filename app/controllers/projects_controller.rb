@@ -19,7 +19,26 @@ class ProjectsController < ApplicationController
             if @projects.empty?
                 @show_create_project = true
             end
+        elsif params[:tab] == "following"
+            @followed_projects = current_user.followed_projects.includes(:user)
+            @recent_updates = Update.joins(:project)
+                              .includes(:project, :user)
+                              .where(project_id: @followed_projects.pluck(:id))
+                              .where(projects: { is_deleted: false })
+                              .order(created_at: :desc)
+
+            @pagy, @recent_updates = pagy(@recent_updates, items: 5)
+        elsif params[:tab] == "stonked"
+            @stonked_projects = current_user.staked_projects.includes(:user)
+            @recent_updates = Update.joins(:project)
+                              .includes(:project, :user)
+                              .where(project_id: @stonked_projects.pluck(:id))
+                              .where(projects: { is_deleted: false })
+                              .order(created_at: :desc)
+
+            @pagy, @recent_updates = pagy(@recent_updates, items: 5)
         else
+            # Default explore tab
             updates_query = Update.joins(:project)
                                  .includes(:project, :user, comments: :user)
                                  .where(projects: { is_deleted: false })
@@ -90,24 +109,6 @@ class ProjectsController < ApplicationController
         current_user.refresh_hackatime_data if current_user.has_hackatime?
 
         render :index
-    end
-
-    def activity
-        @followed_projects = current_user.followed_projects.includes(:user)
-        @recent_updates = Update.joins(:project)
-                              .includes(:project, :user)
-                              .where(project_id: @followed_projects.pluck(:id))
-                              .where(projects: { is_deleted: false })
-                              .order(created_at: :desc)
-    end
-
-    def stonks
-        @stonked_projects = current_user.staked_projects.includes(:user)
-        @recent_updates = Update.joins(:project)
-                              .includes(:project, :user)
-                              .where(project_id: @stonked_projects.pluck(:id))
-                              .where(projects: { is_deleted: false })
-                              .order(created_at: :desc)
     end
 
     def projects_feed
@@ -422,8 +423,8 @@ class ProjectsController < ApplicationController
     def destroy
         Project.transaction do
             # delete all active timer sessions for this project (otherwise it bricks and you can't start new timers)
-            @project.timer_sessions.where(status: [:running, :paused]).destroy_all
-            
+            @project.timer_sessions.where(status: [ :running, :paused ]).destroy_all
+
             @project.stonks.destroy_all
             @project.project_follows.destroy_all
 

@@ -23,8 +23,6 @@ Rails.application.routes.draw do
 
   get "explore", to: "projects#index"
   get "projects_feed", to: "projects#projects_feed"
-  get "activity", to: "projects#activity"
-  get "stonks", to: "projects#stonks"
   get "my_projects", to: "projects#my_projects"
   post "check_link", to: "projects#check_link"
 
@@ -52,7 +50,7 @@ Rails.application.routes.draw do
   resources :votes, only: [ :new, :create ]
 
 
-  resources :shop_items, except: [:index]
+  resources :shop_items, except: [ :index ]
   get "/shop", to: "shop_items#index"
 
   match "/404", to: "errors#not_found", via: :all
