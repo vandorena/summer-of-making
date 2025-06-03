@@ -421,6 +421,9 @@ class ProjectsController < ApplicationController
 
     def destroy
         Project.transaction do
+            # delete all active timer sessions for this project (otherwise it bricks and you can't start new timers)
+            @project.timer_sessions.where(status: [:running, :paused]).destroy_all
+            
             @project.stonks.destroy_all
             @project.project_follows.destroy_all
 
