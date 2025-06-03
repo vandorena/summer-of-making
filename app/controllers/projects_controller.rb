@@ -38,7 +38,6 @@ class ProjectsController < ApplicationController
 
             @pagy, @recent_updates = pagy(@recent_updates, items: 5)
         else
-            # Default explore tab
             updates_query = Update.joins(:project)
                                  .includes(:project, :user, comments: :user)
                                  .where(projects: { is_deleted: false })
