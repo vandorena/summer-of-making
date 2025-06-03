@@ -4,6 +4,7 @@ class ShopItemsController < ApplicationController
 
   def index
     @shop_items = ShopItem.all
+    @shop_item_types = available_shop_item_types
   end
 
   def new
