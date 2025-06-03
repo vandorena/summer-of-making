@@ -100,22 +100,7 @@
 
         <!-- Dear Lord Pagy life saver, but it is infitnie scroll trigger -->
         <div id="load-more-updates">
-          <% if @pagy && @pagy.next %>
-            <%= turbo_frame_tag "load-more-updates",
-                  src: explore_path(tab: 'explore', page: @pagy.next, format: :turbo_stream),
-                  loading: "lazy",
-                  class: "block" do %>
-              <div class="flex flex-col items-center justify-center">
-                  <%= image_tag 'lollipop.svg', class: 'w-8 h-8 sm:w-16 sm:h-16 animate-spin' %>
-              </div>
-            <% end %>
-          <% else %>
-            <div class="flex justify-center py-6">
-              <div class="text-gray-500 text-sm sm:text-base">
-                No more updates to load... Phew you're a doomscroller! Drink water!!
-              </div>
-            </div>
-          <% end %>
+          <!-- It'll be replaced, i'm idiot -->
         </div>
       </div>
     <% end %>
