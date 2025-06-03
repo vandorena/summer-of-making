@@ -33,9 +33,13 @@
     </div>
 
     <div class="flex flex-wrap items-center space-x-2 mb-3 md:mb-4 text-sm md:text-base 2xl:text-lg text-gray-600">
-      <span class="text-gray-800"><%= @project.followers.count %> </span> <%= "follower".pluralize(@project.followers.count) %>
+      <button data-controller="modal" data-action="click->modal#open" data-modal-id="<%= @project.id %>" data-modal-type="follower" class="hover:underline cursor-pointer duration-200">
+        <span class="text-gray-800"><%= @project.followers.count %> </span> <%= "follower".pluralize(@project.followers.count) %>
+      </button>
       •&nbsp;
-      <span class="text-gray-800"><%= @project.stonks.count %> </span> <%= "stonk".pluralize(@project.stonks.count) %>
+      <button data-controller="modal" data-action="click->modal#open" data-modal-id="<%= @project.id %>" data-modal-type="stonks" class="hover:underline cursor-pointer duration-200">
+        <span class="text-gray-800"><%= @project.stonks.count %> </span> <%= "stonk".pluralize(@project.stonks.count) %>
+      </button>
       •&nbsp;
       <span class="text-gray-800"><%= @project.updates.count %> </span> <%= "update".pluralize(@project.updates.count) %>
       •&nbsp;
@@ -78,4 +82,4 @@
       <% end %>
     </div>
   </div>
-</div> 
+</div>
