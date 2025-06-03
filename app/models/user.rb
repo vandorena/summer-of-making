@@ -186,6 +186,11 @@ class User < ApplicationRecord
       5 - staked_projects_count
     end
 
+    # Avo backtraces
+    def is_developer?
+      slack_id == "U03DFNYGPCN"
+    end
+
     private
 
     def sync_to_airtable
