@@ -96,3 +96,4 @@ gem "streamio-ffmpeg", "~> 3.0"
 gem "image_processing", "~> 1.14"
 
 gem "aws-sdk-s3", require: false
+gem "avo", ">= 3.2"
