@@ -1,3 +1,4 @@
+require "open-uri"
 # This file should ensure the existence of records required to run the application in every environment (production,
 # development, test). The code here should be idempotent so that it can be executed at any point in every environment.
 # The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
@@ -500,6 +501,210 @@ created_users.each do |user|
   end
 end
 
+
+puts "Creating shop items..."
+shop_item_data = [
+  {
+    "name": "Crucial X6 1TB SSD",
+    "description": "Carry tons of data with you",
+    "internal_description": "Link: https://www.amazon.com/dp/B08FSZT2J7",
+    "actual_irl_fr_cost": 85.0,
+    "cost": 400.0,
+    "hacker_score": 0.5,
+    "requires_black_market": false,
+    "image_url": "https://cloud-cyle4t8f6-hack-club-bot.vercel.app/0image.png"
+  },
+  {
+    "name": "Flipper",
+    "description": "(zero!)",
+    "internal_description": "Link: https://flipperzero.one/",
+    "actual_irl_fr_cost": 169.0,
+    "cost": 650.0,
+    "hacker_score": 0.7,
+    "requires_black_market": false,
+    "image_url": "https://noras-secret-cdn.hackclub.dev/shop/flipper.png"
+  },
+  {
+    "name": "Orpheus Pico! (pre‑soldered)",
+    "description": "Pocket‑sized RISC‑V dev board",
+    "internal_description": "",
+    "actual_irl_fr_cost": 12.0,
+    "cost": 38.0,
+    "hacker_score": 0.6,
+    "requires_black_market": false,
+    "image_url": "https://noras-secret-cdn.hackclub.dev/shop/orph_pico_soldered.jpg"
+  },
+  {
+    "name": "E3D Filament or Parts Credit",
+    "description": "Perfect for your next 3‑D print",
+    "internal_description": "Link: https://e3d-online.com/",
+    "actual_irl_fr_cost": 25.0,
+    "cost": 95.0,
+    "hacker_score": 0.5,
+    "requires_black_market": false,
+    "image_url": "https://noras-secret-cdn.hackclub.dev/shop/card_grant_e3d.png"
+  },
+  {
+    "name": "ticket to DEF CON (flight + hotel)",
+    "description": "The legendary Vegas hacker con",
+    "internal_description": "",
+    "actual_irl_fr_cost": 2780.0,
+    "cost": 6675.0,
+    "hacker_score": 0.9,
+    "requires_black_market": false,
+    "image_url": "https://noras-secret-cdn.hackclub.dev/shop/defcon.png"
+  },
+  {
+    "name": "Baofeng UV‑5R",
+    "description": "Hand‑held 2m / 70cm ham radio",
+    "internal_description": "Link: https://www.amazon.com/dp/B0925XWVS8",
+    "actual_irl_fr_cost": 33.0,
+    "cost": 126.0,
+    "hacker_score": 0.55,
+    "requires_black_market": false,
+    "image_url": "https://noras-secret-cdn.hackclub.dev/shop/baofeng.png"
+  },
+  {
+    "name": "GitHub Keycaps",
+    "description": "Mechanicals, but make it Octocat",
+    "internal_description": "",
+    "actual_irl_fr_cost": 38.5,
+    "cost": 125.0,
+    "hacker_score": 0.5,
+    "requires_black_market": false,
+    "image_url": "https://noras-secret-cdn.hackclub.dev/shop/gh_keycaps.png"
+  },
+  {
+    "name": "System76 Launch Keyboard",
+    "description": "USA‑milled, hot‑swap, open firmware",
+    "internal_description": "Link: https://system76.com/accessories/launch",
+    "actual_irl_fr_cost": 285.0,
+    "cost": 1025.0,
+    "hacker_score": 0.65,
+    "requires_black_market": false,
+    "image_url": "https://noras-secret-cdn.hackclub.dev/shop/s76_launch.png"
+  },
+  {
+    "name": "Raspberry Pi 5 (8GB)",
+    "description": "The latest single‑board PC",
+    "internal_description": "",
+    "actual_irl_fr_cost": 72.0,
+    "cost": 265.0,
+    "hacker_score": 0.6,
+    "requires_black_market": false,
+    "image_url": "https://cloud-k3f252fo0-hack-club-bot.vercel.app/0raspberry_pi_5.png"
+  },
+  {
+    "name": "PCB Manufacturing Credit",
+    "description": "Spin up boards at JLCPCB",
+    "internal_description": "",
+    "actual_irl_fr_cost": 20.0,
+    "cost": 63.0,
+    "hacker_score": 0.5,
+    "requires_black_market": false,
+    "image_url": "https://noras-secret-cdn.hackclub.dev/shop/card_grant_pcb.png"
+  },
+  {
+    "name": "DJI Goggles N3",
+    "description": "Immersive FPV headset",
+    "internal_description": "",
+    "actual_irl_fr_cost": 699.0,
+    "cost": 2150.0,
+    "hacker_score": 0.6,
+    "requires_black_market": false,
+    "image_url": "https://cloud-emahrsqwu-hack-club-bot.vercel.app/0goggles3.png"
+  },
+  {
+    "name": "Hack Club Micro‑SD Card (64 GB)",
+    "description": "Tiny but mighty storage",
+    "internal_description": "",
+    "actual_irl_fr_cost": 10.0,
+    "cost": 30.0,
+    "hacker_score": 0.8,
+    "requires_black_market": false,
+    "image_url": "https://noras-secret-cdn.hackclub.dev/shop/microsd.png"
+  },
+  {
+    "name": "Free Stickers (really!)",
+    "description": "Rep your hack pride everywhere",
+    "internal_description": "",
+    "actual_irl_fr_cost": 3.0,
+    "cost": 0.0,
+    "hacker_score": 0.5,
+    "requires_black_market": false,
+    "image_url": "https://noras-secret-cdn.hackclub.dev/shop/free_stickers.png"
+  },
+  {
+    "name": "Chromebook 1080p Screen",
+    "description": "Great for Pi or cyber‑deck builds",
+    "internal_description": "",
+    "actual_irl_fr_cost": 52.0,
+    "cost": 190.0,
+    "hacker_score": 0.6,
+    "requires_black_market": false,
+    "image_url": "https://cloud-eg73iwqal-hack-club-bot.vercel.app/0chrome_screen.png"
+  },
+  {
+    "name": "Blåhaj",
+    "description": "Everyone’s favorite IKEA shark",
+    "internal_description": "",
+    "actual_irl_fr_cost": 28.0,
+    "cost": 95.0,
+    "hacker_score": 0.6,
+    "requires_black_market": false,
+    "image_url": "https://noras-secret-cdn.hackclub.dev/shop/blahaj.png"
+  },
+  {
+    "name": "Pidora Hot‑Glue Gun",
+    "description": "Because every project needs glue",
+    "internal_description": "",
+    "actual_irl_fr_cost": 12.0,
+    "cost": 38.0,
+    "hacker_score": 0.5,
+    "requires_black_market": false,
+    "image_url": "https://noras-secret-cdn.hackclub.dev/shop/glue_gun.png"
+  },
+  {
+    "name": "McMaster‑Carr Credits",
+    "description": "Industrial hardware, fast shipping",
+    "internal_description": "",
+    "actual_irl_fr_cost": 10.0,
+    "cost": 38.0,
+    "hacker_score": 0.6,
+    "requires_black_market": false,
+    "image_url": "https://noras-secret-cdn.hackclub.dev/shop/card_grant_mcmaster.png"
+  }
+]
+shop_item_data.each do |h|
+  ShopItem::SpecialFulfillmentShopItem.create!(
+    name: h[:name],
+    description: h[:description],
+    internal_description: h[:internal_description],
+    actual_irl_fr_cost: h[:actual_irl_fr_cost],
+    cost: h[:cost],
+    hacker_score: h[:hacker_score],
+    requires_black_market: h[:requires_black_market]
+  )
+end
+
+puts "Attaching shop item images..."
+ShopItem.find_each do |item|
+  next if item.image.attached?
+
+  item_data = shop_item_data.find { |sid| sid[:name] == item.name }
+
+  if (url = item_data[:image_url].presence)
+    item.image.attach(
+      io: URI.open(url),
+      filename: File.basename(URI.parse(url).path)
+    )
+    puts "  ↳ #{item.name}: attached"
+  else
+    puts "  ↳ #{item.name}: no image_url"
+  end
+end
+
+
 puts "\nSeeding completed!"
 puts "Created:"
 puts "- #{User.count} users"
@@ -510,3 +715,4 @@ puts "- #{Update.count} updates"
 puts "- #{Comment.count} comments"
 puts "- #{Stonk.count} stonks"
 puts "- #{TimerSession.count} timer sessions"
+puts "- #{ShopItem.count} shop items"
