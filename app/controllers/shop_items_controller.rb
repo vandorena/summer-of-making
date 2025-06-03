@@ -1,6 +1,6 @@
 class ShopItemsController < ApplicationController
   before_action :authenticate_user!
-  before_action :require_admin!
+  before_action :require_admin!, except: [:index]
 
   def index
     @shop_items = ShopItem.all
