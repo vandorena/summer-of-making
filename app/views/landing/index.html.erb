@@ -1,34 +1,107 @@
-<div class="flex flex-col items-center justify-center min-h-screen w-full bg-cover bg-center" style="background-image: url('<%= asset_path('herobg.png') %>');">
+<%= stylesheet_link_tag "landing", "data-turbo-track": "reload" %>
 
-  <div class="absolute top-4 left-4 z-10">
-    <%= inline_svg "icon.svg", class: "lg:h-12 lg:w-12 h-10 w-10" %>
+<div class="landing-container min-h-screen w-full relative overflow-hidden" style="background: linear-gradient(to bottom, #97D8F8 0%, #87CEEB 50%, #42A5E7 100%);" data-controller="clouds" data-clouds-cloud-count-value="8" data-clouds-speed-value="0.3" data-clouds-cloud-color-value="rgba(255, 255, 255, 0.4)">
+  <div class="absolute inset-0 w-full h-full overflow-hidden" data-clouds-target="container"></div>
+  <div class="absolute top-0 left-4 z-20">
+    <img src="https://assets.hackclub.com/flag-orpheus-top.png" alt="Island" class="w-30 animate-float" />
   </div>
 
-  <div class="absolute top-4 right-4 z-10">
-    <a href="/auth/slack" class="btn-pixel bg-forest text-white py-1 px-2 sm:py-2 sm:px-4 text-base md:text-lg 2xl:text-xl sm:text-sm hover:scale-105 transition-transform duration-300 flex items-center">
-      <%= inline_svg "slack.svg", class: "h-3 w-3 sm:h-4 sm:w-4 mr-1" %>
+  <div class="absolute top-4 right-4 z-20">
+    <a href="/auth/slack" class="island-btn text-white py-2 px-4 text-base md:text-lg flex items-center" style="background: linear-gradient(135deg, #E06540, #EC8153);">
+      <%= inline_svg "slack.svg", class: "h-4 w-4 mr-2" %>
       Sign In!
     </a>
   </div>
 
-  <div class="text-center w-full mx-auto max-w-6xl flex flex-col px-4 sm:px-8 relative z-10">
-    <div class="w-full md:w-2/3 mx-auto mb-8 sm:mb-12 mt-12 sm:mt-20 card-pixel p-4 sm:p-8 bg-bread text-center">
-      <div class="mb-2 sm:mb-4">
-        <h1 class="text-5xl md:text-7xl font-steven mb-2 sm:mb-4" style="text-shadow: -2px -2px 0 #583c28, 2px -2px 0 #583c28, -2px 2px 0 #583c28, 2px 2px 0 #583c28, 3px 3px 0 #2e2e1f; color: #d49d50;">THE JOURNEY</h1>
+  <div class="absolute bottom-0 w-full h-1/4 transform -skew-y-5 origin-bottom-right z-10" style="background: linear-gradient(135deg, #F3ECD8 0%, #E4DCC6 60%, #D4C4A8 100%);"></div>
+  
+  <div class="relative z-15 flex items-center min-h-screen">
+    <div class="w-full max-w-7xl mx-auto px-4 sm:px-8 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+      
+      <div class="text-left space-y-8 animate-float">
+        <div>
+          <h1 class="landing-title text-6xl md:text-8xl font-bold text-white text-glow-white">
+            Summer of
+          </h1>
+          <h1 class="landing-title text-6xl md:text-8xl font-bold -mt-4 text-glow-yellow" style="color: #E7E76B;">
+            Making
+          </h1>
+        </div>
+        
+        <h2 class="landing-subtitle text-2xl md:text-3xl text-white font-medium">
+          You discover a lost land,<br>
+          <span class="text-glow-yellow" style="color: #E7E76B;">time to rebuild, but <span class="font-bold">better</span>
+        </h2>
+        
+        <div class="flex flex-col sm:flex-row gap-4 pt-4">
+          <button onclick="document.getElementById('how-it-works').scrollIntoView({behavior: 'smooth'})" class="island-btn text-white py-4 px-8 text-xl lg:text-2xl flex items-center justify-center" style="background: linear-gradient(135deg, #E06540, #EC8153);">
+            <span>Start Creating</span>
+          </button>
+          <a href="#" class="island-btn py-4 px-8 text-xl lg:text-2xl flex items-center justify-center text-white" style="background: linear-gradient(135deg, #CECE9C, #E7E76B);">
+            <span>Free Stickers</span>
+          </a>
+        </div>
+        
+        <p class="landing-text text-lg text-white opacity-90">
+          Join thousands of makers in Hack Club this summer to build, create, and earn awesome prizes!
+        </p>
       </div>
 
-      <h2 class="text-2xl sm:text-3xl md:text-4xl font-steven mb-4 sm:mb-8" style="color: #ac6d3c; text-shadow: 1px 1px 0 #f8e2b8, 2px 2px 0 rgba(88, 60, 40, 0.3);">A 3 week journey<br>into making!</h2>
-
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/auth/slack" class="btn-pixel bg-forest text-white py-2 px-6 sm:py-3 sm:px-8 text-xl lg:text-2xl 2xl:text-3xl hover:scale-105 transition-transform duration-300 flex items-center justify-center">
-          <%= inline_svg "slack.svg", class: "h-5 w-5 sm:h-6 sm:w-6 mr-2" %>
-          <span>Embark!</span>
-        </a>
+      <div class="flex justify-center lg:justify-end">
+        <img src="https://hackclub.com/arcade/o7.png" alt="Island" class="w-80 h-80 lg:w-96 lg:h-96 object-contain drop-shadow-2xl animate-wiggle" />
       </div>
+      
+    </div>
+  </div>
+</div>
 
-      <p class="mt-4 sm:mt-8 text-base sm:text-lg" style="color: #B94D3A; text-shadow: 1px 1px 0 #f8e2b8, 2px 2px 0 rgba(88, 60, 40, 0.2);">
-        The Journey is running now, sign up now!
+<div id="how-it-works" class="py-20 px-4 sm:px-8" style="background: linear-gradient(135deg, #F3ECD8 0%, #E4DCC6 50%, #D4C4A8 100%);">
+  <div class="max-w-6xl mx-auto">
+    <h2 class="landing-title text-5xl md:text-6xl font-bold text-center mb-4 text-glow-yellow" style="color: #E06540;">
+      How It Works
+    </h2>
+    <p class="landing-text text-center text-xl mb-16 opacity-80" style="color: #8B4513;">
+      🗺️ Your journey to becoming a legendary maker starts here!
+    </p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+      <div class="island-card text-center p-8 animate-wave" style="background: rgba(255, 255, 255, 0.9);">
+        <div class="text-6xl mb-6 animate-float">:3</div>
+        <h3 class="landing-subtitle text-2xl font-bold mb-4" style="color: #E06540;">1. Work on projects</h3>
+        <p class="landing-text text-lg" style="color: #333;">
+          Hack on something cool! Examples: making your own PCB, building your own site, creating an app.
+        </p>
+      </div>
+      
+      <div class="island-card text-center p-8 animate-wave" style="animation-delay: 1s; background: rgba(255, 255, 255, 0.9);">
+        <div class="text-6xl mb-6 animate-float" style="animation-delay: 0.5s;">:3</div>
+        <h3 class="landing-subtitle text-2xl font-bold mb-4" style="color: #E06540;">2. Bank your hours</h3>
+        <p class="landing-text text-lg" style="color: #333;">
+          Join the Hack Club Slack and use /hack in #arcade to log your hours! You earn a ticket for each hour spent!
+        </p>
+      </div>
+      
+      <div class="island-card text-center p-8 animate-wave" style="animation-delay: 2s; background: rgba(255, 255, 255, 0.9);">
+        <div class="text-6xl mb-6 animate-float" style="animation-delay: 1s;">:3</div>
+        <h3 class="landing-subtitle text-2xl font-bold mb-4" style="color: #E06540;">3. Redeem your Prizes</h3>
+        <p class="landing-text text-lg" style="color: #333;">
+          Use your tickets to buy prizes for your next project! Such as Arduino kits, drawing tablets, and more!
+        </p>
+      </div>
+    </div>
+    
+    <div class="text-center">
+      <h3 class="landing-title text-4xl font-bold mb-8 text-glow-yellow" style="color: #E7E76B;">
+        "Make stuff. Get stuff. Repeat."
+      </h3>
+      <p class="landing-text text-xl mb-8 opacity-80" style="color: #8B4513;">
+        Ready to start your island adventure? Join thousands of makers on Slack!<br>
+        Don't have a Slack account? No problem, it's free and easy to sign up!
       </p>
+      <a href="/auth/slack" class="island-btn text-white py-4 px-12 text-2xl lg:text-3xl inline-flex items-center" style="background: linear-gradient(135deg, #E06540, #EC8153);">
+        <%= inline_svg "slack.svg", class: "h-6 w-6 mr-3" %>
+        <span>Join the Adventure!</span>
+      </a>
     </div>
   </div>
 </div>

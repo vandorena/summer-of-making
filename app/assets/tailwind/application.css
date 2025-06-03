@@ -1,19 +1,46 @@
 @import "tailwindcss";
 
 @font-face {
-    font-family: "Steven";
-    font-weight: bold;
-    src: url("Steven.ttf") format(truetype);
+  font-family: "Steven";
+  font-weight: bold;
+  src: url("Steven.ttf") format(truetype);
 }
 
 @theme {
-    --font-steven: "Steven", "sans-serif";
-    --color-forest: #508364;
-    --color-warm: #e6c58e;
-    --color-bread: #f9e8c7;
-    --color-vintage-red: #B94D3A;
-    --color-nice-blue: #4A7BA7; /* blue is my favirite color, ty */
-    --color-soft-bone: #f5d9a5;
-    --color-saddle-taupe: #ac6d3c;
+  --font-steven: "Steven", "sans-serif";
+  --color-forest: #508364;
+  --color-warm: #e6c58e;
+  --color-bread: #f9e8c7;
+  --color-vintage-red: #b94d3a;
+  --color-nice-blue: #4a7ba7; /* blue is my favirite color, ty */
+  --color-soft-bone: #f5d9a5;
+  --color-saddle-taupe: #ac6d3c;
+
+  /* som theme ig */
+  --color-red-light: #ec8153;
+  --color-red-dark: #e06540;
+  --color-yellow-light: #e7e76b;
+  --color-yellow-dark: #cece9c;
+  --color-white-light: #f3ecd8;
+  --color-white-dark: #e4dcc6;
+  --color-blue-light: #97d8f8;
+  --color-blue-dark: #42a5e7;
 }
 
+@keyframes jiggy {
+  /* get jiggy with it */
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(3deg);
+  }
+  75% {
+    transform: rotate(-3deg);
+  }
+}
+
+.animate-jiggy {
+  animation: jiggy 4s ease-in-out infinite;
+}
