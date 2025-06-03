@@ -28,12 +28,18 @@ export default class extends Controller {
   }
 
   loadTabContent(tab) {
-    const updatesList = document.getElementById('updates-list')
+    const updatesListContainer = document.getElementById('updates-list-container')
     
-    if (updatesList) {
-      updatesList.innerHTML = ''
+    if (updatesListContainer) {
+      updatesListContainer.innerHTML = `
+        <div class="space-y-4 sm:space-y-6" id="updates-list">
+        </div>
+        <div id="load-more-updates">
+        </div>
+      `
     }
 
+    const updatesList = document.getElementById('updates-list')
     const newInitialFrame = document.createElement('turbo-frame')
     newInitialFrame.id = 'initial-updates'
     newInitialFrame.src = `/explore?tab=${tab}&format=turbo_stream`
