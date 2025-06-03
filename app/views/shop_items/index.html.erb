@@ -8,6 +8,8 @@
     <p><%= @shop_items.count %> items</p>
 <% end %>
 
-<% @shop_items.each do |item| %>
-    <%= render "item", item: %>
-<% end %>
+<div class="flex flex-wrap gap-8">
+    <% @shop_items.each do |item| %>
+        <%= render "item", item: %>
+    <% end %>
+</div>

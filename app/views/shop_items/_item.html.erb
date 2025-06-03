@@ -1,5 +1,11 @@
-<div class="bg-soft-bone card-pixel p-2 sm:p-4 w-fit    ">
-  <p><%= item.type %></p>
+<div class="bg-soft-bone card-pixel p-2 sm:p-4 w-fit">
+    <% admin_tool do %>
+        <p class="text-xs">Reload after hitting update bc i'm lazy</p>
+        <%= form_with(model: item, url: shop_item_path(item), scope: :shop_item, class: "flex flex-col items-start") do |f| %>
+            <%= f.select :type, [["Typeless (ILLEGAL)", nil], *@shop_item_types], selected: item.type %>
+            <%= f.submit %>
+        <% end %>
+    <% end %>
 
   <%= text_field_editable(item, :name) %>
   <%= text_field_editable(item, :description) %>
@@ -8,7 +14,9 @@
       <%= text_field_editable(item, :internal_description) %>
   <% end %>
 
-  <%= image_tag item.image.variant(:thumb) %>
+  <!--<%= image_tag item.image.variant(:thumb) %>-->
+
+  <%= image_field_editable(item, :image) %>
 
   <%= number_field_editable(item, :cost, display_prefix: "$") %>
 
