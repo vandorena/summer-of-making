@@ -1,5 +1,4 @@
 module ShopItemsHelper
-
   def text_field_editable(item, field_name, display_prefix: "")
     editable(item, field_name, display_prefix, false)
   end
@@ -31,7 +30,7 @@ module ShopItemsHelper
 
         form_with(model: item, html: { style: "display: none;" }) do |f|
           form_field = is_number ? f.number_field(field_name, step: 0.01) : f.text_field(field_name)
-          safe_join([form_field, f.submit])
+          safe_join([ form_field, f.submit ])
         end
       ])
     end
@@ -66,6 +65,6 @@ module ShopItemsHelper
       });
     JS
 
-    safe_join([html, js])
+    safe_join([ html, js ])
   end
 end

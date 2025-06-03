@@ -37,10 +37,10 @@ class ShopItemsController < ApplicationController
 
   def available_shop_item_types
     # Explicitly require all shop item type files
-    Dir[Rails.root.join('app/models/shop_item/*.rb')].each { |file| require_dependency file }
+    Dir[Rails.root.join("app/models/shop_item/*.rb")].each { |file| require_dependency file }
 
     # Now get all descendants
-    ShopItem.descendants.map { |type| [type.name.demodulize.underscore.humanize, type.name] }
+    ShopItem.descendants.map { |type| [ type.name.demodulize.underscore.humanize, type.name ] }
   end
 
   def shop_item_params
