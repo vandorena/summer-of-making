@@ -1,4 +1,4 @@
-# Journey
+# Summer of making
 
 A 3 week journey into making!
 
