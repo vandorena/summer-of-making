@@ -191,6 +191,38 @@ class User < ApplicationRecord
       slack_id == "U03DFNYGPCN"
     end
 
+    def identity_vault_oauth_link(callback_url)
+      IdentityVaultService.authorize_url(callback_url, {
+        prefill: {
+          email: email,
+          first_name: first_name,
+          last_name: last_name
+        }
+      })
+    end
+
+    def link_identity_vault_callback(callback_url, code)
+      code_response = IdentityVaultService.exchange_token(callback_url, code)
+
+      access_token = code_response[:access_token]
+
+      idv_data = IdentityVaultService.me(access_token)
+
+      update!(
+        identity_vault_access_token: access_token,
+        identity_vault_id: idv_data.dig(:identity, :id),
+        ysws_verified: idv_data.dig(:identity, :verification_status) == "verified" && idv_data.dig(:identity, :ysws_eligible)
+      )
+    end
+
+    def refresh_identity_vault_data!
+      idv_data = IdentityVaultService.me(identity_vault_access_token)
+
+      update!(
+        ysws_verified: idv_data.dig(:identity, :verification_status) == "verified" && idv_data.dig(:identity, :ysws_eligible)
+      )
+    end
+
     private
 
     def sync_to_airtable

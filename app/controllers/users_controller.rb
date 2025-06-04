@@ -37,6 +37,15 @@ class UsersController < ApplicationController
     end
   end
 
+  def identity_vault_callback
+    current_user.link_identity_vault_callback(identity_vault_callback_url, params[:code])
+    redirect_back_or_to root_path, notice: "Successfully linked your identity!"
+  end
+
+  def link_identity_vault
+    redirect_to current_user.identity_vault_oauth_link(identity_vault_callback_url), allow_other_host: true
+  end
+
   private
 
   def authenticate_api_key

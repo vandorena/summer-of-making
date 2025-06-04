@@ -20,6 +20,10 @@ Rails.application.routes.draw do
   get "/auth/failure", to: "sessions#failure"
   delete "/logout", to: "sessions#destroy", as: :logout
 
+  # Identity Vault routes
+  get "users/identity_vault_callback", to: "users#identity_vault_callback", as: :identity_vault_callback
+  get "users/link_identity_vault", to: "users#link_identity_vault", as: :link_identity_vault
+
   # Dashboard
   # get "dashboard", to: "dashboard#index"
 
