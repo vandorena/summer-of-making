@@ -1,5 +1,5 @@
 <div class="container mx-auto px-4 sm:px-4 pt-2 md:pt-8">
-  <h1 class="text-4xl sm:text-5xl font-steven mb-4 sm:text-center">Vote</h1>
+  <h1 class="text-4xl sm:text-5xl mb-4 sm:text-center">Vote</h1>
   <p class="text-center text-nice-blue text-lg mb-6">You have voted <%= @user_vote_count %> times.</p>
 
   <% if ENV['VOTING_STATUS'] == 'locked' && !ENV['ALLOWED_SLACK_IDS']&.split(',')&.include?(current_user.slack_id) %>
@@ -28,7 +28,7 @@
          class="space-y-6 sm:space-y-8">
       <!-- Step 1: Journeys -->
       <div data-voting-steps-target="step1" class="space-y-6 sm:space-y-8">
-        <h2 class="text-xl sm:text-2xl font-steven mb-6 sm:mb-8 text-center text-gray-600"> A good ship is technical, creative, and presented well so that
+        <h2 class="text-xl sm:text-2xl mb-6 sm:mb-8 text-center text-gray-600"> A good ship is technical, creative, and presented well so that
             others can understand and experience it. By that definition, which
             of these two projects is better?</h2>
 
@@ -42,7 +42,7 @@
                     <img src="<%= project_image %>" alt="<%= project.title %>" class="w-full h-full object-cover">
                   </div>
                   <div class="flex-grow min-w-0">
-                    <h3 class="text-xl sm:text-3xl font-steven mb-1 sm:mb-2 truncate"><%= project.title %></h3>
+                    <h3 class="text-xl sm:text-3xl mb-1 sm:mb-2 truncate"><%= project.title %></h3>
                     <p class="text-base sm:text-lg text-gray-600"><%= project.description %></p>
                   </div>
                 </div>
@@ -146,7 +146,7 @@
 
       <!-- Step 2: Voting -->
       <div data-voting-steps-target="step2" class="hidden">
-        <h2 class="text-xl sm:text-2xl font-steven mb-6 sm:mb-8 text-center text-gray-600"> A good ship is technical, creative, and presented well so that
+        <h2 class="text-xl sm:text-2xl mb-6 sm:mb-8 text-center text-gray-600"> A good ship is technical, creative, and presented well so that
             others can understand and experience it. By that definition, which
             of these two projects is better?</h2>
 
@@ -163,7 +163,7 @@
                     <img src="<%= project_image %>" alt="<%= project.title %>" class="w-full h-full object-cover">
                   </div>
                   <div class="flex-grow min-w-0">
-                    <h3 class="text-xl sm:text-3xl font-steven mb-1 sm:mb-2 truncate"><%= project.title %></h3>
+                    <h3 class="text-xl sm:text-3xl mb-1 sm:mb-2 truncate"><%= project.title %></h3>
                     <p class="text-base sm:text-lg text-gray-600"><%= project.description %></p>
                   </div>
                 </div>

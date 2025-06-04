@@ -7,7 +7,7 @@
 
   <div class="p-4 md:p-6">
     <div class="flex flex-col md:flex-row md:items-center mb-4 space-y-3 md:space-y-0">
-      <h1 class="text-2xl md:text-3xl 2xl:text-4xl text-black md:flex-grow font-steven"><%= @project.title %></h1>
+      <h1 class="text-2xl md:text-3xl 2xl:text-4xl text-black md:flex-grow"><%= @project.title %></h1>
       <div class="flex items-center space-x-3 md:space-x-4">
         <% if user_signed_in? %>
           <div class="ml-4 flex flex-wrap items-center gap-3 md:gap-4">
@@ -89,7 +89,7 @@
   <div class="bg-soft-bone w-full max-w-md card-pixel mx-2 md:mx-auto relative max-h-[80vh] flex flex-col" data-modal-target="container">
     <div class="p-3 md:p-4 border-b border-saddle-taupe border-opacity-30 flex-shrink-0">
       <div class="flex justify-between items-center">
-        <h3 class="text-lg md:text-2xl font-steven">Followers</h3>
+        <h3 class="text-lg md:text-2xl">Followers</h3>
           <button type="button" class="text-gray-600 hover:text-vintage-red cursor-pointer" data-action="click->modal#close">
             <%= inline_svg_tag "close.svg", class: "h-6 w-6 2xl:h-8 2xl:w-8" %>
           </button>
@@ -103,7 +103,7 @@
             <div class="flex items-center space-x-3">
               <img src="<%= follower.avatar %>" alt="<%= follower.display_name %>" class="w-10 h-10 -full">
               <div>
-                <p class="font-steven text-black"><%= follower.display_name %></p>
+                <p class="text-black"><%= follower.display_name %></p>
                 <p class="text-sm text-gray-600">
                   <% if follower.projects.length() > 1 %>
                     Check their projects out:
@@ -135,7 +135,7 @@
   <div class="bg-soft-bone w-full max-w-2xl card-pixel mx-2 md:mx-auto relative max-h-[90vh] flex flex-col overflow-hidden">
     <div class="p-3 md:p-4 border-b border-saddle-taupe border-opacity-30 flex-shrink-0">
       <div class="flex justify-between items-center">
-        <h3 class="text-lg md:text-2xl font-steven">Ship Your Project</h3>
+        <h3 class="text-lg md:text-2xl">Ship Your Project</h3>
         <button type="button" class="text-gray-600 hover:text-vintage-red cursor-pointer" data-action="ship#close">
           <%= inline_svg_tag "close.svg", class: "h-6 w-6 2xl:h-8 2xl:w-8" %>
         </button>
@@ -146,7 +146,7 @@
     <div data-ship-target="page1" class="p-4 md:p-6 overflow-y-auto">
       <div class="text-center mb-8">
         <%= image_tag "orpheusyap1.png", class: "w-64 h-64 mx-auto mb-4", alt: "Orpheus Yap" %>
-        <h4 class="text-xl md:text-2xl 2xl:text-3xl font-steven mb-2">HOLD UP</h4>
+        <h4 class="text-xl md:text-2xl 2xl:text-3xl mb-2">HOLD UP</h4>
         <p class="text-base md:text-lg mb-4 text-gray-600">By shipping your project, you're marking it as complete and it'll enter matchmaking. <span class="text-vintage-red">However, you will NOT be able to edit it anymore.</span></p>
       </div>
 
@@ -163,7 +163,7 @@
     <!-- Page 2: Requirements -->
     <div data-ship-target="page2" class="p-4 md:p-6 overflow-y-auto hidden">
       <div class="text-center mb-4">
-        <h4 class="text-xl md:text-2xl 2xl:text-3xl font-steven mb-2">Ship Requirements Checklist</h4>
+        <h4 class="text-xl md:text-2xl 2xl:text-3xl mb-2">Ship Requirements Checklist</h4>
         <p class="text-base md:text-lg mb-4 text-gray-600">Your project <span class="text-vintage-red">must meet ALL these requirements</span> before it can be shipped.</p>
       </div>
 
@@ -331,15 +331,15 @@
     <!-- Page 3: Link Verification -->
     <div data-ship-target="page3" class="p-4 md:p-6 overflow-y-auto hidden">
       <div class="text-center mb-6">
-        <h4 class="text-xl md:text-2xl 2xl:text-3xl font-steven mb-2">Link Verification</h4>
+        <h4 class="text-xl md:text-2xl 2xl:text-3xl mb-2">Link Verification</h4>
         <p class="text-base md:text-lg mb-4 text-gray-600">Look, I'm not going through airtable to check your links so here's some automated checks. I hope it's bug free.</p>
       </div>
 
       <div class="mb-6">
-        <p data-ship-target="statusText" class="text-center font-steven text-lg mb-4 p-2 border-2 border-saddle-taupe/30 bg-soft-bone/50">Ready to check your links...</p>
+        <p data-ship-target="statusText" class="text-center text-lg mb-4 p-2 border-2 border-saddle-taupe/30 bg-soft-bone/50">Ready to check your links...</p>
 
         <div class="space-y-4 p-4 border-2 border-saddle-taupe/30 bg-soft-bone/50 card-pixel">
-          <h5 class="font-steven text-base md:text-lg mb-2">Link Status:</h5>
+          <h5 class="text-base md:text-lg mb-2">Link Status:</h5>
 
           <% if @project.repo_link.present? %>
             <div class="flex justify-between items-center border-b border-saddle-taupe/30 pb-2">

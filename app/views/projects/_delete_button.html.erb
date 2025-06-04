@@ -9,7 +9,7 @@
   <div class="bg-soft-bone w-full max-w-2xl card-pixel mx-2 md:mx-auto relative max-h-[90vh] flex flex-col overflow-hidden" data-modal-target="container">
     <div class="p-3 md:p-4 border-b border-saddle-taupe border-opacity-30 flex-shrink-0">
       <div class="flex justify-between items-center">
-        <h3 class="text-lg md:text-2xl font-steven">Delete Project</h3>
+        <h3 class="text-lg md:text-2xl">Delete Project</h3>
         <button type="button" class="text-gray-600 hover:text-vintage-red cursor-pointer" data-action="click->modal#close">
           <%= inline_svg_tag "close.svg", class: "h-6 w-6 2xl:h-8 2xl:w-8" %>
         </button>
@@ -20,7 +20,7 @@
     <div class="p-4 md:p-6 overflow-y-auto text-center">
      <%= image_tag "sadjourneypheus.png", class: "w-auto h-96 mx-auto mb-4", alt: "Sadjourneypheus" %>
       <div class="text-center mb-8">
-        <h4 class="text-xl md:text-2xl 2xl:text-3xl font-steven mb-2">Hold up!</h4>
+        <h4 class="text-xl md:text-2xl 2xl:text-3xl mb-2">Hold up!</h4>
         <p class="text-base md:text-lg mb-4 text-gray-600">Are you sure you want to delete "<%= @project.title %>"? <span class="text-vintage-red">This action cannot be undone.</span> This will also delete all updates, comments, and other data associated with this project. </p>
       </div>
 

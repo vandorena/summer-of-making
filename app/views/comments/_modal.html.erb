@@ -3,7 +3,7 @@
   <div class="bg-soft-bone w-full max-w-2xl card-pixel mx-2 md:mx-auto relative" data-modal-target="container">
     <div class="p-3 md:p-4 border-b border-saddle-taupe border-opacity-30">
       <div class="flex justify-between items-center">
-        <h3 class="text-lg md:text-2xl font-steven">Add a Comment</h3>
+        <h3 class="text-lg md:text-2xl">Add a Comment</h3>
         <button type="button" class="text-gray-600 hover:text-vintage-red cursor-pointer transition-colors duration-200" data-action="click->modal#close">
           <%= inline_svg_tag "close.svg", class: "h-6 w-6 " %>
         </button>
@@ -15,7 +15,7 @@
         <% if !current_user.has_commented %>
           <div class="text-center mb-4" data-comment-modal-target="warning">
             <%= image_tag "journeypheus.png", class: "w-32 h-32 2xl:w-64 2xl:h-64 mx-auto mb-4", alt: "Journeypheus" %>
-            <h4 class="text-xl md:text-2xl 2xl:text-3xl font-steven mb-2">HOLD UP</h4>
+            <h4 class="text-xl md:text-2xl 2xl:text-3xl mb-2">HOLD UP</h4>
             <p class="text-base md:text-lg mb-4 text-gray-600">Be nice in the comments! <a href="https://hackclub.com/conduct/" class="text-nice-blue underline">Hack Club's Code of Conduct</a> still applies here, so don't be naughty, or Journeypheus might just come and kidnap you. <br> (& don't give Kartikey an excuse to ban :P)</p>
             <button data-action="click->comment-modal#next" class="px-2 md:px-4 py-2 bg-vintage-red hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-large btn-pixel">
               Next
