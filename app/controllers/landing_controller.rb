@@ -7,61 +7,73 @@ class LandingController < ApplicationController
       {
         name: "Flipper Zero",
         cost: 120,
+        time: "~120 hours",
         image: nil
       },
       {
         name: "Framework Laptop DIY Edition",
         cost: 800,
+        time: "~800 hours",
         image: nil
       },
       {
         name: "Pinecil Soldering Iron",
         cost: 30,
+        time: "~30 hours",
         image: nil
       },
       {
         name: "Cloud Credits - Cloudflare",
         cost: 50,
+        time: "~50 hours",
         image: nil
       },
       {
         name: "PCB Credits - JLCPCB",
         cost: 30,
+        time: "~30 hours",
         image: nil
       },
       {
         name: "iPad with Apple Pencil",
         cost: 450,
+        time: "~450 hours",
         image: nil
       },
       {
         name: "Raspberry Pi 5 Starter Kit",
         cost: 90,
+        time: "~90 hours",
         image: nil
       },
       {
         name: "BLÅHAJ Soft Toy",
         cost: 20,
+        time: "~20 hours",
         image: nil
       },
       {
         name: "Sony WH-1000XM4 Headphones",
         cost: 250,
+        time: "~250 hours",
         image: nil
       },
       {
         name: "Steam Game - Factorio",
         cost: 25,
+        time: "~25 hours",
         image: nil
       },
       {
         name: "Ben Eater 8-bit Computer Kit",
         cost: 200,
+        time: "~200 hours",
         image: nil
       },
       {
         name: "MORE FUDGE!",
         cost: 35,
+        time: "~35 hours",
         image: nil
       }
     ]

@@ -133,7 +133,6 @@
       <span class="glow-y" style="color: #E7E76B;">All prizes are available while supplies last.</span>
     </p>
     
-    <!-- First Carousel - Default Direction -->
     <div class="slider-wrap relative mx-15 md:mx-15 sm:mx-10" data-controller="carousel">
       <div class="slider-box overflow-hidden relative rounded-2xl py-8">
         <div class="carousel-track flex gap-8 md:gap-8 sm:gap-6" data-carousel-target="container">
@@ -148,6 +147,7 @@
                   <% end %>
                 </div>
                 <h3 class="prize-name font-semibold text-lg md:text-lg sm:text-base text-orange-600 leading-tight m-0" style="font-family: 'Fredoka', sans-serif;"><%= prize[:name] %></h3>
+                <p class="text-sm text-gray-600 mt-2"><%= prize[:time] %></p>
               </div>
             </div>
           <% end %>
@@ -155,7 +155,6 @@
       </div>
     </div>
 
-    <!-- Second Carousel - Reverse Direction -->
     <div class="slider-wrap relative mx-15 md:mx-15 sm:mx-10" data-controller="carousel">
       <div class="slider-box overflow-hidden relative rounded-2xl">
         <div class="carousel-track-rev flex gap-8 py-4 md:gap-8 sm:gap-6" data-carousel-target="container">
@@ -170,6 +169,7 @@
                   <% end %>
                 </div>
                 <h3 class="prize-name font-semibold text-lg md:text-lg sm:text-base text-orange-600 leading-tight m-0" style="font-family: 'Fredoka', sans-serif;"><%= prize[:name] %></h3>
+                <p class="text-sm text-gray-600 mt-2"><%= prize[:time] %></p>
               </div>
             </div>
           <% end %>
