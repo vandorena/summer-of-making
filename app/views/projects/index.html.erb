@@ -3,6 +3,8 @@
     <div class="flex justify-between items-center w-full flex-wrap">
       <% if params[:action] == 'my_projects' %>
         <h1 class="text-4xl sm:text-5xl font-steven mb-0">My Projects</h1>
+      <% elsif @feed_type == 'projects' %>
+        <h1 class="text-4xl sm:text-5xl font-steven mb-0">Gallery</h1>
       <% else %>
         <div class="flex justify-center w-full">
           <div class="flex bg-soft-bone card-pixel overflow-hidden w-full max-w-md sm:max-w-none sm:w-auto">
@@ -86,6 +88,47 @@
             <button data-action="click->modal#open" data-modal-type="create-project" class="px-4 md:px-6 py-1 md:py-2 bg-forest hover:bg-forest-dark text-white text-base md:text-lg 2xl:text-xl btn-pixel cursor-pointer">
               Create Your Project
             </button>
+          </div>
+        <% end %>
+      </div>
+    <% elsif @feed_type == 'projects' %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 md:gap-8 px-4 md:px-8">
+        <% if @projects.any? %>
+          <% @projects.each do |project| %>
+            <div class="bg-soft-bone card-pixel transform hover:scale-[1.02] transition-transform duration-300 flex flex-col h-full">
+              <% project_image = project.banner.presence || project.updates.find { |u| u.attachment.present? }&.attachment || "https://raw.githubusercontent.com/hackclub/dinosaurs/main/confused_dinosaur.png" %>
+              <div class="h-36 md:h-48 overflow-hidden relative">
+                <img src="<%= project_image %>" alt="<%= project.title %>" class="w-full h-full object-cover">
+              </div>
+
+              <div class="p-4 md:p-6 flex flex-col flex-grow">
+                <div class="flex items-center justify-between mb-2 md:mb-3">
+                  <h2 class="text-xl md:text-2xl 2xl:text-3xl font-steven line-clamp-1"><%= project.title %></h2>
+                  <% if user_signed_in? && current_user != project.user %>
+                    <div>
+                      <%= render "projects/follow_button", project: project %>
+                    </div>
+                  <% end %>
+                </div>
+                <p class="mb-4 md:mb-6 line-clamp-3 text-sm md:text-base 2xl:text-lg text-gray-600 break-words overflow-wrap-anywhere"><%= project.description %></p>
+
+                <div class="flex flex-row space-x-4 mt-auto flex-wrap">
+                  <%= link_to project_path(project), class: "px-3 md:px-4 py-2 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 flex-1 text-center btn-pixel text-base md:text-lg 2xl:text-2xl" do %>
+                    View Project
+                  <% end %>
+                  <%= link_to project_path(project), class: "px-3 md:px-4 py-2 bg-nice-blue text-white hover:scale-[1.05] transition-transform duration-300 flex-1 text-center btn-pixel text-base md:text-lg 2xl:text-xl" do %>
+                    <%= project.updates.count %> Updates
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="col-span-full flex flex-col items-center justify-center bg-soft-bone p-6 md:p-8 card-pixel mt-2 md:mt-0">
+            <div class="flex justify-center items-center">
+              <%= image_tag 'happytriangle.png', class: 'w-32 h-32 sm:w-48 sm:h-48 2xl:w-64 2xl:h-64 transform scale-x-[-1] mb-4 sm:mb-6' %>
+            </div>
+            <p class="mb-6 sm:mb-8 text-black text-large sm:text-xl 2xl:text-2xl text-center">No projects found in the gallery yet!</p>
           </div>
         <% end %>
       </div>
