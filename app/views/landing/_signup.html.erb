@@ -3,7 +3,7 @@
   @turbo:submit-end.window="if ($event.detail.success) open = true"
 >
   <%= form_with url: sign_up_path, method: :post, data: { turbo: true }, class: "flex flex-col gap-4" do |f| %>
-      <%= f.email_field :email, required: true,  class: "btn-fancy text-white py-4 px-8 text-xl lg:text-2xl flex items-center justify-center", style: "background: linear-gradient(135deg, #E06540, #EC8153);" %>
+      <%= f.email_field :email, required: true, placeholder: "Enter your email...", autocomplete: "email", class: "btn-fancy text-white py-4 px-8 text-xl lg:text-2xl flex items-center justify-center", style: "background: linear-gradient(135deg, #E06540, #EC8153);" %>
 
       <%= f.submit "Start creating", class: "btn-fancy text-white py-4 px-8 text-xl lg:text-2xl flex items-center justify-center", style: "background: linear-gradient(135deg, #E06540, #EC8153);" %>
       <!-- <a href="#" class="btn-fancy py-4 px-8 text-xl lg:text-2xl flex items-center justify-center text-white" style="background: linear-gradient(135deg, #CECE9C, #E7E76B);">
