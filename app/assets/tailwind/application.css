@@ -15,5 +15,18 @@
     --color-nice-blue: #4A7BA7; /* blue is my favirite color, ty */
     --color-soft-bone: #f5d9a5;
     --color-saddle-taupe: #ac6d3c;
+ 
+    /* These colors are in HSL not in Hex. Please use HSL */
+    --color-burn-sienna: hsl(20, 60%, 50%);
+    --color-dark-sienna: hsl(14, 72%, 56%);
+
+    --color-lime-yellow: hsl(60, 72%, 66%);
+    --color-faded-lime: hsl(60, 34%, 71%)
+
+    --color-limestone: hsl(44, 53%, 90%);
+    --color-faded-limestone: hsl(44, 36%, 84%);
+
+    --color-sky-blue: hsl(200, 87%, 78%);
+    --color-dark-blue: hsl(204, 77%, 58%);
 }
 
