@@ -110,9 +110,8 @@ class ProjectsController < ApplicationController
         render :index
     end
 
-    def projects_feed
+    def gallery
         @projects = Project.includes(:user)
-        .where.not(user_id: current_user.id)
         .order(rating: :asc)
 
         @projects = @projects.sort_by do |project|
