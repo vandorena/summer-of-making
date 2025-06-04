@@ -14,10 +14,10 @@
   </div>
 
   <div class="absolute bottom-0 w-full h-1/4 transform -skew-y-5 origin-bottom-right z-10" style="background: linear-gradient(135deg, #F3ECD8 0%, #E4DCC6 60%, #D4C4A8 100%);"></div>
-  
+
   <div class="relative z-15 flex items-center min-h-screen">
     <div class="w-full max-w-7xl mx-auto px-4 sm:px-8 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-      
+
       <div class="text-left space-y-8 animate-float">
         <div>
           <h1 class="head-big text-6xl md:text-8xl font-bold text-white glow-w">
@@ -27,21 +27,16 @@
             Making
           </h1>
         </div>
-        
+
         <h2 class="head-med text-2xl md:text-3xl text-white font-medium">
           You discover a lost land,<br>
           <span class="glow-y" style="color: #E7E76B;">time to rebuild, but <span class="font-bold">better</span>
         </h2>
-        
+
         <div class="flex flex-col sm:flex-row gap-4 pt-4">
-          <button onclick="document.getElementById('how-it-works').scrollIntoView({behavior: 'smooth'})" class="btn-fancy text-white py-4 px-8 text-xl lg:text-2xl flex items-center justify-center" style="background: linear-gradient(135deg, #E06540, #EC8153);">
-            <span>Start Creating</span>
-          </button>
-          <a href="#" class="btn-fancy py-4 px-8 text-xl lg:text-2xl flex items-center justify-center text-white" style="background: linear-gradient(135deg, #CECE9C, #E7E76B);">
-            <span>Free Stickers</span>
-          </a>
+            <%= render "signup" %>
         </div>
-        
+
         <p class="txt-norm text-lg text-white opacity-90">
           Join thousands of makers in Hack Club this summer to build, create, and earn awesome prizes!
         </p>
@@ -50,7 +45,7 @@
       <div class="flex justify-center lg:justify-end">
         <img src="https://hackclub.com/arcade/o7.png" alt="Island" class="w-80 h-80 lg:w-96 lg:h-96 object-contain drop-shadow-2xl animate-wiggle" />
       </div>
-      
+
     </div>
   </div>
 </div>
@@ -64,18 +59,18 @@
     <p class="txt-norm text-xl mb-8 opacity-80" style="color: #8B4513;">
       subtext
     </p>
-    
+
     <div class="card-box relative w-full max-w-3xl mx-auto rounded-2xl overflow-hidden shadow-2xl" style="background: rgba(255, 255, 255, 0.95); aspect-ratio: 16/9;">
-      <iframe 
+      <iframe
         class="absolute inset-0 w-full h-full"
-        src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0&modestbranding=1&showinfo=0" 
-        title="Epic Maker Tutorial" 
-        frameborder="0" 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0&modestbranding=1&showinfo=0"
+        title="Epic Maker Tutorial"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowfullscreen>
       </iframe>
     </div>
-    
+
     <p class="txt-norm text-lg mt-6 opacity-70" style="color: #8B4513;">
       tagline
     </p>
@@ -90,7 +85,7 @@
     <p class="txt-norm text-center text-xl mb-8 opacity-80" style="color: #8B4513;">
       🗺️ Your journey to becoming a legendary maker starts here!
     </p>
-    
+
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
       <div class="card-box text-center p-8 animate-wave" style="background: rgba(255, 255, 255, 0.9);">
         <div class="text-6xl mb-6 animate-float">:3</div>
@@ -99,7 +94,7 @@
           Hack on something cool! Examples: making your own PCB, building your own site, creating an app.
         </p>
       </div>
-      
+
       <div class="card-box text-center p-8 animate-wave" style="animation-delay: 1s; background: rgba(255, 255, 255, 0.9);">
         <div class="text-6xl mb-6 animate-float" style="animation-delay: 0.5s;">:3</div>
         <h3 class="head-med text-2xl font-bold mb-4" style="color: #E06540;">2. Bank your hours</h3>
@@ -107,7 +102,7 @@
           Join the Hack Club Slack and use /hack in #arcade to log your hours! You earn a ticket for each hour spent!
         </p>
       </div>
-      
+
       <div class="card-box text-center p-8 animate-wave" style="animation-delay: 2s; background: rgba(255, 255, 255, 0.9);">
         <div class="text-6xl mb-6 animate-float" style="animation-delay: 1s;">:3</div>
         <h3 class="head-med text-2xl font-bold mb-4" style="color: #E06540;">3. Redeem your Prizes</h3>
@@ -132,7 +127,7 @@
       Redeem these prizes with your tickets! We cover shipping costs, so you can focus on making!<br>
       <span class="glow-y" style="color: #E7E76B;">All prizes are available while supplies last.</span>
     </p>
-    
+
     <div class="slider-wrap relative mx-15 md:mx-15 sm:mx-10" data-controller="carousel">
       <div class="slider-box overflow-hidden relative rounded-2xl py-8">
         <div class="carousel-track flex gap-8 md:gap-8 sm:gap-6" data-carousel-target="container">
