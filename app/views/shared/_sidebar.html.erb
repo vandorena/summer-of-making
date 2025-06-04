@@ -13,7 +13,7 @@
   <nav class="flex-1 px-4 flex items-center text-justify text-4xl 2xl:text-5xl">
     <ul class="space-y-4 w-full">
       <li class="flex justify-start">
-        <%= link_to explore_path, class: "px-4 py-2 block hover:bg-saddle-taupe hover-btn-pixel #{'bg-saddle-taupe btn-pixel' if current_page?(explore_path) || current_page?(projects_feed_path)}" do %>
+        <%= link_to explore_path, class: "px-4 py-2 block hover:bg-saddle-taupe hover-btn-pixel #{'bg-saddle-taupe btn-pixel' if current_page?(explore_path)}" do %>
           <%= inline_svg "downasaur.svg", class: "2xl:h-12 2xl:w-12 inline h-10 w-10", data: { 'sidebar-target': 'icon' } %>
           <span data-sidebar-target="content" class="ml-2">Explore</span>
         <% end %>
