@@ -8,75 +8,76 @@
  *
  * Consider organizing styles into separate files for maintainability.
  */
- 
- ::-webkit-scrollbar {
+
+::-webkit-scrollbar {
     width: 8px;
-  }
-  
-  ::-webkit-scrollbar-track {
+}
+
+::-webkit-scrollbar-track {
     background: rgba(150, 133, 115, 0.1);
     border-radius: 4px;
-  }
-  
-  ::-webkit-scrollbar-thumb {
+}
+
+::-webkit-scrollbar-thumb {
     background-color: rgba(150, 133, 115, 0.5);
     border-radius: 4px;
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
+}
+
+::-webkit-scrollbar-thumb:hover {
     background-color: rgba(150, 133, 115, 0.7);
-  }
-  
-  /* Firefox */
-  * {
+}
+
+/* Firefox */
+* {
     scrollbar-width: thin;
     scrollbar-color: rgba(150, 133, 115, 0.5) rgba(150, 133, 115, 0.1);
-  }
-  
-  [data-music-target="toggle"].active {
+}
+
+[data-music-target="toggle"].active {
     animation: pulse 2s infinite;
-  }
-  
-  @keyframes pulse {
+}
+
+@keyframes pulse {
     0% {
-      transform: scale(1);
+        transform: scale(1);
     }
     50% {
-      transform: scale(1.1);
+        transform: scale(1.1);
     }
     100% {
-      transform: scale(1);
+        transform: scale(1);
     }
-  }
-  
-  [data-controller="music"] {
+}
+
+[data-controller="music"] {
     transition: transform 0.8s ease-in-out;
-  }
-  
-  [data-controller="music"].music-playing {
-    transform: translateY(-80px);
-  }
+}
 
-  [data-controller="music"].mobile-music-playing {
+[data-controller="music"].music-playing {
+    transform: translateY(-80px);
+}
+
+[data-controller="music"].mobile-music-playing {
     transform: translateY(-40px);
-  }
-  
-  [data-music-target="speechBubble"] {
+}
+
+[data-music-target="speechBubble"] {
     animation: bubble-pulse 2.5s ease-in-out infinite;
-  }
-  
-  @keyframes bubble-pulse {
+}
+
+@keyframes bubble-pulse {
     0% {
-      transform: rotate(-13deg) scale(1);
+        transform: rotate(-13deg) scale(1);
     }
     50% {
-      transform: rotate(-13deg) scale(1.05);
+        transform: rotate(-13deg) scale(1.05);
     }
     100% {
-      transform: rotate(-13deg) scale(1);
+        transform: rotate(-13deg) scale(1);
     }
-  }
 
+  }
+/* 
   body {
     cursor: url("cursor.svg") 0 0, auto;
   }
@@ -100,6 +101,25 @@
   textarea,
   [contenteditable="true"] {
     cursor: url("cursorText.svg") 6 12, text;
-  }
+  } */
 
-  
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+input[type="number"],
+textarea,
+[contenteditable="true"] {
+    cursor:
+        url("cursorText.svg") 6 12,
+        text;
+}
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+}

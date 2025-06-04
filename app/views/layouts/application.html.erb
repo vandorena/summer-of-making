@@ -24,9 +24,10 @@
     <%= javascript_importmap_tags %>
     <%= Sentry.get_trace_propagation_meta.html_safe %>
     <script defer data-domain="journey.hackclub.com" src="https://plausible.io/js/script.hash.outbound-links.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   </head>
 
-  <body class="min-h-screen bg-warm font-steven tracking-wider leading-9">
+  <body class="min-h-screen bg-warm font-dynapuff">
     <%# admin_tool do %>
       <%# render "shared/stonk_tickler_marquee" %>
     <%# end %>
@@ -63,7 +64,7 @@
         <div class="bg-soft-bone w-full max-w-md card-pixel mx-2 md:mx-auto relative max-h-[80vh] flex flex-col" data-modal-target="container" data-hackatime-modal-target="container">
           <div class="p-3 md:p-4 border-b border-saddle-taupe border-opacity-30 flex-shrink-0">
             <div class="flex justify-between items-center">
-              <h3 class="text-lg md:text-2xl font-steven">Connect Hackatime</h3>
+              <h3 class="text-lg md:text-2xl">Connect Hackatime</h3>
               <button type="button" class="text-gray-600 hover:text-vintage-red cursor-pointer" data-action="hackatime-modal#skip">
                 <%= inline_svg_tag "close.svg", class: "h-6 w-6 2xl:h-8 2xl:w-8" %>
               </button>
@@ -73,7 +74,7 @@
           <div class="p-4 md:p-6 overflow-y-auto" data-hackatime-modal-target="modalContent">
             <div class="text-center mb-6">
               <%= image_tag "orpheustimer.png", class: "w-32 h-32 md:w-48 md:h-48 2xl:w-64 2xl:h-64 mx-auto mb-4", alt: "Hackatime" %>
-              <h4 class="text-xl md:text-2xl 2xl:text-3xl font-steven mb-2">Set up Hackatime</h4>
+              <h4 class="text-xl md:text-2xl 2xl:text-3xl mb-2">Set up Hackatime</h4>
               <p class="text-base md:text-lg mb-4 text-gray-600">
                 Hackatime helps you track your time and progress. Set it up to embark on a journey!
               </p>
@@ -92,7 +93,7 @@
           <div class="p-4 md:p-6 overflow-y-auto hidden" data-hackatime-modal-target="countdownContent">
             <div class="text-center mb-6">
               <%= image_tag "orpheustimer.png", class: "w-32 h-32 md:w-48 md:h-48 2xl:w-64 2xl:h-64 mx-auto mb-4", alt: "Hackatime" %>
-              <h4 class="text-xl md:text-2xl 2xl:text-3xl font-steven mb-2">Redirecting to Hackatime</h4>
+              <h4 class="text-xl md:text-2xl 2xl:text-3xl mb-2">Redirecting to Hackatime</h4>
               <p class="text-base md:text-lg mb-4 text-gray-600">
                 You'll be redirected to Hackatime in <span data-hackatime-modal-target="countdown" class="font-bold text-vintage-red">3</span> seconds...
               </p>
@@ -102,7 +103,7 @@
           <div class="p-4 md:p-6 overflow-y-auto hidden" data-hackatime-modal-target="instructionsContent">
             <div class="text-center mb-6">
               <%= image_tag "orpheustimer.png", class: "w-32 h-32 md:w-48 md:h-48 2xl:w-64 2xl:h-64 mx-auto mb-4", alt: "Hackatime" %>
-              <h4 class="text-xl md:text-2xl 2xl:text-3xl font-steven mb-2">Complete Hackatime Setup</h4>
+              <h4 class="text-xl md:text-2xl 2xl:text-3xl mb-2">Complete Hackatime Setup</h4>
               <p class="text-base md:text-lg mb-4 text-gray-600">
                 On Hackatime:
               </p>
@@ -136,7 +137,7 @@
         <div class="bg-soft-bone w-full max-w-md card-pixel mx-2 md:mx-auto relative max-h-[80vh] flex flex-col" data-modal-target="container">
           <div class="p-3 md:p-4 border-b border-saddle-taupe border-opacity-30 flex-shrink-0">
             <div class="flex justify-between items-center">
-              <h3 class="text-lg md:text-2xl font-steven">Sync Hackatime</h3>
+              <h3 class="text-lg md:text-2xl">Sync Hackatime</h3>
               <button type="button" class="text-gray-600 hover:text-vintage-red cursor-pointer" data-action="modal#close">
                 <%= inline_svg_tag "close.svg", class: "h-6 w-6 2xl:h-8 2xl:w-8" %>
               </button>
@@ -146,7 +147,7 @@
           <div class="p-4 md:p-6 overflow-y-auto">
             <div class="text-center mb-6">
               <%= image_tag "orpheustimer.png", class: "w-32 h-32 md:w-48 md:h-48 2xl:w-64 2xl:h-64 mx-auto mb-4", alt: "Hackatime" %>
-              <h4 class="text-xl md:text-2xl 2xl:text-3xl font-steven mb-2">Sync Hackatime Data</h4>
+              <h4 class="text-xl md:text-2xl 2xl:text-3xl mb-2">Sync Hackatime Data</h4>
               <p class="text-base md:text-lg mb-4 text-gray-600">
                 Your Hackatime account is already connected. Would you like to manually sync your activity data?
               </p>
@@ -172,7 +173,7 @@
         <div class="bg-soft-bone w-full max-w-md card-pixel mx-2 md:mx-auto relative max-h-[80vh] flex flex-col" data-modal-target="container">
           <div class="p-3 md:p-4 border-b border-saddle-taupe border-opacity-30 flex-shrink-0">
             <div class="flex justify-between items-center">
-              <h3 class="text-lg md:text-2xl font-steven">Hackatime Connected</h3>
+              <h3 class="text-lg md:text-2xl">Hackatime Connected</h3>
               <%= form_tag users_update_hackatime_confirmation_path, method: :post, data: { turbo: false } do %>
                 <button type="submit" class="text-gray-600 hover:text-vintage-red cursor-pointer">
                   <%= inline_svg_tag "close.svg", class: "h-6 w-6 2xl:h-8 2xl:w-8" %>
@@ -184,7 +185,7 @@
           <div class="p-4 md:p-6 overflow-y-auto">
             <div class="text-center mb-6">
               <%= image_tag "orpheustimer.png", class: "w-32 h-32 md:w-48 md:h-48 2xl:w-64 2xl:h-64 mx-auto mb-4", alt: "Hackatime" %>
-              <h4 class="text-xl md:text-2xl 2xl:text-3xl font-steven mb-2">You're All Set!</h4>
+              <h4 class="text-xl md:text-2xl 2xl:text-3xl mb-2">You're All Set!</h4>
               <p class="text-base md:text-lg mb-4 text-gray-600">
                 Your Hackatime account is already connected. You're all set to embark on a journey!
               </p>

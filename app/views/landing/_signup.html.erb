@@ -1,0 +1,27 @@
+<div
+  x-data="{ open: false }"
+  @turbo:submit-end.window="if ($event.detail.success) open = true"
+>
+  <%= form_with url: sign_up_path, method: :post, data: { turbo: true } do |f| %>
+      <%= f.email_field :email, required: true, class: "border" %>
+    <%= f.submit "Save", class: "border" %>
+  <% end %>
+
+  <!-- any modal markup works; here we use the native <dialog> -->
+  <dialog
+    x-ref="dlg"
+    x-show="open"
+    x-on:open.window="$refs.dlg.showModal()"
+    x-effect="open ? $refs.dlg.showModal() : $refs.dlg.close()"
+    x-transition
+    class="modal card-pixel p-4 sm:p-8 bg-bread"
+  >
+    <h2 class="mb-2">Welcome aboard ✨</h2>
+    <p>Check your inbox to confirm your address.</p>
+    <p>While you wait...</p>
+
+    <%= video_tag "wat.mp4", autoplay: true, loop: true, controls: true %>
+
+    <button class="btn" @click="open = false">Close</button>
+  </dialog>
+</div>

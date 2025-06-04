@@ -21,6 +21,15 @@ class TimerSessionsController < ApplicationController
     )
 
     if @timer_session.save
+      # show indicator
+      Turbo::StreamsChannel.broadcast_replace_to(
+        current_user,
+        "timer_indicator",
+        target: "timer-indicator",
+        partial: "shared/timer_indicator_content",
+        locals: { active_timer_session: @timer_session }
+      )
+      
       render json: {
         id: @timer_session.id,
         started_at: @timer_session.started_at,
@@ -70,6 +79,15 @@ class TimerSessionsController < ApplicationController
         @timer_session.errors.add(:base, "Timer sessions must be at least 5 minutes long")
       else
         @timer_session.update(stopped_at: end_time, net_time: net_time.to_i, status: :stopped)
+        
+        # hide indicator
+        Turbo::StreamsChannel.broadcast_replace_to(
+          current_user,
+          "timer_indicator",
+          target: "timer-indicator",
+          partial: "shared/timer_indicator_content",
+          locals: { active_timer_session: nil }
+        )
       end
     end
 
@@ -121,6 +139,15 @@ class TimerSessionsController < ApplicationController
   def destroy
     if @timer_session.user == current_user
       if @timer_session.destroy
+        # hide indicator
+        Turbo::StreamsChannel.broadcast_replace_to(
+          current_user,
+          "timer_indicator",
+          target: "timer-indicator",
+          partial: "shared/timer_indicator_content",
+          locals: { active_timer_session: nil }
+        )
+        
         render json: { success: true }, status: :ok
       else
         render json: { error: @timer_session.errors.full_messages.join(", ") }, status: :unprocessable_entity

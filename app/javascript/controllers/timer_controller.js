@@ -67,7 +67,7 @@ export default class extends Controller {
           this.activeStateTarget.classList.remove("hidden")
           this.pauseButtonTarget.classList.add("hidden")
           this.resumeButtonTarget.classList.remove("hidden")
-          this.titleTarget.textContent = "Timer Session (Paused)"
+          this.titleTarget.textContent = "Timer (Paused)"
           
           this.updateTimerDisplay()
         } else {
@@ -76,10 +76,14 @@ export default class extends Controller {
           
           this.initialStateTarget.classList.add("hidden")
           this.activeStateTarget.classList.remove("hidden")
-          this.titleTarget.textContent = "Timer Session"
+          this.titleTarget.textContent = "Timer"
           
           this.updateTimer()
         }
+        
+        this.updateTimerButtonText("View Timer")
+      } else {
+        this.updateTimerButtonText("Start Timer")
       }
     } catch (error) {
       console.error("Error checking for active timer session:", error)
@@ -115,10 +119,12 @@ export default class extends Controller {
       this.timerSessionId = data.id;
       this.initialStateTarget.classList.add("hidden");
       this.activeStateTarget.classList.remove("hidden");
-      this.titleTarget.textContent = "Timer Session";
+      this.titleTarget.textContent = "Timer";
       this.startTime = new Date(data.started_at);
       this.isPaused = false;
       this.updateTimer();
+      
+      this.updateTimerButtonText("View Timer");
     } catch (error) {
       console.error("Error creating timer session:", error);
       window.location.href = `/projects/${this.projectId}`;
@@ -172,7 +178,7 @@ export default class extends Controller {
       
       this.pauseButtonTarget.classList.add("hidden")
       this.resumeButtonTarget.classList.remove("hidden")
-      this.titleTarget.textContent = "Timer Session (Paused)"
+      this.titleTarget.textContent = "Timer (Paused)"
       
       if (!response.ok) {
         throw new Error('Failed to pause timer session')
@@ -205,7 +211,7 @@ export default class extends Controller {
       this.accumulatedPaused = data.accumulated_paused
       
       this.isPaused = false
-      this.titleTarget.textContent = "Timer Session"
+      this.titleTarget.textContent = "Timer"
       this.pauseButtonTarget.classList.remove("hidden")
       this.resumeButtonTarget.classList.add("hidden")
       
@@ -239,6 +245,8 @@ export default class extends Controller {
       this.resetTimerState()
       this.element.classList.add("hidden")
       document.body.classList.remove("overflow-hidden")
+      
+      this.updateTimerButtonText("Start Timer")
     } catch (error) {
       console.error("Error deleting timer session:", error)
     }
@@ -359,5 +367,14 @@ export default class extends Controller {
     this.accumulatedPaused = 0
     this.isPaused = false
     this.isCountingDown = false
+    
+    this.updateTimerButtonText("Start Timer")
+  }
+
+  updateTimerButtonText(text) {
+    const timerButtons = document.querySelectorAll(`button[data-modal-id="${this.projectId}"][data-modal-type="timer"]`);
+    timerButtons.forEach(button => {
+      button.textContent = text;
+    });
   }
 } 

@@ -12,6 +12,7 @@ Rails.application.routes.draw do
 
   # Root path is landing page for unauthenticated, redirects to dashboard for authenticated
   root "landing#index"
+  post "/sign-up", to: "landing#sign_up"
 
   # Authentication routes
   get "/auth/slack", to: "sessions#new"
@@ -23,7 +24,7 @@ Rails.application.routes.draw do
   # get "dashboard", to: "dashboard#index"
 
   get "explore", to: "projects#index"
-  get "projects_feed", to: "projects#projects_feed"
+  get "gallery", to: "projects#gallery"
   get "my_projects", to: "projects#my_projects"
   post "check_link", to: "projects#check_link"
 

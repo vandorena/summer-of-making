@@ -1,6 +1,6 @@
 class ProjectsController < ApplicationController
     include ActionView::RecordIdentifier
-    before_action :authenticate_user!
+    before_action :authenticate_user!, except: [:index, :gallery, :show]
     before_action :set_project, only: [ :show, :edit, :update, :follow, :unfollow, :ship, :stake_stonks, :unstake_stonks, :destroy ]
     before_action :check_if_shipped, only: [ :edit, :update ]
     before_action :authorize_user, only: [ :destroy ]
@@ -110,9 +110,8 @@ class ProjectsController < ApplicationController
         render :index
     end
 
-    def projects_feed
+    def gallery
         @projects = Project.includes(:user)
-        .where.not(user_id: current_user.id)
         .order(rating: :asc)
 
         @projects = @projects.sort_by do |project|
