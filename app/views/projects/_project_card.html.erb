@@ -12,7 +12,7 @@
         <% if user_signed_in? %>
           <div class="ml-4 flex flex-wrap items-center gap-3 md:gap-4">
 
-            <% if current_user != @project.user %>
+            <% if user_signed_in? && current_user != @project.user %>
               <%= render "projects/follow_button", project: @project %>
               <%= render "projects/stonks_button", project: @project %>
             <% end %>
@@ -83,3 +83,345 @@
     </div>
   </div>
 </div>
+
+<!-- Follower Modal -->
+<div id="follower-modal-<%= @project.id %>" data-controller="modal" class="hidden fixed inset-0 z-50 overflow-auto bg-black/30 flex items-center justify-center p-2 md:p-4">
+  <div class="bg-soft-bone w-full max-w-md card-pixel mx-2 md:mx-auto relative max-h-[80vh] flex flex-col" data-modal-target="container">
+    <div class="p-3 md:p-4 border-b border-saddle-taupe border-opacity-30 flex-shrink-0">
+      <div class="flex justify-between items-center">
+        <h3 class="text-lg md:text-2xl font-steven">Followers</h3>
+          <button type="button" class="text-gray-600 hover:text-vintage-red cursor-pointer" data-action="click->modal#close">
+            <%= inline_svg_tag "close.svg", class: "h-6 w-6 2xl:h-8 2xl:w-8" %>
+          </button>
+      </div>
+    </div>
+
+    <div class="p-3 md:p-4 overflow-y-auto">
+      <div class="space-y-4">
+        <% if @project.followers.any? %>
+          <% @project.followers.each do |follower| %>
+            <div class="flex items-center space-x-3">
+              <img src="<%= follower.avatar %>" alt="<%= follower.display_name %>" class="w-10 h-10 -full">
+              <div>
+                <p class="font-steven text-black"><%= follower.display_name %></p>
+                <p class="text-sm text-gray-600">
+                  <% if follower.projects.length() > 1 %>
+                    Check their projects out:
+                    <% follower.projects.each do |project| %>
+                      <%= link_to project.title, project_path(project), class: "text-nice-blue underline" %><%= ", " unless project == follower.projects.last %>
+                    <% end %>
+                  <% elsif follower.projects.present? %>
+                    Check their project out: <%= link_to follower.projects.first.title, project_path(follower.projects.first), class: "text-nice-blue underline" %>
+                  <% else %>
+                    Whoops! Looks like they don't have a project yet. Maybe ask them to start one?
+                  <% end %>
+                </p>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="text-center">
+            <%= image_tag "puppyeyes.png", class: "w-32 h-32 2xl:w-64 2xl:h-64 mx-auto mb-4 transform scale-x-[-1]", alt: "Puppy Eyes" %>
+            <p class="text-gray-600 text-center text-xl">No followers yet</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Ship Modal -->
+<div id="ship-modal-<%= @project.id %>" data-controller="ship" class="hidden fixed inset-0 z-50 overflow-auto bg-black/30 flex items-center justify-center p-2 md:p-4" data-ship-target="modal" data-action="click->ship#closeBackground">
+  <div class="bg-soft-bone w-full max-w-2xl card-pixel mx-2 md:mx-auto relative max-h-[90vh] flex flex-col overflow-hidden">
+    <div class="p-3 md:p-4 border-b border-saddle-taupe border-opacity-30 flex-shrink-0">
+      <div class="flex justify-between items-center">
+        <h3 class="text-lg md:text-2xl font-steven">Ship Your Project</h3>
+        <button type="button" class="text-gray-600 hover:text-vintage-red cursor-pointer" data-action="ship#close">
+          <%= inline_svg_tag "close.svg", class: "h-6 w-6 2xl:h-8 2xl:w-8" %>
+        </button>
+      </div>
+    </div>
+
+    <!-- Page 1: Introduction -->
+    <div data-ship-target="page1" class="p-4 md:p-6 overflow-y-auto">
+      <div class="text-center mb-8">
+        <%= image_tag "orpheusyap1.png", class: "w-64 h-64 mx-auto mb-4", alt: "Orpheus Yap" %>
+        <h4 class="text-xl md:text-2xl 2xl:text-3xl font-steven mb-2">HOLD UP</h4>
+        <p class="text-base md:text-lg mb-4 text-gray-600">By shipping your project, you're marking it as complete and it'll enter matchmaking. <span class="text-vintage-red">However, you will NOT be able to edit it anymore.</span></p>
+      </div>
+
+      <div class="mt-6 flex justify-center space-x-4">
+        <button type="button" class="px-4 py-2 btn-pixel bg-vintage-red text-white hover:scale-[1.05] transition-transform 2xl:text-xl" data-action="ship#close">
+          Not Yet
+        </button>
+        <button type="button" data-ship-target="nextButton1" data-action="ship#next1" class="px-4 py-2 btn-pixel 2xl:text-xl bg-forest text-white hover:scale-[1.05] transition-transform">
+          Next
+        </button>
+      </div>
+    </div>
+
+    <!-- Page 2: Requirements -->
+    <div data-ship-target="page2" class="p-4 md:p-6 overflow-y-auto hidden">
+      <div class="text-center mb-4">
+        <h4 class="text-xl md:text-2xl 2xl:text-3xl font-steven mb-2">Ship Requirements Checklist</h4>
+        <p class="text-base md:text-lg mb-4 text-gray-600">Your project <span class="text-vintage-red">must meet ALL these requirements</span> before it can be shipped.</p>
+      </div>
+
+      <div class="p-4 mb-4 overflow-y-auto max-h-[40vh]">
+        <ul class="space-y-2 text-left">
+          <% has_enough_updates = @project.updates.count >= 10 %>
+          <li class="flex items-start">
+            <div class="flex-shrink-0 h-6 w-6 mt-0.5">
+              <div class="h-5 w-5 border-2 <%= has_enough_updates ? 'bg-forest border-forest' : 'border-gray-400' %>  flex items-center justify-center">
+                <% if has_enough_updates %>
+                  <%= inline_svg "check.svg", class: "h-3 w-3 text-white" %>
+                <% end %>
+              </div>
+            </div>
+            <span class="ml-2 <%= has_enough_updates ? 'text-forest' : 'text-gray-600' %>">
+              Project must have at least 10 updates
+              <% unless has_enough_updates %>
+                <span class="block text-sm text-vintage-red">You have <%= @project.updates.count %> updates. Need <%= 10 - @project.updates.count %> more.</span>
+              <% end %>
+            </span>
+          </li>
+
+          <% unique_dates = @project.updates.pluck(:created_at).compact.map { |date| date.to_date }.uniq %>
+          <% has_enough_dates = unique_dates.count >= 5 %>
+          <li class="flex items-start">
+            <div class="flex-shrink-0 h-6 w-6 mt-0.5">
+              <div class="h-5 w-5 border-2 <%= has_enough_dates ? 'bg-forest border-forest' : 'border-gray-400' %>  flex items-center justify-center">
+                <% if has_enough_dates %>
+                  <%= inline_svg "check.svg", class: "h-3 w-3 text-white" %>
+                <% end %>
+              </div>
+            </div>
+            <span class="ml-2 <%= has_enough_dates ? 'text-forest' : 'text-gray-600' %>">
+              Updates must be posted on at least 5 different dates
+              <% unless has_enough_dates %>
+                <span class="block text-sm text-vintage-red">You have updates on <%= unique_dates.count %> different dates. Need <%= 5 - unique_dates.count %> more days.</span>
+              <% end %>
+            </span>
+          </li>
+
+          <% has_repo = @project.repo_link.present? %>
+          <li class="flex items-start">
+            <div class="flex-shrink-0 h-6 w-6 mt-0.5">
+              <div class="h-5 w-5 border-2 <%= has_repo ? 'bg-forest border-forest' : 'border-gray-400' %>  flex items-center justify-center">
+                <% if has_repo %>
+                  <%= inline_svg "check.svg", class: "h-3 w-3 text-white" %>
+                <% end %>
+              </div>
+            </div>
+            <span class="ml-2 <%= has_repo ? 'text-forest' : 'text-gray-600' %>">
+              Project must have a repository link
+              <% unless has_repo %>
+                <span class="block text-sm text-vintage-red">Please add a repository link in the project edit page.</span>
+              <% end %>
+            </span>
+          </li>
+
+          <% has_raw_readme = @project.readme_link.present? && @project.readme_link.include?("raw") %>
+          <li class="flex items-start">
+            <div class="flex-shrink-0 h-6 w-6 mt-0.5">
+              <div class="h-5 w-5 border-2 <%= has_raw_readme ? 'bg-forest border-forest' : 'border-gray-400' %>  flex items-center justify-center">
+                <% if has_raw_readme %>
+                  <%= inline_svg "check.svg", class: "h-3 w-3 text-white" %>
+                <% end %>
+              </div>
+            </div>
+            <span class="ml-2 <%= has_raw_readme ? 'text-forest' : 'text-gray-600' %>">
+              Project must have a raw GitHub documentation link (raw.github...)
+              <% unless has_raw_readme %>
+                <span class="block text-sm text-vintage-red">
+                  <% if @project.readme_link.blank? %>
+                    Please add a readme/documentation link.
+                  <% else %>
+                    Your documentation link should be a raw GitHub link (raw.github...).
+                  <% end %>
+                </span>
+              <% end %>
+            </span>
+          </li>
+
+          <% has_demo = @project.demo_link.present? %>
+          <li class="flex items-start">
+            <div class="flex-shrink-0 h-6 w-6 mt-0.5">
+              <div class="h-5 w-5 border-2 <%= has_demo ? 'bg-forest border-forest' : 'border-gray-400' %>  flex items-center justify-center">
+                <% if has_demo %>
+                  <%= inline_svg "check.svg", class: "h-3 w-3 text-white" %>
+                <% end %>
+              </div>
+            </div>
+            <span class="ml-2 <%= has_demo ? 'text-forest' : 'text-gray-600' %>">
+              Project must have a demo link
+              <% unless has_demo %>
+                <span class="block text-sm text-vintage-red">Please add a demo link in the project edit page.</span>
+              <% end %>
+            </span>
+          </li>
+
+          <% has_description = @project.description.present? && @project.description.length >= 30 %>
+          <li class="flex items-start">
+            <div class="flex-shrink-0 h-6 w-6 mt-0.5">
+              <div class="h-5 w-5 border-2 <%= has_description ? 'bg-forest border-forest' : 'border-gray-400' %>  flex items-center justify-center">
+                <% if has_description %>
+                  <%= inline_svg "check.svg", class: "h-3 w-3 text-white" %>
+                <% end %>
+              </div>
+            </div>
+            <span class="ml-2 <%= has_description ? 'text-forest' : 'text-gray-600' %>">
+              Project must have a valid description (at least 30 characters)
+              <% unless has_description %>
+                <span class="block text-sm text-vintage-red">
+                  <% if @project.description.blank? %>
+                    Please add a description.
+                  <% else %>
+                    Your description is too short. Current length: <%= @project.description.length %>/30.
+                  <% end %>
+                </span>
+              <% end %>
+            </span>
+          </li>
+
+          <% has_banner = @project.banner.present? %>
+          <li class="flex items-start">
+            <div class="flex-shrink-0 h-6 w-6 mt-0.5">
+              <div class="h-5 w-5 border-2 <%= has_banner ? 'bg-forest border-forest' : 'border-gray-400' %>  flex items-center justify-center">
+                <% if has_banner %>
+                  <%= inline_svg "check.svg", class: "h-3 w-3 text-white" %>
+                <% end %>
+              </div>
+            </div>
+            <span class="ml-2 <%= has_banner ? 'text-forest' : 'text-gray-600' %>">
+              Project must have a banner image
+              <% unless has_banner %>
+                <span class="block text-sm text-vintage-red">Please add a banner image URL in the project edit page.</span>
+              <% end %>
+            </span>
+          </li>
+        </ul>
+      </div>
+
+      <%
+        all_requirements_met = has_enough_updates &&
+                               has_enough_dates &&
+                               has_repo &&
+                               has_raw_readme &&
+                               has_demo &&
+                               has_description &&
+                               has_banner
+      %>
+
+      <input type="hidden" id="all-requirements-met" value="<%= all_requirements_met %>">
+      <input type="hidden" id="repo-link" value="<%= @project.repo_link %>">
+      <input type="hidden" id="readme-link" value="<%= @project.readme_link %>">
+      <input type="hidden" id="demo-link" value="<%= @project.demo_link %>">
+
+      <div class="mt-6 flex justify-center space-x-4">
+        <button type="button" class="px-4 py-2 btn-pixel bg-nice-blue text-white hover:scale-[1.05] transition-transform 2xl:text-xl" data-ship-target="backButton1" data-action="ship#back1">
+          Go Back
+        </button>
+        <button type="button" data-ship-target="nextButton2" data-action="ship#next2" class="px-4 py-2 btn-pixel <%= all_requirements_met ? 'bg-forest' : 'bg-forest/70 cursor-not-allowed' %> text-white hover:scale-[1.05] transition-transform 2xl:text-xl" <%= all_requirements_met ? '' : 'disabled' %>>
+          <%= all_requirements_met ? 'Next: Check Links' : 'Complete Requirements First' %>
+        </button>
+      </div>
+    </div>
+
+    <!-- Page 3: Link Verification -->
+    <div data-ship-target="page3" class="p-4 md:p-6 overflow-y-auto hidden">
+      <div class="text-center mb-6">
+        <h4 class="text-xl md:text-2xl 2xl:text-3xl font-steven mb-2">Link Verification</h4>
+        <p class="text-base md:text-lg mb-4 text-gray-600">Look, I'm not going through airtable to check your links so here's some automated checks. I hope it's bug free.</p>
+      </div>
+
+      <div class="mb-6">
+        <p data-ship-target="statusText" class="text-center font-steven text-lg mb-4 p-2 border-2 border-saddle-taupe/30 bg-soft-bone/50">Ready to check your links...</p>
+
+        <div class="space-y-4 p-4 border-2 border-saddle-taupe/30 bg-soft-bone/50 card-pixel">
+          <h5 class="font-steven text-base md:text-lg mb-2">Link Status:</h5>
+
+          <% if @project.repo_link.present? %>
+            <div class="flex justify-between items-center border-b border-saddle-taupe/30 pb-2">
+              <div class="max-w-[70%]">
+                <p class="font-medium">Repository Link:</p>
+                <p class="text-sm text-gray-600 break-all"><%= @project.repo_link %></p>
+              </div>
+              <div data-ship-target="linkStatus" data-link-name="Repository" class="text-gray-600 text-sm font-medium">
+                Not checked
+              </div>
+            </div>
+          <% end %>
+
+          <% if @project.readme_link.present? %>
+            <div class="flex justify-between items-center border-b border-saddle-taupe/30 pb-2">
+              <div class="max-w-[70%]">
+                <p class="font-medium">Readme Link:</p>
+                <p class="text-sm text-gray-600 break-all"><%= @project.readme_link %></p>
+              </div>
+              <div data-ship-target="linkStatus" data-link-name="Readme" class="text-gray-600 text-sm font-medium">
+                Not checked
+              </div>
+            </div>
+          <% end %>
+
+          <% if @project.demo_link.present? %>
+            <div class="flex justify-between items-center <%= @project.demo_link == @project.repo_link || @project.demo_link == @project.readme_link ? 'border-b border-saddle-taupe/30 pb-2' : '' %>">
+              <div class="max-w-[70%]">
+                <p class="font-medium">Demo Link:</p>
+                <p class="text-sm text-gray-600 break-all"><%= @project.demo_link %></p>
+              </div>
+              <div data-ship-target="linkStatus" data-link-name="Demo" class="text-gray-600 text-sm font-medium">
+                Not checked
+              </div>
+            </div>
+          <% end %>
+
+          <div class="text-center mt-4 mb-1">
+            <button type="button" onclick="window.location.href='<%= edit_project_path(@project) %>'" class="text-sm text-nice-blue underline">
+              Edit Project Links
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="mb-4 p-4 border-2 border-saddle-taupe/30 bg-soft-bone/50 card-pixel">
+        <div class="flex items-start mb-4">
+          <div class="flex-shrink-0 h-6 w-6 mt-0.5">
+            <label for="no-404-links" class="cursor-pointer">
+              <div class="h-5 w-5 border-2 border-gray-400 flex items-center justify-center">
+                <input type="checkbox" id="no-404-links" class="sr-only" data-ship-target="no404Checkbox" data-action="change->ship#toggleNo404Check">
+                <div data-ship-target="no404Check" class="hidden">
+                  <%= inline_svg "check.svg", class: "h-3 w-3 text-white" %>
+                </div>
+              </div>
+            </label>
+          </div>
+          <span class="ml-2 text-gray-600">
+            <label for="no-404-links" class="cursor-pointer">
+              <strong>I confirm that:</strong>
+              <ul class="list-disc ml-6 mt-1 text-sm">
+                <li>I've verified my project links are working correctly</li>
+                <li>My project is complete and ready to be shipped</li>
+                <li>I understand that shipping is permanent and cannot be undone</li>
+              </ul>
+            </label>
+          </span>
+        </div>
+      </div>
+
+      <%= form_with(model: @project, url: ship_project_path(@project), method: :patch, data: { ship_target: "form", action: "submit->ship#submit" }) do |form| %>
+        <div class="mt-6 flex justify-center space-x-4">
+          <button type="button" class="px-4 py-2 btn-pixel bg-nice-blue text-white hover:scale-[1.05] transition-transform 2xl:text-xl" data-ship-target="backButton2" data-action="ship#back2">
+            Go Back
+          </button>
+          <button type="submit" class="px-4 py-2 btn-pixel bg-forest/70 cursor-not-allowed text-white hover:scale-[1.05] transition-transform 2xl:text-xl" data-ship-target="submitButton" disabled>
+            Ship It!
+          </button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+

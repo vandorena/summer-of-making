@@ -35,13 +35,33 @@
             <% minutes = (timer_session.net_time % 3600) / 60 %>
             <%= hours > 0 ? "#{hours}h spent working" : "#{minutes}m spent working" %>
           </span>
+          <span class="text-gray-600 text-xs sm:text-sm 2xl:text-base"> • </span>
         <% elsif update.last_hackatime_time.present? && update.last_hackatime_time > 0 %>
           <span class="text-gray-600 text-xs sm:text-sm 2xl:text-base">
             <% hours = update.last_hackatime_time / 3600 %>
             <% minutes = (update.last_hackatime_time % 3600) / 60 %>
             <%= hours > 0 ? "#{hours}h spent working" : "#{minutes}m spent working" %>
           </span>
+          <span class="text-gray-600 text-xs sm:text-sm 2xl:text-base"> • </span>
         <% end %>
+
+        <!-- Time ago -->
+        <span class="text-gray-600 text-xs sm:text-sm 2xl:text-base">
+          <% time_diff = Time.current - update.created_at %>
+          <% if time_diff >= 86400 %>
+            <% days = (time_diff / 86400).to_i %>
+            <%= "#{days}d ago" %>
+          <% elsif time_diff >= 3600 %>
+            <% hours = (time_diff / 3600).to_i %>
+            <%= "#{hours}h ago" %>
+          <% elsif time_diff >= 60 %>
+            <% minutes = (time_diff / 60).to_i %>
+            <%= "#{minutes}m ago" %>
+          <% else %>
+            <% seconds = time_diff.to_i %>
+            <%= "#{seconds}s ago" %>
+          <% end %>
+        </span>
 
         <% if show_stonks && update.project.stonks.count %>
           <span class="text-gray-600 text-xs sm:text-sm 2xl:text-base">
