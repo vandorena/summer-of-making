@@ -1,7 +1,7 @@
 class TutorialProgress < ApplicationRecord
   belongs_to :user
 
-  TUTORIAL_STEPS = %w[explore shop my_projects gallery].freeze
+  TUTORIAL_STEPS = %w[explore gallery my_projects vote shop].freeze
 
   after_initialize :setup_default_progress, if: :new_record?
 
