@@ -46,6 +46,34 @@
   }
 }
 
+@keyframes sh {
+  0% {
+    transform: translateX(0px) scale(1);
+    box-shadow: none;
+  }
+  50% {
+    transform: translateX(12px) scale(1.02);
+    box-shadow: 0 8px 24px rgba(224, 101, 64, 0.3);
+  }
+  100% {
+    transform: translateX(8px) scale(1);
+    box-shadow: 0 4px 12px rgba(224, 101, 64, 0.2);
+  }
+}
+
+@keyframes sc {
+  0% {
+    transform: translateX(8px);
+    background-color: #fff3cd;
+    border-left-color: #e06540;
+  }
+  100% {
+    transform: translateX(0px);
+    background-color: #d4edda;
+    border-left-color: #28a745;
+  }
+}
+
 .animate-wiggle {
   animation: wiggle 6s ease-in-out infinite;
 }
@@ -398,6 +426,50 @@
   z-index: 2;
 }
 
+.example-sec {
+  scroll-behavior: smooth;
+}
+
+.example-sec .step-item {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+}
+
+.example-sec .step-item.highlighted {
+  animation: sh 0.6s ease-out;
+}
+
+.example-sec .step-item.completed {
+  animation: sc 0.4s ease-out;
+}
+
+.example-sec .step-item:hover {
+  transform: translateX(4px);
+  background-color: rgba(224, 101, 64, 0.05) !important;
+  border-left-color: rgba(224, 101, 64, 0.3) !important;
+}
+
+.example-sec [data-scroll-showcase-target="emoji"] {
+  display: inline-block;
+  transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.example-sec [data-scroll-showcase-target="image"] {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.example-sec .card-box {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.example-sec [data-scroll-showcase-target="activeIndicator"] {
+  transition: opacity 0.5s ease-in-out;
+}
+
 @media (max-width: 768px) {
   .wavy-section::before,
   .wavy-section::after {
@@ -420,8 +492,27 @@
     );
   }
 
-    .section-z::before,
-    .section-z::after {
-        height: 40px;
-    }
+  .section-z::before,
+  .section-z::after {
+    height: 40px;
+  }
+
+  .example-sec .step-item {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .example-sec [data-scroll-showcase-target="emoji"] {
+    font-size: 3rem;
+  }
+
+  .example-sec .card-box {
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .scroll-trigger {
+    height: 4rem;
+    margin: 1rem 0;
+  }
 }
