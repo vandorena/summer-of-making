@@ -12,7 +12,6 @@ class SessionsController < ApplicationController
       redirect_to "https://slack.com/oauth/v2/authorize?#{params.to_query}", allow_other_host: true
     end
 
-
     def create
       if params[:state] != session[:state]
         Rails.logger.tagged("Authentication") do
@@ -70,5 +69,52 @@ class SessionsController < ApplicationController
       end
       session[:user_id] = nil
       redirect_to root_path, notice: "Signed out successfully!"
+    end
+
+    def magic_link
+      token = params[:token]
+
+      if token.blank?
+        redirect_to root_path, alert: "Invalid magic link."
+        return
+      end
+
+      magic_link = MagicLink.find_by(token: token)
+
+      if magic_link.nil?
+        Rails.logger.tagged("Authentication") do
+          Rails.logger.warn({
+            event: "magic_link_not_found",
+            token: token
+          }.to_json)
+        end
+        redirect_to root_path, alert: "Invalid magic link."
+        return
+      end
+
+      if magic_link.expired?
+        Rails.logger.tagged("Authentication") do
+          Rails.logger.warn({
+            event: "magic_link_expired",
+            magic_link_id: magic_link.id,
+            expired_at: magic_link.expires_at
+          }.to_json)
+        end
+        redirect_to root_path, alert: "This magic link has expired."
+        return
+      end
+
+      # Authenticate the user
+      session[:user_id] = magic_link.user.id
+
+      Rails.logger.tagged("Authentication") do
+        Rails.logger.info({
+          event: "magic_link_authentication_successful",
+          user_id: magic_link.user.id,
+          magic_link_id: magic_link.id
+        }.to_json)
+      end
+
+      redirect_to root_path, notice: "Successfully signed in via magic link!"
     end
 end
