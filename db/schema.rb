@@ -342,6 +342,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_05_002232) do
     t.boolean "has_hackatime", default: false
     t.boolean "hackatime_confirmation_shown", default: false
     t.boolean "is_admin", default: false, null: false
+    t.string "identity_vault_id"
+    t.string "identity_vault_access_token"
+    t.boolean "ysws_verified", default: false
   end
 
   create_table "votes", force: :cascade do |t|
