@@ -143,6 +143,34 @@
       transform: translateY(1px) scale(0.98);
     }
   }
+
+  &[type="email"] {
+    transition: all 0.3s ease;
+    text-align: center;
+
+    &:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    &:focus {
+      outline: none;
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4),
+        0 0 0 3px rgba(255, 255, 255, 0.3);
+    }
+
+    &:active {
+      transform: translateY(1px) scale(0.99);
+    }
+
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 500;
+    }
+  }
 }
 
 .btn-fancy::before {
@@ -163,6 +191,11 @@
 
 .btn-fancy:hover::before {
   left: 100%;
+}
+
+.btn-fancy[type="email"]:focus::before {
+  left: 100%;
+  transition: left 0.3s;
 }
 
 .card-box {
