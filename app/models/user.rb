@@ -11,7 +11,7 @@ class User < ApplicationRecord
     has_one :tutorial_progress, dependent: :destroy
 
     validates :slack_id, presence: true, uniqueness: true
-    validates :email, :first_name, :last_name, :display_name, :timezone, :avatar, presence: true
+    validates :email, :display_name, :timezone, :avatar, presence: true
     validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
 
     after_create :create_tutorial_progress
