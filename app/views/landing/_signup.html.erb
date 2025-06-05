@@ -4,19 +4,22 @@
     <%= f.submit "Start creating", class: "btn-fancy text-white py-4 px-8 text-xl lg:text-2xl flex items-center justify-center", style: "background: linear-gradient(135deg, #E06540, #EC8153);" %>
   <% end %>
 
-  <dialog 
+  <dialog
     x-ref="dlg"
-    x-show="open"
-    x-on:open.window="$refs.dlg.showModal()"
-    x-effect="open ? $refs.dlg.showModal() : $refs.dlg.close()"
-    x-transition
+    x-on:open-signup-modal.window="open = true; $nextTick(() => $refs.dlg.showModal())"
     class="modal card-pixel p-4 sm:p-8 bg-bread">
     <h2 class="mb-2">Welcome aboard ✨</h2>
     <p>Check your inbox to confirm your address.</p>
     <p>While you wait...</p>
 
-    <%= video_tag "wat.mp4", autoplay: true, loop: true, controls: true %>
+    <%= video_tag "wat.mp4", controls: true %>
 
-    <button class="btn" @click="open = false">Close</button>
+    <button class="btn" @click="open = false; $refs.dlg.close()">Close</button>
   </dialog>
+
+  <!-- DEBUG: Manual trigger -->
+  <button type="button" onclick="document.dispatchEvent(new Event('open-signup-modal'))" class="btn">Test Modal</button>
+  <button type="button" @click="open = true; console.log('Alpine works, open =', open)" class="btn">Test Alpine</button>
+  <button type="button" onclick="console.log('JS works')" class="btn">Test JS</button>
+  <button type="button" @click="$refs.dlg.showModal(); console.log('Dialog:', $refs.dlg)" class="btn">Test Dialog</button>
 </div>
