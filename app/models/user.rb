@@ -68,9 +68,6 @@ class User < ApplicationRecord
 
         user = User.new(
             slack_id: slack_id,
-            first_name: eligible_record.fields["First Name"],
-            middle_name: eligible_record.fields["Middle Name"] || "",
-            last_name: eligible_record.fields["Last Name"],
             display_name: user_info.user.profile.display_name.presence || user_info.user.profile.real_name,
             email: user_info.user.profile.email,
             timezone: user_info.user.tz,
@@ -227,6 +224,8 @@ class User < ApplicationRecord
       idv_data = fetch_idv
 
       update!(
+        first_name: idv_data.dig(:identity, :first_name),
+        last_name: idv_data.dig(:identity, :last_name),
         ysws_verified: idv_data.dig(:identity, :verification_status) == "verified" && idv_data.dig(:identity, :ysws_eligible)
       )
     end
