@@ -1,0 +1,14 @@
+<div class="bg-soft-bone card-pixel p-2 sm:p-4 w-fit my-8">
+    <h3 class="text-2xl">ID verification status</h3>
+
+    <% case :ineligible %>
+        <% when :not_linked %>
+            <p>You haven't linked your ID. <%= link_to "You can add your ID here", link_identity_vault_path, class: "underline" %></p>
+        <% when :needs_resubmission %>
+            <p>You need to resubmit your ID. <%= link_to "Do that here.", Rails.application.credentials.dig(:identity_vault, :host), class: "underline" %></p>
+        <% when :pending %>
+          Your document is under review. Patience is a virtue, grasshopper. <button id="annoying-nudge-button" class="text-soft-bone text-sm px-3 py-0.5 block hover:bg-saddle-taupe hover-btn-pixel bg-saddle-taupe btn-pixel mt-3" onclick="setTimeout(() => { alert(window.nudgeCount > 0 ? 'You\'ve already nudged someone. They\'re probably asleep. Be nice.' : 'You poked a staff member. We\'ll get right to it!'); window.nudgeCount = (window.nudgeCount || 0) + 1 }, Math.floor(Math.random() * (1500 - 250 + 1)) + 250);">Nudge a staff member to get around to it quicker.</button>
+        <% when :ineligible %>
+            You're ineligible for this programme. This is either because you're over 18, or you submitted fake documents. Please do not try again. We are a nonprofit for teenagers!
+    <% end %>
+</div>

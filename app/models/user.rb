@@ -54,7 +54,8 @@ class User < ApplicationRecord
     end
 
     def self.create_from_slack(slack_id)
-        eligible_record = check_eligibility(slack_id)
+        # eligible_record = check_eligibility(slack_id)
+
         user_info = fetch_slack_user_info(slack_id)
 
         Rails.logger.tagged("UserCreation") do
@@ -79,24 +80,25 @@ class User < ApplicationRecord
         user.save!
         user
     end
+
     # Checks if the User is Eligible and ensures YSWS DB is the source of truth for FN, MN, LN
-    def self.check_eligibility(slack_id)
-        user_table = Airrecord.table(ENV["AIRTABLE_API_KEY"], ENV["AIRTABLE_BASE_ID"], "Users")
-        airtable_records = user_table.all(filter: "{Hack Club Slack ID} = '#{slack_id}'")
+    # def self.check_eligibility(slack_id)
+    #     user_table = Airrecord.table(ENV["AIRTABLE_API_KEY"], ENV["AIRTABLE_BASE_ID"], "Users")
+    #     airtable_records = user_table.all(filter: "{Hack Club Slack ID} = '#{slack_id}'")
 
-        if airtable_records.empty?
-            raise StandardError, "Please verify at https://forms.hackclub.com/eligibility"
-        end
+    #     if airtable_records.empty?
+    #         raise StandardError, "Please verify at https://forms.hackclub.com/eligibility"
+    #     end
 
-        valid_statuses = [ "Eligible L1", "Eligible L2" ]
-        eligible_record = airtable_records.find { |record| valid_statuses.include?(record.fields["Verification Status"]) }
+    #     valid_statuses = [ "Eligible L1", "Eligible L2" ]
+    #     eligible_record = airtable_records.find { |record| valid_statuses.include?(record.fields["Verification Status"]) }
 
-        unless eligible_record
-            raise StandardError, "You are not eligible. If you think this is an error, please DM @Bartosz on Slack."
-        end
+    #     unless eligible_record
+    #         raise StandardError, "You are not eligible. If you think this is an error, please DM @Bartosz on Slack."
+    #     end
 
-        eligible_record
-    end
+    #     eligible_record
+    # end
 
     def self.check_hackatime(slack_id)
         response = Faraday.get("https://hackatime.hackclub.com/api/summary?user=#{slack_id}&from=2025-05-16&to=#{Date.today.strftime('%Y-%m-%d')}")
@@ -203,12 +205,16 @@ class User < ApplicationRecord
       })
     end
 
+    def fetch_idv
+      IdentityVaultService.me(identity_vault_access_token)
+    end
+
     def link_identity_vault_callback(callback_url, code)
       code_response = IdentityVaultService.exchange_token(callback_url, code)
 
       access_token = code_response[:access_token]
 
-      idv_data = IdentityVaultService.me(access_token)
+      idv_data = fetch_idv
 
       update!(
         identity_vault_access_token: access_token,
@@ -218,11 +224,32 @@ class User < ApplicationRecord
     end
 
     def refresh_identity_vault_data!
-      idv_data = IdentityVaultService.me(identity_vault_access_token)
+      idv_data = fetch_idv
 
       update!(
         ysws_verified: idv_data.dig(:identity, :verification_status) == "verified" && idv_data.dig(:identity, :ysws_eligible)
       )
+    end
+
+    def verification_status
+      return :not_linked unless identity_vault_id.present?
+
+      idv_data = fetch_idv[:identity]
+
+      case idv_data[:verification_status]
+        when "pending"
+          :pending
+        when "needs_resubmission"
+          :needs_resubmission
+        when "verified"
+          if idv_data[:ysws_eligible]
+            :verified
+          else
+            :ineligible
+          end
+        else
+          :ineligible
+      end
     end
 
     private

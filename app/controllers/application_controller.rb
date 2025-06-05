@@ -8,10 +8,14 @@ class ApplicationController < ActionController::Base
     Rails.logger.info ">>> Request IP: #{request.remote_ip}, User-Agent: #{request.user_agent}"
   end
 
-  helper_method :current_user, :user_signed_in?
+  helper_method :current_user, :user_signed_in?, :current_verification_status
 
   def current_user
     @current_user ||= User.find_by(id: session[:user_id]) if session[:user_id]
+  end
+
+  def current_verification_status
+    @current_verification_status ||= current_user&.verification_status
   end
 
   def user_signed_in?
