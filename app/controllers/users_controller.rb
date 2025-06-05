@@ -43,7 +43,7 @@ class UsersController < ApplicationController
   end
 
   def link_identity_vault
-    return redirect_to root_path unless current_verificaiton_status == :not_linked
+    return redirect_to root_path unless current_verification_status == :not_linked
 
     redirect_to current_user.identity_vault_oauth_link(identity_vault_callback_url), allow_other_host: true
   end
