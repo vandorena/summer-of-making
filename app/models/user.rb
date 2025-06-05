@@ -202,8 +202,8 @@ class User < ApplicationRecord
       })
     end
 
-    def fetch_idv
-      IdentityVaultService.me(identity_vault_access_token)
+    def fetch_idv(access_token = nil)
+      IdentityVaultService.me(access_token || identity_vault_access_token)
     end
 
     def link_identity_vault_callback(callback_url, code)
@@ -211,7 +211,7 @@ class User < ApplicationRecord
 
       access_token = code_response[:access_token]
 
-      idv_data = fetch_idv
+      idv_data = fetch_idv(access_token)
 
       update!(
         identity_vault_access_token: access_token,
