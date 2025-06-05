@@ -119,7 +119,7 @@
         <button data-action="click->dropdown#toggle" class="text-gray-600 hover:text-nice-blue transition-colors duration-200 p-2">
           <%= inline_svg_tag "more.svg", class: "w-5 h-5 sm:w-6 sm:h-6" %>
         </button>
-        <div data-dropdown-target="menu" class="absolute right-0 top-full mt-1 w-32 bg-soft-bone card-pixel shadow-lg py-1 z-50 hidden">
+        <div data-dropdown-target="menu" class="absolute right-0 top-full mt-1 w-32 bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] shadow-lg py-1 z-50 hidden">
           <% unless defined?(@project) && @project&.is_shipped? %>
             <button data-action="click->modal#open" data-modal-id="<%= update.id %>" data-modal-type="edit" class="w-full px-4 py-2 text-left text-sm text-nice-blue hover:text-nice-blue transition-colors duration-200">
               Edit

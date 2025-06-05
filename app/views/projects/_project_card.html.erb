@@ -86,7 +86,7 @@
 
 <!-- Follower Modal -->
 <div id="follower-modal-<%= @project.id %>" data-controller="modal" class="hidden fixed inset-0 z-50 overflow-auto bg-black/30 flex items-center justify-center p-2 md:p-4">
-  <div class="bg-soft-bone w-full max-w-md card-pixel mx-2 md:mx-auto relative max-h-[80vh] flex flex-col" data-modal-target="container">
+  <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] w-full max-w-md mx-2 md:mx-auto relative max-h-[80vh] flex flex-col" data-modal-target="container">
     <div class="p-3 md:p-4 border-b border-saddle-taupe border-opacity-30 flex-shrink-0">
       <div class="flex justify-between items-center">
         <h3 class="text-lg md:text-2xl">Followers</h3>
@@ -132,7 +132,7 @@
 
 <!-- Ship Modal -->
 <div id="ship-modal-<%= @project.id %>" data-controller="ship" class="hidden fixed inset-0 z-50 overflow-auto bg-black/30 flex items-center justify-center p-2 md:p-4" data-ship-target="modal" data-action="click->ship#closeBackground">
-  <div class="bg-soft-bone w-full max-w-2xl card-pixel mx-2 md:mx-auto relative max-h-[90vh] flex flex-col overflow-hidden">
+  <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] w-full max-w-2xl mx-2 md:mx-auto relative max-h-[90vh] flex flex-col overflow-hidden">
     <div class="p-3 md:p-4 border-b border-saddle-taupe border-opacity-30 flex-shrink-0">
       <div class="flex justify-between items-center">
         <h3 class="text-lg md:text-2xl">Ship Your Project</h3>
@@ -338,7 +338,7 @@
       <div class="mb-6">
         <p data-ship-target="statusText" class="text-center text-lg mb-4 p-2 border-2 border-saddle-taupe/30 bg-soft-bone/50">Ready to check your links...</p>
 
-        <div class="space-y-4 p-4 border-2 border-saddle-taupe/30 bg-soft-bone/50 card-pixel">
+        <div class="space-y-4 p-4 border-2 border-saddle-taupe/30 bg-soft-bone/50">
           <h5 class="text-base md:text-lg mb-2">Link Status:</h5>
 
           <% if @project.repo_link.present? %>
@@ -386,7 +386,7 @@
         </div>
       </div>
 
-      <div class="mb-4 p-4 border-2 border-saddle-taupe/30 bg-soft-bone/50 card-pixel">
+      <div class="mb-4 p-4 border-2 border-saddle-taupe/30 bg-soft-bone/50">
         <div class="flex items-start mb-4">
           <div class="flex-shrink-0 h-6 w-6 mt-0.5">
             <label for="no-404-links" class="cursor-pointer">

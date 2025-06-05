@@ -9,7 +9,7 @@
 
 <!-- Stonks Modal -->
 <div id="stonks-modal-<%= @project.id %>" data-controller="modal stonks" class="hidden fixed inset-0 z-50 overflow-auto bg-black/30 flex items-center justify-center p-2 md:p-4" data-action="click->modal#clickOutsideHandler">
-  <div class="bg-soft-bone w-full max-w-2xl card-pixel mx-2 md:mx-auto relative max-h-[90vh] flex flex-col overflow-hidden" data-modal-target="container">
+  <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] w-full max-w-2xl mx-2 md:mx-auto relative max-h-[90vh] flex flex-col overflow-hidden" data-modal-target="container">
     <div class="p-3 md:p-4 border-b border-saddle-taupe border-opacity-30 flex-shrink-0">
       <div class="flex justify-between items-center">
         <h3 class="text-lg md:text-2xl">Project Stonks</h3>
@@ -65,7 +65,7 @@
 
         <div class="border-t border-saddle-taupe/30 pt-4 mt-4">
           <h4 class="text-lg md:text-xl mb-3 text-center">Stonkers</h4>
-          <div class="card-pixel p-4">
+          <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] p-4">
             <% if @project.stonks.any? %>
               <% @project.stonks.order(created_at: :asc).each_with_index do |stonk, index| %>
                 <div class="flex items-center justify-between py-2 <%= index < @project.stonks.count - 1 ? 'border-b border-saddle-taupe/20' : '' %>">
@@ -88,7 +88,7 @@
       <% else %>
         <div class="border-t border-saddle-taupe/30 pt-4 mt-4">
           <h4 class="text-lg md:text-xl mb-3 text-center">Stonkers</h4>
-          <div class="card-pixel p-4">
+          <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] p-4">
             <% if @project.stonks.any? %>
               <% @project.stonks.order(created_at: :asc).each_with_index do |stonk, index| %>
                 <div class="flex items-center justify-between py-2 <%= index < @project.stonks.count - 1 ? 'border-b border-saddle-taupe/20' : '' %>">
