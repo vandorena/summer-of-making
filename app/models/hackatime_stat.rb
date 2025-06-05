@@ -1,3 +1,22 @@
+# == Schema Information
+#
+# Table name: hackatime_stats
+#
+#  id              :bigint           not null, primary key
+#  data            :jsonb
+#  last_updated_at :datetime
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  user_id         :bigint           not null
+#
+# Indexes
+#
+#  index_hackatime_stats_on_user_id  (user_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (user_id => users.id)
+#
 class HackatimeStat < ApplicationRecord
   belongs_to :user
 

@@ -1,3 +1,22 @@
+# == Schema Information
+#
+# Table name: tutorial_progresses
+#
+#  id            :bigint           not null, primary key
+#  completed_at  :datetime
+#  step_progress :jsonb            not null
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  user_id       :bigint           not null
+#
+# Indexes
+#
+#  index_tutorial_progresses_on_user_id  (user_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (user_id => users.id)
+#
 class TutorialProgress < ApplicationRecord
   belongs_to :user
 

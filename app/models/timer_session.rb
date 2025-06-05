@@ -1,3 +1,32 @@
+# == Schema Information
+#
+# Table name: timer_sessions
+#
+#  id                 :bigint           not null, primary key
+#  accumulated_paused :integer          default(0), not null
+#  last_paused_at     :datetime
+#  net_time           :integer          default(0), not null
+#  started_at         :datetime         not null
+#  status             :integer          default("running"), not null
+#  stopped_at         :datetime
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  project_id         :bigint           not null
+#  update_id          :bigint
+#  user_id            :bigint           not null
+#
+# Indexes
+#
+#  index_timer_sessions_on_project_id  (project_id)
+#  index_timer_sessions_on_update_id   (update_id)
+#  index_timer_sessions_on_user_id     (user_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (project_id => projects.id)
+#  fk_rails_...  (update_id => updates.id)
+#  fk_rails_...  (user_id => users.id)
+#
 class TimerSession < ApplicationRecord
   belongs_to :user
   belongs_to :project

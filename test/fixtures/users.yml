@@ -1,5 +1,28 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
+# == Schema Information
+#
+# Table name: users
+#
+#  id                           :bigint           not null, primary key
+#  avatar                       :string
+#  display_name                 :string
+#  email                        :string
+#  first_name                   :string
+#  hackatime_confirmation_shown :boolean          default(FALSE)
+#  has_commented                :boolean          default(FALSE)
+#  has_hackatime                :boolean          default(FALSE)
+#  identity_vault_access_token  :string
+#  is_admin                     :boolean          default(FALSE), not null
+#  last_name                    :string
+#  middle_name                  :string
+#  timezone                     :string
+#  ysws_verified                :boolean          default(FALSE)
+#  created_at                   :datetime         not null
+#  updated_at                   :datetime         not null
+#  identity_vault_id            :string
+#  slack_id                     :string
+#
 one:
   slack_id: MyString
   email: MyString

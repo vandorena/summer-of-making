@@ -99,3 +99,5 @@ gem "aws-sdk-s3", require: false
 gem "avo", ">= 3.2"
 
 gem "lz_string", "~> 0.3.0"
+
+gem "annotaterb", "~> 4.15", :group => :development

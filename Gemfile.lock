@@ -81,6 +81,7 @@ GEM
       faraday (>= 1.0, < 3.0)
       faraday-net_http_persistent
       net-http-persistent
+    annotaterb (4.15.0)
     ast (2.4.3)
     avo (3.21.0)
       actionview (>= 6.1)
@@ -505,6 +506,7 @@ PLATFORMS
 
 DEPENDENCIES
   airrecord
+  annotaterb (~> 4.15)
   avo (>= 3.2)
   aws-sdk-s3
   bootsnap
