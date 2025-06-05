@@ -19,9 +19,26 @@
 class MagicLink < ApplicationRecord
   belongs_to :user
 
+  before_create :set_token
+
   VALIDITY_PERIOD = 1.day
 
   def expires_at
-    created_at + 1.day
+    created_at + VALIDITY_PERIOD
+  end
+
+  def expired?
+    # Time.current > expires_at
+    false
+  end
+
+  def secret_url host
+    "#{Rails.application.routes.url_helpers.magic_link_url(host:)}?token=#{token}"
+  end
+
+  private
+
+  def set_token
+    self.token = SecureRandom.hex 16
   end
 end
