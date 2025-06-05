@@ -33,6 +33,8 @@
     <%# end %>
 
     <% if user_signed_in? %>
+      <%= render "tutorial/tutorial" %>
+
       <div data-controller="sidebar">
         <% if mobile_device? %>
           <%= render "shared/mobile_nav" %>

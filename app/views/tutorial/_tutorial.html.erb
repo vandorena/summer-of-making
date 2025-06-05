@@ -1,0 +1,30 @@
+<% tutorial_steps = {
+  explore: {
+    path: explore_path,
+    title: "This is the explore page!",
+    description: "Here you can see other hackers' projects. Try clicking on \"View project\" and leaving a comment on (or following) one!"
+  },
+  shop: {
+    path: shop_path,
+    title: "Shop for Supplies",
+    description: "Find all the materials and tools you need for your projects. Compare prices, read reviews, and add items to your wishlist."
+  },
+  my_projects: {
+    path: my_projects_path,
+    title: "Manage Your Projects",
+    description: "Keep track of all your ongoing and completed projects. Upload photos, write notes, and share your progress with the community."
+  },
+  gallery: {
+    path: gallery_path,
+    title: "Showcase Your Work",
+    description: "Share your finished projects with the world. Get feedback, inspire others, and build your portfolio."
+  }
+} %>
+
+<% tutorial_steps.each do |key, config| %>
+  <%= render "tutorial/tutorial_step",
+    tutorial_key: key,
+    tutorial_path: config[:path],
+    tutorial_title: config[:title],
+    tutorial_description: config[:description] %>
+<% end %>

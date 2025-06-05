@@ -9,6 +9,8 @@
  * Consider organizing styles into separate files for maintainability.
  */
 
+@import "tutorial.css";
+
 ::-webkit-scrollbar {
     width: 8px;
 }
@@ -75,13 +77,12 @@
     100% {
         transform: rotate(-13deg) scale(1);
     }
-
-  }
-/* 
+}
+/*
   body {
     cursor: url("cursor.svg") 0 0, auto;
   }
-  
+
   a,
   button,
   [role="button"],

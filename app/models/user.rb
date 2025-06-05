@@ -7,12 +7,14 @@ class User < ApplicationRecord
     has_many :timer_sessions
     has_many :stonks
     has_many :staked_projects, through: :stonks, source: :project
-    has_one :hackatime_stat
+    has_one :hackatime_stat, dependent: :destroy
+    has_one :tutorial_progress, dependent: :destroy
 
     validates :slack_id, presence: true, uniqueness: true
     validates :email, :first_name, :last_name, :display_name, :timezone, :avatar, presence: true
     validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
 
+    after_create :create_tutorial_progress
     after_commit :sync_to_airtable, on: [ :create, :update ]
 
     def self.exchange_slack_token(code, redirect_uri)
@@ -195,5 +197,9 @@ class User < ApplicationRecord
 
     def sync_to_airtable
         SyncUserToAirtableJob.perform_later(id)
+    end
+
+    def create_tutorial_progress
+      TutorialProgress.create!(user: self)
     end
 end
