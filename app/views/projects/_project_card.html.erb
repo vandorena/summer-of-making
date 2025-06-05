@@ -1,4 +1,4 @@
-<div class="bg-soft-bone card-pixel shadow-lg overflow-hidden mb-4 md:mb-8">
+<div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] shadow-lg overflow-hidden mb-4 md:mb-8">
   <div class="h-48 md:h-64 overflow-hidden relative">
     <% project_image = @project.banner.presence || @project.updates.find { |u| u.attachment.present? }&.attachment || "https://raw.githubusercontent.com/hackclub/dinosaurs/main/confused_dinosaur.png" %>
     <img src="<%= project_image %>" alt="<%= @project.title %>" class="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity" data-action="click->image-viewer#open">
