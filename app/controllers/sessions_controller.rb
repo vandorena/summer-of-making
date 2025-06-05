@@ -6,7 +6,8 @@ class SessionsController < ApplicationController
         client_id: ENV["SLACK_CLIENT_ID"],
         redirect_uri: slack_callback_url,
         state: state,
-        user_scope: "identity.basic,identity.email,identity.team,identity.avatar"
+        user_scope: "identity.basic,identity.email,identity.team,identity.avatar",
+        team: "T0266FRGM" # Hardcoding this because it will literally never, ever change.
       }
       redirect_to "https://slack.com/oauth/v2/authorize?#{params.to_query}", allow_other_host: true
     end
