@@ -32,13 +32,11 @@
           <span data-sidebar-target="content" class="ml-2">Vote</span>
         <% end %>
       </li>
-      <% admin_tool do %>
-        <li class="flex justify-start">
-            <%= link_to shop_path, class: "px-4 py-2 block #{'organic-card' if current_page?(shop_path)}" do %>
-            <span data-sidebar-target="content" class="ml-2">Shop</span>
-            <% end %>
-        </li>
-      <% end %>
+      <li class="flex justify-start">
+        <%= link_to shop_path, class: "px-4 py-2 block #{'organic-card' if current_page?(shop_path)}" do %>
+        <span data-sidebar-target="content" class="ml-2">Shop</span>
+        <% end %>
+      </li>
     </ul>
   </nav>
 
