@@ -20,9 +20,9 @@ export default class extends Controller {
       const isActive = button.dataset.tab === this.currentTabValue
       
       if (isActive) {
-        button.className = "flex-1 sm:flex-none px-3 sm:px-6 py-2 sm:py-3 text-lg transition-colors duration-200 text-center bg-forest text-white"
+        button.className = "px-6 py-2 text-lg text-white bg-[#B8DA77] rounded-full shadow-sm"
       } else {
-        button.className = "flex-1 sm:flex-none px-3 sm:px-6 py-2 sm:py-3 text-lg transition-colors duration-200 text-center hover:bg-saddle-taupe/10"
+        button.className = "px-6 py-2 text-lg text-white bg-transparent rounded-full hover:bg-[#b8da77]/30 transition-colors"
       }
     })
   }

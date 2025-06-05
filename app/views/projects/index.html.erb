@@ -6,25 +6,32 @@
       <% elsif @feed_type == 'projects' %>
         <h1 class="text-4xl sm:text-5xl mb-0">Gallery</h1>
       <% else %>
-        <div class="flex justify-center w-full">
-          <div class="flex bg-soft-bone card-pixel overflow-hidden w-full max-w-md sm:max-w-none sm:w-auto">
-            <button data-action="click->tabs#switchTab" data-tab="explore"
-                  class="flex-1 sm:flex-none px-3 sm:px-6 py-2 sm:py-3 text-lg transition-colors duration-200 text-center bg-forest text-white"
-                  data-tabs-target="tabButton">
-              Explore
-            </button>
-            <button data-action="click->tabs#switchTab" data-tab="following"
-                  class="flex-1 sm:flex-none px-3 sm:px-6 py-2 sm:py-3 text-lg transition-colors duration-200 text-center hover:bg-saddle-taupe/10"
-                  data-tabs-target="tabButton">
-              Following
-            </button>
-            <button data-action="click->tabs#switchTab" data-tab="stonked"
-                  class="flex-1 sm:flex-none px-3 sm:px-6 py-2 sm:py-3 text-lg transition-colors duration-200 text-center hover:bg-saddle-taupe/10"
-                  data-tabs-target="tabButton">
-              Stonked
-            </button>
-          </div>
-        </div>
+<div class="flex justify-center w-full">
+  <div class="flex gap-2 bg-[#B8DA77]/40 px-2 py-2 rounded-full">
+    <button
+      data-action="click->tabs#switchTab"
+      data-tab="explore"
+      class="px-6 py-2 text-white bg-[#B8DA77] rounded-full shadow-sm"
+      data-tabs-target="tabButton">
+      Explore
+    </button>
+    <button
+      data-action="click->tabs#switchTab"
+      data-tab="following"
+      class="px-6 py-2 text-black bg-transparent rounded-full hover:bg-[#b8da77]/10 transition-colors"
+      data-tabs-target="tabButton">
+      Following
+    </button>
+    <button
+      data-action="click->tabs#switchTab"
+      data-tab="stonked"
+      class="px-6 py-2 text-black bg-transparent rounded-full hover:bg-[#b8da77]/10 transition-colors"
+      data-tabs-target="tabButton">
+      Stonked
+    </button>
+  </div>
+</div>
+
       <% end %>
       <% if user_signed_in? && params[:action] == 'my_projects' %>
         <% if current_user.has_hackatime %>

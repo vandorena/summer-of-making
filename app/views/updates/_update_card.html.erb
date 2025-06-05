@@ -11,7 +11,7 @@
   content_margin ||= ''                    # Content margin/padding classes
 %>
 
-<div class="bg-soft-bone <%= context == 'explore' || context == 'project' ? 'card-pixel' : '' %> <%= context == 'project' ? 'p-2 sm:p-3' : 'p-3 sm:p-4' %> <%= container_classes %> transform <%= 'hover:scale-[1.01]' if context != 'project' %> transition-transform duration-300 <%= 'cursor-pointer' if show_project_navigation %> <%= 'max-w-2xl mx-auto' if context == 'explore' %>"
+<div class="bg-[#F3ECD8] rounded-xl border-5 border-[#E4DCC6] <%= context == 'explore' || context == 'project' ? '' : '' %> <%= context == 'project' ? 'p-2 sm:p-3' : 'p-3 sm:p-4' %> <%= container_classes %> transform <%= 'hover:scale-[1.01]' if context != 'project' %> transition-transform duration-300 <%= 'cursor-pointer' if show_project_navigation %> <%= 'max-w-2xl mx-auto' if context == 'explore' %>"
      id="<%= dom_id(update) %>"
      data-controller="modal update-card"
      data-update-card-project-path-value="<%= project_path(update.project) if show_project_navigation %>"
@@ -102,15 +102,15 @@
     <% end %>
 
     <!-- Action buttons -->
-    <div class="mt-3 sm:mt-4 flex items-center justify-between max-w-prose">
-      <!-- Comment button -->
-      <% if show_comment_modal && user_signed_in? %>
-        <%= render "comments/button", update: update %>
-      <% end %>
-
+    <div class="mt-3 sm:mt-4 flex items-center justify-start gap-x-4 max-w-prose">
       <!-- Like button -->
       <% if show_likes && user_signed_in? %>
         <%= render "likes/button", likeable: update %>
+      <% end %>
+
+      <!-- Comment button -->
+      <% if show_comment_modal && user_signed_in? %>
+        <%= render "comments/button", update: update %>
       <% end %>
 
       <!-- More button -->
