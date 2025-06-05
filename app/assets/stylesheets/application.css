@@ -124,3 +124,18 @@ textarea,
     left: 50%;
     translate: -50% -50%;
 }
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, #42A5E7, #97D8F8);
+    z-index: -1;
+}
+
+main {
+    background: transparent !important;
+}
