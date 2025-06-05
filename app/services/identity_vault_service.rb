@@ -25,6 +25,8 @@ class IdentityVaultService
     end
 
     def me(user_token)
+      raise ArgumentError, "user_token is required" unless user_token
+
       conn.get("/api/v1/me", nil, {
         Authorization: "Bearer #{user_token}"
       }).body
