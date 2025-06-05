@@ -214,50 +214,67 @@ class LandingController < ApplicationController
   def sign_up
     email = params.require(:email)
 
-    ip = request.remote_ip
-    ip_response_raw = URI.open("https://ip.hackclub.com/ip/#{ip}").read
-    if ip_response_raw.presence
-      ip_response = JSON.parse(ip_response_raw)
-      continent = ip_response["continent_name"] || ip_response["continent_code"] || "?"
-    else
-      continent = "?"
+    unless email.match?(URI::MailTo::EMAIL_REGEXP)
+      return respond_to do |format|
+        format.html { redirect_to request.referer || projects_path, alert: "Invalid email format" }
+        format.turbo_stream do
+          flash.now[:alert] = "Invalid email format"
+          render turbo_stream: turbo_stream.update("flash-container", partial: "shared/flash"), status: :internal_server_error
+        end
+      end
     end
+
+    slack_invite_response = send_slack_invite(email)
+
+    puts "Status: #{slack_invite_response.code}"
+    puts "Body:\n#{slack_invite_response.body}"
+
+    body = JSON.parse(slack_invite_response.body)
+    puts body
+
+    @response_data = body
+
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: [
+          turbo_stream.update("modal-content", partial: "landing/signup_modal"),
+          turbo_stream.action("show_modal", "signup-modal")
+        ]
+      end
+    end
+  end
+
+  private
+
+  def send_slack_invite(email)
+    ip = request.remote_ip
+    continent = fetch_continent(ip)
 
     uri = URI("https://toriel.hackclub.com/slack-invite")
     request = Net::HTTP::Post.new(uri)
     request["Content-Type"] = "application/json"
     request["Authorization"] = "Bearer #{Rails.application.credentials.toriel_key}"
-    request.body = { email:, ip:, continent:, event: "Summer of Making 2025", userAgent: "som25server(landing_controller#sign_up)" }.to_json
+    request.body = {
+      email:,
+      ip:,
+      continent:,
+      event: "Summer of Making 2025",
+      userAgent: "som25server(landing_controller#sign_up)"
+    }.to_json
 
-    response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == "https") do |http|
+    Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == "https") do |http|
       http.request(request)
     end
+  end
 
-    puts "Status: #{response.code}"
-    puts "Body:\n#{response.body}"
+  def fetch_continent(ip)
+    response = URI.open("https://ip.hackclub.com/ip/#{ip}").read
+    return "?" unless response.present?
 
-    body = JSON.parse(response.body)
-    puts body
-
-    respond_to do |format|
-        format.turbo_stream do
-          render turbo_stream: [
-            # ① append the modal itself
-            turbo_stream.append(
-              "modals",
-              partial: "landing/signup_modal",
-              locals:  { api_body: body }
-            ),
-
-            # ② immediately append a <script> tag that opens it
-            turbo_stream.append(
-              "modals",
-              helpers.tag.script(
-                "document.dispatchEvent(new Event('open-signup-modal'))".html_safe
-              )
-            )
-          ]
-        end
-      end
+    data = JSON.parse(response)
+    data["continent_name"] || data["continent_code"] || "?"
+  rescue StandardError => e
+    Rails.logger.error "IP lookup failed: #{e.message}"
+    "?"
   end
 end

@@ -1,25 +1,11 @@
-<div x-data="{ open: false }">
+<div data-controller="turbo-actions">
   <%= form_with url: sign_up_path, method: :post, data: { turbo: true }, class: "flex flex-col gap-4" do |f| %>
     <%= f.email_field :email, required: true, placeholder: "Enter your email...", autocomplete: "email", class: "btn-fancy text-white py-4 px-8 text-xl lg:text-2xl flex items-center justify-center", style: "background: linear-gradient(135deg, #E06540, #EC8153);" %>
     <%= f.submit "Start creating", class: "btn-fancy text-white py-4 px-8 text-xl lg:text-2xl flex items-center justify-center", style: "background: linear-gradient(135deg, #E06540, #EC8153);" %>
   <% end %>
 
-  <dialog
-    x-ref="dlg"
-    x-on:open-signup-modal.window="open = true; $nextTick(() => $refs.dlg.showModal())"
-    class="modal card-pixel p-4 sm:p-8 bg-bread">
-    <h2 class="mb-2">Welcome aboard ✨</h2>
-    <p>Check your inbox to confirm your address.</p>
-    <p>While you wait...</p>
-
-    <%= video_tag "wat.mp4", controls: true %>
-
-    <button class="btn" @click="open = false; $refs.dlg.close()">Close</button>
+  <dialog id="signup-modal" class="modal card-pixel p-4 sm:p-8 bg-bread">
+    <div id="modal-content">
+    </div>
   </dialog>
-
-  <!-- DEBUG: Manual trigger -->
-  <button type="button" onclick="document.dispatchEvent(new Event('open-signup-modal'))" class="btn">Test Modal</button>
-  <button type="button" @click="open = true; console.log('Alpine works, open =', open)" class="btn">Test Alpine</button>
-  <button type="button" onclick="console.log('JS works')" class="btn">Test JS</button>
-  <button type="button" @click="$refs.dlg.showModal(); console.log('Dialog:', $refs.dlg)" class="btn">Test Dialog</button>
 </div>
