@@ -1,7 +1,7 @@
 <div class="bg-soft-bone card-pixel p-2 sm:p-4 w-fit my-8">
     <h3 class="text-2xl">ID verification status</h3>
 
-    <% case :ineligible %>
+    <% case current_verification_status %>
         <% when :not_linked %>
             <p>You haven't linked your ID. <%= link_to "You can add your ID here", link_identity_vault_path, class: "underline" %></p>
         <% when :needs_resubmission %>
