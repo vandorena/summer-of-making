@@ -1,3 +1,22 @@
+# == Schema Information
+#
+# Table name: slack_emotes
+#
+#  id             :bigint           not null, primary key
+#  created_by     :string
+#  is_active      :boolean          default(TRUE), not null
+#  last_synced_at :datetime
+#  name           :string           not null
+#  url            :string           not null
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  slack_id       :string           not null
+#
+# Indexes
+#
+#  index_slack_emotes_on_name      (name) UNIQUE
+#  index_slack_emotes_on_slack_id  (slack_id) UNIQUE
+#
 class SlackEmote < ApplicationRecord
   validates :name, presence: true, uniqueness: true
   validates :url, presence: true

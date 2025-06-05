@@ -1,3 +1,25 @@
+# == Schema Information
+#
+# Table name: comments
+#
+#  id           :bigint           not null, primary key
+#  rich_content :jsonb
+#  text         :text
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  update_id    :bigint           not null
+#  user_id      :bigint           not null
+#
+# Indexes
+#
+#  index_comments_on_update_id  (update_id)
+#  index_comments_on_user_id    (user_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (update_id => updates.id)
+#  fk_rails_...  (user_id => users.id)
+#
 class Comment < ApplicationRecord
   include EmotesHelper
   include ActionView::Helpers::SanitizeHelper
