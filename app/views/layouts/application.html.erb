@@ -33,8 +33,6 @@
       <%# render "shared/stonk_tickler_marquee" %>
     <%# end %>
 
-    <div id="modals"></div>
-
     <% if user_signed_in? %>
       <%= render "tutorial/tutorial" %>
 
@@ -211,6 +209,8 @@
     <% if user_signed_in? && current_user.has_hackatime %>
       <%= render "shared/timer_indicator" %>
     <% end %>
+
+    <div id="modals"></div>
 
   </body>
 </html>
