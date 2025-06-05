@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_05_002232) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_05_211704) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -79,6 +79,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_05_002232) do
     t.index ["likeable_type", "likeable_id"], name: "index_likes_on_likeable"
     t.index ["user_id", "likeable_type", "likeable_id"], name: "index_likes_on_user_id_and_likeable_type_and_likeable_id", unique: true
     t.index ["user_id"], name: "index_likes_on_user_id"
+  end
+
+  create_table "magic_links", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "token", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_magic_links_on_user_id"
   end
 
   create_table "project_follows", force: :cascade do |t|
@@ -374,6 +382,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_05_002232) do
   add_foreign_key "comments", "users"
   add_foreign_key "hackatime_stats", "users"
   add_foreign_key "likes", "users"
+  add_foreign_key "magic_links", "users"
   add_foreign_key "project_follows", "projects"
   add_foreign_key "project_follows", "users"
   add_foreign_key "projects", "users"
