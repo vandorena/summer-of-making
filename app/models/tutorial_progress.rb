@@ -1,0 +1,59 @@
+class TutorialProgress < ApplicationRecord
+  belongs_to :user
+
+  TUTORIAL_STEPS = %w[explore gallery my_projects vote shop].freeze
+
+  after_initialize :setup_default_progress, if: :new_record?
+
+  def complete_step!(step_name)
+    return unless TUTORIAL_STEPS.include?(step_name.to_s)
+
+    step_progress[step_name.to_s] ||= {}
+    step_progress[step_name.to_s]["completed_at"] = Time.current
+
+    check_overall_completion!
+
+    save!
+  end
+
+  def step_completed?(step_name)
+    step_progress.dig(step_name.to_s, "completed_at").present?
+  end
+
+  def completion_percentage
+    completed_count = TUTORIAL_STEPS.count { |step| step_completed?(step) }
+    (completed_count.to_f / TUTORIAL_STEPS.count * 100).round
+  end
+
+  def completed?
+    completed_at.present?
+  end
+
+  def reset_step!(step_name)
+    return unless TUTORIAL_STEPS.include?(step_name.to_s)
+
+    step_progress[step_name.to_s] = {}
+    self.completed_at = nil
+    save!
+  end
+
+  def reset!
+    setup_default_progress
+    self.completed_at = nil
+    save!
+  end
+
+  private
+
+  def setup_default_progress
+    self.step_progress = TUTORIAL_STEPS.each_with_object({}) do |step, hash|
+      hash[step] = {}
+    end
+  end
+
+  def check_overall_completion!
+    if TUTORIAL_STEPS.all? { |step| step_completed?(step) }
+      self.completed_at = Time.current
+    end
+  end
+end

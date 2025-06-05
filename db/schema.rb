@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_04_182247) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_05_002232) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -306,6 +306,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_04_182247) do
     t.index ["user_id"], name: "index_timer_sessions_on_user_id"
   end
 
+  create_table "tutorial_progresses", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.jsonb "step_progress", default: {}, null: false
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_tutorial_progresses_on_user_id"
+  end
+
   create_table "updates", force: :cascade do |t|
     t.text "text"
     t.string "attachment"
@@ -380,6 +389,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_04_182247) do
   add_foreign_key "timer_sessions", "projects"
   add_foreign_key "timer_sessions", "updates"
   add_foreign_key "timer_sessions", "users"
+  add_foreign_key "tutorial_progresses", "users"
   add_foreign_key "updates", "projects"
   add_foreign_key "updates", "users"
   add_foreign_key "votes", "projects", column: "loser_id"

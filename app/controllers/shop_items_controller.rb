@@ -1,9 +1,9 @@
 class ShopItemsController < ApplicationController
   before_action :authenticate_user!
-  before_action :require_admin!, except: [:index]
+  before_action :require_admin!, except: [ :index ]
 
   def index
-    @shop_items = ShopItem.all
+    @shop_items = ShopItem.order(cost: :asc)
     @shop_item_types = available_shop_item_types
   end
 

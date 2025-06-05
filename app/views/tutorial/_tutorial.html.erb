@@ -1,0 +1,35 @@
+<% tutorial_steps = {
+  explore: {
+    path: explore_path,
+    title: "This is the explore page!",
+    description: "This is basically everything that is going on rn. \"Explore\" is just random shit, following is updates of projects you hit the \"follow\" button on, and \"stonked\" is projects you've invested stonks in, which you will learn about later."
+  },
+  gallery: {
+    path: gallery_path,
+    title: "This is the gallery!",
+    description: "Here you can see other hackers' projects. Try clicking on \"View project\" and leaving a comment on (or following) one!"
+  },
+  my_projects: {
+    path: my_projects_path,
+    title: "These are your projects.",
+    description: "Simple. This is where you create new projects, as well. Geddit?"
+  },
+  vote: {
+    path: votes_path,
+    title: "Here you're going to vote on other hackers' projects.",
+    description: "Left or right? Wait-"
+  },
+  shop: {
+    path: shop_path,
+    title: "Dis da shop",
+    description: "Buy stuff here and i will subtract from a decimal in the db. Then the thing arrives at your door. Simple!"
+  }
+} %>
+
+<% tutorial_steps.each do |key, config| %>
+  <%= render "tutorial/tutorial_step",
+    tutorial_key: key,
+    tutorial_path: config[:path],
+    tutorial_title: config[:title],
+    tutorial_description: config[:description] %>
+<% end %>

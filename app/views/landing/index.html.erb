@@ -1,37 +1,227 @@
-<div class="flex flex-col items-center justify-center min-h-screen w-full bg-cover bg-center" style="background-image: url('<%= asset_path('herobg.png') %>');">
+<%= stylesheet_link_tag "landing", "data-turbo-track": "reload" %>
 
-  <div class="absolute top-4 left-4 z-10">
-    <%= inline_svg "icon.svg", class: "lg:h-12 lg:w-12 h-10 w-10" %>
+<div class="zone-a min-h-screen w-full relative overflow-hidden" style="background: linear-gradient(to bottom, #97D8F8 0%, #87CEEB 50%, #42A5E7 100%);" data-controller="clouds" data-clouds-cloud-count-value="8" data-clouds-speed-value="0.3" data-clouds-cloud-color-value="rgba(255, 255, 255, 0.4)">
+  <div class="absolute inset-0 w-full h-full overflow-hidden" data-clouds-target="container"></div>
+  <div class="absolute top-0 left-4 z-20">
+    <img src="https://assets.hackclub.com/flag-orpheus-top.png" alt="Island" class="w-30 animate-float" />
   </div>
 
-  <div class="absolute top-4 right-4 z-10">
-    <a href="/auth/slack" class="btn-pixel bg-forest text-white py-1 px-2 sm:py-2 sm:px-4 text-base md:text-lg 2xl:text-xl sm:text-sm hover:scale-105 transition-transform duration-300 flex items-center">
-      <%= inline_svg "slack.svg", class: "h-3 w-3 sm:h-4 sm:w-4 mr-1" %>
+  <div class="absolute top-4 right-4 z-20">
+    <a href="/auth/slack" class="btn-fancy text-white py-2 px-4 text-base md:text-lg flex items-center" style="background: linear-gradient(135deg, #E06540, #EC8153);">
+      <%= inline_svg "slack.svg", class: "h-4 w-4 mr-2" %>
       Sign In!
     </a>
   </div>
 
-  <div class="text-center w-full mx-auto max-w-6xl flex flex-col px-4 sm:px-8 relative z-10">
-    <div class="w-full md:w-2/3 mx-auto mb-8 sm:mb-12 mt-12 sm:mt-20 card-pixel p-4 sm:p-8 bg-bread text-center">
-      <div class="mb-2 sm:mb-4">
-        <h1 class="text-5xl md:text-7xl font-steven mb-2 sm:mb-4" style="text-shadow: -2px -2px 0 #583c28, 2px -2px 0 #583c28, -2px 2px 0 #583c28, 2px 2px 0 #583c28, 3px 3px 0 #2e2e1f; color: #d49d50;">THE JOURNEY</h1>
+  <div class="absolute bottom-0 w-full h-1/4 transform -skew-y-5 origin-bottom-right z-10" style="background: linear-gradient(135deg, #F3ECD8 0%, #E4DCC6 60%, #D4C4A8 100%);"></div>
+
+  <div class="relative z-15 flex items-center min-h-screen">
+    <div class="w-full max-w-7xl mx-auto px-4 sm:px-8 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+
+      <div class="text-left space-y-8 animate-float">
+        <div>
+          <h1 class="head-big text-6xl md:text-8xl font-bold text-white glow-w">
+            Summer of
+          </h1>
+          <h1 class="head-big text-6xl md:text-8xl font-bold -mt-4 glow-y" style="color: #E7E76B;">
+            Making
+          </h1>
+        </div>
+
+        <h2 class="head-med text-2xl md:text-3xl text-white font-medium">
+          You discover a lost land,<br>
+          <span class="glow-y" style="color: #E7E76B;">time to rebuild, but <span class="font-bold">better</span>
+        </h2>
+
+        <div class="flex flex-col sm:flex-row gap-4 pt-4">
+            <%= render "signup" %>
+        </div>
+
+        <p class="txt-norm text-lg text-white opacity-90">
+          Join thousands of makers in Hack Club this summer to build, create, and earn awesome prizes!
+        </p>
       </div>
 
-      <h2 class="text-2xl sm:text-3xl md:text-4xl font-steven mb-4 sm:mb-8" style="color: #ac6d3c; text-shadow: 1px 1px 0 #f8e2b8, 2px 2px 0 rgba(88, 60, 40, 0.3);">A 3 week journey<br>into making!</h2>
-
-      <h1 x-data="{ message: 'I ❤️ Alpine' }" x-text="message"></h1>
-      <%= render "signup" %>
-
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/auth/slack" class="btn-pixel bg-forest text-white py-2 px-6 sm:py-3 sm:px-8 text-xl lg:text-2xl 2xl:text-3xl hover:scale-105 transition-transform duration-300 flex items-center justify-center">
-          <%= inline_svg "slack.svg", class: "h-5 w-5 sm:h-6 sm:w-6 mr-2" %>
-          <span>Embark!</span>
-        </a>
+      <div class="flex justify-center lg:justify-end">
+        <img src="https://hackclub.com/arcade/o7.png" alt="Island" class="w-80 h-80 lg:w-96 lg:h-96 object-contain drop-shadow-2xl animate-wiggle" />
       </div>
 
-      <p class="mt-4 sm:mt-8 text-base sm:text-lg" style="color: #B94D3A; text-shadow: 1px 1px 0 #f8e2b8, 2px 2px 0 rgba(88, 60, 40, 0.2);">
-        The Journey is running now, sign up now!
+    </div>
+  </div>
+</div>
+
+<div class="py-20 px-4 sm:px-8" style="background: linear-gradient(135deg, #F3ECD8 0%, #E4DCC6 50%, #D4C4A8 100%);">
+  <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-10">
+    <div class="md:w-1/2 w-full mb-8 md:mb-0">
+      <p class="txt-norm text-xl opacity-80 mb-4" style="color: #8B4513;">
+        Little Saint James is a small private island in the United States Virgin Islands, southeast of Saint Thomas. It was owned by American financier and sex offender Jeffrey Epstein from 1998 until his death in 2019. During Epstein's ownership, the island acquired the nickname Epstein Island.
       </p>
+      <p class="txt-norm text-lg opacity-70" style="color: #8B4513;">
+        The Virgin Islands are mountain peaks rising from the Caribbean ocean floor.[6] The trade winds (prevailing east-to-west winds near Earth's equator) dominate its climate and local weather, with stronger winds and less rain during winter.[7]
+      </p>
+    </div>
+    <div class="card-box relative w-full md:w-1/2 max-w-3xl mx-auto rounded-2xl overflow-hidden shadow-2xl" style="background: rgba(255, 255, 255, 0.95); aspect-ratio: 16/9;">
+      <iframe
+        class="absolute inset-0 w-full h-full"
+        src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0&modestbranding=1&showinfo=0"
+        title="Epic Maker Tutorial"
+        frameborder="0"
+        allow="fullscreen"
+        allowfullscreen>
+      </iframe>
+    </div>
+  </div>
+</div>
+
+<div id="how-it-works" class="pt-20 px-4 sm:px-8" style="background: linear-gradient(135deg, #F3ECD8 0%, #E4DCC6 50%, #D4C4A8 100%);">
+  <div class="max-w-6xl mx-auto">
+    <h2 class="head-big text-5xl md:text-6xl font-bold text-center mb-8 glow-y" style="color: #E06540;">
+      How this works
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+      <div class="card-box text-center p-8 animate-wave" style="background: rgba(255, 255, 255, 0.9);">
+        <h3 class="head-med text-2xl font-bold mb-4" style="color: #E06540;">1. Build something</h3>
+        <p class="txt-norm text-lg" style="color: #333;">
+          Hack on something cool! It can be a website, game, mobile app, hardware project, or anything you can imagine!<br>
+        </p>
+      </div>
+
+      <div class="card-box text-center p-8 animate-wave" style="animation-delay: 1s; background: rgba(255, 255, 255, 0.9);">
+        <h3 class="head-med text-2xl font-bold mb-4" style="color: #E06540;">2. Track your hours</h3>
+        <p class="txt-norm text-lg" style="color: #333;">
+          Install Hackatime to track your hours automatically, each hour earns you 1 shell!<br>
+        </p>
+      </div>
+
+      <div class="card-box text-center p-8 animate-wave" style="animation-delay: 2s; background: rgba(255, 255, 255, 0.9);">
+        <h3 class="head-med text-2xl font-bold mb-4" style="color: #E06540;">3. Get awesome prizes</h3>
+        <p class="txt-norm text-lg" style="color: #333;">
+          Now that you have shells, redeem them for amazing prizes! These include Raspberry Pis, Blahaj, Laptops, and more!<br>
+        </p>
+      </div>
+    </div>
+    <div class="flex items-start justify-center mb-8">
+      <img src="https://files.catbox.moe/ztikz5.png" class="w-16 h-16 rounded-full shadow-lg mr-4 border-2 border-yellow-300 bg-white" />
+      <div class="relative max-w-xl">
+      <div class="bg-white/90 border border-yellow-200 rounded-2xl px-6 py-4 shadow-md text-left text-[#8B4513] txt-norm text-xl opacity-80">
+        Building projects?? That sounds like a lot of work!<br>
+      </div>
+      <svg class="absolute -left-4 top-6" width="24" height="24" viewBox="0 0 24 24">
+        <polygon points="24,0 0,12 24,24" fill="#fff" fill-opacity="0.9" stroke="#ffe082" stroke-width="1"/>
+      </svg>
+      </div>
+    </div>
+    <div class="flex items-start justify-center mb-8 flex-row-reverse">
+      <img src="https://files.catbox.moe/d3hyls.png" class="w-16 h-16 rounded-full shadow-lg ml-4 border-2 border-yellow-300 bg-white" />
+      <div class="relative max-w-xl">
+      <div class="bg-white/90 border border-yellow-200 rounded-2xl px-6 py-4 shadow-md text-left text-[#8B4513] txt-norm text-xl opacity-80">
+        Don't sweat it! It is really easy! Let's look at a example!
+      </div>
+      <svg class="absolute -right-4 top-6" width="24" height="24" viewBox="0 0 24 24">
+        <polygon points="0,0 24,12 0,24" fill="#fff" fill-opacity="0.9" stroke="#ffe082" stroke-width="1"/>
+      </svg>
+      </div>
+    </div>
+
+    <%= render "example_project" %>
+
+    <div class="flex items-start justify-center mb-8 flex-row-reverse">
+      <img src="https://files.catbox.moe/d3hyls.png" class="w-16 h-16 rounded-full shadow-lg ml-4 border-2 border-yellow-300 bg-white" />
+      <div class="relative max-w-xl">
+      <div class="bg-white/90 border border-yellow-200 rounded-2xl px-6 py-4 shadow-md text-left text-[#8B4513] txt-norm text-xl opacity-80">
+        Oh yeah, prizes! Let's talk about those...
+      </div>
+      <svg class="absolute -right-4 top-6" width="24" height="24" viewBox="0 0 24 24">
+        <polygon points="0,0 24,12 0,24" fill="#fff" fill-opacity="0.9" stroke="#ffe082" stroke-width="1"/>
+      </svg>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+
+<div class="section-z py-32 px-4 sm:px-8" style="background: linear-gradient(135deg, #97D8F8 0%, #87CEEB 50%, #42A5E7 100%);">
+  <div class="max-w-8xl mx-auto">
+    <h2 class="head-big text-5xl md:text-6xl font-bold text-center mb-4 text-white glow-w">
+      Amazing Prizes
+    </h2>
+    <p class="txt-norm text-center text-xl mb-16 text-white opacity-90">
+      Redeem these prizes with your tickets! We cover shipping costs, so you can focus on making!<br>
+      <span class="glow-y" style="color: #E7E76B;">All prizes are available while supplies last.</span>
+    </p>
+
+    <div class="slider-wrap relative mx-15 md:mx-15 sm:mx-10" data-controller="carousel" data-carousel-row-value="1">
+      <div class="slider-box overflow-hidden relative rounded-2xl py-8">
+        <div class="carousel-track flex gap-8 md:gap-8 sm:gap-6" data-carousel-target="container">
+          <% @prizes.each do |prize| %>
+            <div class="carousel-slide flex-none w-50 md:w-50 sm:w-40">
+              <div class="prize-card bg-white/95 backdrop-blur-lg rounded-2xl border-2 border-white/30 shadow-lg p-6 md:p-6 sm:p-4 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:scale-105">
+                <div class="prize-image w-full h-full flex items-center justify-center mb-4 rounded-xl bg-yellow-100/20">
+                  <% if prize[:image] && prize[:image] != "" %>
+                    <%= image_tag prize[:image], alt: prize[:name], class: "w-full h-full object-cover rounded-xl" %>
+                  <% else %>
+                    <%= image_tag "clubhuman.png", alt: "Prize", class: "w-full h-full object-cover rounded-xl" %>
+                  <% end %>
+                </div>
+                <h3 class="prize-name font-semibold text-lg md:text-lg sm:text-base text-orange-600 leading-tight m-0" style="font-family: 'Fredoka', sans-serif;"><%= prize[:name] %></h3>
+                <p class="text-sm text-gray-600 mt-2"><%= prize[:time] %></p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="slider-wrap relative mx-15 md:mx-15 sm:mx-10" data-controller="carousel" data-carousel-row-value="2">
+      <div class="slider-box overflow-hidden relative rounded-2xl">
+        <div class="carousel-track-rev flex gap-8 py-4 md:gap-8 sm:gap-6" data-carousel-target="container">
+          <% @prizes.each do |prize| %>
+            <div class="carousel-slide flex-none w-50 md:w-50 sm:w-40">
+              <div class="prize-card bg-white/95 backdrop-blur-lg rounded-2xl border-2 border-white/30 shadow-lg p-6 md:p-6 sm:p-4 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:scale-105">
+                <div class="prize-image w-full h-full flex items-center justify-center mb-4 rounded-xl bg-yellow-100/20">
+                  <% if prize[:image] && prize[:image] != "" %>
+                    <%= image_tag prize[:image], alt: prize[:name], class: "w-full h-full object-cover rounded-xl" %>
+                  <% else %>
+                    <%= image_tag "clubhuman.png", alt: "Prize", class: "w-full h-full object-cover rounded-xl" %>
+                  <% end %>
+                </div>
+                <h3 class="prize-name font-semibold text-lg md:text-lg sm:text-base text-orange-600 leading-tight m-0" style="font-family: 'Fredoka', sans-serif;"><%= prize[:name] %></h3>
+                <p class="text-sm text-gray-600 mt-2"><%= prize[:time] %></p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="py-20 px-4 sm:px-8 background-[#e6c58e]">
+  <div class="max-w-6xl mx-auto text-center">
+    <h3 class="head-big text-4xl font-bold mb-8 glow-y" style="color: #E7E76B;">
+      "Make stuff. Get stuff. Repeat."
+    </h3>
+    <p class="txt-norm text-xl mb-8 opacity-80" style="color: #8B4513;">
+      Ready to start your island adventure? Join thousands of makers on Slack!<br>
+      Don't have a Slack account? No problem, it's free and easy to sign up!
+    </p>
+    <a href="/auth/slack" class="btn-fancy text-white py-4 px-12 text-2xl lg:text-3xl inline-flex items-center" style="background: linear-gradient(135deg, #E06540, #EC8153);">
+      <%= inline_svg "slack.svg", class: "h-6 w-6 mr-3" %>
+      <span>Join the Adventure!</span>
+    </a>
+    <div class="flex items-start justify-center mt-8 flex-row-reverse">
+      <img src="https://files.catbox.moe/d3hyls.png" class="w-16 h-16 rounded-full shadow-lg ml-4 border-2 border-yellow-300 bg-white" />
+      <div class="relative max-w-xl">
+      <div class="bg-white/90 border border-yellow-200 rounded-2xl px-6 py-4 shadow-md text-left text-[#8B4513] txt-norm text-xl opacity-80">
+        Sounds good? Let's get started!<br>
+        <span class="font-bold">Join us on Slack </span> by clicking that shiny button above!<br>
+        We can't wait to see what you build!
+      </div>
+      <svg class="absolute -right-4 top-6" width="24" height="24" viewBox="0 0 24 24">
+        <polygon points="0,0 24,12 0,24" fill="#fff" fill-opacity="0.9" stroke="#ffe082" stroke-width="1"/>
+      </svg>
+      </div>
     </div>
   </div>
 </div>

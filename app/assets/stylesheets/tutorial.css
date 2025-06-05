@@ -1,0 +1,54 @@
+.tutorial-step-content {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 9997;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    &::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(
+            circle at bottom right,
+            #000000c0 0%,
+            transparent 100%
+        );
+        pointer-events: none;
+    }
+
+    & .tutorial-mascot {
+        margin-top: -1rem;
+        z-index: 9998;
+    }
+}
+
+.tutorial-step-content-bubble {
+    background: white;
+    position: relative;
+    max-width: 60ch;
+    border-radius: 1em;
+    padding: 0.5em;
+    margin-left: 1rem;
+
+    & .bubble-penis {
+        position: absolute;
+        width: 6rem;
+        bottom: 3rem;
+        right: 0;
+        translate: 0 100%;
+
+        z-index: 9999;
+    }
+}
+
+.tutorial-dismiss {
+    margin-top: 0.5em;
+    background: #00000020;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    border-radius: 0.5em;
+}

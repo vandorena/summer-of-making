@@ -1,39 +1,56 @@
 @import "tailwindcss";
 
 @font-face {
-    font-family: "Steven";
-    font-weight: bold;
-    src: url("Steven.ttf") format(truetype);
+  font-family: "Steven";
+  font-weight: bold;
+  src: url("Steven.ttf") format(truetype);
 }
 
 @font-face {
-    font-family: "DynaPuff";
-    font-weight: 100 900;
-    src: url("DynaPuff.ttf") format(truetype);
+  font-family: "DynaPuff";
+  font-weight: 100 900;
+  src: url("DynaPuff.ttf") format(truetype);
 }
 
 @theme {
-    --font-steven: "Steven", "sans-serif";
-    --font-dynapuff: "DynaPuff", "sans-serif";
-    --color-forest: #508364;
-    --color-warm: #e6c58e;
-    --color-bread: #f9e8c7;
-    --color-vintage-red: #B94D3A;
-    --color-nice-blue: #4A7BA7; /* blue is my favirite color, ty */
-    --color-soft-bone: #f5d9a5;
-    --color-saddle-taupe: #ac6d3c;
- 
-    /* These colors are in HSL not in Hex. Please use HSL */
-    --color-burn-sienna: hsl(20, 60%, 50%);
-    --color-dark-sienna: hsl(14, 72%, 56%);
+  --font-steven: "Steven", "sans-serif";
+  --font-dynapuff: "DynaPuff", "sans-serif";
+  --color-forest: #508364;
+  --color-warm: #e6c58e;
+  --color-bread: #f9e8c7;
+  --color-vintage-red: #b94d3a;
+  --color-nice-blue: #4a7ba7; /* blue is my favirite color, ty */
+  --color-soft-bone: #f5d9a5;
+  --color-saddle-taupe: #ac6d3c;
 
-    --color-lime-yellow: hsl(60, 72%, 66%);
-    --color-faded-lime: hsl(60, 34%, 71%)
+  /* These colors are in HSL not in Hex. Please use HSL */
+  --color-burn-sienna: hsl(20, 60%, 50%);
+  --color-dark-sienna: hsl(14, 72%, 56%);
 
-    --color-limestone: hsl(44, 53%, 90%);
-    --color-faded-limestone: hsl(44, 36%, 84%);
+  --color-lime-yellow: hsl(60, 72%, 66%);
+  --color-faded-lime: hsl(60, 34%, 71%);
 
-    --color-sky-blue: hsl(200, 87%, 78%);
-    --color-dark-blue: hsl(204, 77%, 58%);
+  --color-limestone: hsl(44, 53%, 90%);
+  --color-faded-limestone: hsl(44, 36%, 84%);
+
+  --color-sky-blue: hsl(200, 87%, 78%);
+  --color-dark-blue: hsl(204, 77%, 58%);
 }
 
+@keyframes jiggy {
+  /* get jiggy with it */
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(3deg);
+  }
+  75% {
+    transform: rotate(-3deg);
+  }
+}
+
+.animate-jiggy {
+  animation: jiggy 4s ease-in-out infinite;
+}

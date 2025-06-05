@@ -78,6 +78,8 @@ Rails.application.routes.draw do
     end
   end
 
+  post "tutorial/complete_step", to: "tutorial_progress#complete_step"
+
   # API routes
   namespace :api do
     namespace :v1 do

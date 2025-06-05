@@ -1,6 +1,6 @@
 class ProjectsController < ApplicationController
     include ActionView::RecordIdentifier
-    before_action :authenticate_user!, except: [:index, :gallery, :show]
+    before_action :authenticate_user!, except: [ :index, :gallery, :show ]
     before_action :set_project, only: [ :show, :edit, :update, :follow, :unfollow, :ship, :stake_stonks, :unstake_stonks, :destroy ]
     before_action :check_if_shipped, only: [ :edit, :update ]
     before_action :authorize_user, only: [ :destroy ]
@@ -115,8 +115,8 @@ class ProjectsController < ApplicationController
         .order(rating: :asc)
 
         @projects = @projects.sort_by do |project|
-        weight = rand + (project.updates.count > 0 ? 1.5 : 0)
-        -weight
+          weight = rand + (project.updates.count > 0 ? 1.5 : 0)
+          -weight
         end
 
         @feed_type = "projects"
