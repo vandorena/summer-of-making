@@ -18,12 +18,13 @@
   <div class="relative z-15 flex items-center min-h-screen">
     <div class="w-full max-w-7xl mx-auto px-4 sm:px-8 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
 
-      <div class="text-left space-y-8 animate-float">
+      <div class="text-left space-y-8 animate-float"
+      style="font-family: 'Pacifico', sans-serif;">
         <div>
-          <h1 class="head-big text-6xl md:text-8xl font-bold text-white glow-w">
+          <h1 class="text-6xl md:text-8xl font-bold text-white glow-w">
             Summer of
           </h1>
-          <h1 class="head-big text-6xl md:text-8xl font-bold -mt-4 glow-y" style="color: #E7E76B;">
+          <h1 class="text-6xl md:text-8xl font-bold -mt-4 glow-y" style="color: #E7E76B;">
             Making
           </h1>
         </div>
@@ -203,19 +204,17 @@
       "Make stuff. Get stuff. Repeat."
     </h3>
     <p class="font-['Fredoka',sans-serif] font-normal text-xl mb-8 opacity-80" style="color: #8B4513;">
-      Ready to start your island adventure? Join thousands of makers on Slack!<br>
-      Don't have a Slack account? No problem, it's free and easy to sign up!
+      Ready to start your island adventure? Join thousands of makers!<br>
+      Sign up with your email to get started on your making journey!
     </p>
-    <a href="/auth/slack" class="btn-fancy text-white py-4 px-12 text-2xl lg:text-3xl inline-flex items-center" style="background: linear-gradient(135deg, #E06540, #EC8153);">
-      <%= inline_svg "slack.svg", class: "h-6 w-6 mr-3" %>
-      <span>Join the Adventure!</span>
-    </a>
+    <div class="flex items-center justify-center max-w-3xl mx-auto">
+      <%= render "signup" %>
+    </div>
     <div class="flex items-start justify-center mt-8 flex-row-reverse">
       <img src="https://files.catbox.moe/d3hyls.png" class="w-16 h-16 rounded-full shadow-lg ml-4 border-2 border-yellow-300 bg-white">
       <div class="relative max-w-xl">
       <div class="bg-white/90 border border-yellow-200 rounded-2xl px-6 py-4 shadow-md text-left text-[#8B4513] font-['Fredoka',sans-serif] font-normal text-xl opacity-80">
         Sounds good? Let's get started!<br>
-        <span class="font-bold">Join us on Slack </span> by clicking that shiny button above!<br>
         We can't wait to see what you build!
       </div>
       <svg class="absolute -right-4 top-6" width="24" height="24" viewBox="0 0 24 24">
