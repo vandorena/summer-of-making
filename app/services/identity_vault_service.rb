@@ -51,7 +51,7 @@ class IdentityVaultService
 
     def encode_sneaky_params(params)
       return nil unless params
-      Base64.urlsafe_encode64(LZString.compress(params.to_json))
+      Base64.urlsafe_encode64(LZString.compress(params.to_json.force_encoding("UTF-8")))
     end
   end
 end
