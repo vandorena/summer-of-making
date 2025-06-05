@@ -98,10 +98,6 @@
 }
 
 /* getting fancy! */
-.zone-a {
-  font-family: "Fredoka", sans-serif;
-  line-height: 1.4;
-}
 
 .head-big {
   font-family: "Pacifico", cursive;
@@ -112,11 +108,6 @@
   font-family: "Fredoka", sans-serif;
   font-weight: 500;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.txt-norm {
-  font-family: "Fredoka", sans-serif;
-  font-weight: 400;
 }
 
 /* hella fancy, i mean like ripped off of codepen fancy */
@@ -242,10 +233,6 @@
     0 0 20px rgba(255, 255, 255, 0.3), 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.slider-wrap {
-  margin: 0 60px;
-}
-
 .slider-box {
   box-shadow: inset 60px 0 40px -40px rgba(0, 0, 0, 0.15),
     inset -60px 0 40px -40px rgba(0, 0, 0, 0.15);
@@ -320,10 +307,6 @@
   .cloud,
   .dynamic-cloud {
     display: none;
-  }
-
-  .slider-wrap {
-    margin: 0 40px;
   }
 
   .slider-box {
