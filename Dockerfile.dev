@@ -1,7 +1,10 @@
-FROM ruby:3.4.3
+FROM ruby:3.4.2
 
 # Install system dependencies
-RUN apt-get update -qq && \
+RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
+    --mount=target=/var/cache/apt,type=cache,sharing=locked \ 
+    rm -f /etc/apt/apt.conf.d/docker-clean && \
+    apt-get update -qq && \
     apt-get install --no-install-recommends -y \
     build-essential \
     git \
@@ -11,8 +14,7 @@ RUN apt-get update -qq && \
     libvips \
     pkg-config \
     curl \
-    vim \
-    && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives
+    vim
 
 # Set working directory
 WORKDIR /app
