@@ -195,7 +195,7 @@ Rails.application.routes.draw do
   get "timer_sessions/active", to: "timer_sessions#global_active"
 
   resources :projects do
-    resources :updates, only: [ :create, :destroy, :update ]
+    resources :devlogs, only: [ :create, :destroy, :update ]
     resources :timer_sessions, only: [ :create, :update, :show, :destroy ] do
       collection do
         get :active
@@ -211,7 +211,7 @@ Rails.application.routes.draw do
     end
   end
 
-  get "updates", to: "updates#index"
+  get "devlogs", to: "devlogs#index"
   resources :votes, only: [ :new, :create ]
 
 
@@ -230,7 +230,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :updates do
+  resources :devlogs do
     resources :comments, only: [ :create, :destroy ]
     member do
       post :toggle_like, to: "likes#toggle"
@@ -243,13 +243,13 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :projects, only: [ :index, :show ]
-      resources :updates, only: [ :index, :show ]
+      resources :devlogs, only: [ :index, :show ]
       resources :comments, only: [ :index, :show ]
       resources :emotes, only: [ :show ]
     end
   end
   get "api/check_user", to: "users#check_user"
-  post "api/updates", to: "updates#api_create"
+  post "api/devlogs", to: "devlogs#api_create"
 
   # User Hackatime routes
   post "users/update_hackatime_confirmation", to: "users#update_hackatime_confirmation"

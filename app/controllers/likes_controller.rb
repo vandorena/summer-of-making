@@ -24,7 +24,7 @@ class LikesController < ApplicationController
 
   def set_likeable
     if params[:id]
-      @likeable = Update.find(params[:id])
+      @likeable = Devlog.find(params[:id])
     else
       head :not_found
     end

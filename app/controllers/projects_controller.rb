@@ -21,37 +21,37 @@ class ProjectsController < ApplicationController
             end
         elsif params[:tab] == "following"
             @followed_projects = current_user.followed_projects.includes(:user)
-            @recent_updates = Update.joins(:project)
+            @recent_devlogs = Devlog.joins(:project)
                               .includes(:project, :user)
                               .where(project_id: @followed_projects.pluck(:id))
                               .where(projects: { is_deleted: false })
                               .order(created_at: :desc)
 
-            @pagy, @recent_updates = pagy(@recent_updates, items: 5)
+            @pagy, @recent_devlogs = pagy(@recent_devlogs, items: 5)
         elsif params[:tab] == "stonked"
             @stonked_projects = current_user.staked_projects.includes(:user)
-            @recent_updates = Update.joins(:project)
+            @recent_devlogs = Devlog.joins(:project)
                               .includes(:project, :user)
                               .where(project_id: @stonked_projects.pluck(:id))
                               .where(projects: { is_deleted: false })
                               .order(created_at: :desc)
 
-            @pagy, @recent_updates = pagy(@recent_updates, items: 5)
+            @pagy, @recent_devlogs = pagy(@recent_devlogs, items: 5)
         else
-            updates_query = Update.joins(:project)
+            devlogs_query = Devlog.joins(:project)
                                  .includes(:project, :user, comments: :user)
                                  .where(projects: { is_deleted: false })
                                  .order(created_at: :desc)
 
-            @pagy, @recent_updates = pagy(updates_query, items: 5)
+            @pagy, @recent_devlogs = pagy(devlogs_query, items: 5)
         end
     end
 
     def show
-        @updates = @project.updates.order(created_at: :asc)
+        @devlogs = @project.devlogs.order(created_at: :asc)
 
         @unlinked_timer_sessions = @project.timer_sessions
-            .where(user: current_user, update_id: nil, status: :stopped)
+            .where(user: current_user, devlog_id: nil, status: :stopped)
             .where("net_time >= ?", TimerSession::MINIMUM_DURATION)
             .order(created_at: :desc)
 
@@ -115,7 +115,7 @@ class ProjectsController < ApplicationController
         .order(rating: :asc)
 
         @projects = @projects.sort_by do |project|
-          weight = rand + (project.updates.count > 0 ? 1.5 : 0)
+          weight = rand + (project.devlogs.count > 0 ? 1.5 : 0)
           -weight
         end
 
@@ -219,13 +219,13 @@ class ProjectsController < ApplicationController
         # Verify all requirements are met
         errors = []
 
-        if @project.updates.count < 10
-            errors << "Project must have at least 10 updates."
+        if @project.devlogs.count < 10
+            errors << "Project must have at least 10 devlogs."
         end
 
-        unique_dates = @project.updates.pluck(:created_at).compact.map { |date| date.to_date }.uniq
+        unique_dates = @project.devlogs.pluck(:created_at).compact.map { |date| date.to_date }.uniq
         if unique_dates.count < 5
-            errors << "Updates must be posted on at least 5 different dates."
+            errors << "Devlogs must be posted on at least 5 different dates."
         end
 
         if @project.repo_link.blank?
@@ -455,7 +455,7 @@ class ProjectsController < ApplicationController
     private
 
     def set_project
-        @project = Project.includes(:user, updates: :user).find(params[:id])
+        @project = Project.includes(:user, devlogs: :user).find(params[:id])
     rescue ActiveRecord::RecordNotFound
         deleted_project = Project.with_deleted.find_by(id: params[:id])
         if deleted_project && deleted_project.is_deleted?

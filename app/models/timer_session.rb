@@ -11,26 +11,26 @@
 #  stopped_at         :datetime
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
+#  devlog_id          :bigint
 #  project_id         :bigint           not null
-#  update_id          :bigint
 #  user_id            :bigint           not null
 #
 # Indexes
 #
+#  index_timer_sessions_on_devlog_id   (devlog_id)
 #  index_timer_sessions_on_project_id  (project_id)
-#  index_timer_sessions_on_update_id   (update_id)
 #  index_timer_sessions_on_user_id     (user_id)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (devlog_id => devlogs.id)
 #  fk_rails_...  (project_id => projects.id)
-#  fk_rails_...  (update_id => updates.id)
 #  fk_rails_...  (user_id => users.id)
 #
 class TimerSession < ApplicationRecord
   belongs_to :user
   belongs_to :project
-  belongs_to :update_record, class_name: "Update", foreign_key: "update_id", optional: true
+  belongs_to :devlog, foreign_key: "devlog_id", optional: true
 
   enum :status, { running: 0, paused: 1, stopped: 2 }
 
@@ -45,7 +45,7 @@ class TimerSession < ApplicationRecord
   private
 
   def validate_no_changes_if_stopped
-    if status_was == "stopped" && changed? && (changed - [ "update_id" ]).present?
+    if status_was == "stopped" && changed? && (changed - [ "devlog_id" ]).present?
       errors.add(:base, "Stopped timer sessions cannot be modified")
     end
   end

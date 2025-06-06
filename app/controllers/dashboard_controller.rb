@@ -10,12 +10,12 @@ class DashboardController < ApplicationController
                                 .order(rating: :desc)
                                 .limit(5)
 
-    @recent_updates = Update.includes(:project, :user)
+    @recent_devlogs = Devlog.includes(:project, :user)
                            .order(created_at: :desc)
                            .limit(10)
 
     @total_projects = Project.count
     @total_users = User.count
-    @total_updates = Update.count
+    @total_devlogs = Devlog.count
   end
 end

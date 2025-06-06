@@ -1,6 +1,6 @@
 <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] shadow-lg overflow-hidden mb-4 md:mb-8">
   <div class="h-48 md:h-64 overflow-hidden relative">
-    <% project_image = @project.banner.presence || @project.updates.find { |u| u.attachment.present? }&.attachment || "https://raw.githubusercontent.com/hackclub/dinosaurs/main/confused_dinosaur.png" %>
+    <% project_image = @project.banner.presence || @project.devlogs.find { |u| u.attachment.present? }&.attachment || "https://raw.githubusercontent.com/hackclub/dinosaurs/main/confused_dinosaur.png" %>
     <img src="<%= project_image %>" alt="<%= @project.title %>" class="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity" data-action="click->image-viewer#open">
     <div class="absolute inset-0 bg-gradient-to-t from-soft-bone/30 to-transparent pointer-events-none"></div>
   </div>
@@ -41,7 +41,7 @@
         <span class="text-gray-800"><%= @project.stonks.count %> </span> <%= "stonk".pluralize(@project.stonks.count) %>
       </button>
       •&nbsp;
-      <span class="text-gray-800"><%= @project.updates.count %> </span> <%= "update".pluralize(@project.updates.count) %>
+      <span class="text-gray-800"><%= @project.devlogs.count %> </span> <%= "devlog".pluralize(@project.devlogs.count) %>
       •&nbsp;
       <%
         timer_total_time = @project.timer_sessions.where(status: :stopped).sum(:net_time)
@@ -169,24 +169,24 @@
 
       <div class="p-4 mb-4 overflow-y-auto max-h-[40vh]">
         <ul class="space-y-2 text-left">
-          <% has_enough_updates = @project.updates.count >= 10 %>
+          <% has_enough_devlogs = @project.devlogs.count >= 10 %>
           <li class="flex items-start">
             <div class="flex-shrink-0 h-6 w-6 mt-0.5">
-              <div class="h-5 w-5 border-2 <%= has_enough_updates ? 'bg-forest border-forest' : 'border-gray-400' %>  flex items-center justify-center">
-                <% if has_enough_updates %>
+              <div class="h-5 w-5 border-2 <%= has_enough_devlogs ? 'bg-forest border-forest' : 'border-gray-400' %>  flex items-center justify-center">
+                <% if has_enough_devlogs %>
                   <%= inline_svg "check.svg", class: "h-3 w-3 text-white" %>
                 <% end %>
               </div>
             </div>
-            <span class="ml-2 <%= has_enough_updates ? 'text-forest' : 'text-gray-600' %>">
-              Project must have at least 10 updates
-              <% unless has_enough_updates %>
-                <span class="block text-sm text-vintage-red">You have <%= @project.updates.count %> updates. Need <%= 10 - @project.updates.count %> more.</span>
+            <span class="ml-2 <%= has_enough_devlogs ? 'text-forest' : 'text-gray-600' %>">
+              Project must have at least 10 devlogs
+              <% unless has_enough_devlogs %>
+                <span class="block text-sm text-vintage-red">You have <%= @project.devlogs.count %> devlogs. Need <%= 10 - @project.devlogs.count %> more.</span>
               <% end %>
             </span>
           </li>
 
-          <% unique_dates = @project.updates.pluck(:created_at).compact.map { |date| date.to_date }.uniq %>
+          <% unique_dates = @project.devlogs.pluck(:created_at).compact.map { |date| date.to_date }.uniq %>
           <% has_enough_dates = unique_dates.count >= 5 %>
           <li class="flex items-start">
             <div class="flex-shrink-0 h-6 w-6 mt-0.5">
@@ -197,9 +197,9 @@
               </div>
             </div>
             <span class="ml-2 <%= has_enough_dates ? 'text-forest' : 'text-gray-600' %>">
-              Updates must be posted on at least 5 different dates
+              Devlogs must be posted on at least 5 different dates
               <% unless has_enough_dates %>
-                <span class="block text-sm text-vintage-red">You have updates on <%= unique_dates.count %> different dates. Need <%= 5 - unique_dates.count %> more days.</span>
+                <span class="block text-sm text-vintage-red">You have devlogs on <%= unique_dates.count %> different dates. Need <%= 5 - unique_dates.count %> more days.</span>
               <% end %>
             </span>
           </li>
@@ -304,7 +304,7 @@
       </div>
 
       <%
-        all_requirements_met = has_enough_updates &&
+        all_requirements_met = has_enough_devlogs &&
                                has_enough_dates &&
                                has_repo &&
                                has_raw_readme &&

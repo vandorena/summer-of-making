@@ -1,33 +1,33 @@
 class CommentsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_update
+  before_action :set_devlog
 
   def create
-    @comment = @update.comments.build(comment_params)
+    @comment = @devlog.comments.build(comment_params)
     @comment.user = current_user
 
     if @comment.save
       current_user.update(has_commented: true) unless current_user.has_commented
-      redirect_to @update.project, notice: "Comment was successfully created."
+      redirect_to @devlog.project, notice: "Comment was successfully created."
     else
-      redirect_to @update.project, alert: "Failed to add comment."
+      redirect_to @devlog.project, alert: "Failed to add comment."
     end
   end
 
   def destroy
-    @comment = @update.comments.find(params[:id])
+    @comment = @devlog.comments.find(params[:id])
 
     if @comment.destroy
-      redirect_to @update.project, notice: "Comment deleted successfully!"
+      redirect_to @devlog.project, notice: "Comment deleted successfully!"
     else
-      redirect_to @update.project, alert: "Failed to delete comment."
+      redirect_to @devlog.project, alert: "Failed to delete comment."
     end
   end
 
   private
 
-  def set_update
-    @update = Update.find(params[:update_id])
+  def set_devlog
+    @devlog = Devlog.find(params[:devlog_id])
   end
 
   def comment_params

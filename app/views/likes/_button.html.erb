@@ -1,6 +1,6 @@
 <div id="like-button-<%= likeable.id %>">
   <% if user_signed_in? %>
-    <%= button_to toggle_like_update_path(likeable),
+    <%= button_to toggle_like_devlog_path(likeable),
           remote: true,
           class: "inline-flex items-center pb-2 text-gray-600 hover:text-vintage-red transition-colors duration-300 text-sm sm:text-base",
           onclick: "event.stopPropagation()",

@@ -1,8 +1,8 @@
-<% if @recent_updates.any? %>
-  <% @recent_updates.each do |update| %>
-    <%= turbo_stream.append "updates-list" do %>
-      <%= render "updates/update_card", 
-          update: update,
+<% if @recent_devlogs.any? %>
+  <% @recent_devlogs.each do |devlog| %>
+    <%= turbo_stream.append "devlogs-list" do %>
+      <%= render "devlogs/devlog_card",
+          devlog: devlog,
           context: 'explore',
           show_project_title: true,
           show_project_navigation: true,
@@ -13,10 +13,10 @@
   <% end %>
 <% end %>
 
-<%= turbo_stream.replace "load-more-updates" do %>
+<%= turbo_stream.replace "load-more-devlogs" do %>
   <% if @pagy.next %>
-    <%= turbo_frame_tag "load-more-updates", 
-          src: explore_path(page: @pagy.next, format: :turbo_stream), 
+    <%= turbo_frame_tag "load-more-devlogs",
+          src: explore_path(page: @pagy.next, format: :turbo_stream),
           loading: "lazy",
           class: "block" do %>
       <div class="flex flex-col items-center justify-center">
@@ -24,10 +24,10 @@
       </div>
     <% end %>
   <% else %>
-    <div id="load-more-updates" class="flex justify-center py-6">
+    <div id="load-more-devlogs" class="flex justify-center py-6">
       <div class="text-gray-500 text-sm sm:text-base">
-        No more updates to load... Phew you're a doomscroller! Drink water!!
+        No more devlogs to load... Phew you're a doomscroller! Drink water!!
       </div>
     </div>
   <% end %>
-<% end %> 
+<% end %>

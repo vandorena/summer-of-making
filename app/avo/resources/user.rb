@@ -20,7 +20,7 @@ class Avo::Resources::User < Avo::BaseResource
     field :hackatime_confirmation_shown, as: :boolean
     field :is_admin, as: :boolean
     field :projects, as: :has_many
-    field :updates, as: :has_many
+    field :devlogs, as: :has_many
     field :votes, as: :has_many
     field :project_follows, as: :has_many
     field :followed_projects, as: :has_many, through: :project_follows

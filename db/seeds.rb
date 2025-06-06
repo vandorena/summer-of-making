@@ -16,7 +16,7 @@ puts "Clearing existing data..."
 Comment.destroy_all
 Vote.destroy_all
 ProjectFollow.destroy_all
-Update.destroy_all
+Devlog.destroy_all
 TimerSession.destroy_all
 Stonk.destroy_all
 Project.destroy_all
@@ -341,7 +341,7 @@ created_users.each do |user|
   end
 end
 
-# Create timer sessions BEFORE updates
+# Create timer sessions BEFORE devlogs
 puts "Creating timer sessions..."
 created_projects.each do |project|
   # Each project gets 3-8 timer sessions
@@ -384,8 +384,8 @@ created_projects.each do |project|
   end
 end
 
-puts "Creating updates..."
-updates_data = [
+puts "Creating devlogs..."
+devlogs_data = [
   {
     text: "🎉 Initial commit - Project setup complete with basic structure and dependencies",
     attachment: "https://picsum.photos/800/600?random=1"
@@ -437,20 +437,20 @@ updates_data = [
 ]
 
 created_projects.each do |project|
-  # Ensure each project gets up to 10 updates, but no more than available timer sessions
-  available_timer_sessions = project.timer_sessions.where(status: 2, update_id: nil).to_a
-  updates_to_create = updates_data.shuffle.take([ available_timer_sessions.count, 10 ].min)
+  # Ensure each project gets up to 10 devlogs, but no more than available timer sessions
+  available_timer_sessions = project.timer_sessions.where(status: 2, devlog_id: nil).to_a
+  devlogs_to_create = devlogs_data.shuffle.take([ available_timer_sessions.count, 10 ].min)
 
-  updates_to_create.each_with_index do |update_data, index|
-    # Space out the updates over the last 60 days
-    days_ago = (60.0 / updates_to_create.length * (updates_to_create.length - index)).round
+  devlogs_to_create.each_with_index do |devlog_data, index|
+    # Space out the devlogs over the last 60 days
+    days_ago = (60.0 / devlogs_to_create.length * (devlogs_to_create.length - index)).round
 
-    # Get a timer session for this update
+    # Get a timer session for this devlog
     timer_session = available_timer_sessions.pop
 
-    # Create the update with timer_session_id
-    update = Update.new(
-      update_data.merge(
+    # Create the devlog with timer_session_id
+    devlog = Devlog.new(
+      devlog_data.merge(
         user: project.user,
         project: project,
         created_at: days_ago.days.ago,
@@ -458,27 +458,16 @@ created_projects.each do |project|
       )
     )
 
-    update.save!
+    devlog.save!
 
-    # Add comments to some updates
+    # Add comments to some devlogs
     if rand < 0.7 # 70% chance of having comments
       rand(2..4).times do
         commenter = (created_users - [ project.user ]).sample
-        update.comments.create!(
+        devlog.comments.create!(
           user: commenter,
-          text: [
-            "Great progress! Looking forward to seeing more.",
-            "This is exactly what we needed!",
-            "Nice work on the implementation.",
-            "The performance improvements are noticeable.",
-            "Could you explain more about the architecture?",
-            "This is a game-changer!",
-            "The documentation is very clear.",
-            "I'm excited to try this out!",
-            "Impressive work on this milestone!",
-            "The new features look promising.",
-            "Can't wait to see this in production!",
-            "The code quality is outstanding."
+          rich_content: [
+            "{\"type\":\"tiptap\",\"content\":\"<p>this is a test comment</p>\",\"json\":{\"type\":\"doc\",\"content\":[{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"this is a test comment\"}]}]}}"
           ].sample
         )
       end
@@ -711,7 +700,7 @@ puts "- #{User.count} users"
 puts "- #{Project.count} projects"
 puts "- #{ProjectFollow.count} project follows"
 puts "- #{Vote.count} votes"
-puts "- #{Update.count} updates"
+puts "- #{Devlog.count} devlog"
 puts "- #{Comment.count} comments"
 puts "- #{Stonk.count} stonks"
 puts "- #{TimerSession.count} timer sessions"
