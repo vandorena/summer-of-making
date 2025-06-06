@@ -371,6 +371,83 @@ class ProjectsController < ApplicationController
     end
   end
 
+  def check_github_readme
+    owner = params[:owner]
+    repo = params[:repo]
+
+    return render json: { error: "Missing owner or repo" }, status: :bad_request if owner.blank? || repo.blank?
+
+    require "net/http"
+    require "uri"
+
+    begin
+        # Check GitHub API for readme
+        api_url = "https://api.github.com/repos/#{owner}/#{repo}/readme"
+        uri = URI.parse(api_url)
+
+        response = nil
+        Net::HTTP.start(uri.host, uri.port, use_ssl: true, open_timeout: 5, read_timeout: 10) do |http|
+            request = Net::HTTP::Get.new(uri)
+            request["User-Agent"] = "HackClub-SummerOfMaking"
+            request["Accept"] = "application/vnd.github.v3+json"
+            response = http.request(request)
+        end
+
+        case response.code.to_i
+        when 200
+            readme_data = JSON.parse(response.body)
+            readme_name = readme_data["name"]
+
+            # Check if it's .md or .txt
+            extension = File.extname(readme_name).downcase
+            unless [ ".md", ".txt" ].include?(extension)
+                return render json: { error: "README must be a .md or .txt file" }
+            end
+
+            # Construct the raw URL
+            raw_url = "https://raw.githubusercontent.com/#{owner}/#{repo}/main/#{readme_name}"
+
+            # Verify the raw URL exists
+            raw_uri = URI.parse(raw_url)
+            raw_response = nil
+            Net::HTTP.start(raw_uri.host, raw_uri.port, use_ssl: true, open_timeout: 5, read_timeout: 10) do |http|
+                head_request = Net::HTTP::Head.new(raw_uri)
+                head_request["User-Agent"] = "HackClub-SummerOfMaking"
+                raw_response = http.request(head_request)
+            end
+
+            if raw_response.code.to_i == 200
+                render json: { readme_url: raw_url }
+            else
+                # Try with master branch if main doesn't work
+                master_url = "https://raw.githubusercontent.com/#{owner}/#{repo}/master/#{readme_name}"
+                master_uri = URI.parse(master_url)
+
+                Net::HTTP.start(master_uri.host, master_uri.port, use_ssl: true, open_timeout: 5, read_timeout: 10) do |http|
+                    head_request = Net::HTTP::Head.new(master_uri)
+                    head_request["User-Agent"] = "HackClub-SummerOfMaking"
+                    master_response = http.request(head_request)
+
+                    if master_response.code.to_i == 200
+                        render json: { readme_url: master_url }
+                    else
+                        render json: { error: "Could not access README file" }
+                    end
+                end
+            end
+        when 404
+            render json: { error: "Repository or README not found" }
+        when 403
+            render json: { error: "Repository is private or rate limited" }
+        else
+            render json: { error: "GitHub API error: #{response.code}" }
+        end
+    rescue StandardError => e
+        render json: { error: "Failed to check GitHub README: #{e.message}" }
+    end
+  end
+
+
   def stake_stonks
     @project = Project.find(params[:id])
 
