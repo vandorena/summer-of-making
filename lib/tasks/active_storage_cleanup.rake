@@ -7,21 +7,15 @@ namespace :active_storage do
 
     puts "Cleaning up unattached ActiveStorage blobs older than #{days} days..."
 
-    unattached_blobs = ActiveStorage::Blob.unattached.where(
-      "created_at < ?", days.days.ago
-    )
-
-    count = unattached_blobs.count
-    puts "Found #{count} unattached blobs to delete"
-
-    if count > 0
-      unattached_blobs.find_each do |blob|
-        puts "Deleting blob: #{blob.filename} (#{blob.byte_size} bytes)"
-        blob.purge
+    count = 0
+    ActiveStorage::Blob
+      .unattached
+      .where(created_at: ..days.days.ago)
+      .find_each do |blob|
+        blob.purge_later
+        count += 1
       end
-      puts "Cleanup completed: #{count} blobs deleted"
-    else
-      puts "No unattached blobs found"
-    end
+
+    puts "Cleanup queued: #{count} blobs scheduled for deletion"
   end
 end
