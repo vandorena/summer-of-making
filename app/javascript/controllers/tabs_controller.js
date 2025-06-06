@@ -20,9 +20,9 @@ export default class extends Controller {
       const isActive = button.dataset.tab === this.currentTabValue
       
       if (isActive) {
-        button.className = "px-6 tab-element py-2 text-lg text-black"
+        button.className = "px-6 tab-element py-2 text-xl text-black"
       } else {
-        button.className = "px-6 py-2 text-lg text-black"
+        button.className = "px-6 py-2 text-xl text-black"
       }
     })
   }
