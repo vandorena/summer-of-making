@@ -19,8 +19,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
     --mount=target=/var/cache/apt,type=cache,sharing=locked \ 
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libjemalloc2 libvips postgresql-client && \
-    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+    apt-get install --no-install-recommends -y curl libjemalloc2 libvips postgresql-client
 
 # Set production environment
 ENV RAILS_ENV="production" \
@@ -38,8 +37,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
     --mount=target=/var/cache/apt,type=cache,sharing=locked \ 
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential git libpq-dev libyaml-dev pkg-config && \
-    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+    apt-get install --no-install-recommends -y build-essential git libpq-dev libyaml-dev pkg-config
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./

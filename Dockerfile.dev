@@ -14,8 +14,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
     libvips \
     pkg-config \
     curl \
-    vim \
-    && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives
+    vim
 
 # Set working directory
 WORKDIR /app
