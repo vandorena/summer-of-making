@@ -4,7 +4,6 @@
 #
 #  id           :bigint           not null, primary key
 #  rich_content :jsonb
-#  text         :text
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #  update_id    :bigint           not null
@@ -27,34 +26,18 @@ class Comment < ApplicationRecord
   belongs_to :user
   belongs_to :update_record, class_name: "Update", foreign_key: "update_id"
 
-  validates :text, presence: true, unless: :rich_content?
-  validates :rich_content, presence: true, unless: :text?
+  validates :rich_content, presence: true
 
   after_create :notify_update_author
   after_commit :sync_to_airtable, on: [ :create ]
   after_destroy :delete_from_airtable
 
-
-  # I'm not in the mood to migrate everything to rich content, so we'll just use this for now, but eventually we'll migrate everything to rich content, or just drop the text column when we for flagship
   def display_content
-    content = if rich_content.present?
-      render_rich_content
-    else
-      text
-    end
-
-    sanitized_content = sanitize(content, tags: %w[a br code pre p em strong h1 h2 h3 h4 h5 h6 ul ol li blockquote span],
-                                         attributes: %w[href title class target])
+    sanitized_content = sanitize(render_rich_content, 
+      tags: %w[a br code pre p em strong h1 h2 h3 h4 h5 h6 ul ol li blockquote span],
+      attributes: %w[href title class target])
 
     parse_emotes(sanitized_content)
-  end
-
-  def rich_content?
-    rich_content.present?
-  end
-
-  def text?
-    text.present?
   end
 
   private
@@ -66,21 +49,6 @@ class Comment < ApplicationRecord
       return parsed_rich_content["content"] || ""
     end
 
-    # Handling legacy format, but can't wait to ditch it!
-    if parsed_rich_content["blocks"]
-      return parsed_rich_content["blocks"].map do |block|
-        case block["type"]
-        when "paragraph"
-          block.dig("data", "text")
-        when "code"
-          "<pre><code>#{block.dig('data', 'code')}</code></pre>"
-        else
-          block.dig("data", "text")
-        end
-      end.join("")
-    end
-
-    # Fallback for unknown formats
     parsed_rich_content.to_s
   end
 
