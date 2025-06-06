@@ -38,7 +38,7 @@ class SessionsController < ApplicationController
           }.to_json)
         end
 
-        redirect_to root_path, notice: "Successfully signed in!"
+        redirect_to root_path
       rescue StandardError => e
         Rails.logger.tagged("Authentication") do
           Rails.logger.error({
@@ -115,6 +115,6 @@ class SessionsController < ApplicationController
         }.to_json)
       end
 
-      redirect_to root_path, notice: "Successfully signed in via magic link!"
+      redirect_to root_path
     end
 end
