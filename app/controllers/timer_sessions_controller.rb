@@ -1,11 +1,28 @@
+# frozen_string_literal: true
+
 class TimerSessionsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_project, except: [ :global_active ]
-  before_action :set_timer_session, only: [ :update, :show, :destroy ]
-  before_action :ensure_timer_not_stopped, only: [ :update, :destroy ]
+  before_action :set_project, except: [:global_active]
+  before_action :set_timer_session, only: %i(update show destroy)
+  before_action :ensure_timer_not_stopped, only: %i(update destroy)
+
+  def show
+    if @timer_session
+      render json: {
+        id: @timer_session.id,
+        started_at: @timer_session.started_at,
+        last_paused_at: @timer_session.last_paused_at,
+        accumulated_paused: @timer_session.accumulated_paused,
+        status: @timer_session.status,
+        net_time: @timer_session.net_time
+      }
+    else
+      render json: { error: 'No active timer session found' }, status: :not_found
+    end
+  end
 
   def create
-    active_session = TimerSession.where(user: current_user, status: [ :running, :paused ]).first
+    active_session = TimerSession.where(user: current_user, status: %i(running paused)).first
 
     if active_session
       project = active_session.project
@@ -24,9 +41,9 @@ class TimerSessionsController < ApplicationController
       # show indicator
       Turbo::StreamsChannel.broadcast_replace_to(
         current_user,
-        "timer_indicator",
-        target: "timer-indicator",
-        partial: "shared/timer_indicator_content",
+        'timer_indicator',
+        target: 'timer-indicator',
+        partial: 'shared/timer_indicator_content',
         locals: { active_timer_session: @timer_session }
       )
 
@@ -36,35 +53,20 @@ class TimerSessionsController < ApplicationController
         status: @timer_session.status
       }
     else
-      error_message = @timer_session.errors.full_messages.join(", ")
+      error_message = @timer_session.errors.full_messages.join(', ')
       redirect_to project_path(@project), alert: error_message
-    end
-  end
-
-  def show
-    if @timer_session
-      render json: {
-        id: @timer_session.id,
-        started_at: @timer_session.started_at,
-        last_paused_at: @timer_session.last_paused_at,
-        accumulated_paused: @timer_session.accumulated_paused,
-        status: @timer_session.status,
-        net_time: @timer_session.net_time
-      }
-    else
-      render json: { error: "No active timer session found" }, status: :not_found
     end
   end
 
   def update
     case params[:action_type]
-    when "pause"
+    when 'pause'
       @timer_session.update(last_paused_at: Time.current, status: :paused)
-    when "resume"
+    when 'resume'
       paused_duration = Time.current - @timer_session.last_paused_at
       new_accumulated = @timer_session.accumulated_paused + paused_duration.to_i
       @timer_session.update(accumulated_paused: new_accumulated, status: :running)
-    when "stop"
+    when 'stop'
       end_time = Time.current
 
       if @timer_session.paused? && @timer_session.last_paused_at.present?
@@ -76,23 +78,23 @@ class TimerSessionsController < ApplicationController
       net_time = elapsed - @timer_session.accumulated_paused
 
       if net_time.to_i < TimerSession::MINIMUM_DURATION
-        @timer_session.errors.add(:base, "Timer sessions must be at least 5 minutes long")
+        @timer_session.errors.add(:base, 'Timer sessions must be at least 5 minutes long')
       else
         @timer_session.update(stopped_at: end_time, net_time: net_time.to_i, status: :stopped)
 
         # hide indicator
         Turbo::StreamsChannel.broadcast_replace_to(
           current_user,
-          "timer_indicator",
-          target: "timer-indicator",
-          partial: "shared/timer_indicator_content",
+          'timer_indicator',
+          target: 'timer-indicator',
+          partial: 'shared/timer_indicator_content',
           locals: { active_timer_session: nil }
         )
       end
     end
 
     if @timer_session.errors.any?
-      render json: { error: @timer_session.errors.full_messages.join(", ") }, status: :unprocessable_entity
+      render json: { error: @timer_session.errors.full_messages.join(', ') }, status: :unprocessable_entity
     else
       render json: {
         id: @timer_session.id,
@@ -104,7 +106,10 @@ class TimerSessionsController < ApplicationController
   end
 
   def active
-    @timer_session = @project.timer_sessions.where(user: current_user, status: [ :running, :paused ]).order(created_at: :desc).first
+    @timer_session = @project.timer_sessions.where(user: current_user,
+                                                   status: %i(
+                                                     running paused
+                                                   )).order(created_at: :desc).first
 
     if @timer_session
       render json: {
@@ -120,7 +125,9 @@ class TimerSessionsController < ApplicationController
   end
 
   def global_active
-    @timer_session = TimerSession.where(user: current_user, status: [ :running, :paused ]).order(created_at: :desc).first
+    @timer_session = TimerSession.where(user: current_user,
+                                        status: %i(running
+                                                   paused)).order(created_at: :desc).first
 
     if @timer_session
       render json: {
@@ -142,18 +149,18 @@ class TimerSessionsController < ApplicationController
         # hide indicator
         Turbo::StreamsChannel.broadcast_replace_to(
           current_user,
-          "timer_indicator",
-          target: "timer-indicator",
-          partial: "shared/timer_indicator_content",
+          'timer_indicator',
+          target: 'timer-indicator',
+          partial: 'shared/timer_indicator_content',
           locals: { active_timer_session: nil }
         )
 
         render json: { success: true }, status: :ok
       else
-        render json: { error: @timer_session.errors.full_messages.join(", ") }, status: :unprocessable_entity
+        render json: { error: @timer_session.errors.full_messages.join(', ') }, status: :unprocessable_entity
       end
     else
-      render json: { error: "Unauthorized" }, status: :unauthorized
+      render json: { error: 'Unauthorized' }, status: :unauthorized
     end
   end
 
@@ -168,9 +175,9 @@ class TimerSessionsController < ApplicationController
   end
 
   def ensure_timer_not_stopped
-    if @timer_session.stopped?
-      render json: { error: "Stopped timer sessions cannot be modified" }, status: :unprocessable_entity
-      false
-    end
+    return unless @timer_session.stopped?
+
+    render json: { error: 'Stopped timer sessions cannot be modified' }, status: :unprocessable_entity
+    false
   end
 end

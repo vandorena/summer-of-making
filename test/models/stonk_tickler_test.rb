@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: stonk_ticklers
@@ -16,7 +18,7 @@
 #
 #  fk_rails_...  (project_id => projects.id)
 #
-require "test_helper"
+require 'test_helper'
 
 class StonkTicklerTest < ActiveSupport::TestCase
   # test "the truth" do

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: magic_links
@@ -32,7 +34,7 @@ class MagicLink < ApplicationRecord
     false
   end
 
-  def secret_url host
+  def secret_url(host)
     "#{Rails.application.routes.url_helpers.magic_link_url(host:)}?token=#{token}"
   end
 

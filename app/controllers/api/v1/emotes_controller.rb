@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 module Api
   module V1
     class EmotesController < ApplicationController
       def show
         emote_name = params[:id]
-        emote = SlackEmote.find_by_name(emote_name)
+        emote = SlackEmote.find_by(name: emote_name)
 
         if emote
           render json: {
@@ -12,7 +14,7 @@ module Api
             html: emote.to_html
           }
         else
-          render json: { error: "Emote not found" }, status: 404
+          render json: { error: 'Emote not found' }, status: :not_found
         end
       end
     end

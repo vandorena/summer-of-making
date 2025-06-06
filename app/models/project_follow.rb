@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: project_follows
@@ -23,18 +25,18 @@ class ProjectFollow < ApplicationRecord
   belongs_to :user
   belongs_to :project
 
-  validates :user_id, uniqueness: { scope: :project_id, message: "is already following this project" }
+  validates :user_id, uniqueness: { scope: :project_id, message: 'is already following this project' }
   validate :cannot_follow_own_project
 
-  after_commit :sync_to_airtable, on: [ :create ]
   after_destroy :delete_from_airtable
+  after_commit :sync_to_airtable, on: [:create]
 
   private
 
   def cannot_follow_own_project
-    if user_id == project.user_id
-      errors.add(:user_id, "cannot follow your own project")
-    end
+    return unless user_id == project.user_id
+
+    errors.add(:user_id, 'cannot follow your own project')
   end
 
   def sync_to_airtable

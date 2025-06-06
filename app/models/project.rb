@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: projects
@@ -35,8 +37,8 @@ class Project < ApplicationRecord
   has_many :stakers, through: :stonks, source: :user
   has_one :stonk_tickler
 
-  has_many :won_votes, class_name: "Vote", foreign_key: "winner_id"
-  has_many :lost_votes, class_name: "Vote", foreign_key: "loser_id"
+  has_many :won_votes, class_name: 'Vote', foreign_key: 'winner_id'
+  has_many :lost_votes, class_name: 'Vote', foreign_key: 'loser_id'
 
   has_many :timer_sessions
 
@@ -53,32 +55,29 @@ class Project < ApplicationRecord
   validates :title, :description, :category, presence: true
 
   validates :readme_link, :demo_link, :repo_link, :banner,
-    format: { with: URI::DEFAULT_PARSER.make_regexp, message: "must be a valid URL" },
-    allow_blank: true
+            format: { with: URI::DEFAULT_PARSER.make_regexp, message: 'must be a valid URL' },
+            allow_blank: true
 
-  validates :category, inclusion: { in: [ "Software", "Hardware", "Both Software & Hardware", "Something else" ], message: "%{value} is not a valid category" }
+  validates :category,
+            inclusion: { in: ['Software', 'Hardware', 'Both Software & Hardware', 'Something else'],
+                         message: '%<value>s is not a valid category' }
 
   validate :cannot_change_category, on: :update
 
+  after_initialize :set_default_rating, if: :new_record?
   before_save :filter_hackatime_keys
 
   before_save :remove_duplicate_hackatime_keys
 
-  after_initialize :set_default_rating, if: :new_record?
-
-  after_commit :sync_to_airtable, on: [ :create, :update ]
+  after_commit :sync_to_airtable, on: %i(create update)
 
   def total_votes
     won_votes.count + lost_votes.count
   end
 
-  def won_votes_count
-    won_votes.count
-  end
+  delegate :count, to: :won_votes, prefix: true
 
-  def lost_votes_count
-    lost_votes.count
-  end
+  delegate :count, to: :lost_votes, prefix: true
 
   def hackatime_total_time
     return 0 unless user.has_hackatime? && hackatime_project_keys.present?
@@ -104,10 +103,10 @@ class Project < ApplicationRecord
   def cumulative_stonk_dollars
     stonk_dollars_by_day = stonks.group_by_day(:created_at).sum(:amount)
 
-    stonk_dollars_by_day.each_with_object({}) { |(date, count), result|
+    stonk_dollars_by_day.each_with_object({}) do |(date, count), result|
       previous = result.empty? ? 0 : result.values.last
       result[date] = previous + count
-    }
+    end
   end
 
   def create_tickler
@@ -121,13 +120,13 @@ class Project < ApplicationRecord
   end
 
   def cannot_change_category
-    if category_changed? && persisted?
-      errors.add(:category, "cannot be changed after project creation")
-    end
+    return unless category_changed? && persisted?
+
+    errors.add(:category, 'cannot be changed after project creation')
   end
 
   def filter_hackatime_keys
-    self.hackatime_project_keys = hackatime_project_keys.reject(&:blank?) if hackatime_project_keys
+    self.hackatime_project_keys = hackatime_project_keys.compact_blank if hackatime_project_keys
   end
 
   def remove_duplicate_hackatime_keys

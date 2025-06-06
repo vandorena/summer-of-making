@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: shop_items
@@ -18,5 +20,7 @@
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
 #
-class ShopItem::AghShopItem < ShopItem
+module ShopItem
+  class AghShopItem < ShopItem
+  end
 end
