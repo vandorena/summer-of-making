@@ -58,6 +58,9 @@ group :development, :test do
 
   # Language Server Protocol for Ruby
   gem "ruby-lsp", require: false
+
+  # Annotate Rails models
+  gem "annotaterb", "~> 4.15"
 end
 
 group :development do
@@ -103,5 +106,3 @@ gem "avo", ">= 3.2"
 gem "aws-sdk-s3", require: false
 
 gem "lz_string", "~> 0.3.0"
-
-gem "annotaterb", "~> 4.15", group: :development
