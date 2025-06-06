@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RefreshHackatimeStatsJob < ApplicationJob
   queue_as :default
 
@@ -9,7 +11,7 @@ class RefreshHackatimeStatsJob < ApplicationJob
     query_params[:from] = options[:from].to_s if options[:from]
     query_params[:to] = options[:to].to_s if options[:to]
 
-    uri = URI("https://hackatime.hackclub.com/api/summary")
+    uri = URI('https://hackatime.hackclub.com/api/summary')
     uri.query = URI.encode_www_form(query_params)
 
     response = Faraday.get(uri.to_s)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SyncUserToAirtableJob < ApplicationJob
   queue_as :default
 
@@ -6,24 +8,25 @@ class SyncUserToAirtableJob < ApplicationJob
     return unless user
 
     # Use Airrecord table
-    table = Airrecord.table(Rails.application.credentials.airtable.api_key, Rails.application.credentials.airtable.base_id, "_users")
+    table = Airrecord.table(Rails.application.credentials.airtable.api_key,
+                            Rails.application.credentials.airtable.base_id, '_users')
 
     # Prepare user data for Airrecord
     user_data = {
-      "first_name" => user.first_name,
-      "last_name" => user.last_name,
-      "email" => user.email,
-      "slack_id" => user.slack_id,
-      "avatar_url" => user.avatar,
-      "has_commented" => user.has_commented,
-      "is_admin" => user.is_admin
+      'first_name' => user.first_name,
+      'last_name' => user.last_name,
+      'email' => user.email,
+      'slack_id' => user.slack_id,
+      'avatar_url' => user.avatar,
+      'has_commented' => user.has_commented,
+      'is_admin' => user.is_admin
     }
 
     existing_record = table.all(filter: "{slack_id} = '#{user.slack_id}'").first
 
     if existing_record
       updated = false
-      %w[first_name last_name email slack_id avatar_url has_commented is_admin].each do |field|
+      %w(first_name last_name email slack_id avatar_url has_commented is_admin).each do |field|
         new_value = user_data[field]
         if existing_record[field] != new_value
           existing_record[field] = new_value

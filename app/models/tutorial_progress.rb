@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: tutorial_progresses
@@ -20,7 +22,7 @@
 class TutorialProgress < ApplicationRecord
   belongs_to :user
 
-  TUTORIAL_STEPS = %w[explore gallery my_projects vote shop].freeze
+  TUTORIAL_STEPS = %w(explore gallery my_projects vote shop).freeze
 
   after_initialize :setup_default_progress, if: :new_record?
 
@@ -28,7 +30,7 @@ class TutorialProgress < ApplicationRecord
     return unless TUTORIAL_STEPS.include?(step_name.to_s)
 
     step_progress[step_name.to_s] ||= {}
-    step_progress[step_name.to_s]["completed_at"] = Time.current
+    step_progress[step_name.to_s]['completed_at'] = Time.current
 
     check_overall_completion!
 
@@ -36,7 +38,7 @@ class TutorialProgress < ApplicationRecord
   end
 
   def step_completed?(step_name)
-    step_progress.dig(step_name.to_s, "completed_at").present?
+    step_progress.dig(step_name.to_s, 'completed_at').present?
   end
 
   def completion_percentage
@@ -65,14 +67,14 @@ class TutorialProgress < ApplicationRecord
   private
 
   def setup_default_progress
-    self.step_progress = TUTORIAL_STEPS.each_with_object({}) do |step, hash|
-      hash[step] = {}
+    self.step_progress = TUTORIAL_STEPS.index_with do |_step|
+      {}
     end
   end
 
   def check_overall_completion!
-    if TUTORIAL_STEPS.all? { |step| step_completed?(step) }
-      self.completed_at = Time.current
-    end
+    return unless TUTORIAL_STEPS.all? { |step| step_completed?(step) }
+
+    self.completed_at = Time.current
   end
 end

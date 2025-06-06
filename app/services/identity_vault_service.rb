@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 class IdentityVaultService
   class << self
     def authorize_url(redirect_uri, sneaky_params = nil)
       params = {
         client_id: Rails.application.credentials.dig(:identity_vault, :client_id),
         redirect_uri:,
-        response_type: "code",
-        scope: "basic_info address",
+        response_type: 'code',
+        scope: 'basic_info address',
         stash_data: encode_sneaky_params(sneaky_params)
       }.compact_blank
 
@@ -13,23 +15,23 @@ class IdentityVaultService
     end
 
     def exchange_token(redirect_uri, code)
-      conn.post("/oauth/token") do |req|
+      conn.post('/oauth/token') do |req|
         req.body = {
           client_id: Rails.application.credentials.dig(:identity_vault, :client_id),
           client_secret: Rails.application.credentials.dig(:identity_vault, :client_secret),
           redirect_uri:,
           code:,
-          grant_type: "authorization_code"
+          grant_type: 'authorization_code'
         }
       end.body
     end
 
     def me(user_token)
-      raise ArgumentError, "user_token is required" unless user_token
+      raise ArgumentError, 'user_token is required' unless user_token
 
-      conn.get("/api/v1/me", nil, {
-        Authorization: "Bearer #{user_token}"
-      }).body
+      conn.get('/api/v1/me', nil, {
+                 Authorization: "Bearer #{user_token}"
+               }).body
     end
 
     def get_identity(identity_id)
@@ -42,7 +44,7 @@ class IdentityVaultService
       @conn ||= Faraday.new(
         url: Rails.application.credentials.dig(:identity_vault, :host),
         headers: {
-          "Authorization" => "Bearer #{Rails.application.credentials.dig(:identity_vault, :global_program_key)}"
+          'Authorization' => "Bearer #{Rails.application.credentials.dig(:identity_vault, :global_program_key)}"
         }
       ) do |f|
         f.request :json
@@ -53,6 +55,7 @@ class IdentityVaultService
 
     def encode_sneaky_params(params)
       return nil unless params
+
       Base64.urlsafe_encode64(LZString::UTF16.compress(params.to_json))
     end
   end

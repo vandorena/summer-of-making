@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ApplicationController < ActionController::Base
   include Pagy::Backend
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
@@ -23,6 +25,6 @@ class ApplicationController < ActionController::Base
   end
 
   def authenticate_user!
-    redirect_to root_path, alert: "Please sign in to access this page" unless user_signed_in?
+    redirect_to root_path, alert: 'Please sign in to access this page' unless user_signed_in?
   end
 end

@@ -1,15 +1,17 @@
+# frozen_string_literal: true
+
 module MarkdownHelper
   class CustomRender < Redcarpet::Render::HTML
     def link(link, title, content)
       "<a href='#{link}' title='#{title}' class='text-nice-blue underline' target='_blank'>#{content}</a>"
     end
 
-    def autolink(link, link_type)
-        "<a href='#{link}' class='text-nice-blue underline' target='_blank'>#{link}</a>"
+    def autolink(link, _link_type)
+      "<a href='#{link}' class='text-nice-blue underline' target='_blank'>#{link}</a>"
     end
 
     def block_code(code, language)
-      language ||= "plaintext"
+      language ||= 'plaintext'
       "<pre class='bg-gray-900 p-4 text-forest overflow-x-auto'><code class='language-#{language}'>#{code}</code></pre>"
     end
 
@@ -19,9 +21,9 @@ module MarkdownHelper
   end
 
   def markdown(text)
-    return "" if text.blank?
+    return '' if text.blank?
 
-    text = text.gsub(/(?<!\~)\~(?!\~)(.*?)(?<!\~)\~(?!\~)/, '~~\1~~')
+    text = text.gsub(/(?<!~)~(?!~)(.*?)(?<!~)~(?!~)/, '~~\1~~')
     text = text.gsub(/\n{2,}/, "\n<br>\n")
 
     markdown = Redcarpet::Markdown.new(
@@ -43,7 +45,7 @@ module MarkdownHelper
 
     rendered = markdown.render(text)
 
-    sanitize(rendered, tags: %w[a br code pre p em strong h1 h2 h3 h4 h5 h6 ul ol li blockquote span],
-                            attributes: %w[href title class target])
+    sanitize(rendered, tags: %w(a br code pre p em strong h1 h2 h3 h4 h5 h6 ul ol li blockquote span),
+                       attributes: %w(href title class target))
   end
 end
