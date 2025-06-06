@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :sync do
   desc "Sync all existing comments to Airrecord"
   task comments: :environment do
@@ -8,14 +10,12 @@ namespace :sync do
     failed_count = 0
 
     Comment.find_each do |comment|
-      begin
-        SyncCommentToAirtableJob.perform_now(comment.id)
-        synced_count += 1
-        print "."
-      rescue => e
-        failed_count += 1
-        puts "\nFailed to sync comment #{comment.id}: #{e.message}"
-      end
+      SyncCommentToAirtableJob.perform_now(comment.id)
+      synced_count += 1
+      print "."
+    rescue StandardError => e
+      failed_count += 1
+      puts "\nFailed to sync comment #{comment.id}: #{e.message}"
     end
 
     puts "\nSync completed!"

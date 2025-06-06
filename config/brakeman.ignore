@@ -1,0 +1,74 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "4a92422d53b2d0d1d642910e3b174a4c3293fe93810b0079b70550d881667a60",
+      "check_name": "SendFile",
+      "message": "Parameter value used in file name",
+      "file": "app/controllers/attachments_controller.rb",
+      "line": 55,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "send_file(Rails.root.join(\"tmp\", \"uploads\", sanitize(params[:filename])), :disposition => \"inline\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "AttachmentsController",
+        "method": "download"
+      },
+      "user_input": "params[:filename]",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "830b6acd278c8e9ed54b5b3ae19108c2241118128eb1467872af4c9ec7950d9b",
+      "check_name": "FileAccess",
+      "message": "Parameter value used in file name",
+      "file": "app/controllers/attachments_controller.rb",
+      "line": 16,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "FileUtils.mkdir_p(File.dirname(Rails.root.join(\"tmp\", \"uploads\", \"#{SecureRandom.hex(32)}#{File.extname(params[:file].original_filename).downcase}\")))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "AttachmentsController",
+        "method": "upload"
+      },
+      "user_input": "params[:file].original_filename",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "f996047f3bd6ffb07bd3f75e2c20984f6bf9807a1c852c1f559d33d32e1d0918",
+      "check_name": "FileAccess",
+      "message": "Parameter value used in file name",
+      "file": "app/controllers/attachments_controller.rb",
+      "line": 32,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "FileUtils.rm_f(Rails.root.join(\"tmp\", \"uploads\", \"#{SecureRandom.hex(32)}#{File.extname(params[:file].original_filename).downcase}\"))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "AttachmentsController",
+        "method": "upload"
+      },
+      "user_input": "params[:file].original_filename",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": ""
+    }
+  ],
+  "brakeman_version": "7.0.2"
+}

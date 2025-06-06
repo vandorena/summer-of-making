@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SyncProjectToAirtableJob < ApplicationJob
   queue_as :default
 
@@ -5,7 +7,7 @@ class SyncProjectToAirtableJob < ApplicationJob
     project = Project.find(project_id)
     return unless project
 
-    table = Airrecord.table(ENV["AIRTABLE_API_KEY"], ENV["AIRTABLE_BASE_ID_JOURNEY"], "projects")
+    table = Airrecord.table(ENV.fetch("AIRTABLE_API_KEY", nil), ENV.fetch("AIRTABLE_BASE_ID_JOURNEY", nil), "projects")
     author_slack_id = User.find(project.user_id).slack_id
 
     project_data = {
@@ -27,7 +29,8 @@ class SyncProjectToAirtableJob < ApplicationJob
 
     if existing_record
       updated = false
-      %w[title description repo_link readme_link demo_link banner_link category author_slack_id project_id is_shipped].each do |field|
+      %w[title description repo_link readme_link demo_link banner_link category author_slack_id project_id
+         is_shipped].each do |field|
         new_value = project_data[field]
         if existing_record[field] != new_value
           existing_record[field] = new_value
@@ -42,7 +45,8 @@ class SyncProjectToAirtableJob < ApplicationJob
 
     return unless record&.id
 
-    user_table = Airrecord.table(ENV["AIRTABLE_API_KEY"], ENV["AIRTABLE_BASE_ID_JOURNEY"], "users")
+    user_table = Airrecord.table(ENV.fetch("AIRTABLE_API_KEY", nil), ENV.fetch("AIRTABLE_BASE_ID_JOURNEY", nil),
+                                 "users")
     user = user_table.all(filter: "{slack_id} = '#{author_slack_id}'").first
 
     return unless user

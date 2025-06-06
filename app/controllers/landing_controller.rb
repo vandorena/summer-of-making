@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "open-uri"
 
 class LandingController < ApplicationController
@@ -219,18 +221,19 @@ class LandingController < ApplicationController
         format.html { redirect_to request.referer || projects_path, alert: "Invalid email format" }
         format.turbo_stream do
           flash.now[:alert] = "Invalid email format"
-          render turbo_stream: turbo_stream.update("flash-container", partial: "shared/flash"), status: :internal_server_error
+          render turbo_stream: turbo_stream.update("flash-container", partial: "shared/flash"),
+                 status: :internal_server_error
         end
       end
     end
 
     slack_invite_response = send_slack_invite(email)
 
-    puts "Status: #{slack_invite_response.code}"
-    puts "Body:\n#{slack_invite_response.body}"
+    Rails.logger.debug { "Status: #{slack_invite_response.code}" }
+    Rails.logger.debug { "Body:\n#{slack_invite_response.body}" }
 
     body = JSON.parse(slack_invite_response.body)
-    puts body
+    Rails.logger.debug body
 
     @response_data = body
 
@@ -269,7 +272,7 @@ class LandingController < ApplicationController
 
   def fetch_continent(ip)
     response = URI.open("https://ip.hackclub.com/ip/#{ip}").read
-    return "?" unless response.present?
+    return "?" if response.blank?
 
     data = JSON.parse(response)
     data["continent_name"] || data["continent_code"] || "?"

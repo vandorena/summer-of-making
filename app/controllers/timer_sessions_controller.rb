@@ -1,11 +1,28 @@
+# frozen_string_literal: true
+
 class TimerSessionsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_project, except: [ :global_active ]
-  before_action :set_timer_session, only: [ :update, :show, :destroy ]
-  before_action :ensure_timer_not_stopped, only: [ :update, :destroy ]
+  before_action :set_timer_session, only: %i[update show destroy]
+  before_action :ensure_timer_not_stopped, only: %i[update destroy]
+
+  def show
+    if @timer_session
+      render json: {
+        id: @timer_session.id,
+        started_at: @timer_session.started_at,
+        last_paused_at: @timer_session.last_paused_at,
+        accumulated_paused: @timer_session.accumulated_paused,
+        status: @timer_session.status,
+        net_time: @timer_session.net_time
+      }
+    else
+      render json: { error: "No active timer session found" }, status: :not_found
+    end
+  end
 
   def create
-    active_session = TimerSession.where(user: current_user, status: [ :running, :paused ]).first
+    active_session = TimerSession.where(user: current_user, status: %i[running paused]).first
 
     if active_session
       project = active_session.project
@@ -38,21 +55,6 @@ class TimerSessionsController < ApplicationController
     else
       error_message = @timer_session.errors.full_messages.join(", ")
       redirect_to project_path(@project), alert: error_message
-    end
-  end
-
-  def show
-    if @timer_session
-      render json: {
-        id: @timer_session.id,
-        started_at: @timer_session.started_at,
-        last_paused_at: @timer_session.last_paused_at,
-        accumulated_paused: @timer_session.accumulated_paused,
-        status: @timer_session.status,
-        net_time: @timer_session.net_time
-      }
-    else
-      render json: { error: "No active timer session found" }, status: :not_found
     end
   end
 
@@ -104,7 +106,10 @@ class TimerSessionsController < ApplicationController
   end
 
   def active
-    @timer_session = @project.timer_sessions.where(user: current_user, status: [ :running, :paused ]).order(created_at: :desc).first
+    @timer_session = @project.timer_sessions.where(user: current_user,
+                                                   status: %i[
+                                                     running paused
+                                                   ]).order(created_at: :desc).first
 
     if @timer_session
       render json: {
@@ -120,7 +125,9 @@ class TimerSessionsController < ApplicationController
   end
 
   def global_active
-    @timer_session = TimerSession.where(user: current_user, status: [ :running, :paused ]).order(created_at: :desc).first
+    @timer_session = TimerSession.where(user: current_user,
+                                        status: %i[running
+                                                   paused]).order(created_at: :desc).first
 
     if @timer_session
       render json: {
@@ -168,9 +175,9 @@ class TimerSessionsController < ApplicationController
   end
 
   def ensure_timer_not_stopped
-    if @timer_session.stopped?
-      render json: { error: "Stopped timer sessions cannot be modified" }, status: :unprocessable_entity
-      false
-    end
+    return unless @timer_session.stopped?
+
+    render json: { error: "Stopped timer sessions cannot be modified" }, status: :unprocessable_entity
+    false
   end
 end

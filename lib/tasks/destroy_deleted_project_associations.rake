@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :projects do
   desc "Destroy followers and stonkers associated with deleted projects"
   task destroy_deleted_associations: :environment do
@@ -16,7 +18,7 @@ namespace :projects do
       deleted_projects.each do |project|
         # Destroy project follows (followers)
         follow_count = project.project_follows.count
-        if follow_count > 0
+        if follow_count.positive?
           puts "Destroying #{follow_count} followers for project ##{project.id} (#{project.title})"
           project.project_follows.destroy_all
           followers_destroyed += follow_count
@@ -24,11 +26,11 @@ namespace :projects do
 
         # Destroy stonks
         stonk_count = project.stonks.count
-        if stonk_count > 0
-          puts "Destroying #{stonk_count} stonks for project ##{project.id} (#{project.title})"
-          project.stonks.destroy_all
-          stonks_destroyed += stonk_count
-        end
+        next unless stonk_count.positive?
+
+        puts "Destroying #{stonk_count} stonks for project ##{project.id} (#{project.title})"
+        project.stonks.destroy_all
+        stonks_destroyed += stonk_count
       end
 
       puts "\nSummary:"

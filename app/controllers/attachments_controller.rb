@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AttachmentsController < ApplicationController
   def upload
     file = params[:file]
@@ -13,12 +15,10 @@ class AttachmentsController < ApplicationController
 
     FileUtils.mkdir_p(File.dirname(temp_path))
 
-    File.open(temp_path, "wb") do |f|
-      f.write(file.read)
-    end
+    File.binwrite(temp_path, file.read)
 
     temp_url = url_for(controller: "attachments", action: "download", filename: filename, only_path: false)
-    puts "temp_url: #{temp_url}"
+    Rails.logger.debug { "temp_url: #{temp_url}" }
     conn = Faraday.new(url: "https://cdn.hackclub.com") do |f|
       f.request :json
       f.response :json
@@ -29,7 +29,7 @@ class AttachmentsController < ApplicationController
       req.body = [ temp_url ]
     end
 
-    File.delete(temp_path) if File.exist?(temp_path)
+    FileUtils.rm_f(temp_path)
 
     if response.success?
       render json: { url: response.body["files"][0]["deployedUrl"] }
@@ -67,15 +67,17 @@ class AttachmentsController < ApplicationController
 
   def sanitize(filename)
     return nil if filename.blank?
+
     sanitized = File.basename(filename)
     return nil unless sanitized.match?(/\A[a-zA-Z0-9._-]+\z/)
     return nil if sanitized.start_with?(".")
+
     sanitized
   end
 
   # double check that path to make sure its not funky
   def good_path?(path)
-    uploads_dir = Rails.root.join("tmp", "uploads").realpath
+    uploads_dir = Rails.root.join("tmp/uploads").realpath
     begin
       path.realpath.to_s.start_with?(uploads_dir.to_s)
     rescue Errno::ENOENT

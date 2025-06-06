@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SyncUserToAirtableJob < ApplicationJob
   queue_as :default
 
@@ -6,7 +8,8 @@ class SyncUserToAirtableJob < ApplicationJob
     return unless user
 
     # Use Airrecord table
-    table = Airrecord.table(Rails.application.credentials.airtable.api_key, Rails.application.credentials.airtable.base_id, "_users")
+    table = Airrecord.table(Rails.application.credentials.airtable.api_key,
+                            Rails.application.credentials.airtable.base_id, "_users")
 
     # Prepare user data for Airrecord
     user_data = {

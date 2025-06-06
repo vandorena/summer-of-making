@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class NotifyProjectDevlogJob < ApplicationJob
   queue_as :default
 
@@ -6,7 +8,7 @@ class NotifyProjectDevlogJob < ApplicationJob
     return unless devlog
 
     project = devlog.project
-    devlog_author = devlog.user
+    devlog.user
 
     follower_slack_ids = project.project_follows.joins(:user).pluck("users.slack_id").compact
     stonk_slack_ids = project.stonks.joins(:user).pluck("users.slack_id").compact
@@ -35,6 +37,6 @@ class NotifyProjectDevlogJob < ApplicationJob
   private
 
   def project_url(project)
-    Rails.application.routes.url_helpers.project_url(project, host: ENV["APP_HOST"])
+    Rails.application.routes.url_helpers.project_url(project, host: ENV.fetch("APP_HOST", nil))
   end
 end

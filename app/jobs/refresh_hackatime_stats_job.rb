@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RefreshHackatimeStatsJob < ApplicationJob
   queue_as :default
 

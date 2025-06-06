@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :sync do
   desc "Sync all existing projects to Airrecord"
   task projects: :environment do
@@ -8,14 +10,12 @@ namespace :sync do
     failed_count = 0
 
     Project.find_each do |project|
-      begin
-        SyncProjectToAirtableJob.perform_now(project.id)
-        synced_count += 1
-        print "."
-      rescue => e
-        failed_count += 1
-        puts "\nFailed to sync project #{project.id}: #{e.message}"
-      end
+      SyncProjectToAirtableJob.perform_now(project.id)
+      synced_count += 1
+      print "."
+    rescue StandardError => e
+      failed_count += 1
+      puts "\nFailed to sync project #{project.id}: #{e.message}"
     end
 
     puts "\nSync completed!"

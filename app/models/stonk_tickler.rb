@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: stonk_ticklers
@@ -30,35 +32,35 @@ class StonkTickler < ApplicationRecord
     client = OpenAI::Client.new
 
     response = client.responses.create(parameters: {
-      "model": "gpt-4.1",
-      "input": [
-        {
-          "role": "developer",
-          "content": [
-            {
-              "type": "input_text",
-              "text": "Summarise the following project title into a fictional 3-4 letter stock ticker. It should be in capitals. Respond ONLY with the ticker."
-            }
-          ]
-        },
-        {
-          "role": "user",
-          "content": [
-            {
-              "type": "input_text",
-              "text": project.title
-            }
-          ]
-        }
-      ],
-      "text": {
-        "format": {
-          "type": "text"
-        }
-      },
-      "tools": [],
-      "store": false
-    })
+                                         model: "gpt-4.1",
+                                         input: [
+                                           {
+                                             role: "developer",
+                                             content: [
+                                               {
+                                                 type: "input_text",
+                                                 text: "Summarise the following project title into a fictional 3-4 letter stock ticker. It should be in capitals. Respond ONLY with the ticker."
+                                               }
+                                             ]
+                                           },
+                                           {
+                                             role: "user",
+                                             content: [
+                                               {
+                                                 type: "input_text",
+                                                 text: project.title
+                                               }
+                                             ]
+                                           }
+                                         ],
+                                         text: {
+                                           format: {
+                                             type: "text"
+                                           }
+                                         },
+                                         tools: [],
+                                         store: false
+                                       })
 
     self.tickler = response.dig("output", 0, "content", 0, "text").strip
   end

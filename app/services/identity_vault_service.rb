@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class IdentityVaultService
   class << self
     def authorize_url(redirect_uri, sneaky_params = nil)
@@ -28,8 +30,8 @@ class IdentityVaultService
       raise ArgumentError, "user_token is required" unless user_token
 
       conn.get("/api/v1/me", nil, {
-        Authorization: "Bearer #{user_token}"
-      }).body
+                 Authorization: "Bearer #{user_token}"
+               }).body
     end
 
     def get_identity(identity_id)
@@ -53,6 +55,7 @@ class IdentityVaultService
 
     def encode_sneaky_params(params)
       return nil unless params
+
       Base64.urlsafe_encode64(LZString::UTF16.compress(params.to_json))
     end
   end

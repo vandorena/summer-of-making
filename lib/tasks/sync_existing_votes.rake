@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :sync do
   desc "Sync all existing votes to Airrecord"
   task votes: :environment do
@@ -8,14 +10,12 @@ namespace :sync do
     failed_count = 0
 
     Vote.find_each do |vote|
-      begin
-        SyncVoteToAirtableJob.perform_now(vote.id)
-        synced_count += 1
-        print "."
-      rescue => e
-        failed_count += 1
-        puts "\nFailed to sync vote #{vote.id}: #{e.message}"
-      end
+      SyncVoteToAirtableJob.perform_now(vote.id)
+      synced_count += 1
+      print "."
+    rescue StandardError => e
+      failed_count += 1
+      puts "\nFailed to sync vote #{vote.id}: #{e.message}"
     end
 
     puts "\nSync completed!"

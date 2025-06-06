@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :hackatime do
   desc "Update Hackatime stats for all users"
   task update_all: :environment do
@@ -8,7 +10,7 @@ namespace :hackatime do
     puts "Found #{total} users with Hackatime enabled"
 
     from = Date.parse("2025-05-16") # The earliest date in the migrations
-    to = Date.today.strftime("%Y-%m-%d")
+    to = Time.zone.today.strftime("%Y-%m-%d")
 
     users_with_hackatime.each_with_index do |user, index|
       puts "Updating Hackatime data for user #{user.id} (#{index + 1}/#{total})"
@@ -19,7 +21,7 @@ namespace :hackatime do
   end
 
   desc "Update Hackatime stats for a specific user by ID"
-  task :update_user, [ :user_id ] => :environment do |t, args|
+  task :update_user, [ :user_id ] => :environment do |_t, args|
     user_id = args[:user_id]
     user = User.find_by(id: user_id)
 
@@ -28,14 +30,14 @@ namespace :hackatime do
       next
     end
 
-    if !user.has_hackatime?
+    unless user.has_hackatime?
       puts "User #{user_id} does not have Hackatime enabled"
       next
     end
 
     puts "Updating Hackatime data for user #{user.id}"
     from = Date.parse("2025-05-16") # The earliest date in the migrations
-    to = Date.today.strftime("%Y-%m-%d")
+    to = Time.zone.today.strftime("%Y-%m-%d")
 
     RefreshHackatimeStatsJob.perform_later(user.id, from: from, to: to)
     puts "Hackatime update job for user #{user.id} has been queued"

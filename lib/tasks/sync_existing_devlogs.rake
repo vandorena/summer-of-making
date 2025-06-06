@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :sync do
   desc "Sync all existing devlogs to Airrecord"
   task devlogs: :environment do
@@ -8,14 +10,12 @@ namespace :sync do
     failed_count = 0
 
     Devlog.find_each do |devlog|
-      begin
-        SyncDevlogToAirtableJob.perform_now(devlog.id)
-        synced_count += 1
-        print "."
-      rescue => e
-        failed_count += 1
-        puts "\nFailed to sync devlog #{devlog.id}: #{e.message}"
-      end
+      SyncDevlogToAirtableJob.perform_now(devlog.id)
+      synced_count += 1
+      print "."
+    rescue StandardError => e
+      failed_count += 1
+      puts "\nFailed to sync devlog #{devlog.id}: #{e.message}"
     end
 
     puts "\nSync completed!"

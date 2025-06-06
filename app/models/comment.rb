@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: comments
@@ -29,13 +31,13 @@ class Comment < ApplicationRecord
   validates :rich_content, presence: true
 
   after_create :notify_devlog_author
-  after_commit :sync_to_airtable, on: [ :create ]
   after_destroy :delete_from_airtable
+  after_commit :sync_to_airtable, on: [ :create ]
 
   def display_content
     sanitized_content = sanitize(render_rich_content,
-      tags: %w[a br code pre p em strong h1 h2 h3 h4 h5 h6 ul ol li blockquote span],
-      attributes: %w[href title class target])
+                                 tags: %w[a br code pre p em strong h1 h2 h3 h4 h5 h6 ul ol li blockquote span],
+                                 attributes: %w[href title class target])
 
     parse_emotes(sanitized_content)
   end
@@ -45,17 +47,17 @@ class Comment < ApplicationRecord
   def render_rich_content
     parsed_rich_content = JSON.parse(rich_content)
 
-    if parsed_rich_content["type"] == "tiptap"
-      return parsed_rich_content["content"] || ""
-    end
+    return parsed_rich_content["content"] || "" if parsed_rich_content["type"] == "tiptap"
 
     parsed_rich_content.to_s
   end
 
   def notify_devlog_author
-    return unless devlog.user.slack_id.present?
+    return if devlog.user.slack_id.blank?
 
-    message = "New comment on your project!:dino-bbq:\n\nCheck it out here: #{Rails.application.routes.url_helpers.project_url(devlog.project, host: ENV['APP_HOST'])}"
+    message = "New comment on your project!:dino-bbq:\n\nCheck it out here: #{Rails.application.routes.url_helpers.project_url(
+      devlog.project, host: ENV.fetch('APP_HOST', nil)
+    )}"
     SendSlackDmJob.perform_later(devlog.user.slack_id, message)
   end
 

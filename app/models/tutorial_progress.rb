@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: tutorial_progresses
@@ -65,14 +67,14 @@ class TutorialProgress < ApplicationRecord
   private
 
   def setup_default_progress
-    self.step_progress = TUTORIAL_STEPS.each_with_object({}) do |step, hash|
-      hash[step] = {}
+    self.step_progress = TUTORIAL_STEPS.index_with do |_step|
+      {}
     end
   end
 
   def check_overall_completion!
-    if TUTORIAL_STEPS.all? { |step| step_completed?(step) }
-      self.completed_at = Time.current
-    end
+    return unless TUTORIAL_STEPS.all? { |step| step_completed?(step) }
+
+    self.completed_at = Time.current
   end
 end

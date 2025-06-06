@@ -1,12 +1,15 @@
+# frozen_string_literal: true
+
 class SyncProjectFollowToAirtableJob < ApplicationJob
   queue_as :default
 
   def perform(project_follow_id)
-    puts "Syncing project follow to airtable: #{project_follow_id}"
+    Rails.logger.debug { "Syncing project follow to airtable: #{project_follow_id}" }
     project_follow = ProjectFollow.find(project_follow_id)
     return unless project_follow
 
-    table = Airrecord.table(ENV["AIRTABLE_API_KEY"], ENV["AIRTABLE_BASE_ID_JOURNEY"], "project_follows")
+    table = Airrecord.table(ENV.fetch("AIRTABLE_API_KEY", nil), ENV.fetch("AIRTABLE_BASE_ID_JOURNEY", nil),
+                            "project_follows")
     author_slack_id = User.find(project_follow.user_id).slack_id
 
     project_follow_data = {
@@ -36,7 +39,8 @@ class SyncProjectFollowToAirtableJob < ApplicationJob
 
     return unless record&.id
 
-    project_table = Airrecord.table(ENV["AIRTABLE_API_KEY"], ENV["AIRTABLE_BASE_ID_JOURNEY"], "projects")
+    project_table = Airrecord.table(ENV.fetch("AIRTABLE_API_KEY", nil), ENV.fetch("AIRTABLE_BASE_ID_JOURNEY", nil),
+                                    "projects")
     project = project_table.all(filter: "{project_id} = '#{project_follow.project_id}'").first
 
     return unless project
@@ -45,7 +49,8 @@ class SyncProjectFollowToAirtableJob < ApplicationJob
     project["followers"].uniq!
     project.save
 
-    user_table = Airrecord.table(ENV["AIRTABLE_API_KEY"], ENV["AIRTABLE_BASE_ID_JOURNEY"], "users")
+    user_table = Airrecord.table(ENV.fetch("AIRTABLE_API_KEY", nil), ENV.fetch("AIRTABLE_BASE_ID_JOURNEY", nil),
+                                 "users")
     user = user_table.all(filter: "{slack_id} = '#{author_slack_id}'").first
 
     return unless user

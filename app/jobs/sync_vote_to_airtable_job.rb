@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SyncVoteToAirtableJob < ApplicationJob
   queue_as :default
 
@@ -5,7 +7,7 @@ class SyncVoteToAirtableJob < ApplicationJob
     vote = Vote.find(vote_id)
     return unless vote
 
-    table = Airrecord.table(ENV["AIRTABLE_API_KEY"], ENV["AIRTABLE_BASE_ID_JOURNEY"], "votes")
+    table = Airrecord.table(ENV.fetch("AIRTABLE_API_KEY", nil), ENV.fetch("AIRTABLE_BASE_ID_JOURNEY", nil), "votes")
     user_slack_id = User.find(vote.user_id).slack_id
     winner_project_id = vote.winner_id.to_s
     loser_project_id = vote.loser_id.to_s
@@ -46,26 +48,28 @@ class SyncVoteToAirtableJob < ApplicationJob
 
     return unless record&.id
 
-    user_table = Airrecord.table(ENV["AIRTABLE_API_KEY"], ENV["AIRTABLE_BASE_ID_JOURNEY"], "users")
+    user_table = Airrecord.table(ENV.fetch("AIRTABLE_API_KEY", nil), ENV.fetch("AIRTABLE_BASE_ID_JOURNEY", nil),
+                                 "users")
     user_record = user_table.all(filter: "{slack_id} = '#{user_slack_id}'").first
     if user_record
       user_record["votes"] = (Array(user_record["votes"]) + [ record.id ]).uniq
       user_record.save
     end
 
-    project_table = Airrecord.table(ENV["AIRTABLE_API_KEY"], ENV["AIRTABLE_BASE_ID_JOURNEY"], "projects")
+    project_table = Airrecord.table(ENV.fetch("AIRTABLE_API_KEY", nil), ENV.fetch("AIRTABLE_BASE_ID_JOURNEY", nil),
+                                    "projects")
     winner_project_record = project_table.all(filter: "{project_id} = '#{winner_project_id}'").first
     if winner_project_record
       winner_project_record["votes_won"] = (Array(winner_project_record["votes_won"]) + [ record.id ]).uniq
       winner_project_record.save
     end
 
-    if loser_project_id
-      loser_project_record = project_table.all(filter: "{project_id} = '#{loser_project_id}'").first
-      if loser_project_record
-        loser_project_record["votes_lost"] = (Array(loser_project_record["votes_lost"]) + [ record.id ]).uniq
-        loser_project_record.save
-      end
-    end
+    return unless loser_project_id
+
+    loser_project_record = project_table.all(filter: "{project_id} = '#{loser_project_id}'").first
+    return unless loser_project_record
+
+    loser_project_record["votes_lost"] = (Array(loser_project_record["votes_lost"]) + [ record.id ]).uniq
+    loser_project_record.save
   end
 end

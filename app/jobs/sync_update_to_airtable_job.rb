@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SyncUpdateToAirtableJob < ApplicationJob
   queue_as :default
 
@@ -5,7 +7,8 @@ class SyncUpdateToAirtableJob < ApplicationJob
     devlog = Devlog.find(devlog_id)
     return unless devlog
 
-    table = Airrecord.table(Rails.application.credentials.airtable.api_key, Rails.application.credentials.airtable.base_id, "_devlogs")
+    table = Airrecord.table(Rails.application.credentials.airtable.api_key,
+                            Rails.application.credentials.airtable.base_id, "_devlogs")
     author_slack_id = User.find(devlog.user_id).slack_id
 
     devlog_data = {
@@ -37,7 +40,8 @@ class SyncUpdateToAirtableJob < ApplicationJob
 
     return unless record&.id
 
-    project_table = Airrecord.table(Rails.application.credentials.airtable.api_key, Rails.application.credentials.airtable.base_id, "_devlogs")
+    project_table = Airrecord.table(Rails.application.credentials.airtable.api_key,
+                                    Rails.application.credentials.airtable.base_id, "_devlogs")
     project = project_table.all(filter: "{project_id} = '#{devlog.project_id}'").first
 
     return unless project
@@ -46,8 +50,8 @@ class SyncUpdateToAirtableJob < ApplicationJob
     project["devlogs"].uniq!
     project.save
 
-
-    user_table = Airrecord.table(Rails.application.credentials.airtable.api_key, Rails.application.credentials.airtable.base_id, "_users")
+    user_table = Airrecord.table(Rails.application.credentials.airtable.api_key,
+                                 Rails.application.credentials.airtable.base_id, "_users")
     user = user_table.all(filter: "{slack_id} = '#{author_slack_id}'").first
 
     return unless user

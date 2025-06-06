@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :users do
   desc "Update all users' Slack avatars from Slack API"
   task update_slack_avatars: :environment do

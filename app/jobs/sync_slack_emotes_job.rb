@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 class SyncSlackEmotesJob < ApplicationJob
   queue_as :default
 
   def perform
     Rails.logger.info "Starting Slack emotes sync..."
 
-    client = Slack::Web::Client.new(token: ENV["SLACK_BOT_TOKEN"])
+    client = Slack::Web::Client.new(token: ENV.fetch("SLACK_BOT_TOKEN", nil))
 
     begin
       response = client.emoji_list
@@ -32,7 +34,7 @@ class SyncSlackEmotesJob < ApplicationJob
           )
           emote.save!
           created_count += 1
-          Rails.logger.debug "Created emote: #{name}"
+          Rails.logger.debug { "Created emote: #{name}" }
         else
           emote.update!(
             url: url,
@@ -40,7 +42,7 @@ class SyncSlackEmotesJob < ApplicationJob
             last_synced_at: Time.current
           )
           updated_count += 1
-          Rails.logger.debug "Updated emote: #{name}"
+          Rails.logger.debug { "Updated emote: #{name}" }
         end
 
         synced_count += 1
@@ -48,7 +50,6 @@ class SyncSlackEmotesJob < ApplicationJob
 
       Rails.logger.info "Slack emotes sync completed successfully!"
       Rails.logger.info "Total synced: #{synced_count}, Created: #{created_count}, Updated: #{updated_count}, Inactive: #{inactive_count}"
-
     rescue Slack::Web::Api::Errors::SlackError => e
       Rails.logger.error "Slack API error during emotes sync: #{e.message}"
       raise e

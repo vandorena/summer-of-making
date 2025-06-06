@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: hackatime_stats
@@ -37,6 +39,7 @@ class HackatimeStat < ApplicationRecord
 
   def seconds_since_last_update
     return 0 unless last_updated_at
+
     (Time.current - last_updated_at).to_i
   end
 
@@ -53,7 +56,8 @@ class HackatimeStat < ApplicationRecord
     current_total - previous_hackatime_total
   end
 
-  def can_post_for_project_since_last_update?(project, required_seconds = 300) # 5 minutes
+  # 5 minutes
+  def can_post_for_project_since_last_update?(project, required_seconds = 300)
     return false unless user.has_hackatime? && project.hackatime_keys.present?
 
     time_since_last = time_since_last_update_for_project(project)

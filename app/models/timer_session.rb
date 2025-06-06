@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: timer_sessions
@@ -30,11 +32,11 @@
 class TimerSession < ApplicationRecord
   belongs_to :user
   belongs_to :project
-  belongs_to :devlog, foreign_key: "devlog_id", optional: true
+  belongs_to :devlog, optional: true
 
   enum :status, { running: 0, paused: 1, stopped: 2 }
 
-  validates :user, :project, :started_at, :status, presence: true
+  validates :started_at, :status, presence: true
   validate :validate_no_changes_if_stopped, on: :update
   validate :validate_minimum_duration, on: :update
 
@@ -45,21 +47,21 @@ class TimerSession < ApplicationRecord
   private
 
   def validate_no_changes_if_stopped
-    if status_was == "stopped" && changed? && (changed - [ "devlog_id" ]).present?
-      errors.add(:base, "Stopped timer sessions cannot be modified")
-    end
+    return unless status_was == "stopped" && changed? && (changed - [ "devlog_id" ]).present?
+
+    errors.add(:base, "Stopped timer sessions cannot be modified")
   end
 
   def validate_minimum_duration
-    if status_changed? && status == "stopped" && net_time < MINIMUM_DURATION
-      errors.add(:base, "Timer sessions must be at least 5 minutes long")
-    end
+    return unless status_changed? && status == "stopped" && net_time < MINIMUM_DURATION
+
+    errors.add(:base, "Timer sessions must be at least 5 minutes long")
   end
 
   def prevent_destroy_if_stopped
-    if stopped?
-      errors.add(:base, "Stopped timer sessions cannot be deleted")
-      throw :abort
-    end
+    return unless stopped?
+
+    errors.add(:base, "Stopped timer sessions cannot be deleted")
+    throw :abort
   end
 end

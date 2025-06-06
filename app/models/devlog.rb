@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: devlogs
@@ -33,7 +35,8 @@ class Devlog < ApplicationRecord
   validates :text, presence: true
 
   # Attachment is a #cdn link
-  validates :attachment, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "must be a valid URL" }, allow_blank: true
+  validates :attachment, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "must be a valid URL" },
+                         allow_blank: true
 
   # Validates if only MD changes are made
   validate :only_formatting_changes, on: :update
@@ -43,10 +46,10 @@ class Devlog < ApplicationRecord
   validate :validate_timer_session_required, on: :create
   validate :validate_hackatime_time_since_last_update, on: :create
 
-  after_commit :sync_to_airtable, on: [ :create, :update ]
+  after_destroy :delete_from_airtable
+  after_commit :sync_to_airtable, on: %i[create update]
   after_commit :associate_timer_session, on: :create
   after_commit :notify_followers_and_stakers, on: :create
-  after_destroy :delete_from_airtable
 
   def formatted_text
     ApplicationController.helpers.markdown(text)
@@ -54,12 +57,11 @@ class Devlog < ApplicationRecord
 
   def liked_by?(user)
     return false unless user
+
     likes.exists?(user: user)
   end
 
-  def likes_count
-    likes.count
-  end
+  delegate :count, to: :likes, prefix: true
 
   private
 
@@ -68,32 +70,33 @@ class Devlog < ApplicationRecord
                     project.user.has_hackatime? &&
                     project.user.hackatime_stat&.has_enough_time_since_last_update?(project)
 
-    if timer_session_id.blank? && !has_hackatime
-      errors.add(:timer_session_id, "You need to track time with Timer Session or Hackatime")
-    end
+    return unless timer_session_id.blank? && !has_hackatime
+
+    errors.add(:timer_session_id, "You need to track time with Timer Session or Hackatime")
   end
 
   def validate_timer_session_not_linked
-    return unless timer_session_id.present?
+    return if timer_session_id.blank?
 
     timer_session = TimerSession.find_by(id: timer_session_id)
-    if timer_session && timer_session.devlog_id.present?
-      errors.add(:timer_session_id, "This timer session is already linked to another update")
-    end
+    return unless timer_session && timer_session.devlog_id.present?
+
+    errors.add(:timer_session_id, "This timer session is already linked to another update")
   end
 
   def validate_hackatime_time_since_last_update
     return unless project.hackatime_project_keys.present? && project.user.has_hackatime?
     return if timer_session_id.present?
 
-    unless project.user.hackatime_stat&.has_enough_time_since_last_update?(project)
-      seconds_needed = project.user.hackatime_stat&.seconds_needed_since_last_update(project) || 300
-      errors.add(:base, "You need to spend more time on this project before posting an update. #{ActionController::Base.helpers.format_seconds(seconds_needed)} more needed since your last update.")
-    end
+    return if project.user.hackatime_stat&.has_enough_time_since_last_update?(project)
+
+    seconds_needed = project.user.hackatime_stat&.seconds_needed_since_last_update(project) || 300
+    errors.add(:base,
+               "You need to spend more time on this project before posting an update. #{ActionController::Base.helpers.format_seconds(seconds_needed)} more needed since your last update.")
   end
 
   def associate_timer_session
-    return unless timer_session_id.present?
+    return if timer_session_id.blank?
 
     timer_session = project.timer_sessions.find_by(id: timer_session_id)
     return unless timer_session
@@ -103,24 +106,25 @@ class Devlog < ApplicationRecord
   end
 
   def updates_not_locked
-    if ENV["UPDATES_STATUS"] == "locked"
-      errors.add(:base, "Posting updates is currently locked")
-    end
+    return unless ENV["UPDATES_STATUS"] == "locked"
+
+    errors.add(:base, "Posting updates is currently locked")
   end
 
   def only_formatting_changes
-    if text_changed? && persisted?
-      original_stripped = strip_formatting(text_was)
-      new_stripped = strip_formatting(text)
+    return unless text_changed? && persisted?
 
-      if original_stripped != new_stripped
-        errors.add(:text, "You can only modify formatting (markdown, spaces, line breaks), not the content")
-      end
-    end
+    original_stripped = strip_formatting(text_was)
+    new_stripped = strip_formatting(text)
+
+    return unless original_stripped != new_stripped
+
+    errors.add(:text, "You can only modify formatting (markdown, spaces, line breaks), not the content")
   end
 
   def strip_formatting(text)
     return "" if text.nil?
+
     text.gsub(/[\s\n\r\t\*\_\#\~\`\>\<\-\+\.\,\;\:\!\?\(\)\[\]\{\}]/i, "").downcase
   end
 
