@@ -10,9 +10,9 @@ class CommentsController < ApplicationController
 
     if @comment.save
       current_user.update(has_commented: true) unless current_user.has_commented
-      redirect_to @devlog.project, notice: 'Comment was successfully created.'
+      redirect_to @devlog.project, notice: "Comment was successfully created."
     else
-      redirect_to @devlog.project, alert: 'Failed to add comment.'
+      redirect_to @devlog.project, alert: "Failed to add comment."
     end
   end
 
@@ -20,9 +20,9 @@ class CommentsController < ApplicationController
     @comment = @devlog.comments.find(params[:id])
 
     if @comment.destroy
-      redirect_to @devlog.project, notice: 'Comment deleted successfully!'
+      redirect_to @devlog.project, notice: "Comment deleted successfully!"
     else
-      redirect_to @devlog.project, alert: 'Failed to delete comment.'
+      redirect_to @devlog.project, alert: "Failed to delete comment."
     end
   end
 
@@ -33,6 +33,6 @@ class CommentsController < ApplicationController
   end
 
   def comment_params
-    params.expect(comment: [:rich_content])
+    params.expect(comment: [ :rich_content ])
   end
 end

@@ -47,21 +47,21 @@ class TimerSession < ApplicationRecord
   private
 
   def validate_no_changes_if_stopped
-    return unless status_was == 'stopped' && changed? && (changed - ['devlog_id']).present?
+    return unless status_was == "stopped" && changed? && (changed - [ "devlog_id" ]).present?
 
-    errors.add(:base, 'Stopped timer sessions cannot be modified')
+    errors.add(:base, "Stopped timer sessions cannot be modified")
   end
 
   def validate_minimum_duration
-    return unless status_changed? && status == 'stopped' && net_time < MINIMUM_DURATION
+    return unless status_changed? && status == "stopped" && net_time < MINIMUM_DURATION
 
-    errors.add(:base, 'Timer sessions must be at least 5 minutes long')
+    errors.add(:base, "Timer sessions must be at least 5 minutes long")
   end
 
   def prevent_destroy_if_stopped
     return unless stopped?
 
-    errors.add(:base, 'Stopped timer sessions cannot be deleted')
+    errors.add(:base, "Stopped timer sessions cannot be deleted")
     throw :abort
   end
 end

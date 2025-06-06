@@ -37,8 +37,8 @@ class Project < ApplicationRecord
   has_many :stakers, through: :stonks, source: :user
   has_one :stonk_tickler
 
-  has_many :won_votes, class_name: 'Vote', foreign_key: 'winner_id'
-  has_many :lost_votes, class_name: 'Vote', foreign_key: 'loser_id'
+  has_many :won_votes, class_name: "Vote", foreign_key: "winner_id"
+  has_many :lost_votes, class_name: "Vote", foreign_key: "loser_id"
 
   has_many :timer_sessions
 
@@ -55,12 +55,12 @@ class Project < ApplicationRecord
   validates :title, :description, :category, presence: true
 
   validates :readme_link, :demo_link, :repo_link, :banner,
-            format: { with: URI::DEFAULT_PARSER.make_regexp, message: 'must be a valid URL' },
+            format: { with: URI::DEFAULT_PARSER.make_regexp, message: "must be a valid URL" },
             allow_blank: true
 
   validates :category,
-            inclusion: { in: ['Software', 'Hardware', 'Both Software & Hardware', 'Something else'],
-                         message: '%<value>s is not a valid category' }
+            inclusion: { in: [ "Software", "Hardware", "Both Software & Hardware", "Something else" ],
+                         message: "%<value>s is not a valid category" }
 
   validate :cannot_change_category, on: :update
 
@@ -69,7 +69,7 @@ class Project < ApplicationRecord
 
   before_save :remove_duplicate_hackatime_keys
 
-  after_commit :sync_to_airtable, on: %i(create update)
+  after_commit :sync_to_airtable, on: %i[create update]
 
   def total_votes
     won_votes.count + lost_votes.count
@@ -122,7 +122,7 @@ class Project < ApplicationRecord
   def cannot_change_category
     return unless category_changed? && persisted?
 
-    errors.add(:category, 'cannot be changed after project creation')
+    errors.add(:category, "cannot be changed after project creation")
   end
 
   def filter_hackatime_keys

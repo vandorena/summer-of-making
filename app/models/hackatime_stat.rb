@@ -23,14 +23,14 @@ class HackatimeStat < ApplicationRecord
   belongs_to :user
 
   def total_seconds_for_project(project)
-    return 0 if data.blank? || !data['projects'].is_a?(Array)
+    return 0 if data.blank? || !data["projects"].is_a?(Array)
 
     project_keys = project.hackatime_keys
     return 0 if project_keys.blank?
 
-    data['projects'].sum do |hackatime_project|
-      if project_keys.include?(hackatime_project['key'])
-        hackatime_project['total'].to_i
+    data["projects"].sum do |hackatime_project|
+      if project_keys.include?(hackatime_project["key"])
+        hackatime_project["total"].to_i
       else
         0
       end
@@ -68,7 +68,7 @@ class HackatimeStat < ApplicationRecord
     return required_seconds unless user.has_hackatime?
 
     time_since_last = time_since_last_update_for_project(project)
-    [required_seconds - time_since_last, 0].max
+    [ required_seconds - time_since_last, 0 ].max
   end
 
   def has_enough_time_since_last_update?(project, required_seconds = 300)

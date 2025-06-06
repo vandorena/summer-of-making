@@ -27,7 +27,7 @@ class SlackEmote < ApplicationRecord
   scope :active, -> { where(is_active: true) }
 
   def self.find_by_name(name)
-    active.find_by(name: name.to_s.gsub(/^:/, '').gsub(/:$/, ''))
+    active.find_by(name: name.to_s.gsub(/^:/, "").gsub(/:$/, ""))
   end
 
   def to_html

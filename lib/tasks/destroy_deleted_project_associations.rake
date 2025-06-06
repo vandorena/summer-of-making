@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 namespace :projects do
-  desc 'Destroy followers and stonkers associated with deleted projects'
+  desc "Destroy followers and stonkers associated with deleted projects"
   task destroy_deleted_associations: :environment do
-    puts 'Starting to destroy associations for deleted projects...'
+    puts "Starting to destroy associations for deleted projects..."
 
     # Find all deleted projects by unscoping the default scope
     deleted_projects = Project.with_deleted.where(is_deleted: true)
@@ -34,15 +34,15 @@ namespace :projects do
       end
 
       puts "\nSummary:"
-      puts '-------------------------------------------------------------'
+      puts "-------------------------------------------------------------"
       puts "Total deleted projects processed: #{deleted_projects.count}"
       puts "Total followers destroyed: #{followers_destroyed}"
       puts "Total stonks destroyed: #{stonks_destroyed}"
-      puts '-------------------------------------------------------------'
+      puts "-------------------------------------------------------------"
     else
-      puts 'No deleted projects found.'
+      puts "No deleted projects found."
     end
 
-    puts 'Task completed!'
+    puts "Task completed!"
   end
 end

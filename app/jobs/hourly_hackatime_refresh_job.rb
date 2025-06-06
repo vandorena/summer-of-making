@@ -6,8 +6,8 @@ class HourlyHackatimeRefreshJob < ApplicationJob
   def perform
     users = User.where(has_hackatime: true).distinct
 
-    from = '2025-05-16'
-    to = Time.zone.today.strftime('%Y-%m-%d')
+    from = "2025-05-16"
+    to = Time.zone.today.strftime("%Y-%m-%d")
 
     users.find_each do |user|
       RefreshHackatimeStatsJob.perform_later(user.id, from: from, to: to)
@@ -16,10 +16,10 @@ class HourlyHackatimeRefreshJob < ApplicationJob
     message = "Hourly Hackatime refresh job performed for #{users.count} users"
 
     begin
-      client = Slack::Web::Client.new(token: ENV.fetch('SLACK_BOT_TOKEN', nil))
+      client = Slack::Web::Client.new(token: ENV.fetch("SLACK_BOT_TOKEN", nil))
       Rails.logger.debug { "Sending Slack message: #{message}" }
       client.chat_postMessage(
-        channel: 'C08TRKC44UU',
+        channel: "C08TRKC44UU",
         text: message,
         as_user: true
       )

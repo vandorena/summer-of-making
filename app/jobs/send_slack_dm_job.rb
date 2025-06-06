@@ -4,7 +4,7 @@ class SendSlackDmJob < ApplicationJob
   queue_as :default
 
   def perform(user_id, message)
-    client = Slack::Web::Client.new(token: ENV.fetch('SLACK_BOT_TOKEN', nil))
+    client = Slack::Web::Client.new(token: ENV.fetch("SLACK_BOT_TOKEN", nil))
 
     response = client.conversations_open(users: user_id)
     channel_id = response.channel.id

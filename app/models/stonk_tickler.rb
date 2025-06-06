@@ -18,7 +18,7 @@
 #
 #  fk_rails_...  (project_id => projects.id)
 #
-require 'openai'
+require "openai"
 
 class StonkTickler < ApplicationRecord
   belongs_to :project
@@ -28,26 +28,26 @@ class StonkTickler < ApplicationRecord
   private
 
   def generate_tickler
-    OpenAI.configure { |c| c.access_token = ENV.fetch('OPENAI_KEY') }
+    OpenAI.configure { |c| c.access_token = ENV.fetch("OPENAI_KEY") }
     client = OpenAI::Client.new
 
     response = client.responses.create(parameters: {
-                                         model: 'gpt-4.1',
+                                         model: "gpt-4.1",
                                          input: [
                                            {
-                                             role: 'developer',
+                                             role: "developer",
                                              content: [
                                                {
-                                                 type: 'input_text',
-                                                 text: 'Summarise the following project title into a fictional 3-4 letter stock ticker. It should be in capitals. Respond ONLY with the ticker.'
+                                                 type: "input_text",
+                                                 text: "Summarise the following project title into a fictional 3-4 letter stock ticker. It should be in capitals. Respond ONLY with the ticker."
                                                }
                                              ]
                                            },
                                            {
-                                             role: 'user',
+                                             role: "user",
                                              content: [
                                                {
-                                                 type: 'input_text',
+                                                 type: "input_text",
                                                  text: project.title
                                                }
                                              ]
@@ -55,13 +55,13 @@ class StonkTickler < ApplicationRecord
                                          ],
                                          text: {
                                            format: {
-                                             type: 'text'
+                                             type: "text"
                                            }
                                          },
                                          tools: [],
                                          store: false
                                        })
 
-    self.tickler = response.dig('output', 0, 'content', 0, 'text').strip
+    self.tickler = response.dig("output", 0, "content", 0, "text").strip
   end
 end

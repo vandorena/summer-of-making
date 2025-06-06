@@ -35,7 +35,7 @@ class Devlog < ApplicationRecord
   validates :text, presence: true
 
   # Attachment is a #cdn link
-  validates :attachment, format: { with: URI::DEFAULT_PARSER.make_regexp, message: 'must be a valid URL' },
+  validates :attachment, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "must be a valid URL" },
                          allow_blank: true
 
   # Validates if only MD changes are made
@@ -47,7 +47,7 @@ class Devlog < ApplicationRecord
   validate :validate_hackatime_time_since_last_update, on: :create
 
   after_destroy :delete_from_airtable
-  after_commit :sync_to_airtable, on: %i(create update)
+  after_commit :sync_to_airtable, on: %i[create update]
   after_commit :associate_timer_session, on: :create
   after_commit :notify_followers_and_stakers, on: :create
 
@@ -72,7 +72,7 @@ class Devlog < ApplicationRecord
 
     return unless timer_session_id.blank? && !has_hackatime
 
-    errors.add(:timer_session_id, 'You need to track time with Timer Session or Hackatime')
+    errors.add(:timer_session_id, "You need to track time with Timer Session or Hackatime")
   end
 
   def validate_timer_session_not_linked
@@ -81,7 +81,7 @@ class Devlog < ApplicationRecord
     timer_session = TimerSession.find_by(id: timer_session_id)
     return unless timer_session && timer_session.devlog_id.present?
 
-    errors.add(:timer_session_id, 'This timer session is already linked to another update')
+    errors.add(:timer_session_id, "This timer session is already linked to another update")
   end
 
   def validate_hackatime_time_since_last_update
@@ -106,9 +106,9 @@ class Devlog < ApplicationRecord
   end
 
   def updates_not_locked
-    return unless ENV['UPDATES_STATUS'] == 'locked'
+    return unless ENV["UPDATES_STATUS"] == "locked"
 
-    errors.add(:base, 'Posting updates is currently locked')
+    errors.add(:base, "Posting updates is currently locked")
   end
 
   def only_formatting_changes
@@ -119,13 +119,13 @@ class Devlog < ApplicationRecord
 
     return unless original_stripped != new_stripped
 
-    errors.add(:text, 'You can only modify formatting (markdown, spaces, line breaks), not the content')
+    errors.add(:text, "You can only modify formatting (markdown, spaces, line breaks), not the content")
   end
 
   def strip_formatting(text)
-    return '' if text.nil?
+    return "" if text.nil?
 
-    text.gsub(/[\s\n\r\t\*\_\#\~\`\>\<\-\+\.\,\;\:\!\?\(\)\[\]\{\}]/i, '').downcase
+    text.gsub(/[\s\n\r\t\*\_\#\~\`\>\<\-\+\.\,\;\:\!\?\(\)\[\]\{\}]/i, "").downcase
   end
 
   def sync_to_airtable

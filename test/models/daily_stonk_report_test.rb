@@ -14,7 +14,7 @@
 #
 #  index_daily_stonk_reports_on_date  (date) UNIQUE
 #
-require 'test_helper'
+require "test_helper"
 
 class DailyStonkReportTest < ActiveSupport::TestCase
   # test "the truth" do

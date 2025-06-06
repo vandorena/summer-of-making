@@ -20,9 +20,9 @@ class UpdateSlackAvatarJob < ApplicationJob
       new_avatar = user_info.user.profile.image_original.presence || user_info.user.profile.image_512
 
       if new_avatar != current_avatar
-        Rails.logger.tagged('AvatarUpdate') do
+        Rails.logger.tagged("AvatarUpdate") do
           Rails.logger.info({
-            event: 'updating_avatar',
+            event: "updating_avatar",
             user_id: user.id,
             slack_id: slack_id,
             old_avatar: current_avatar,
@@ -33,9 +33,9 @@ class UpdateSlackAvatarJob < ApplicationJob
         user.update!(avatar: new_avatar)
       end
     rescue StandardError => e
-      Rails.logger.tagged('AvatarUpdate') do
+      Rails.logger.tagged("AvatarUpdate") do
         Rails.logger.error({
-          event: 'avatar_update_failed',
+          event: "avatar_update_failed",
           user_id: user.id,
           slack_id: slack_id,
           error: e.message

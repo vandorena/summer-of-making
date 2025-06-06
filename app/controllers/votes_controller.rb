@@ -2,7 +2,7 @@
 
 class VotesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_projects, only: %i(new create)
+  before_action :set_projects, only: %i[new create]
 
   def new
     @vote = Vote.new
@@ -13,9 +13,9 @@ class VotesController < ApplicationController
     @projects.each do |project|
       token = SecureRandom.hex(16)
       session[:vote_tokens][token] = {
-        'project_id' => project.id,
-        'user_id' => current_user.id,
-        'expires_at' => 2.hours.from_now.iso8601
+        "project_id" => project.id,
+        "user_id" => current_user.id,
+        "expires_at" => 2.hours.from_now.iso8601
       }
     end
   end
@@ -29,16 +29,16 @@ class VotesController < ApplicationController
     @vote.loser_id = @projects.find { |p| p.id != @vote.winner_id }.id if @projects.size == 2
 
     unless @vote.authorized_with_token?(token_data)
-      redirect_to new_vote_path, alert: 'Vote validation failed'
+      redirect_to new_vote_path, alert: "Vote validation failed"
       return
     end
 
     if @vote.save
       session[:vote_tokens].delete(token)
 
-      redirect_to new_vote_path, notice: 'Vote Submitted!'
+      redirect_to new_vote_path, notice: "Vote Submitted!"
     else
-      redirect_to new_vote_path, alert: @vote.errors.full_messages.join(', ')
+      redirect_to new_vote_path, alert: @vote.errors.full_messages.join(", ")
     end
   end
 
@@ -52,15 +52,15 @@ class VotesController < ApplicationController
     @projects = Project.where(is_shipped: true)
                        .where.not(id: voted_project_ids)
                        .where.not(user_id: current_user.id)
-                       .where.not(demo_link: [nil, ''])
-                       .order('RANDOM()')
+                       .where.not(demo_link: [ nil, "" ])
+                       .order("RANDOM()")
                        .limit(2)
   end
 
   def vote_params
-    params.expect(vote: %i(winner_id explanation
+    params.expect(vote: %i[winner_id explanation
                            winner_demo_opened winner_readme_opened winner_repo_opened
                            loser_demo_opened loser_readme_opened loser_repo_opened
-                           time_spent_voting_ms music_played))
+                           time_spent_voting_ms music_played])
   end
 end

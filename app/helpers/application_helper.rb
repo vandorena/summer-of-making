@@ -11,7 +11,7 @@ module ApplicationHelper
   end
 
   def format_seconds(seconds)
-    return '0h 0m' if seconds.nil? || seconds.zero?
+    return "0h 0m" if seconds.nil? || seconds.zero?
 
     hours = seconds / 3600
     minutes = (seconds % 3600) / 60
@@ -19,7 +19,7 @@ module ApplicationHelper
     "#{hours}h #{minutes}m"
   end
 
-  def admin_tool(class_name = '', element = 'div', **, &)
+  def admin_tool(class_name = "", element = "div", **, &)
     return unless current_user&.is_admin?
 
     concat content_tag(element,

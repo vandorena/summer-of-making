@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 namespace :projects do
-  desc 'Find projects with more than 10 devlogs spread across at least 5 different dates'
+  desc "Find projects with more than 10 devlogs spread across at least 5 different dates"
   task find_active: :environment do
     active_project_ids = Project.joins(:devlogs)
-                                .group('projects.id')
-                                .having('COUNT(devlogs.id) > 10')
-                                .having('COUNT(DISTINCT DATE(devlogs.created_at)) >= 5')
-                                .pluck('projects.id')
+                                .group("projects.id")
+                                .having("COUNT(devlogs.id) > 10")
+                                .having("COUNT(DISTINCT DATE(devlogs.created_at)) >= 5")
+                                .pluck("projects.id")
 
     active_projects = Project.where(id: active_project_ids).includes(:devlogs)
 
@@ -23,13 +23,13 @@ namespace :projects do
     end
   end
 
-  desc 'DM authors of active projects to ship their projects'
+  desc "DM authors of active projects to ship their projects"
   task dm_active_authors: :environment do
     active_project_ids = Project.joins(:devlogs)
-                                .group('projects.id')
-                                .having('COUNT(devlogs.id) > 10')
-                                .having('COUNT(DISTINCT DATE(devlogs.created_at)) >= 5')
-                                .pluck('projects.id')
+                                .group("projects.id")
+                                .having("COUNT(devlogs.id) > 10")
+                                .having("COUNT(DISTINCT DATE(devlogs.created_at)) >= 5")
+                                .pluck("projects.id")
 
     active_projects = Project.where(id: active_project_ids).includes(:devlogs, :user)
 

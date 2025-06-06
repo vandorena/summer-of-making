@@ -2,7 +2,7 @@
 
 class ShopItemsController < ApplicationController
   before_action :authenticate_user!
-  before_action :require_admin!, except: [:index]
+  before_action :require_admin!, except: [ :index ]
 
   def index
     @shop_items = ShopItem.order(cost: :asc)
@@ -19,7 +19,7 @@ class ShopItemsController < ApplicationController
     Rails.logger.debug @shop_item
 
     if @shop_item.save
-      redirect_to shop_items_path, notice: 'Shop item was successfully created.'
+      redirect_to shop_items_path, notice: "Shop item was successfully created."
     else
       @shop_item_types = available_shop_item_types
       render :new, status: :unprocessable_entity
@@ -40,19 +40,19 @@ class ShopItemsController < ApplicationController
 
   def available_shop_item_types
     # Explicitly require all shop item type files
-    Rails.root.glob('app/models/shop_item/*.rb').each { |file| require_dependency file }
+    Rails.root.glob("app/models/shop_item/*.rb").each { |file| require_dependency file }
 
     # Now get all descendants
-    ShopItem.descendants.map { |type| [type.name.demodulize.underscore.humanize, type.name] }
+    ShopItem.descendants.map { |type| [ type.name.demodulize.underscore.humanize, type.name ] }
   end
 
   def shop_item_params
     params.expect(
-      shop_item: %i(type name description internal_description
+      shop_item: %i[type name description internal_description
                     actual_irl_fr_cost cost hacker_score
                     requires_black_market hcb_merchant_lock
                     hcb_category_lock hcb_keyword_lock agh_contents
-                    image)
+                    image]
     )
   end
 end

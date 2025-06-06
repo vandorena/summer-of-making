@@ -22,7 +22,7 @@
 class TutorialProgress < ApplicationRecord
   belongs_to :user
 
-  TUTORIAL_STEPS = %w(explore gallery my_projects vote shop).freeze
+  TUTORIAL_STEPS = %w[explore gallery my_projects vote shop].freeze
 
   after_initialize :setup_default_progress, if: :new_record?
 
@@ -30,7 +30,7 @@ class TutorialProgress < ApplicationRecord
     return unless TUTORIAL_STEPS.include?(step_name.to_s)
 
     step_progress[step_name.to_s] ||= {}
-    step_progress[step_name.to_s]['completed_at'] = Time.current
+    step_progress[step_name.to_s]["completed_at"] = Time.current
 
     check_overall_completion!
 
@@ -38,7 +38,7 @@ class TutorialProgress < ApplicationRecord
   end
 
   def step_completed?(step_name)
-    step_progress.dig(step_name.to_s, 'completed_at').present?
+    step_progress.dig(step_name.to_s, "completed_at").present?
   end
 
   def completion_percentage

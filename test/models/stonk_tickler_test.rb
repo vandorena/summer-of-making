@@ -18,7 +18,7 @@
 #
 #  fk_rails_...  (project_id => projects.id)
 #
-require 'test_helper'
+require "test_helper"
 
 class StonkTicklerTest < ActiveSupport::TestCase
   # test "the truth" do

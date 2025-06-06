@@ -39,30 +39,30 @@ class User < ApplicationRecord
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
 
   after_create :create_tutorial_progress
-  after_commit :sync_to_airtable, on: %i(create update)
+  after_commit :sync_to_airtable, on: %i[create update]
 
   def self.exchange_slack_token(code, redirect_uri)
-    response = Faraday.post('https://slack.com/api/oauth.v2.access',
+    response = Faraday.post("https://slack.com/api/oauth.v2.access",
                             {
-                              client_id: ENV.fetch('SLACK_CLIENT_ID', nil),
-                              client_secret: ENV.fetch('SLACK_CLIENT_SECRET', nil),
+                              client_id: ENV.fetch("SLACK_CLIENT_ID", nil),
+                              client_secret: ENV.fetch("SLACK_CLIENT_SECRET", nil),
                               redirect_uri: redirect_uri,
                               code: code
                             })
 
     result = JSON.parse(response.body)
 
-    unless result['ok']
+    unless result["ok"]
       Rails.logger.error("Slack OAuth error: #{result['error']}")
       raise StandardError, "Failed to authenticate with Slack: #{result['error']}"
     end
 
-    slack_id = result['authed_user']['id']
+    slack_id = result["authed_user"]["id"]
     user = User.find_by(slack_id: slack_id)
     if user.present?
-      Rails.logger.tagged('UserCreation') do
+      Rails.logger.tagged("UserCreation") do
         Rails.logger.info({
-          event: 'existing_user_found',
+          event: "existing_user_found",
           slack_id: slack_id,
           user_id: user.id,
           email: user.email
@@ -81,9 +81,9 @@ class User < ApplicationRecord
 
     user_info = fetch_slack_user_info(slack_id)
 
-    Rails.logger.tagged('UserCreation') do
+    Rails.logger.tagged("UserCreation") do
       Rails.logger.info({
-        event: 'user_not_found',
+        event: "user_not_found",
         slack_id: slack_id,
         email: user_info.user.profile.email
       }.to_json)
@@ -123,7 +123,7 @@ class User < ApplicationRecord
   def self.check_hackatime(slack_id)
     response = Faraday.get("https://hackatime.hackclub.com/api/summary?user=#{slack_id}&from=2025-05-16&to=#{Time.zone.today.strftime('%Y-%m-%d')}")
     result = JSON.parse(response.body)
-    return unless result['user_id'] == slack_id
+    return unless result["user_id"] == slack_id
 
     user = User.find_by(slack_id: slack_id)
     user.has_hackatime = true
@@ -134,7 +134,7 @@ class User < ApplicationRecord
   end
 
   def self.fetch_slack_user_info(slack_id)
-    client = Slack::Web::Client.new(token: ENV.fetch('SLACK_BOT_TOKEN', nil))
+    client = Slack::Web::Client.new(token: ENV.fetch("SLACK_BOT_TOKEN", nil))
     client.users_info(user: slack_id)
   end
 
@@ -142,20 +142,20 @@ class User < ApplicationRecord
     return [] unless has_hackatime?
 
     data = hackatime_stat&.data
-    projects = data['projects'] || []
+    projects = data["projects"] || []
 
     projects.map do |project|
       {
-        key: project['key'],
-        name: project['name'] || project['key'],
-        total_seconds: project['total'] || 0,
-        formatted_time: format_seconds(project['total'] || 0)
+        key: project["key"],
+        name: project["name"] || project["key"],
+        total_seconds: project["total"] || 0,
+        formatted_time: format_seconds(project["total"] || 0)
       }
     end.sort_by { |p| p[:name] }
   end
 
   def format_seconds(seconds)
-    return '0h 0m' if seconds.nil? || seconds.zero?
+    return "0h 0m" if seconds.nil? || seconds.zero?
 
     hours = seconds / 3600
     minutes = (seconds % 3600) / 60
@@ -164,19 +164,19 @@ class User < ApplicationRecord
   end
 
   def refresh_hackatime_data
-    from = '2025-05-16'
-    to = Time.zone.today.strftime('%Y-%m-%d')
+    from = "2025-05-16"
+    to = Time.zone.today.strftime("%Y-%m-%d")
     RefreshHackatimeStatsJob.perform_later(id, from: from, to: to)
   end
 
   def refresh_hackatime_data_now
     return unless has_hackatime?
 
-    from = '2025-05-16'
-    to = Time.zone.today.strftime('%Y-%m-%d')
+    from = "2025-05-16"
+    to = Time.zone.today.strftime("%Y-%m-%d")
 
     query_params = { user: slack_id, from: from, to: to }
-    uri = URI('https://hackatime.hackclub.com/api/summary')
+    uri = URI("https://hackatime.hackclub.com/api/summary")
     uri.query = URI.encode_www_form(query_params)
 
     response = Faraday.get(uri.to_s)
@@ -190,8 +190,8 @@ class User < ApplicationRecord
 
   def project_time_from_hackatime(project_key)
     data = hackatime_stat&.data
-    project_stats = data['projects']&.find { |p| p['key'] == project_key }
-    project_stats&.dig('total') || 0
+    project_stats = data["projects"]&.find { |p| p["key"] == project_key }
+    project_stats&.dig("total") || 0
   end
 
   def has_hackatime?
@@ -212,7 +212,7 @@ class User < ApplicationRecord
 
   # Avo backtraces
   def is_developer?
-    slack_id == 'U03DFNYGPCN'
+    slack_id == "U03DFNYGPCN"
   end
 
   def identity_vault_oauth_link(callback_url)
@@ -240,7 +240,7 @@ class User < ApplicationRecord
       identity_vault_access_token: access_token,
       identity_vault_id: idv_data.dig(:identity, :id),
       ysws_verified: idv_data.dig(:identity,
-                                  :verification_status) == 'verified' && idv_data.dig(:identity, :ysws_eligible)
+                                  :verification_status) == "verified" && idv_data.dig(:identity, :ysws_eligible)
     )
   end
 
@@ -251,7 +251,7 @@ class User < ApplicationRecord
       first_name: idv_data.dig(:identity, :first_name),
       last_name: idv_data.dig(:identity, :last_name),
       ysws_verified: idv_data.dig(:identity,
-                                  :verification_status) == 'verified' && idv_data.dig(:identity, :ysws_eligible)
+                                  :verification_status) == "verified" && idv_data.dig(:identity, :ysws_eligible)
     )
   end
 
@@ -261,11 +261,11 @@ class User < ApplicationRecord
     idv_data = fetch_idv[:identity]
 
     case idv_data[:verification_status]
-    when 'pending'
+    when "pending"
       :pending
-    when 'needs_resubmission'
+    when "needs_resubmission"
       :needs_resubmission
-    when 'verified'
+    when "verified"
       if idv_data[:ysws_eligible]
         :verified
       else

@@ -20,7 +20,5 @@
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
 #
-module ShopItem
-  class AghShopItem < ShopItem
-  end
+class AghShopItem < ShopItem
 end

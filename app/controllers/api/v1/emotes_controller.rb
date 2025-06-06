@@ -14,7 +14,7 @@ module Api
             html: emote.to_html
           }
         else
-          render json: { error: 'Emote not found' }, status: :not_found
+          render json: { error: "Emote not found" }, status: :not_found
         end
       end
     end

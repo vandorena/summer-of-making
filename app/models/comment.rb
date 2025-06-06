@@ -32,12 +32,12 @@ class Comment < ApplicationRecord
 
   after_create :notify_devlog_author
   after_destroy :delete_from_airtable
-  after_commit :sync_to_airtable, on: [:create]
+  after_commit :sync_to_airtable, on: [ :create ]
 
   def display_content
     sanitized_content = sanitize(render_rich_content,
-                                 tags: %w(a br code pre p em strong h1 h2 h3 h4 h5 h6 ul ol li blockquote span),
-                                 attributes: %w(href title class target))
+                                 tags: %w[a br code pre p em strong h1 h2 h3 h4 h5 h6 ul ol li blockquote span],
+                                 attributes: %w[href title class target])
 
     parse_emotes(sanitized_content)
   end
@@ -47,7 +47,7 @@ class Comment < ApplicationRecord
   def render_rich_content
     parsed_rich_content = JSON.parse(rich_content)
 
-    return parsed_rich_content['content'] || '' if parsed_rich_content['type'] == 'tiptap'
+    return parsed_rich_content["content"] || "" if parsed_rich_content["type"] == "tiptap"
 
     parsed_rich_content.to_s
   end
