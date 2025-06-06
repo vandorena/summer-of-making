@@ -13,7 +13,6 @@
 #  identity_vault_access_token  :string
 #  is_admin                     :boolean          default(FALSE), not null
 #  last_name                    :string
-#  middle_name                  :string
 #  timezone                     :string
 #  ysws_verified                :boolean          default(FALSE)
 #  created_at                   :datetime         not null
