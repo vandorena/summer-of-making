@@ -20,7 +20,5 @@
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
 #
-module ShopItem
-  class SpecialFulfillmentShopItem < ShopItem
-  end
+class ShopItem::HqMail < ShopItem
 end

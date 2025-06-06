@@ -20,5 +20,5 @@
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
 #
-class AghShopItem < ShopItem
+class ShopItem::Special < ShopItem
 end

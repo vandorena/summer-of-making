@@ -20,7 +20,5 @@
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
 #
-module ShopItem
-  class HcbGrantShopItem < ShopItem
-  end
+class ShopItem::Agh < ShopItem
 end
