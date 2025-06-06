@@ -28,7 +28,7 @@
 #
 class Project < ApplicationRecord
   belongs_to :user
-  has_many :updates
+  has_many :devlogs
   has_many :project_follows
   has_many :followers, through: :project_follows, source: :user
   has_many :stonks

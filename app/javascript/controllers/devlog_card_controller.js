@@ -100,7 +100,7 @@ export default class extends Controller {
       
       splitParent.appendChild(new Text("..."));
       let temp = document.createElement("temp");
-      temp.innerHTML = `<button class="text-nice-blue hover:text-dark-blue font-medium transition-colors duration-200 cursor-pointer hover:underline" data-action="click->update-card#expand">Read more</button>`;
+      temp.innerHTML = `<button class="text-nice-blue hover:text-dark-blue font-medium transition-colors duration-200 cursor-pointer hover:underline" data-action="click->devlog-card#expand">Read more</button>`;
       splitParent.appendChild(temp.firstChild);
     }
   }

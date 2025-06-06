@@ -12,34 +12,34 @@
 %>
 
 <div class="bg-[#F3ECD8] rounded-xl border-5 border-[#E4DCC6] <%= context == 'explore' || context == 'project' ? '' : '' %> <%= context == 'project' ? 'p-2 sm:p-3' : 'p-3 sm:p-4' %> <%= container_classes %> transform <%= 'hover:scale-[1.01]' if context != 'project' %> transition-transform duration-300 <%= 'cursor-pointer' if show_project_navigation %> <%= 'max-w-2xl mx-auto' if context == 'explore' %>"
-     id="<%= dom_id(update) %>"
-     data-controller="modal update-card"
-     data-update-card-project-path-value="<%= project_path(update.project) if show_project_navigation %>"
-     data-update-card-show-project-navigation-value="<%= show_project_navigation %>"
-     data-update-card-max-length-value="200"
-     data-action="<%= 'click->update-card#navigateToProject' if show_project_navigation %>">
+     id="<%= dom_id(devlog) %>"
+     data-controller="modal devlog-card"
+     data-devlog-card-project-path-value="<%= project_path(devlog.project) if show_project_navigation %>"
+     data-devlog-card-show-project-navigation-value="<%= show_project_navigation %>"
+     data-devlog-card-max-length-value="200"
+     data-action="<%= 'click->devlog-card#navigateToProject' if show_project_navigation %>">
 
   <div class="flex items-center justify-between mb-2 sm:mb-3">
     <div class="flex items-center">
-      <% if update.user.avatar.present? %>
-        <img src="<%= update.user.avatar %>" alt="<%= update.user.display_name %>" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3">
+      <% if devlog.user.avatar.present? %>
+        <img src="<%= devlog.user.avatar %>" alt="<%= devlog.user.display_name %>" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3">
       <% end %>
       <div>
-        <span class="font-medium text-base sm:text-lg 2xl:text-xl"><%= update.user.display_name %> <span class="text-gray-600 text-xs sm:text-sm 2xl:text-base">•</span></span>
+        <span class="font-medium text-base sm:text-lg 2xl:text-xl"><%= devlog.user.display_name %> <span class="text-gray-600 text-xs sm:text-sm 2xl:text-base">•</span></span>
 
         <!-- Time info -->
-        <% if update.timer_sessions.any? %>
-          <% timer_session = update.timer_sessions.first %>
+        <% if devlog.timer_sessions.any? %>
+          <% timer_session = devlog.timer_sessions.first %>
           <span class="text-gray-600 text-xs sm:text-sm 2xl:text-base">
             <% hours = timer_session.net_time / 3600 %>
             <% minutes = (timer_session.net_time % 3600) / 60 %>
             <%= hours > 0 ? "#{hours}h spent working" : "#{minutes}m spent working" %>
           </span>
           <span class="text-gray-600 text-xs sm:text-sm 2xl:text-base"> • </span>
-        <% elsif update.last_hackatime_time.present? && update.last_hackatime_time > 0 %>
+        <% elsif devlog.last_hackatime_time.present? && devlog.last_hackatime_time > 0 %>
           <span class="text-gray-600 text-xs sm:text-sm 2xl:text-base">
-            <% hours = update.last_hackatime_time / 3600 %>
-            <% minutes = (update.last_hackatime_time % 3600) / 60 %>
+            <% hours = devlog.last_hackatime_time / 3600 %>
+            <% minutes = (devlog.last_hackatime_time % 3600) / 60 %>
             <%= hours > 0 ? "#{hours}h spent working" : "#{minutes}m spent working" %>
           </span>
           <span class="text-gray-600 text-xs sm:text-sm 2xl:text-base"> • </span>
@@ -47,7 +47,7 @@
 
         <!-- Time ago -->
         <span class="text-gray-600 text-xs sm:text-sm 2xl:text-base">
-          <% time_diff = Time.current - update.created_at %>
+          <% time_diff = Time.current - devlog.created_at %>
           <% if time_diff >= 86400 %>
             <% days = (time_diff / 86400).to_i %>
             <%= "#{days}d ago" %>
@@ -63,10 +63,10 @@
           <% end %>
         </span>
 
-        <% if show_stonks && update.project.stonks.count %>
-          <span class="text-gray-600 text-xs sm:text-sm 2xl:text-base">
-            • <%= pluralize(update.project.stonks.count, 'stonker') %>
-          </span>
+        <% if show_stonks && devlog.project.stonks.count %>
+        <span class="text-gray-600 text-xs sm:text-sm 2xl:text-base">
+        • <%= pluralize(devlog.project.stonks.count, 'stonker') %>
+        </span>
         <% end %>
       </div>
     </div>
@@ -74,14 +74,14 @@
 
   <div class="<%= content_margin.present? ? content_margin : 'ml-10 sm:ml-13' %> max-w-4xl">
     <!-- Update content -->
-    <div data-update-card-target="content" class="prose max-w-[32em] text-black mb-2 sm:mb-3 text-base sm:text-lg 2xl:text-xl break-words overflow-wrap-anywhere">
-      <%= update.formatted_text %>
+    <div data-devlog-card-target="content" class="prose max-w-[32em] text-black mb-2 sm:mb-3 text-base sm:text-lg 2xl:text-xl break-words overflow-wrap-anywhere">
+      <%= devlog.formatted_text %>
     </div>
 
     <!-- Attachments -->
-    <% if update.attachment.present? %>
+    <% if devlog.attachment.present? %>
       <div class="mt-2 sm:mt-3">
-        <% attachment_url = update.attachment %>
+        <% attachment_url = devlog.attachment %>
         <% clean_url = attachment_url.gsub(/\?pub_secret=.*$/, '') %>
         <% if clean_url.match?(/\.(jpg|jpeg|png|gif|heic|heif|webp)$/i) %>
           <img src="<%= attachment_url %>" alt="Update attachment" class="w-full object-contain cursor-pointer hover:opacity-90 transition-opacity rounded-lg" data-action="click->image-viewer#open">
@@ -91,9 +91,9 @@
               Your browser does not support the video tag.
             </video>
           </div>
-        <% elsif update.attachment.match?(/\.(mp3|wav|m4a|ogg|flac)$/i) %>
+        <% elsif devlog.attachment.match?(/\.(mp3|wav|m4a|ogg|flac)$/i) %>
           <div class="w-full flex items-center justify-center py-4">
-            <audio src="<%= update.attachment %>" class="w-full max-w-md" controls controlsList="nodownload">
+            <audio src="<%= devlog.attachment %>" class="w-full max-w-md" controls controlsList="nodownload">
               Your browser does not support the audio tag.
             </audio>
           </div>
@@ -105,26 +105,26 @@
     <div class="mt-3 sm:mt-4 flex items-center justify-start gap-x-4 max-w-prose">
       <!-- Like button -->
       <% if show_likes && user_signed_in? %>
-        <%= render "likes/button", likeable: update %>
+        <%= render "likes/button", likeable: devlog %>
       <% end %>
 
       <!-- Comment button -->
       <% if show_comment_modal && user_signed_in? %>
-        <%= render "comments/button", update: update %>
+        <%= render "comments/button", devlog: devlog %>
       <% end %>
 
       <!-- More button -->
-      <% if user_signed_in? && current_user == update.user %>
+      <% if user_signed_in? && current_user == devlog.user %>
       <div class="relative" data-controller="dropdown">
         <button data-action="click->dropdown#toggle" class="text-gray-600 hover:text-nice-blue transition-colors duration-200 p-2">
           <%= inline_svg_tag "more.svg", class: "w-5 h-5 sm:w-6 sm:h-6" %>
         </button>
         <div data-dropdown-target="menu" class="absolute right-0 top-full mt-1 w-32 bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] shadow-lg py-1 z-50 hidden">
           <% unless defined?(@project) && @project&.is_shipped? %>
-            <button data-action="click->modal#open" data-modal-id="<%= update.id %>" data-modal-type="edit" class="w-full px-4 py-2 text-left text-sm text-nice-blue hover:text-nice-blue transition-colors duration-200">
+            <button data-action="click->modal#open" data-modal-id="<%= devlog.id %>" data-modal-type="edit" class="w-full px-4 py-2 text-left text-sm text-nice-blue hover:text-nice-blue transition-colors duration-200">
               Edit
             </button>
-            <%= button_to "Delete", project_update_path(update.project, update),
+            <%= button_to "Delete", project_devlog_path(devlog.project, devlog),
                 method: :delete,
                 class: "w-full px-4 py-2 text-left text-sm text-vintage-red hover:bg-saddle-taupe/10 transition-colors duration-200",
                 data: { controller: "delete-confirmation", action: "click->delete-confirmation#confirm" } %>
@@ -137,18 +137,18 @@
 
   <!-- Inline comments -->
   <% if show_comments_inline %>
-    <div id="comments-<%= update.id %>" class="mt-4 ml-4 sm:ml-6 space-y-3">
-      <%= render update.comments %>
+    <div id="comments-<%= devlog.id %>" class="mt-4 ml-4 sm:ml-6 space-y-3">
+    <%= render devlog.comments %>
     </div>
   <% end %>
 </div>
 
 <!-- Render comment modal based on context -->
 <% if show_comment_modal || context == 'project' %>
-  <%= render "comments/modal", update: update %>
+  <%= render "comments/modal", devlog: devlog %>
 <% end %>
 
 <!-- Edit Modal (only for project owner) -->
-<% if user_signed_in? && current_user == update.user %>
-  <%= render "updates/edit_modal", update: update %>
+<% if user_signed_in? && current_user == devlog.user %>
+    <%= render "devlogs/edit_modal", devlog: devlog %>
 <% end %>

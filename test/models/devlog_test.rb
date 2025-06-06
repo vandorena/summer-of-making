@@ -1,8 +1,6 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
 # == Schema Information
 #
-# Table name: updates
+# Table name: devlogs
 #
 #  id                  :bigint           not null, primary key
 #  attachment          :string
@@ -15,22 +13,18 @@
 #
 # Indexes
 #
-#  index_updates_on_project_id  (project_id)
-#  index_updates_on_user_id     (user_id)
+#  index_devlogs_on_project_id  (project_id)
+#  index_devlogs_on_user_id     (user_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (project_id => projects.id)
 #  fk_rails_...  (user_id => users.id)
 #
-one:
-  text: MyText
-  attachment: MyString
-  user: one
-  project: one
+require "test_helper"
 
-two:
-  text: MyText
-  attachment: MyString
-  user: two
-  project: two
+class DevlogTest < ActiveSupport::TestCase
+  # test "the truth" do
+  #   assert true
+  # end
+end

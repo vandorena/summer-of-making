@@ -1,13 +1,13 @@
 <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] p-4 md:p-6 mb-4 md:mb-8">
-  <% if ENV['UPDATES_STATUS'] == 'locked' %>
+  <% if ENV['DEVLOGS_STATUS'] == 'locked' %>
     <div class="text-center">
       <div class="flex justify-center items-center">
         <%= image_tag 'sad.png', class: 'w-16 h-16 sm:w-48 sm:h-48 2xl:w-64 2xl:h-64 transform scale-x-[-1] mb-4 sm:mb-6' %>
       </div>
-      <p class="mb-6 sm:mb-8 text-black text-large sm:text-xl 2xl:text-2xl">Posting updates is current locked. It'll open on May 16th!</p>
+      <p class="mb-6 sm:mb-8 text-black text-large sm:text-xl 2xl:text-2xl">Posting devlogs is current locked. It'll open on May 16th!</p>
     </div>
   <% else %>
-    <h3 class="text-xl md:text-2xl 2xl:text-3xl mb-3 md:mb-4">Add Update</h3>
+    <h3 class="text-xl md:text-2xl 2xl:text-3xl mb-3 md:mb-4">Add Devlog</h3>
 
     <%
       has_unlinked_timer_sessions = @unlinked_timer_sessions && @unlinked_timer_sessions.any?
@@ -21,15 +21,15 @@
       show_timer_prompt = !has_unlinked_timer_sessions && !has_hackatime_time
     %>
 
-    <%= form_with(model: [@project, @project.updates.build], class: "space-y-3 md:space-y-4", data: { controller: "form", action: "submit->form#preventDoubleSubmission" }) do |f| %>
+    <%= form_with(model: [@project, @project.devlogs.build], class: "space-y-3 md:space-y-4", data: { controller: "form", action: "submit->form#preventDoubleSubmission" }) do |f| %>
 
       <% if show_timer_prompt %>
         <div class="flex flex-col items-center justify-center space-y-6">
           <%= image_tag 'orpheustimer.png', class: 'w-48 h-48 md:w-64 md:h-64 2xl:w-80 2xl:h-80 mb-4' %>
           <p class="text-base md:text-lg 2xl:text-xl text-center">
-            To post an update, you need to track time either with a Timer or with Hackatime.
+            To post a devlog, you need to track time either with a Timer or with Hackatime.
             <% if @project.hackatime_project_keys.present? && @project.user.has_hackatime %>
-              <br><br>Your Hackatime time since last update is
+              <br><br>Your Hackatime time since last devlog is
               <% time_since_last = @project.user.hackatime_stat.time_since_last_update_for_project(@project) %>
               <% since_last_hours = time_since_last / 3600 %>
               <% since_last_minutes = (time_since_last % 3600) / 60 %>
@@ -58,7 +58,7 @@
             <div class="space-y-4">
 
               <div class="flex items-center p-3 border border-saddle-taupe">
-                <input type="radio" id="timer_source_session" name="update[time_source]" value="timer_session"
+                <input type="radio" id="timer_source_session" name="devlog[time_source]" value="timer_session"
                       class="mr-3" checked
                       data-time-source-target="timerSession"
                       data-action="change->time-source#showTimerSessions">
@@ -68,7 +68,7 @@
               </div>
 
               <div class="flex items-center p-3 border border-saddle-taupe">
-                <input type="radio" id="timer_source_hackatime" name="update[time_source]" value="hackatime"
+                <input type="radio" id="timer_source_hackatime" name="devlog[time_source]" value="hackatime"
                       class="mr-3"
                       data-time-source-target="hackatime"
                       data-action="change->time-source#showHackatime">
@@ -83,7 +83,7 @@
               <div class="space-y-3">
                 <% @unlinked_timer_sessions.each do |session| %>
                   <div class="flex items-center p-3 border border-saddle-taupe">
-                    <input type="radio" id="timer_session_<%= session.id %>" name="update[timer_session_id]" value="<%= session.id %>"
+                    <input type="radio" id="timer_session_<%= session.id %>" name="devlog[timer_session_id]" value="<%= session.id %>"
                            class="mr-3" <%= 'checked' if @unlinked_timer_sessions.first.id == session.id %>
                            data-time-source-target="timerSessionInput">
                     <label for="timer_session_<%= session.id %>" class="flex-grow cursor-pointer">
@@ -116,7 +116,7 @@
                   <% since_last_hours = time_since_last / 3600 %>
                   <% since_last_minutes = (time_since_last % 3600) / 60 %>
                   <% since_last_seconds = time_since_last % 60 %>
-                  <div>Since Last Update: <%= "#{since_last_hours}h #{since_last_minutes}m #{since_last_seconds}s" %></div>
+                  <div>Since Last Devlog: <%= "#{since_last_hours}h #{since_last_minutes}m #{since_last_seconds}s" %></div>
                   <%= f.hidden_field :use_hackatime, value: "true", id: "hackatime_input", data: { time_source_target: "hackatimeInput" } %>
                 </div>
               </div>
@@ -129,7 +129,7 @@
               <div class="space-y-3">
                 <% @unlinked_timer_sessions.each do |session| %>
                   <div class="flex items-center p-3 border border-saddle-taupe">
-                    <input type="radio" id="timer_session_<%= session.id %>" name="update[timer_session_id]" value="<%= session.id %>"
+                    <input type="radio" id="timer_session_<%= session.id %>" name="devlog[timer_session_id]" value="<%= session.id %>"
                           class="mr-3" <%= 'checked' if @unlinked_timer_sessions.first.id == session.id %>>
                     <label for="timer_session_<%= session.id %>" class="flex-grow cursor-pointer">
                       <div class="text-base md:text-lg">
@@ -163,7 +163,7 @@
                   <% since_last_hours = time_since_last / 3600 %>
                   <% since_last_minutes = (time_since_last % 3600) / 60 %>
                   <% since_last_seconds = time_since_last % 60 %>
-                  <div>Since Last Update: <%= "#{since_last_hours}h #{since_last_minutes}m #{since_last_seconds}s" %></div>
+                  <div>Since Last Devlog: <%= "#{since_last_hours}h #{since_last_minutes}m #{since_last_seconds}s" %></div>
                   <%= f.hidden_field :use_hackatime, value: "true" %>
                 </div>
               </div>
@@ -172,7 +172,7 @@
         <% end %>
 
         <div class="space-y-1.5 md:space-y-2">
-          <%= f.label :text, "Update Text", class: "block text-base md:text-lg 2xl:text-xl" %>
+          <%= f.label :text, "Devlog Text", class: "block text-base md:text-lg 2xl:text-xl" %>
           <%= f.text_area :text, class: "w-full p-2 border-2 border-black focus:outline-none focus:border-forest text-base md:text-lg 2xl:text-xl", rows: 4, required: true %>
         </div>
 
@@ -226,7 +226,7 @@
           <button type="button" data-controller="modal" data-action="modal#open" data-modal-id="<%= @project.id %>" data-modal-type="timer" class="px-4 md:px-6 py-2 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-xl btn-pixel cursor-pointer">
             <%= TimerSession.where(user_id: current_user.id, project_id: @project.id, status: ['running', 'paused']).exists? ? "View Timer" : "Start Timer" %>
           </button>
-          <%= f.submit "Post Update", class: "px-4 md:px-6 py-2 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-xl btn-pixel cursor-pointer", data: { form_target: "submitButton" } %>
+          <%= f.submit "Post Devlog", class: "px-4 md:px-6 py-2 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-xl btn-pixel cursor-pointer", data: { form_target: "submitButton" } %>
         </div>
       </div>
     <% end %>

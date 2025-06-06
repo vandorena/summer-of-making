@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_06_030845) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_06_184554) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -44,11 +44,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_030845) do
 
   create_table "comments", force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.bigint "update_id", null: false
+    t.bigint "devlog_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.jsonb "rich_content"
-    t.index ["update_id"], name: "index_comments_on_update_id"
+    t.index ["devlog_id"], name: "index_comments_on_devlog_id"
     t.index ["user_id"], name: "index_comments_on_user_id"
   end
 
@@ -58,6 +58,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_030845) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["date"], name: "index_daily_stonk_reports_on_date", unique: true
+  end
+
+  create_table "devlogs", force: :cascade do |t|
+    t.text "text"
+    t.string "attachment"
+    t.bigint "user_id", null: false
+    t.bigint "project_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "last_hackatime_time"
+    t.index ["project_id"], name: "index_devlogs_on_project_id"
+    t.index ["user_id"], name: "index_devlogs_on_user_id"
   end
 
   create_table "hackatime_stats", force: :cascade do |t|
@@ -299,7 +311,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_030845) do
   create_table "timer_sessions", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "project_id", null: false
-    t.bigint "update_id"
+    t.bigint "devlog_id"
     t.datetime "started_at", null: false
     t.datetime "last_paused_at"
     t.integer "accumulated_paused", default: 0, null: false
@@ -308,8 +320,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_030845) do
     t.integer "status", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["devlog_id"], name: "index_timer_sessions_on_devlog_id"
     t.index ["project_id"], name: "index_timer_sessions_on_project_id"
-    t.index ["update_id"], name: "index_timer_sessions_on_update_id"
     t.index ["user_id"], name: "index_timer_sessions_on_user_id"
   end
 
@@ -320,18 +332,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_030845) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_tutorial_progresses_on_user_id"
-  end
-
-  create_table "updates", force: :cascade do |t|
-    t.text "text"
-    t.string "attachment"
-    t.bigint "user_id", null: false
-    t.bigint "project_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "last_hackatime_time"
-    t.index ["project_id"], name: "index_updates_on_project_id"
-    t.index ["user_id"], name: "index_updates_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -377,8 +377,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_030845) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "comments", "updates"
+  add_foreign_key "comments", "devlogs"
   add_foreign_key "comments", "users"
+  add_foreign_key "devlogs", "projects"
+  add_foreign_key "devlogs", "users"
   add_foreign_key "hackatime_stats", "users"
   add_foreign_key "likes", "users"
   add_foreign_key "magic_links", "users"
@@ -394,12 +396,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_030845) do
   add_foreign_key "stonk_ticklers", "projects"
   add_foreign_key "stonks", "projects"
   add_foreign_key "stonks", "users"
+  add_foreign_key "timer_sessions", "devlogs"
   add_foreign_key "timer_sessions", "projects"
-  add_foreign_key "timer_sessions", "updates"
   add_foreign_key "timer_sessions", "users"
   add_foreign_key "tutorial_progresses", "users"
-  add_foreign_key "updates", "projects"
-  add_foreign_key "updates", "users"
   add_foreign_key "votes", "projects", column: "loser_id"
   add_foreign_key "votes", "projects", column: "winner_id"
   add_foreign_key "votes", "users"

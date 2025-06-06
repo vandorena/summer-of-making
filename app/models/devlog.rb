@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: updates
+# Table name: devlogs
 #
 #  id                  :bigint           not null, primary key
 #  attachment          :string
@@ -13,19 +13,19 @@
 #
 # Indexes
 #
-#  index_updates_on_project_id  (project_id)
-#  index_updates_on_user_id     (user_id)
+#  index_devlogs_on_project_id  (project_id)
+#  index_devlogs_on_user_id     (user_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (project_id => projects.id)
 #  fk_rails_...  (user_id => users.id)
 #
-class Update < ApplicationRecord
+class Devlog < ApplicationRecord
   belongs_to :user
   belongs_to :project
   has_many :comments, -> { order(created_at: :desc) }, dependent: :destroy
-  has_many :timer_sessions, foreign_key: "update_id", dependent: :nullify
+  has_many :timer_sessions, dependent: :nullify
   has_many :likes, as: :likeable, dependent: :destroy
 
   attr_accessor :timer_session_id
@@ -77,7 +77,7 @@ class Update < ApplicationRecord
     return unless timer_session_id.present?
 
     timer_session = TimerSession.find_by(id: timer_session_id)
-    if timer_session && timer_session.update_id.present?
+    if timer_session && timer_session.devlog_id.present?
       errors.add(:timer_session_id, "This timer session is already linked to another update")
     end
   end
@@ -97,9 +97,9 @@ class Update < ApplicationRecord
 
     timer_session = project.timer_sessions.find_by(id: timer_session_id)
     return unless timer_session
-    return if timer_session.update_id.present?
+    return if timer_session.devlog_id.present?
 
-    timer_session.update(update_record: self)
+    timer_session.update(devlog: self)
   end
 
   def updates_not_locked
@@ -133,6 +133,6 @@ class Update < ApplicationRecord
   end
 
   def notify_followers_and_stakers
-    NotifyProjectUpdateJob.perform_later(id)
+    NotifyProjectDevlogJob.perform_later(id)
   end
 end

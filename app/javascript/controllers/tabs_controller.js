@@ -28,25 +28,25 @@ export default class extends Controller {
   }
 
   loadTabContent(tab) {
-    const updatesListContainer = document.getElementById('updates-list-container')
+    const devlogsListContainer = document.getElementById('devlogs-list-container')
     
-    if (updatesListContainer) {
-      updatesListContainer.innerHTML = `
-        <div class="space-y-4 sm:space-y-6" id="updates-list">
+    if (devlogsListContainer) {
+      devlogsListContainer.innerHTML = `
+        <div class="space-y-4 sm:space-y-6" id="devlogs-list">
         </div>
-        <div id="load-more-updates">
+        <div id="load-more-devlogs">
         </div>
       `
     }
 
-    const updatesList = document.getElementById('updates-list')
+    const devlogsList = document.getElementById('devlogs-list')
     const newInitialFrame = document.createElement('turbo-frame')
-    newInitialFrame.id = 'initial-updates'
+    newInitialFrame.id = 'initial-devlogs'
     newInitialFrame.src = `/explore?tab=${tab}&format=turbo_stream`
     newInitialFrame.loading = 'eager'
     
-    if (updatesList) {
-      updatesList.appendChild(newInitialFrame)
+    if (devlogsList) {
+      devlogsList.appendChild(newInitialFrame)
     }
   }
 } 

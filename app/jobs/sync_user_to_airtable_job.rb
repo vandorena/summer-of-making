@@ -6,12 +6,11 @@ class SyncUserToAirtableJob < ApplicationJob
     return unless user
 
     # Use Airrecord table
-    table = Airrecord.table(ENV["AIRTABLE_API_KEY"], ENV["AIRTABLE_BASE_ID_JOURNEY"], "users")
+    table = Airrecord.table(Rails.application.credentials.airtable.api_key, Rails.application.credentials.airtable.base_id, "_users")
 
     # Prepare user data for Airrecord
     user_data = {
       "first_name" => user.first_name,
-      "middle_name" => user.middle_name,
       "last_name" => user.last_name,
       "email" => user.email,
       "slack_id" => user.slack_id,
@@ -24,7 +23,7 @@ class SyncUserToAirtableJob < ApplicationJob
 
     if existing_record
       updated = false
-      %w[first_name middle_name last_name email slack_id avatar_url has_commented is_admin].each do |field|
+      %w[first_name last_name email slack_id avatar_url has_commented is_admin].each do |field|
         new_value = user_data[field]
         if existing_record[field] != new_value
           existing_record[field] = new_value
