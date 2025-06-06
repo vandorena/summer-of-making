@@ -1,9 +1,26 @@
 <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] shadow-lg overflow-hidden mb-4 md:mb-8">
-  <div class="h-48 md:h-64 overflow-hidden relative">
+  <div class="h-48 md:h-64 overflow-hidden relative group">
     <% project_image = @project.banner.presence || @project.devlogs.find { |u| u.attachment.present? }&.attachment || "https://raw.githubusercontent.com/hackclub/dinosaurs/main/confused_dinosaur.png" %>
-    <img src="<%= project_image %>" alt="<%= @project.title %>" class="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity" data-action="click->image-viewer#open">
-    <div class="absolute inset-0 bg-gradient-to-t from-soft-bone/30 to-transparent pointer-events-none"></div>
+    <%= image_tag project_image, alt: @project.title %>
+
+    <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black">
+        click to upload a bnaner
+    </div>
+
+    <%= form_with(model: @project) do |f| %>
+        <%= f.file_field :banner, id: "banner-upload", class: "absolute inset-0 opacity-0" %>
+    <% end %>
+
+    <div class="absolute inset-0 bg-gradient-to-t from-[#F3ECD8] to-transparent pointer-events-none"></div>
   </div>
+
+  <script>
+  console.log(document.querySelector("form > input#banner-upload"))
+    document.querySelector("form > input#banner-upload").onchange = ({ target }) => {
+      console.log(target, target.parentNode)
+      target.parentNode.submit()
+    }
+  </script>
 
   <div class="p-4 md:p-6">
     <div class="flex flex-col md:flex-row md:items-center mb-4 space-y-3 md:space-y-0">
