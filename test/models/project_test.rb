@@ -3,7 +3,6 @@
 # Table name: projects
 #
 #  id                     :bigint           not null, primary key
-#  banner                 :string           not null
 #  category               :string
 #  demo_link              :string
 #  description            :text
