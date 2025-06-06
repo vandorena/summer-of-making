@@ -3,7 +3,6 @@
 # Table name: projects
 #
 #  id                     :bigint           not null, primary key
-#  banner                 :string           not null
 #  category               :string
 #  demo_link              :string
 #  description            :text
@@ -34,6 +33,7 @@ class Project < ApplicationRecord
   has_many :stonks
   has_many :stakers, through: :stonks, source: :user
   has_one :stonk_tickler
+  has_one_attached :banner
 
   has_many :won_votes, class_name: "Vote", foreign_key: "winner_id"
   has_many :lost_votes, class_name: "Vote", foreign_key: "loser_id"
@@ -52,7 +52,7 @@ class Project < ApplicationRecord
 
   validates :title, :description, :category, presence: true
 
-  validates :readme_link, :demo_link, :repo_link, :banner,
+  validates :readme_link, :demo_link, :repo_link,
     format: { with: URI::DEFAULT_PARSER.make_regexp, message: "must be a valid URL" },
     allow_blank: true
 
