@@ -20,9 +20,9 @@ export default class extends Controller {
       const isActive = button.dataset.tab === this.currentTabValue
       
       if (isActive) {
-        button.className = "px-6 py-2 text-lg text-white bg-[#B8DA77] rounded-full shadow-sm"
+        button.className = "px-6 tab-element py-2 text-lg text-black"
       } else {
-        button.className = "px-6 py-2 text-lg text-white bg-transparent rounded-full hover:bg-[#b8da77]/30 transition-colors"
+        button.className = "px-6 py-2 text-lg text-black"
       }
     })
   }
