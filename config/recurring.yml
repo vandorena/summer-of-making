@@ -25,3 +25,8 @@ production:
     queue: default
     schedule: every day
     description: "Sync emotes from Slack :yay:"
+
+  cleanup_unattached_storage:
+    command: "bundle exec rake active_storage:cleanup_unattached[7]"
+    schedule: every day
+    description: "Clean up unattached ActiveStorage blobs older than 7 days"
