@@ -35,18 +35,6 @@
             </div>
         </div>
       <% end %>
-
-      <% if user_signed_in? && params[:action] == 'my_projects' %>
-        <% if current_user.has_hackatime %>
-          <button data-controller="modal" data-action="click->modal#open" data-modal-type="hackatime" class="px-4 py-2 btn-pixel bg-nice-blue text-white hover:scale-[1.05] transition-transform text-base md:text-lg mt-2 md:mt-0">
-            Manually Sync Hackatime
-          </button>
-        <% else %>
-          <button data-controller="modal" data-action="click->modal#open" data-modal-type="hackatime" class="px-4 py-2 btn-pixel bg-vintage-red text-white hover:scale-[1.05] transition-transform text-base md:text-lg mt-2 md:mt-0">
-            Connect Hackatime
-          </button>
-        <% end %>
-      <% end %>
     </div>
   </div>
 
