@@ -68,27 +68,29 @@
 
 <div id="how-it-works" class="pt-20 px-4 sm:px-8 bg-gradient-to-br from-[#F3ECD8] via-[#E4DCC6] to-[#D4C4A8]">
   <div class="max-w-6xl mx-auto">
-    <h2 class="head-big text-5xl md:text-6xl font-bold text-center mb-8 glow-y text-[#E06540]">
+    <h2 class="text-5xl md:text-6xl font-bold text-center mb-8 text-[#333]">
       How this works
     </h2>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
       <div class="text-center p-8 animate-wave bg-cover bg-center bg-no-repeat" style="background-image: url('<%= asset_path('card.png') %>');">
-        <h3 class="head-med text-2xl font-bold mb-4 text-[#E06540]">1. Build something</h3>
+        <h3 class="text-2xl font-bold mb-4 text-[#333]">1. Build something</h3>
         <p class="font-['Fredoka',sans-serif] font-normal text-lg text-[#333]">
           Hack on something cool! It can be a website, game, mobile app, hardware project, or anything you can imagine!<br>
         </p>
       </div>
 
       <div class="text-center p-8 animate-wave delay-1000 bg-cover bg-center bg-no-repeat" style="background-image: url('<%= asset_path('card.png') %>');">
-        <h3 class="head-med text-2xl font-bold mb-4 text-[#E06540]">2. Track your hours</h3>
+          <h3 class="text-2xl font-bold mb-4 text-[#333] flex items-center justify-center">
+          2. Earn shells
+          <%= image_tag "shellcoinv2.png", class: "w-8 h-8 ml-2 inline-block" %>
+        </h3>
         <p class="font-['Fredoka',sans-serif] font-normal text-lg text-[#333]">
-          Install Hackatime to track your hours automatically, each hour earns you 1 shell!<br>
-        </p>
+          Install Hackatime to track your hours automatically, the more hours you log, the more shells you earn!<br>        </p>
       </div>
 
       <div class="text-center p-8 animate-wave delay-2000 bg-cover bg-center bg-no-repeat" style="background-image: url('<%= asset_path('card.png') %>');">
-        <h3 class="head-med text-2xl font-bold mb-4 text-[#E06540]">3. Get awesome prizes</h3>
+        <h3 class="text-2xl font-bold mb-4 text-[#333]">3. Get awesome prizes</h3>
         <p class="font-['Fredoka',sans-serif] font-normal text-lg text-[#333]">
           Now that you have shells, redeem them for amazing prizes! These include Raspberry Pis, Blahaj, Laptops, and more!<br>
         </p>
