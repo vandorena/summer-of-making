@@ -18,12 +18,16 @@
   <div class="relative z-15 flex items-center min-h-screen">
     <div class="w-full max-w-7xl mx-auto px-4 sm:px-8 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
 
-      <div class="text-left space-y-8" style="font-family: 'Pacifico', sans-serif;">
-        <%= image_tag "mos.png", class: "-ml-36" %>
+      <div class="text-left space-y-8 animate-float mt-24 lg:mt-0"
+      style="font-family: 'Pacifico', sans-serif;">
+        <%= image_tag "mos.png", class: "-ml-16 lg:-ml-36" %>
 
         <h2 class="head-med text-2xl md:text-3xl text-white font-medium">
-          You discover a lost land,<br>
-          <span class="glow-y text-[#E7E76B] font-bold">time to rebuild, but better</span>
+          <span class="">Build stuff. </span>
+          <br class="hidden md:block"/>
+          <span class="ml-0 md:ml-16">Get stuff. </span>
+          <br class="hidden md:block"/>
+          <span class="font-bold ml-0 md:ml-32">Repeat.</span>
         </h2>
 
         <div class="flex flex-col sm:flex-row gap-4 pt-4">
@@ -31,7 +35,7 @@
         </div>
 
         <p class="font-['Fredoka',sans-serif] font-normal text-lg text-white opacity-90">
-          Join thousands of makers in Hack Club this summer to build, create, and earn awesome prizes!
+          From Hack Club with love. For teenagers 18 and under <3
         </p>
       </div>
 
@@ -47,7 +51,7 @@
   <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-10">
     <div class="md:w-1/2 w-full mb-8 md:mb-0">
       <p class="font-['Fredoka',sans-serif] font-normal text-xl opacity-80 mb-4 text-[#8B4513]">
-        Little Saint James is a small private island in the United States Virgin Islands, southeast of Saint Thomas. It was owned by American financier and sex offender Jeffrey Epstein from 1998 until his death in 2019. During Epstein's ownership, the island acquired the nickname Epstein Island.
+        Atlantis! Once lost, now found—and soon to be <span class="italic">filled</span> with teenage hackers. Build great things, make new friends, and earn sicknasty prizes on an island continent where high schoolers create the world they want to live in.
       </p>
       <p class="font-['Fredoka',sans-serif] font-normal text-lg opacity-70 text-[#8B4513]">
         The Virgin Islands are mountain peaks rising from the Caribbean ocean floor.[6] The trade winds (prevailing east-to-west winds near Earth's equator) dominate its climate and local weather, with stronger winds and less rain during winter.[7]
@@ -68,30 +72,41 @@
 
 <div id="how-it-works" class="pt-20 px-4 sm:px-8 bg-gradient-to-br from-[#F3ECD8] via-[#E4DCC6] to-[#D4C4A8]">
   <div class="max-w-6xl mx-auto">
-    <h2 class="text-5xl md:text-6xl font-bold text-center mb-8 text-[#333]">
+    <h2 class="head-big text-5xl md:text-6xl font-bold text-center mb-12 glow-y text-[#E06540]">
       How this works
     </h2>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-      <div class="text-center p-8 bg-cover bg-center bg-no-repeat" style="background-image: url('<%= asset_path('card.png') %>');">
-        <h3 class="text-2xl font-bold mb-4 text-[#333]">1. Build something</h3>
-        <p class="font-['Fredoka',sans-serif] font-normal text-lg text-[#333]">
-          Hack on something cool! It can be a website, game, mobile app, hardware project, or anything you can imagine!<br>
-        </p>
-      </div>
+    <div class="relative mb-16 flex flex-col items-center">
+      <div class="relative flex flex-col md:flex-row gap-8 mx-auto justify-center items-center md:items-stretch">
+        <div class="text-center p-4 lg:p-8 animate-wave max-w-80 sm:max-w-96 md:max-w-80 lg:max-w-96 bg-size-[100%_100%] bg-center bg-no-repeat" style="background-image: url('<%= asset_path('card.png') %>');">
+          <h3 class="head-med text-2xl font-bold mb-4 text-[#E06540]">Build Stuff</h3>
+          <p class="font-['Fredoka',sans-serif] font-normal text-lg" style="color: #333;">
+            Websites, games, apps—ship personal coding projects of any kind to earn <span class="italic">shells<image src="/shell.png" class="inline-block w-6 h-6"></image></span>
+          </p>
+        </div>
 
-      <div class="text-center p-8 bg-cover bg-center bg-no-repeat relative" style="background-image: url('<%= asset_path('card.png') %>');">
-        <%= image_tag "shellcoinv2.png", class: "absolute -top-6 -right-4 w-18 h-18 rounded-full rotate-20" %>
-        <h3 class="text-2xl font-bold mb-4 text-[#333]">2. Earn shells</h3>
-        <p class="font-['Fredoka',sans-serif] font-normal text-lg text-[#333]">
-          Install Hackatime to track your hours automatically, the more hours you log, the more shells you earn!<br>        </p>
-      </div>
+        <div class="text-center p-4 lg:p-8 animate-wave max-w-80 sm:max-w-96 md:max-w-80 lg:max-w-96 bg-size-[100%_100%] bg-center bg-no-repeat" style="background-image: url('<%= asset_path('card.png') %>'); animation-delay: 2s;">
+          <h3 class="head-med text-2xl font-bold mb-4 text-[#E06540]">Get Stuff</h3>
+          <p class="font-['Fredoka',sans-serif] font-normal text-lg" style="color: #333;">
+            Redeem your <span class="">shells<image src="/shell.png" class="inline-block w-6 h-6"></image></span> for Raspberry Pis, Framework Laptops, 3D printers, and dozens of other awesome prizes to power your next project.
+          </p>
+        </div>
 
-      <div class="text-center p-8 bg-cover bg-center bg-no-repeat" style="background-image: url('<%= asset_path('card.png') %>');">
-        <h3 class="text-2xl font-bold mb-4 text-[#333]">3. Get awesome prizes</h3>
-        <p class="font-['Fredoka',sans-serif] font-normal text-lg text-[#333]">
-          Now that you have shells, redeem them for amazing prizes! These include Raspberry Pis, Blahaj, Laptops, and more!<br>
-        </p>
+        <div class="absolute mx-auto md:hidden block left-0">
+          <image src="/arc_arrow_top_bottom.png" class="relative max-h-40 sm:max-h-48 -left-4 sm:-left-16 aspect-auto rotate-180"></image>
+        </div>
+
+        <div class="absolute mx-auto md:hidden block right-0">
+          <image src="/arc_arrow_top_bottom.png" class="relative max-h-40 sm:max-h-48 -right-4 sm:-right-16 aspect-auto"></image>
+        </div>
+
+        <div class="absolute mx-auto -top-8 hidden md:block">
+          <image src="/arc_arrow_left_right.png" class="max-w-48 aspect-auto"></image>
+        </div>
+
+        <div class="absolute mx-auto -bottom-8 hidden md:block">
+          <image src="/arc_arrow_left_right.png" class="max-w-48 aspect-auto rotate-180"></image>
+        </div>
       </div>
     </div>
     <div class="flex items-start justify-center mb-8">
