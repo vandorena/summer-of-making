@@ -222,32 +222,14 @@ class ProjectsController < ApplicationController
     end
 
     # Verify all requirements are met
-    errors = []
-
-    errors << "Project must have at least 10 devlogs." if @project.devlogs.count < 10
-
-    unique_dates = @project.devlogs.pluck(:created_at).compact.map(&:to_date).uniq
-    errors << "Devlogs must be posted on at least 5 different dates." if unique_dates.count < 5
-
-    errors << "Project must have a repository link." if @project.repo_link.blank?
-
-    if @project.readme_link.blank? || @project.readme_link.exclude?("raw")
-      errors << "Project must have a raw GitHub documentation link."
-    end
-
-    errors << "Project must have a demo link." if @project.demo_link.blank?
-
-    if @project.description.blank? || @project.description.length < 30
-      errors << "Project must have a valid description (at least 30 characters)."
-    end
-
-    errors << "Project must have a banner image." if @project.banner.blank?
+    errors = @project.shipping_errors
 
     if errors.any?
       redirect_to project_path(@project), alert: "Cannot ship project: #{errors.join(' ')}"
       return
     end
-    if @project.update(is_shipped: true)
+
+    if ShipEvent.create(project: @project)
       redirect_to project_path(@project), notice: "Your project has been shipped!"
 
       message = "Congratulations on shipping your project! Now thy project shall fight for blood :ultrafastparrot:"
