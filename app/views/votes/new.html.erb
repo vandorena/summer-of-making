@@ -2,18 +2,8 @@
   <h1 class="text-4xl sm:text-5xl mb-4 sm:text-center">Vote</h1>
   <p class="text-center text-nice-blue text-lg mb-6">You have voted <%= @user_vote_count %> times.</p>
 
-  <% if ENV['VOTING_STATUS'] == 'locked' && !ENV['ALLOWED_SLACK_IDS']&.split(',')&.include?(current_user.slack_id) %>
-    <div class="bg-soft-bone card-pixel p-6 sm:p-12 text-center mt-8">
-      <div class="flex justify-center items-center">
-        <%= image_tag 'sad.png', class: 'w-32 h-32 sm:w-48 sm:h-48 2xl:w-64 2xl:h-64 transform scale-x-[-1] mb-4 sm:mb-6' %>
-      </div>
-      <p class="mb-6 sm:mb-8 text-black text-large sm:text-xl 2xl:text-2xl">Voting is currently locked. Voting will be unlocked at the end of the event.</p>
-      <%= link_to explore_path, class: "px-4 sm:px-6 py-2 sm:py-3 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 text-base sm:text-lg 2xl:text-xl btn-pixel" do %>
-        Explore Projects
-      <% end %>
-    </div>
-  <% elsif @projects.size < 2 %>
-    <div class="bg-soft-bone card-pixel p-6 sm:p-12 text-center mt-8">
+  <% if @projects.size < 2 %>
+    <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] p-6 sm:p-12 text-center mt-8">
       <div class="flex justify-center items-center">
         <%= image_tag 'sad.png', class: 'w-32 h-32 sm:w-32 sm:h-32 mb-4 sm:mb-6 transform scale-x-[-1]' %>
       </div>
@@ -34,7 +24,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
           <% @projects.each do |project| %>
-            <div class="bg-soft-bone card-pixel p-6 sm:p-12" data-project-id="<%= project.id %>">
+            <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] p-6 sm:p-12" data-project-id="<%= project.id %>">
               <div class="space-y-6 sm:space-y-8">
                 <div class="flex items-start gap-3 sm:gap-4">
                   <div class="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 overflow-hidden rounded-lg">
@@ -152,7 +142,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
           <% @projects.each do |project| %>
-            <div class="bg-soft-bone card-pixel p-6 sm:p-12 cursor-pointer transition-all duration-300"
+            <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] p-6 sm:p-12 cursor-pointer transition-all duration-300"
                  data-voting-steps-target="project"
                  data-project-id="<%= project.id %>"
                  data-action="click->voting-steps#selectProject">
@@ -217,7 +207,7 @@
 </div>
 <!-- Music Player Toggle -->
 <div data-controller="music" class="fixed -bottom-32 -right-12 max-sm:mb-[140px]">
-  <div data-music-target="speechBubble" class="absolute -top-12 -left-10 2xl:-top-16 2xl:-left-12 p-3 bg-bread card-pixel max-w-[150px] opacity-50">
+  <div data-music-target="speechBubble" class="absolute -top-12 -left-10 2xl:-top-16 2xl:-left-12 p-3 bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] max-w-[150px] opacity-50">
     <div class="text-sm text-forest font-medium">Click me, please!</div>
   </div>
   <button

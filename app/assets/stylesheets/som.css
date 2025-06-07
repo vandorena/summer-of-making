@@ -77,3 +77,120 @@
       0 0 0 1px #B8A896,
       0 0 0 2px rgba(184, 168, 150, 0.5);
 }
+
+.marble-button {
+  position: relative;
+  background: #D4C4B0;
+  border: 3px solid #A8956B;
+  border-radius: 12px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-weight: 700;
+  color: #3A2F25;
+  text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.7);
+  transition: all 0.15s ease;
+  box-shadow: 
+    0 6px 0 #8B7A54,
+    0 8px 15px rgba(0, 0, 0, 0.2);
+  transform: translateY(0);
+}
+
+.marble-button::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  right: 4px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 8px 8px 0 0;
+  pointer-events: none;
+}
+
+.marble-button::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 20px;
+  height: 2px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 2px;
+  transform: rotate(-15deg);
+  pointer-events: none;
+}
+
+.marble-button:hover {
+  transform: translateY(-2px);
+  background: #E8DDD0;
+  box-shadow: 
+    0 8px 0 #8B7A54,
+    0 10px 20px rgba(0, 0, 0, 0.25);
+}
+
+.marble-button:active {
+  transform: translateY(4px);
+  box-shadow: 
+    0 2px 0 #8B7A54,
+    0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.marble-textarea {
+  position: relative;
+  background: #F8F3EC;
+  border: none;
+  border-radius: 6px;
+  padding: 12px;
+  font-family: inherit;
+  font-size: 15px;
+  color: #3A2F25;
+  resize: vertical;
+  min-height: 30px;
+  width: 100%;
+  box-shadow: 
+    inset 0 3px 0 #C8B8A4,
+    inset 3px 0 0 #D4C4B0,
+    inset 0 6px 12px rgba(0, 0, 0, 0.15),
+    0 1px 3px rgba(255, 255, 255, 0.8);
+  transition: all 0.2s ease;
+}
+
+.marble-textarea::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 6px;
+  height: 6px;
+  background: rgba(168, 149, 107, 0.3);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.marble-textarea::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  width: 20px;
+  height: 1px;
+  background: rgba(168, 149, 107, 0.4);
+  pointer-events: none;
+}
+
+.marble-textarea:focus {
+  outline: none;
+  background: #FFFBF5;
+  box-shadow: 
+    inset 0 4px 0 #A8956B,
+    inset 4px 0 0 #C8B8A4,
+    inset 0 8px 16px rgba(0, 0, 0, 0.2),
+    0 2px 6px rgba(255, 255, 255, 1),
+    0 0 0 3px rgba(168, 149, 107, 0.4);
+}
+
+.marble-textarea::placeholder {
+  color: rgba(58, 47, 37, 0.4);
+  font-style: italic;
+  font-weight: 300;
+}
