@@ -46,18 +46,17 @@
           </main>
         <% else %>
           <div class="flex flex-col h-screen overflow-hiden">
-            <% unless current_user.has_hackatime %>
+            <% unless current_user.has_hackatime? %>
               <div class="w-full bg-vintage-red text-white flex flex-col justify-center py-2">
                 <p class="text-center">
-                  Your time spent coding is not currently being tracked, and you can't create any projects.
+                  Your time spent coding is not currently being tracked, therefore you can't create any projects.
+                  <br />
+                  <%= link_to "Connect Hackatime (our coding time tracking thing)", "https://hackatime.hackclub.com", class: "underline", target: "_blank" %>
                 </p>
-                <button data-controller="modal" data-action="click->modal#open" data-modal-type="hackatime" class="hover:scale-[1.05] transition-transform text-base underline">
-                  Connect Hackatime (our code time tracking thing)
-                </button>
               </div>
             <% end %>
 
-            <div class="flex h-full border-1 border-red-500 min-h-0">
+            <div class="flex h-full min-h-0">
           <%= render "shared/sidebar" %>
           <main class="overflow-auto w-full" data-sidebar-target="mainContent">
             <div id="flash-container">
