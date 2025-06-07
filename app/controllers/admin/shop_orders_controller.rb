@@ -55,6 +55,14 @@ module Admin
       @shop_order.create_activity('unhold')
     end
 
+    def mark_fulfilled
+      redirect_to @shop_order, notice: "huh!?" unless @shop_order.shop_item.manually_fulfilled?
+      external_ref = params[:external_ref]
+      redirect_to @shop_order, notice: "you need to provide a reference!" unless external_ref
+      @shop_order.mark_fulfilled!(external_ref)
+      @shop_order.create_activity('mark_fulfilled', parameters: { external_ref: })
+    end
+
     private
 
     def set_shop_order
