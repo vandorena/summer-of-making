@@ -44,14 +44,14 @@
 #                                  devlogs GET    /devlogs(.:format)                                                                                devlogs#index
 #                                    votes POST   /votes(.:format)                                                                                  votes#create
 #                                 new_vote GET    /votes/new(.:format)                                                                              votes#new
-#                               shop_items POST   /shop_items(.:format)                                                                             shop_items#create
-#                            new_shop_item GET    /shop_items/new(.:format)                                                                         shop_items#new
-#                           edit_shop_item GET    /shop_items/:id/edit(.:format)                                                                    shop_items#edit
-#                                shop_item GET    /shop_items/:id(.:format)                                                                         shop_items#show
-#                                          PATCH  /shop_items/:id(.:format)                                                                         shop_items#update
-#                                          PUT    /shop_items/:id(.:format)                                                                         shop_items#update
-#                                          DELETE /shop_items/:id(.:format)                                                                         shop_items#destroy
-#                                     shop GET    /shop(.:format)                                                                                   shop_items#index
+#                               shop_item POST   /shop_item(.:format)                                                                             shop_item#create
+#                            new_shop_item GET    /shop_item/new(.:format)                                                                         shop_item#new
+#                           edit_shop_item GET    /shop_item/:id/edit(.:format)                                                                    shop_item#edit
+#                                shop_item GET    /shop_item/:id(.:format)                                                                         shop_item#show
+#                                          PATCH  /shop_item/:id(.:format)                                                                         shop_item#update
+#                                          PUT    /shop_item/:id(.:format)                                                                         shop_item#update
+#                                          DELETE /shop_item/:id(.:format)                                                                         shop_item#destroy
+#                                     shop GET    /shop(.:format)                                                                                   shop_item#index
 #                                                 /404(.:format)                                                                                    errors#not_found
 #                                                 /500(.:format)                                                                                    errors#internal_server_error
 #                                                 /422(.:format)                                                                                    errors#unprocessable_entity
@@ -137,15 +137,15 @@
 #                                     PATCH  /resources/users/:id(.:format)                                                                     avo/users#update
 #                                     PUT    /resources/users/:id(.:format)                                                                     avo/users#update
 #                                     DELETE /resources/users/:id(.:format)                                                                     avo/users#destroy
-#         preview_resources_shop_item GET    /resources/shop_items/:id/preview(.:format)                                                        avo/shop_items#preview
-#                resources_shop_items GET    /resources/shop_items(.:format)                                                                    avo/shop_items#index
-#                                     POST   /resources/shop_items(.:format)                                                                    avo/shop_items#create
-#             new_resources_shop_item GET    /resources/shop_items/new(.:format)                                                                avo/shop_items#new
-#            edit_resources_shop_item GET    /resources/shop_items/:id/edit(.:format)                                                           avo/shop_items#edit
-#                 resources_shop_item GET    /resources/shop_items/:id(.:format)                                                                avo/shop_items#show
-#                                     PATCH  /resources/shop_items/:id(.:format)                                                                avo/shop_items#update
-#                                     PUT    /resources/shop_items/:id(.:format)                                                                avo/shop_items#update
-#                                     DELETE /resources/shop_items/:id(.:format)                                                                avo/shop_items#destroy
+#         preview_resources_shop_item GET    /resources/shop_item/:id/preview(.:format)                                                        avo/shop_item#preview
+#                resources_shop_items GET    /resources/shop_item(.:format)                                                                    avo/shop_item#index
+#                                     POST   /resources/shop_item(.:format)                                                                    avo/shop_item#create
+#             new_resources_shop_item GET    /resources/shop_item/new(.:format)                                                                avo/shop_item#new
+#            edit_resources_shop_item GET    /resources/shop_item/:id/edit(.:format)                                                           avo/shop_item#edit
+#                 resources_shop_item GET    /resources/shop_item/:id(.:format)                                                                avo/shop_item#show
+#                                     PATCH  /resources/shop_item/:id(.:format)                                                                avo/shop_item#update
+#                                     PUT    /resources/shop_item/:id(.:format)                                                                avo/shop_item#update
+#                                     DELETE /resources/shop_item/:id(.:format)                                                                avo/shop_item#destroy
 #        preview_resources_magic_link GET    /resources/magic_links/:id/preview(.:format)                                                       avo/magic_links#preview
 #               resources_magic_links GET    /resources/magic_links(.:format)                                                                   avo/magic_links#index
 #                                     POST   /resources/magic_links(.:format)                                                                   avo/magic_links#create
@@ -226,7 +226,7 @@ Rails.application.routes.draw do
   resources :votes, only: [ :new, :create ]
 
 
-  resources :shop_items, except: [ :index ]
+  resources :shop_items, except: [:index ]
   get "/shop", to: "shop_items#index"
 
   match "/404", to: "errors#not_found", via: :all
@@ -269,9 +269,23 @@ Rails.application.routes.draw do
 
   namespace :admin do
     get "/", to: "static_pages#index", as: :root
+    resources :users, only: [] do
+      member do
+        post :internal_notes
+      end
+    end
     resources :shop_orders do
       collection do
         get :pending
+        get :to_be_fulfilled
+      end
+      member do
+        post :internal_notes
+        post :approve
+        post :reject
+        post :place_on_hold
+        post :take_off_hold
+        post :mark_fulfilled
       end
     end
   end

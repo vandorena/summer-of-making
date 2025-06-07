@@ -2,8 +2,16 @@
 <head>
   <%= yield :head %>
   <style>
-    html { color-scheme: light dark; }
+      html {
+          color-scheme: light dark;
+      }
+      body {
+          padding: 2rem;
+      }
   </style>
+  <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
 </head>
-  <%= yield %>
+<body>
+<%= yield %>
+</body>
 </html>

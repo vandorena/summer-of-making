@@ -1,3 +1,14 @@
 <h1><%= local_assigns[:title] %>shopped orders:</h1>
 
+<ul>
+  <% @shop_orders.each do |order| %>
+    <li>
+      #<%= order.id %>: <%= link_to order.full_name, admin_shop_order_path(order) %>
+    </li>
+  <% end %>
+</ul>
+
+<%== pagy_nav(@pagy) %> <br/>
+<%== pagy_info(@pagy) %> <br/>
+
 <%= link_to "← back", admin_root_path %>

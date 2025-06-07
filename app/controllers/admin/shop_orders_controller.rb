@@ -2,25 +2,56 @@
 
 module Admin
   class ShopOrdersController < ApplicationController
+    include Pagy::Backend
+    before_action :set_shop_order, except: [:index, :pending]
 
-    before_action :set_shop_order, only: [:show]
+    SCOPE = ShopOrder.all.includes(:user, :shop_item).order(created_at: :desc)
 
     def index
-      @shop_orders = ShopOrder.all
+      @pagy, @shop_orders = pagy(SCOPE)
     end
 
     def pending
+      @pagy, @shop_orders = pagy(SCOPE.pending)
+      render :index, locals: { title: "pending " }
+    end
+
+    def awaiting_fulfillment
+      @pagy, @shop_orders = pagy(SCOPE.pending)
       render :index, locals: { title: "pending " }
     end
 
     def show
+    end
 
+    def internal_notes
+      @shop_order.update(internal_notes: params[:internal_notes])
+      render :internal_notes, layout: false
+    end
+
+    def approve
+      @shop_order.approve!
+    end
+
+    def reject
+      unless params[:rejection_reason]
+        redirect_to @shop_order, notice: "you need to provide a rejection reason!"
+      end
+      @shop_order.mark_rejected!(params[:rejection_reason])
+    end
+
+    def place_on_hold
+      @shop_order.place_on_hold!
+    end
+
+    def take_off_hold
+      @shop_order.take_off
     end
 
     private
 
     def set_shop_order
-      @shop_order = nil
+      @shop_order = SCOPE.find(params[:id])
     end
   end
 end

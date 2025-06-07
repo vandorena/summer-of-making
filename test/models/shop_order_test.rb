@@ -2,15 +2,22 @@
 #
 # Table name: shop_orders
 #
-#  id                :bigint           not null, primary key
-#  aasm_state        :string
-#  frozen_address    :jsonb
-#  frozen_item_price :decimal(6, 2)
-#  quantity          :integer
-#  created_at        :datetime         not null
-#  updated_at        :datetime         not null
-#  shop_item_id      :bigint           not null
-#  user_id           :bigint           not null
+#  id                                 :bigint           not null, primary key
+#  aasm_state                         :string
+#  awaiting_periodical_fulfillment_at :datetime
+#  external_ref                       :string
+#  frozen_address                     :jsonb
+#  frozen_item_price                  :decimal(6, 2)
+#  fulfilled_at                       :datetime
+#  internal_notes                     :text
+#  on_hold_at                         :datetime
+#  quantity                           :integer
+#  rejected_at                        :datetime
+#  rejection_reason                   :string
+#  created_at                         :datetime         not null
+#  updated_at                         :datetime         not null
+#  shop_item_id                       :bigint           not null
+#  user_id                            :bigint           not null
 #
 # Indexes
 #

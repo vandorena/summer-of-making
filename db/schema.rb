@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_06_200705) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_07_060845) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -142,6 +142,26 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_200705) do
     t.jsonb "agh_contents"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "shop_orders", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "shop_item_id", null: false
+    t.decimal "frozen_item_price", precision: 6, scale: 2
+    t.integer "quantity"
+    t.jsonb "frozen_address"
+    t.string "aasm_state"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "rejection_reason"
+    t.string "external_ref"
+    t.datetime "awaiting_periodical_fulfillment_at"
+    t.datetime "fulfilled_at"
+    t.datetime "rejected_at"
+    t.datetime "on_hold_at"
+    t.text "internal_notes"
+    t.index ["shop_item_id"], name: "index_shop_orders_on_shop_item_id"
+    t.index ["user_id"], name: "index_shop_orders_on_user_id"
   end
 
   create_table "slack_emotes", force: :cascade do |t|
@@ -350,6 +370,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_200705) do
     t.string "identity_vault_id"
     t.string "identity_vault_access_token"
     t.boolean "ysws_verified", default: false
+    t.text "internal_notes"
   end
 
   create_table "votes", force: :cascade do |t|
@@ -385,6 +406,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_200705) do
   add_foreign_key "project_follows", "projects"
   add_foreign_key "project_follows", "users"
   add_foreign_key "projects", "users"
+  add_foreign_key "shop_orders", "shop_items"
+  add_foreign_key "shop_orders", "users"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
