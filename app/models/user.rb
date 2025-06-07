@@ -33,6 +33,7 @@ class User < ApplicationRecord
   has_many :staked_projects, through: :stonks, source: :project
   has_one :hackatime_stat, dependent: :destroy
   has_one :tutorial_progress, dependent: :destroy
+  has_one :magic_link, dependent: :destroy
 
   validates :slack_id, presence: true, uniqueness: true
   validates :email, :display_name, :timezone, :avatar, presence: true
@@ -83,22 +84,19 @@ class User < ApplicationRecord
 
     Rails.logger.tagged("UserCreation") do
       Rails.logger.info({
-        event: "user_not_found",
+        event: "slack_user_found",
         slack_id: slack_id,
         email: user_info.user.profile.email
       }.to_json)
     end
 
-    user = User.new(
+    User.create!(
       slack_id: slack_id,
       display_name: user_info.user.profile.display_name.presence || user_info.user.profile.real_name,
       email: user_info.user.profile.email,
       timezone: user_info.user.tz,
       avatar: user_info.user.profile.image_original.presence || user_info.user.profile.image_512
     )
-
-    user.save!
-    user
   end
 
   # Checks if the User is Eligible and ensures YSWS DB is the source of truth for FN, MN, LN

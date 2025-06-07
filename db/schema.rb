@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_06_200705) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_07_052844) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -72,6 +72,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_200705) do
     t.index ["user_id"], name: "index_devlogs_on_user_id"
   end
 
+  create_table "email_signups", force: :cascade do |t|
+    t.text "email", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "hackatime_stats", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.jsonb "data", default: {}
@@ -125,6 +131,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_200705) do
     t.string "hackatime_project_keys", default: [], array: true
     t.boolean "is_deleted", default: false
     t.index ["user_id"], name: "index_projects_on_user_id"
+  end
+
+  create_table "ship_events", force: :cascade do |t|
+    t.bigint "project_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id"], name: "index_ship_events_on_project_id"
   end
 
   create_table "shop_items", force: :cascade do |t|
@@ -385,6 +398,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_200705) do
   add_foreign_key "project_follows", "projects"
   add_foreign_key "project_follows", "users"
   add_foreign_key "projects", "users"
+  add_foreign_key "ship_events", "projects"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

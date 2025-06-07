@@ -227,6 +227,8 @@ class LandingController < ApplicationController
       end
     end
 
+    EmailSignup.create!(email:)
+
     slack_invite_response = send_slack_invite(email)
 
     Rails.logger.debug { "Status: #{slack_invite_response.code}" }
