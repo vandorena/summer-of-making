@@ -37,7 +37,7 @@ class MagicLinkController < ApplicationController
   def authenticate_magic_token_service_agent
     unless params.require(:token) == Rails.application.credentials.explorpheus.token
       render json: { success: false, error: "Unauthorized" }, status: :unauthorized
-      return
+      nil
     end
   end
 end
