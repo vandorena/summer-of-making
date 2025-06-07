@@ -266,4 +266,8 @@ Rails.application.routes.draw do
   post "users/update_hackatime_confirmation", to: "users#update_hackatime_confirmation"
   post "users/refresh_hackatime", to: "users#refresh_hackatime"
   post "users/check_hackatime_connection", to: "users#check_hackatime_connection"
+
+  namespace :admin do
+    get "/", to: "static_pages#index"
+  end
 end
