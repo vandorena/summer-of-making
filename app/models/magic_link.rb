@@ -35,7 +35,7 @@ class MagicLink < ApplicationRecord
   end
 
   def secret_url(host)
-    "#{Rails.application.routes.url_helpers.magic_link_url(host:)}?token=#{token}"
+    "#{Rails.application.routes.url_helpers.magic_link_url(host:, protocol: "https")}?token=#{token}"
   end
 
   private

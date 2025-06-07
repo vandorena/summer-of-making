@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_06_200705) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_07_043134) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -70,6 +70,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_200705) do
     t.integer "last_hackatime_time"
     t.index ["project_id"], name: "index_devlogs_on_project_id"
     t.index ["user_id"], name: "index_devlogs_on_user_id"
+  end
+
+  create_table "email_signups", force: :cascade do |t|
+    t.text "email", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "hackatime_stats", force: :cascade do |t|

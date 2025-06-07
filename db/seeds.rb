@@ -29,7 +29,6 @@ users = [
     slack_id: "U123456",
     email: "john@example.com",
     first_name: "John",
-    middle_name: "Robert",
     last_name: "Doe",
     display_name: "JohnD",
     timezone: "UTC",
@@ -40,7 +39,6 @@ users = [
     slack_id: "U789012",
     email: "jane@example.com",
     first_name: "Jane",
-    middle_name: "Marie",
     last_name: "Smith",
     display_name: "JaneS",
     timezone: "EST",
@@ -51,7 +49,6 @@ users = [
     slack_id: "U345678",
     email: "bob@example.com",
     first_name: "Bob",
-    middle_name: "James",
     last_name: "Brown",
     display_name: "BobB",
     timezone: "PST",
@@ -62,7 +59,6 @@ users = [
     slack_id: "U901234",
     email: "alice@example.com",
     first_name: "Alice",
-    middle_name: "Grace",
     last_name: "Johnson",
     display_name: "AliceJ",
     timezone: "GMT",
@@ -82,7 +78,6 @@ if additional_users_needed > 0
       slack_id: "U#{user_number.to_s.rjust(6, '0')}",
       email: "user#{user_number}@example.com",
       first_name: "User",
-      middle_name: "#{('A'..'Z').to_a[i]}",
       last_name: "#{user_number}",
       display_name: "User#{user_number}",
       timezone: [ "UTC", "EST", "PST", "GMT" ].sample,
@@ -303,13 +298,22 @@ projects_data = [
 created_projects = []
 projects_data.each_with_index do |project_data, index|
   user = created_users[index % created_users.length]
-  created_projects << Project.create!(
-    project_data.merge(
+  p = Project.create!(
+    project_data.except(:banner).merge(
       title: "#{user.display_name}'s #{project_data[:title]}",
       user: user
     )
   )
+
+  created_projects << p
+
+  puts "\t(uploading banner for project #{index})"
+  p.banner.attach(
+    io: URI.open(project_data[:banner]),
+    filename: SecureRandom.hex(8)
+  )
 end
+
 
 # Create project follows (adjusted for more projects)
 puts "Creating project follows..."
@@ -665,7 +669,7 @@ shop_item_data = [
   }
 ]
 shop_item_data.each do |h|
-  ShopItem::SpecialFulfillmentShopItem.create!(
+  ShopItem::Special.create!(
     name: h[:name],
     description: h[:description],
     internal_description: h[:internal_description],
