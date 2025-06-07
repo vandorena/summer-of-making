@@ -268,6 +268,11 @@ Rails.application.routes.draw do
   post "users/check_hackatime_connection", to: "users#check_hackatime_connection"
 
   namespace :admin do
-    get "/", to: "static_pages#index"
+    get "/", to: "static_pages#index", as: :root
+    resources :shop_orders do
+      collection do
+        get :pending
+      end
+    end
   end
 end
