@@ -31,6 +31,8 @@
 #
 class ShopOrder < ApplicationRecord
   include AASM
+  include PublicActivity::Model
+  tracked only: [:create], owner: Proc.new{ |controller, model| controller&.current_user }
 
   belongs_to :user
   belongs_to :shop_item

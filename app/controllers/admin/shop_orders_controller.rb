@@ -22,30 +22,37 @@ module Admin
     end
 
     def show
+      @activities = @shop_order.activities
     end
 
     def internal_notes
-      @shop_order.update(internal_notes: params[:internal_notes])
+      @shop_order.update!(internal_notes: params[:internal_notes])
+      @shop_order.create_activity('edit_internal_notes', params: { note: params[:internal_notes] })
       render :internal_notes, layout: false
     end
 
     def approve
       @shop_order.approve!
+      @shop_order.create_activity('approve')
     end
 
     def reject
-      unless params[:rejection_reason]
+      rejection_reason = params[:rejection_reason]
+      unless rejection_reason
         redirect_to @shop_order, notice: "you need to provide a rejection reason!"
       end
-      @shop_order.mark_rejected!(params[:rejection_reason])
+      @shop_order.mark_rejected!(rejection_reason)
+      @shop_order.create_activity('reject', parameters: { rejection_reason: })
     end
 
     def place_on_hold
       @shop_order.place_on_hold!
+      @shop_order.create_activity('hold')
     end
 
     def take_off_hold
-      @shop_order.take_off
+      @shop_order.take_off_hold!
+      @shop_order.create_activity('unhold')
     end
 
     private

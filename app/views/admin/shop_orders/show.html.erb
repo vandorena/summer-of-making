@@ -52,5 +52,8 @@
     <%= f.submit "i fulfilled it!" %>
   <% end %>
 <% end %>
+<br/>
+<%= link_to "← back", admin_root_path %><br/>
 
-<%= link_to "← back", admin_root_path %>
+<b>audit lawg:</b><br/>
+<%= render_activities(@activities, layout: :activity) %>

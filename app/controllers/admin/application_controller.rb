@@ -1,5 +1,7 @@
 module Admin
   class ApplicationController < ActionController::Base
+    include PublicActivity::StoreController
+
     before_action :authenticate_admin!
 
     helper_method :current_user
