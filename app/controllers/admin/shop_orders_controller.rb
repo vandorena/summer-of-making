@@ -6,6 +6,7 @@ module Admin
     before_action :set_shop_order, only: [:show]
 
     def index
+      @shop_orders = ShopOrder.all
     end
 
     def pending
