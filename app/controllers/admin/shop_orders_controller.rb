@@ -34,6 +34,8 @@ module Admin
     def approve
       @shop_order.approve!
       @shop_order.create_activity('approve')
+      flash[:success] = "awesome!"
+      redirect_to [:admin, @shop_order]
     end
 
     def reject
@@ -43,16 +45,22 @@ module Admin
       end
       @shop_order.mark_rejected!(rejection_reason)
       @shop_order.create_activity('reject', parameters: { rejection_reason: })
+      flash[:success] = "rejected with extreme prejudice..."
+      redirect_to [:admin, @shop_order]
     end
 
     def place_on_hold
       @shop_order.place_on_hold!
       @shop_order.create_activity('hold')
+      flash[:success] = "holding..."
+      redirect_to [:admin, @shop_order]
     end
 
     def take_off_hold
       @shop_order.take_off_hold!
       @shop_order.create_activity('unhold')
+      flash[:success] = "fire when ready!"
+      redirect_to [:admin, @shop_order]
     end
 
     def mark_fulfilled
@@ -61,6 +69,8 @@ module Admin
       redirect_to @shop_order, notice: "you need to provide a reference!" unless external_ref
       @shop_order.mark_fulfilled!(external_ref)
       @shop_order.create_activity('mark_fulfilled', parameters: { external_ref: })
+      flash[:success] = "thank you for your service o7"
+      redirect_to [:admin, @shop_order]
     end
 
     private

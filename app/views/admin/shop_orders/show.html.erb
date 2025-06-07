@@ -31,7 +31,7 @@
 
 <% case state %>
 <% when :pending %>
-  <%= button_to "lgtm, approve order!", [:approve, :admin, @shop_order] %>
+  <%= button_to "lgtm, approve order!", [:approve, :admin, @shop_order], method: :post %>
 <% end %>
 
 <% unless %i(rejected fulfilled).include? state %>
@@ -40,9 +40,9 @@
     <%= f.submit "reject that mf" %>
   <% end %>
   <% if state == :on_hold %>
-    <%= button_to "take off hold", [:take_off_hold, :admin, @shop_order] %>
+    <%= button_to "take off hold", [:take_off_hold, :admin, @shop_order], method: :post %>
   <% else %>
-    <%= button_to "put on hold", [:place_on_hold, :admin, @shop_order] %>
+    <%= button_to "put on hold", [:place_on_hold, :admin, @shop_order], method: :post %>
   <% end %>
 <% end %>
 
