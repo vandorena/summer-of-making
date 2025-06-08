@@ -1,0 +1,28 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# == Schema Information
+#
+# Table name: payouts
+#
+#  id           :bigint           not null, primary key
+#  amount       :decimal(6, 2)
+#  payable_type :string
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  payable_id   :bigint
+#  user_id      :bigint           not null
+#
+# Indexes
+#
+#  index_payouts_on_payable  (payable_type,payable_id)
+#  index_payouts_on_user_id  (user_id)
+#
+one:
+  amount: 9.99
+  payable: one
+  payable_type: Payable
+
+two:
+  amount: 9.99
+  payable: two
+  payable_type: Payable
