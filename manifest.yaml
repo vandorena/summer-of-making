@@ -1,40 +1,30 @@
 display_information:
-  name: The Journey
-  description: A 10 day journey into making!
-  background_color: "#000000"
+  name: Summer of Making
 features:
   bot_user:
-    display_name: The Journey
+    display_name: Summer of Making
     always_online: false
 oauth_config:
   redirect_urls:
-    - https://127.0.0.1:3000/auth/slack/callback
-    - http://127.0.0.1:3000/auth/slack/callback
-    - https://localhost:3000/auth/slack/callback
+    - https://52mos.hackclub.malted.dev/auth/slack/callback
+    - http://0.0.0.0:3000/auth/slack/callback
     - http://localhost:3000/auth/slack/callback
   scopes:
+    user:
+      - users.profile:read
+      - users.profile:write
     bot:
       - channels:history
-      - channels:read
       - chat:write
-      - chat:write.public
       - groups:history
-      - groups:read
-      - groups:write
-      - im:history
-      - im:read
       - im:write
       - reactions:write
       - users.profile:read
       - users:read
       - users:read.email
-      - emoji:read
+      - im:history
+      - im:read
 settings:
-  event_subscriptions:
-    request_url: https://[your_url]/slack/events
-    bot_events:
-      - message.channels
-      - message.groups
   org_deploy_enabled: false
   socket_mode_enabled: false
   token_rotation_enabled: false
