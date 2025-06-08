@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_07_074947) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_08_115805) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -151,9 +151,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_07_074947) do
     t.string "name"
     t.string "description"
     t.string "internal_description"
-    t.decimal "actual_irl_fr_cost", precision: 6, scale: 2
-    t.decimal "cost", precision: 6, scale: 2
-    t.string "hacker_score"
+    t.decimal "usd_cost", precision: 6, scale: 2
+    t.decimal "ticket_cost", precision: 6, scale: 2
+    t.integer "hacker_score", default: 0
     t.boolean "requires_black_market"
     t.string "hcb_merchant_lock"
     t.string "hcb_category_lock"
@@ -161,6 +161,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_07_074947) do
     t.jsonb "agh_contents"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.check_constraint "hacker_score >= 0 AND hacker_score <= 100", name: "hacker_score_percentage_check"
   end
 
   create_table "shop_orders", force: :cascade do |t|
