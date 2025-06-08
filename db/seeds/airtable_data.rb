@@ -70,9 +70,9 @@ begin
         item.type = item_type
         item.description = fields['subtitle'] # airtable subtitle -> db description
         item.internal_description = fields['description'] # airtable description -> internal_description
-        item.cost = fields['doubloons_estimated']&.to_f || 0
-        item.actual_irl_fr_cost = fields['unit_cost']&.to_f || fields['fair_market_value']&.to_f || 0
-        item.hacker_score = fields['hacker_score']&.to_s || '0'
+        item.ticket_cost = fields['doubloons_estimated']&.to_f || 0
+        item.usd_cost = fields['unit_cost']&.to_f || fields['fair_market_value']&.to_f || 0
+        item.hacker_score = fields['hacker_score']&.to_i || 0
         item.requires_black_market = false
 
         # Set type-specific fields
