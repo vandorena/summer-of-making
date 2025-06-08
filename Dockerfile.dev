@@ -1,4 +1,4 @@
-FROM ruby:3.4.2
+FROM ruby:3.4.3
 
 # Install system dependencies
 RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
