@@ -3,6 +3,10 @@
 ## Important: Always run formatting and linting after every code change
 - Run `docker compose run web bundle exec rubocop -A` after any code modifications
 
+## Git Best Practices
+- NEVER use `git add .` - Multiple agents may be running simultaneously
+- Always add specific files you've modified: `git add path/to/specific/file`
+
 ## Docker Compose Tips
 - Add `--remove-orphans` flag to docker compose commands to avoid orphan container warnings (e.g., `docker compose run --remove-orphans web rails test`)
 
