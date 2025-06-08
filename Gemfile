@@ -106,3 +106,7 @@ gem "avo", ">= 3.2"
 gem "aws-sdk-s3", require: false
 
 gem "lz_string", "~> 0.3.0"
+
+gem "aasm", "~> 5.5"
+
+gem "public_activity", "~> 3.0"

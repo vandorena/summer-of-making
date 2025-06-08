@@ -1,6 +1,74 @@
 {
   "ignored_warnings": [
     {
+      "warning_type": "Dynamic Render Path",
+      "warning_code": 15,
+      "fingerprint": "0e32caa174ceaeb0e501d5d0459f5563126f5fb7dd59e0b394ab6f2a8125daa5",
+      "check_name": "Render",
+      "message": "Render path contains parameter value",
+      "file": "app/views/admin/shop_orders/show.html.erb",
+      "line": 18,
+      "link": "https://brakemanscanner.org/docs/warning_types/dynamic_render_path/",
+      "code": "render(action => SCOPE.find(params[:id]).user, {})",
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Admin::ShopOrdersController",
+          "method": "show",
+          "line": 28,
+          "file": "app/controllers/admin/shop_orders_controller.rb",
+          "rendered": {
+            "name": "admin/shop_orders/show",
+            "file": "app/views/admin/shop_orders/show.html.erb"
+          }
+        }
+      ],
+      "location": {
+        "type": "template",
+        "template": "admin/shop_orders/show"
+      },
+      "user_input": "params[:id]",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "Dynamic Render Path",
+      "warning_code": 15,
+      "fingerprint": "3694644732110d0163a890d7f1cefa6a8023fee48749786e02ef5cccf751db43",
+      "check_name": "Render",
+      "message": "Render path contains parameter value",
+      "file": "app/views/admin/shop_orders/show.html.erb",
+      "line": 13,
+      "link": "https://brakemanscanner.org/docs/warning_types/dynamic_render_path/",
+      "code": "render(action => SCOPE.find(params[:id]).shop_item, {})",
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Admin::ShopOrdersController",
+          "method": "show",
+          "line": 28,
+          "file": "app/controllers/admin/shop_orders_controller.rb",
+          "rendered": {
+            "name": "admin/shop_orders/show",
+            "file": "app/views/admin/shop_orders/show.html.erb"
+          }
+        }
+      ],
+      "location": {
+        "type": "template",
+        "template": "admin/shop_orders/show"
+      },
+      "user_input": "params[:id]",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": ""
+    },
+    {
       "warning_type": "File Access",
       "warning_code": 16,
       "fingerprint": "4a92422d53b2d0d1d642910e3b174a4c3293fe93810b0079b70550d881667a60",

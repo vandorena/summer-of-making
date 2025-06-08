@@ -1,0 +1,59 @@
+<h1>shop order #<%= @shop_order.id %></h1>
+<%= @shop_order.full_name %>
+<br/>
+<br/>
+<%= render "admin/shared/internal_notes", { record: @shop_order } %>
+<br/>
+<b>Status:</b> <%= @shop_order.aasm_state.humanize %> <br/>
+<% if @shop_order.rejection_reason.present? %>
+  <b>Rejection reason: </b> <%= @shop_order.rejection_reason %> <br/>
+<% end %>
+<b>Shop item:</b>
+<div style="border: 1px solid; margin-top: 1rem; margin-bottom: 1rem; padding: 0.5em">
+  <%= render @shop_order.shop_item %>
+</div>
+<b>Quantity: </b> <%= @shop_order.quantity %> <br/>
+<b>User:</b>
+<div style="border: 1px solid; margin-top: 1rem; margin-bottom: 1rem; padding: 0.5em">
+  <%= render @shop_order.user %>
+</div>
+<b>Address:</b> <br/>
+<% addy = @shop_order.frozen_address || {} %>
+<%= addy[:first_name] %> <%= addy[:first_name] %> <br/>
+<%= addy[:line_1] %> <br/>
+<%= addy[:line_2] %> <br/>
+<%= addy[:city] %>, <%= addy[:state] %> <%= addy[:postal_code] %><br/>
+<%= addy[:country] %> <br/>
+<br/>
+<br/>
+<% state = @shop_order.aasm.current_state %>
+<b>Actions:</b>
+
+<% case state %>
+<% when :pending %>
+  <%= button_to "lgtm, approve order!", [:approve, :admin, @shop_order], method: :post %>
+<% end %>
+
+<% unless %i(rejected fulfilled).include? state %>
+  <%= form_with url: reject_admin_shop_order_path(@shop_order) do |f| %>
+    <%= f.text_area(:rejection_reason, placeholder: "rejection reason") %> <br/>
+    <%= f.submit "reject that mf" %>
+  <% end %>
+  <% if state == :on_hold %>
+    <%= button_to "take off hold", [:take_off_hold, :admin, @shop_order], method: :post %>
+  <% else %>
+    <%= button_to "put on hold", [:place_on_hold, :admin, @shop_order], method: :post %>
+  <% end %>
+<% end %>
+
+<% if state == :awaiting_periodical_fulfillment && @shop_order.shop_item.manually_fulfilled? %>
+  <%= form_with url: url_for([:mark_fulfilled, :admin, @shop_order]) do |f| %>
+    <%= f.text_area(:external_ref, placeholder: "external reference") %> <br/>
+    <%= f.submit "i fulfilled it!" %>
+  <% end %>
+<% end %>
+<br/>
+<%= link_to "← back", admin_root_path %><br/>
+
+<b>audit lawg:</b><br/>
+<%= render_activities(@activities, layout: :activity) %>

@@ -5,23 +5,27 @@
 # Table name: shop_items
 #
 #  id                    :bigint           not null, primary key
-#  actual_irl_fr_cost    :decimal(6, 2)
 #  agh_contents          :jsonb
-#  cost                  :decimal(6, 2)
 #  description           :string
-#  hacker_score          :string
+#  hacker_score          :integer          default(0)
 #  hcb_category_lock     :string
 #  hcb_keyword_lock      :string
 #  hcb_merchant_lock     :string
 #  internal_description  :string
 #  name                  :string
 #  requires_black_market :boolean
+#  ticket_cost           :decimal(6, 2)
 #  type                  :string
+#  usd_cost              :decimal(6, 2)
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
 #
 class ShopItem < ApplicationRecord
   has_one_attached :image do |attachable|
     attachable.variant :thumb, resize_to_limit: [ 256, 256 ]
+  end
+
+  def manually_fulfilled?
+    true
   end
 end

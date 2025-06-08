@@ -1,0 +1,13 @@
+<% thing = record.model_name.human.downcase %>
+<form hx-post="<%= url_for([:internal_notes, :admin, record]) %>">
+<% if record.internal_notes.present? %>
+  👥 <b>Readers added context about this <%= thing %>:</b>
+  <pre><%= record.internal_notes %></pre>
+<% end %>
+<details>
+  <summary><%= record.internal_notes.blank? ? "add internal notes to this #{thing}" : "edit internal notes" %></summary>
+  <textarea name="internal_notes"><%= record.internal_notes %></textarea>
+  <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>" autocomplete="off">
+  <button type="submit">save!</button>
+</details>
+</form>

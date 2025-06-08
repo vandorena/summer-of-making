@@ -13,6 +13,7 @@
 #  has_commented                :boolean          default(FALSE)
 #  has_hackatime                :boolean          default(FALSE)
 #  identity_vault_access_token  :string
+#  internal_notes               :text
 #  is_admin                     :boolean          default(FALSE), not null
 #  last_name                    :string
 #  timezone                     :string
