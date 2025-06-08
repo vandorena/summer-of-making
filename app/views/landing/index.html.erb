@@ -194,7 +194,7 @@
               <div class="prize-card bg-white/95 backdrop-blur-lg rounded-2xl border-2 border-white/30 shadow-lg p-6 md:p-6 sm:p-4 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:scale-105">
                 <div class="prize-image w-full h-full flex items-center justify-center mb-4 rounded-xl bg-yellow-100/20">
                   <% if prize[:image] && prize[:image] != "" %>
-                    <%= image_tag prize[:image], alt: prize[:name], class: "w-full h-full object-cover rounded-xl" %>
+                    <img src="<%= prize[:image] %>" alt="<%= prize[:name] %>" class="w-full h-full object-cover rounded-xl" />
                   <% else %>
                     <%= image_tag "clubhuman.png", alt: "Prize", class: "w-full h-full object-cover rounded-xl" %>
                   <% end %>
@@ -216,7 +216,7 @@
               <div class="prize-card bg-white/95 backdrop-blur-lg rounded-2xl border-2 border-white/30 shadow-lg p-6 md:p-6 sm:p-4 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:scale-105">
                 <div class="prize-image w-full h-full flex items-center justify-center mb-4 rounded-xl bg-yellow-100/20">
                   <% if prize[:image] && prize[:image] != "" %>
-                    <%= image_tag prize[:image], alt: prize[:name], class: "w-full h-full object-cover rounded-xl" %>
+                    <img src="<%= prize[:image] %>" alt="<%= prize[:name] %>" class="w-full h-full object-cover rounded-xl" />
                   <% else %>
                     <%= image_tag "clubhuman.png", alt: "Prize", class: "w-full h-full object-cover rounded-xl" %>
                   <% end %>
