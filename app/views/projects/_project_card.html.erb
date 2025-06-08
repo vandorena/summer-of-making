@@ -186,148 +186,25 @@
 
       <div class="p-4 mb-4 overflow-y-auto max-h-[40vh]">
         <ul class="space-y-2 text-left">
-          <% has_enough_devlogs = @project.devlogs.count >= 10 %>
-          <li class="flex items-start">
-            <div class="flex-shrink-0 h-6 w-6 mt-0.5">
-              <div class="h-5 w-5 border-2 <%= has_enough_devlogs ? 'bg-forest border-forest' : 'border-gray-400' %>  flex items-center justify-center">
-                <% if has_enough_devlogs %>
-                  <%= inline_svg "check.svg", class: "h-3 w-3 text-white" %>
-                <% end %>
-              </div>
-            </div>
-            <span class="ml-2 <%= has_enough_devlogs ? 'text-forest' : 'text-gray-600' %>">
-              Project must have at least 10 devlogs
-              <% unless has_enough_devlogs %>
-                <span class="block text-sm text-vintage-red">You have <%= @project.devlogs.count %> devlogs. Need <%= 10 - @project.devlogs.count %> more.</span>
-              <% end %>
-            </span>
-          </li>
-
-          <% unique_dates = @project.devlogs.pluck(:created_at).compact.map { |date| date.to_date }.uniq %>
-          <% has_enough_dates = unique_dates.count >= 5 %>
-          <li class="flex items-start">
-            <div class="flex-shrink-0 h-6 w-6 mt-0.5">
-              <div class="h-5 w-5 border-2 <%= has_enough_dates ? 'bg-forest border-forest' : 'border-gray-400' %>  flex items-center justify-center">
-                <% if has_enough_dates %>
-                  <%= inline_svg "check.svg", class: "h-3 w-3 text-white" %>
-                <% end %>
-              </div>
-            </div>
-            <span class="ml-2 <%= has_enough_dates ? 'text-forest' : 'text-gray-600' %>">
-              Devlogs must be posted on at least 5 different dates
-              <% unless has_enough_dates %>
-                <span class="block text-sm text-vintage-red">You have devlogs on <%= unique_dates.count %> different dates. Need <%= 5 - unique_dates.count %> more days.</span>
-              <% end %>
-            </span>
-          </li>
-
-          <% has_repo = @project.repo_link.present? %>
-          <li class="flex items-start">
-            <div class="flex-shrink-0 h-6 w-6 mt-0.5">
-              <div class="h-5 w-5 border-2 <%= has_repo ? 'bg-forest border-forest' : 'border-gray-400' %>  flex items-center justify-center">
-                <% if has_repo %>
-                  <%= inline_svg "check.svg", class: "h-3 w-3 text-white" %>
-                <% end %>
-              </div>
-            </div>
-            <span class="ml-2 <%= has_repo ? 'text-forest' : 'text-gray-600' %>">
-              Project must have a repository link
-              <% unless has_repo %>
-                <span class="block text-sm text-vintage-red">Please add a repository link in the project edit page.</span>
-              <% end %>
-            </span>
-          </li>
-
-          <% has_raw_readme = @project.readme_link.present? && @project.readme_link.include?("raw") %>
-          <li class="flex items-start">
-            <div class="flex-shrink-0 h-6 w-6 mt-0.5">
-              <div class="h-5 w-5 border-2 <%= has_raw_readme ? 'bg-forest border-forest' : 'border-gray-400' %>  flex items-center justify-center">
-                <% if has_raw_readme %>
-                  <%= inline_svg "check.svg", class: "h-3 w-3 text-white" %>
-                <% end %>
-              </div>
-            </div>
-            <span class="ml-2 <%= has_raw_readme ? 'text-forest' : 'text-gray-600' %>">
-              Project must have a raw GitHub documentation link (raw.github...)
-              <% unless has_raw_readme %>
-                <span class="block text-sm text-vintage-red">
-                  <% if @project.readme_link.blank? %>
-                    Please add a readme/documentation link.
-                  <% else %>
-                    Your documentation link should be a raw GitHub link (raw.github...).
+          <% @project.shipping_requirements.each do |_key, requirement| %>
+            <li class="flex items-start">
+              <div class="flex-shrink-0 h-6 w-6 mt-0.5">
+                <div class="h-5 w-5 border-2 <%= requirement[:met] ? 'bg-forest border-forest' : 'border-gray-400' %>  flex items-center justify-center">
+                  <% if requirement[:met] %>
+                    <%= inline_svg "check.svg", class: "h-3 w-3 text-white" %>
                   <% end %>
-                </span>
-              <% end %>
-            </span>
-          </li>
-
-          <% has_demo = @project.demo_link.present? %>
-          <li class="flex items-start">
-            <div class="flex-shrink-0 h-6 w-6 mt-0.5">
-              <div class="h-5 w-5 border-2 <%= has_demo ? 'bg-forest border-forest' : 'border-gray-400' %>  flex items-center justify-center">
-                <% if has_demo %>
-                  <%= inline_svg "check.svg", class: "h-3 w-3 text-white" %>
-                <% end %>
+                </div>
               </div>
-            </div>
-            <span class="ml-2 <%= has_demo ? 'text-forest' : 'text-gray-600' %>">
-              Project must have a demo link
-              <% unless has_demo %>
-                <span class="block text-sm text-vintage-red">Please add a demo link in the project edit page.</span>
-              <% end %>
-            </span>
-          </li>
-
-          <% has_description = @project.description.present? && @project.description.length >= 30 %>
-          <li class="flex items-start">
-            <div class="flex-shrink-0 h-6 w-6 mt-0.5">
-              <div class="h-5 w-5 border-2 <%= has_description ? 'bg-forest border-forest' : 'border-gray-400' %>  flex items-center justify-center">
-                <% if has_description %>
-                  <%= inline_svg "check.svg", class: "h-3 w-3 text-white" %>
-                <% end %>
-              </div>
-            </div>
-            <span class="ml-2 <%= has_description ? 'text-forest' : 'text-gray-600' %>">
-              Project must have a valid description (at least 30 characters)
-              <% unless has_description %>
-                <span class="block text-sm text-vintage-red">
-                  <% if @project.description.blank? %>
-                    Please add a description.
-                  <% else %>
-                    Your description is too short. Current length: <%= @project.description.length %>/30.
-                  <% end %>
-                </span>
-              <% end %>
-            </span>
-          </li>
-
-          <% has_banner = @project.banner.present? %>
-          <li class="flex items-start">
-            <div class="flex-shrink-0 h-6 w-6 mt-0.5">
-              <div class="h-5 w-5 border-2 <%= has_banner ? 'bg-forest border-forest' : 'border-gray-400' %>  flex items-center justify-center">
-                <% if has_banner %>
-                  <%= inline_svg "check.svg", class: "h-3 w-3 text-white" %>
-                <% end %>
-              </div>
-            </div>
-            <span class="ml-2 <%= has_banner ? 'text-forest' : 'text-gray-600' %>">
-              Project must have a banner image
-              <% unless has_banner %>
-                <span class="block text-sm text-vintage-red">Please add a banner image URL in the project edit page.</span>
-              <% end %>
-            </span>
-          </li>
+              <span class="ml-2 <%= requirement[:met] ? 'text-forest' : 'text-gray-600' %>">
+                <%= requirement[:message] %>
+              </span>
+            </li>
+          <% end %>
         </ul>
       </div>
 
       <%
-        all_requirements_met = has_enough_devlogs &&
-                               has_enough_dates &&
-                               has_repo &&
-                               has_raw_readme &&
-                               has_demo &&
-                               has_description &&
-                               has_banner
+        all_requirements_met = @project.can_ship?
       %>
 
       <input type="hidden" id="all-requirements-met" value="<%= all_requirements_met %>">

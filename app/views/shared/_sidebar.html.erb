@@ -1,6 +1,6 @@
-<div class="fixed inset-y-0 left-0 bg-[#F3ECD8] flex flex-col h-screen transition-all duration-300 text-black z-50"
+<div class="h-full bg-[#F3ECD8] flex flex-col transition-all duration-300 text-black"
      data-sidebar-target="sidebar">
-  <div class="flex justify-between items-center pt-2 px-2" data-sidebar-target="topContainer">
+  <div class="flex justify-between items-center p-4" data-sidebar-target="topContainer">
     <div class="cursor-pointer">
       <%= link_to inline_svg("icon.svg", class: "2xl:h-12 2xl:w-12 h-10 w-10", data: { 'sidebar-target': 'icon' }), root_path %>
     </div>
@@ -47,7 +47,7 @@
     </ul>
   </nav>
 
-  <div class="hover:scale-105 transition-transform p-4 flex items-center justify-between mt-auto text-[#E06540] bg-[#E06540]/40 rounded-4xl mx-4 mb-4" data-sidebar-target="logoutContainer">
+  <div class="hover:scale-105 transition-transform p-4 m-4 flex items-center justify-between text-[#E06540] bg-[#E06540]/40 rounded-4xl" data-sidebar-target="logoutContainer">
     <div class="flex items-center">
       <%= image_tag current_user.avatar, class: "h-12 w-12 rounded-full", data: { 'sidebar-target': 'avatar' } %>
       <span class="text-xl underline ml-2" data-sidebar-target="content">@<%= current_user.display_name %></span>

@@ -1,10 +1,10 @@
-<div data-controller="turbo-actions">
-  <%= form_with url: sign_up_path, method: :post, data: { turbo: true }, class: "flex flex-col gap-4" do |f| %>
-    <%= f.email_field :email, required: true, placeholder: "Enter your email...", autocomplete: "email", class: "btn-fancy text-white py-4 px-8 text-xl lg:text-2xl flex items-center justify-center", style: "background: linear-gradient(135deg, #E06540, #EC8153);" %>
-    <%= f.submit "Start creating", class: "btn-fancy text-white py-4 px-8 text-xl lg:text-2xl flex items-center justify-center", style: "background: linear-gradient(135deg, #E06540, #EC8153);" %>
+<div data-controller="turbo-actions" class="font-pagaki">
+  <%= form_with url: sign_up_path, method: :post, data: { turbo: true } do |f| %>
+    <%= f.email_field :email, required: true, placeholder: "Enter your email...", autocomplete: "email", class: "marble-textarea w-full mb-4" %>
+    <%= f.submit "Start creating", class: "marble-button w-full" %>
   <% end %>
 
-  <dialog id="signup-modal" class="modal card-pixel p-4 sm:p-8 bg-bread">
+  <dialog id="signup-modal">
     <div id="modal-content">
     </div>
   </dialog>

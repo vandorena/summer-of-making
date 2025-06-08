@@ -12,9 +12,16 @@
   src: url("DynaPuff.ttf") format(truetype);
 }
 
+@font-face {
+  font-family: "Pagaki";
+  font-weight: 400;
+  src: url("Pagaki.ttf") format(truetype);
+}
+
 @theme {
   --font-steven: "Steven", "sans-serif";
   --font-dynapuff: "DynaPuff", "sans-serif";
+  --font-pagaki: "Pagaki", "sans-serif";
   --color-forest: #508364;
   --color-warm: #e6c58e;
   --color-bread: #f9e8c7;

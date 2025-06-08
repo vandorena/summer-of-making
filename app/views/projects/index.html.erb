@@ -6,43 +6,31 @@
       <% elsif @feed_type == 'projects' %>
         <h1 class="text-4xl sm:text-5xl mb-0">Gallery</h1>
       <% else %>
-<div class="flex justify-center w-full">
-  <div class="flex tab-container">
-    <button
-      data-action="click->tabs#switchTab"
-      data-tab="explore"
-      class="px-6 py-2 text-xl text-black"
-      data-tabs-target="tabButton">
-      Explore
-    </button>
-    <button
-      data-action="click->tabs#switchTab"
-      data-tab="following"
-      class="px-6 py-2 text-xl text-black"
-      data-tabs-target="tabButton">
-      Following
-    </button>
-    <button
-      data-action="click->tabs#switchTab"
-      data-tab="stonked"
-      class="px-6 py-2 text-xl text-black"
-      data-tabs-target="tabButton">
-      Stonked
-    </button>
-  </div>
-</div>
-
-      <% end %>
-      <% if user_signed_in? && params[:action] == 'my_projects' %>
-        <% if current_user.has_hackatime %>
-          <button data-controller="modal" data-action="click->modal#open" data-modal-type="hackatime" class="px-4 py-2 btn-pixel bg-nice-blue text-white hover:scale-[1.05] transition-transform text-base md:text-lg mt-2 md:mt-0">
-            Manually Sync Hackatime
-          </button>
-        <% else %>
-          <button data-controller="modal" data-action="click->modal#open" data-modal-type="hackatime" class="px-4 py-2 btn-pixel bg-vintage-red text-white hover:scale-[1.05] transition-transform text-base md:text-lg mt-2 md:mt-0">
-            Connect Hackatime
-          </button>
-        <% end %>
+        <div class="flex justify-center w-full">
+            <div class="flex tab-container">
+                <button
+                    data-action="click->tabs#switchTab"
+                    data-tab="explore"
+                    class="px-6 py-2 text-xl text-black"
+                    data-tabs-target="tabButton">
+                    Explore
+                </button>
+                <button
+                    data-action="click->tabs#switchTab"
+                    data-tab="following"
+                    class="px-6 py-2 text-xl text-black"
+                    data-tabs-target="tabButton">
+                    Following
+                </button>
+                <button
+                    data-action="click->tabs#switchTab"
+                    data-tab="stonked"
+                    class="px-6 py-2 text-xl text-black"
+                    data-tabs-target="tabButton">
+                    Stonked
+                </button>
+            </div>
+        </div>
       <% end %>
     </div>
   </div>
@@ -79,7 +67,7 @@
                     %>
                     <p class="text-gray-400">
                         <%= format_seconds(total_time_seconds) %>
-                        <br />
+                        <br>
                         <%= project.devlogs.count %> devlogs
                     </p>
                 </div>

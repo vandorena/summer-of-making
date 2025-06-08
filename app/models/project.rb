@@ -34,6 +34,7 @@ class Project < ApplicationRecord
   has_many :followers, through: :project_follows, source: :user
   has_many :stonks
   has_many :stakers, through: :stonks, source: :user
+  has_many :ship_events
   has_one :stonk_tickler
   has_one_attached :banner
 
@@ -111,6 +112,48 @@ class Project < ApplicationRecord
 
   def create_tickler
     StonkTickler.create(project: self)
+  end
+
+  def devlogs_since_last_ship
+    last_ship_event_time = ship_events.order(:created_at).last&.created_at
+    last_ship_event_time.nil? ? devlogs : devlogs.where("created_at > ?", last_ship_event_time)
+  end
+
+  def shipping_requirements
+    {
+      devlogs: {
+        met: devlogs_since_last_ship.count >= 1,
+        message: "You must have at least one devlog before shipping"
+      },
+      repo_link: {
+        met: repo_link.present?,
+        message: "Project must have a repository link."
+      },
+      readme_link: {
+        met: readme_link.present? && readme_link.include?("raw"),
+        message: "Project must have a raw GitHub documentation link."
+      },
+      demo_link: {
+        met: demo_link.present?,
+        message: "Project must have a demo link."
+      },
+      description: {
+        met: description.present? && description.length >= 30,
+        message: "Project must have a valid description (at least 30 characters)."
+      },
+      banner: {
+        met: banner.present?,
+        message: "Project must have a banner image."
+      }
+    }
+  end
+
+  def shipping_errors
+    shipping_requirements.filter_map { |_key, req| req[:message] unless req[:met] }
+  end
+
+  def can_ship?
+    shipping_requirements.all? { |_key, req| req[:met] }
   end
 
   private
