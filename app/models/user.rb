@@ -33,6 +33,7 @@ class User < ApplicationRecord
   has_many :stonks
   has_many :staked_projects, through: :stonks, source: :project
   has_many :ship_events, through: :projects
+  has_many :payouts
   has_one :hackatime_stat, dependent: :destroy
   has_one :tutorial_progress, dependent: :destroy
   has_one :magic_link, dependent: :destroy
