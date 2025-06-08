@@ -49,12 +49,9 @@ class ProjectsController < ApplicationController
   end
 
   def show
-    @devlogs = @project.devlogs.order(created_at: :asc)
-
-    @unlinked_timer_sessions = @project.timer_sessions
-                                       .where(user: current_user, devlog_id: nil, status: :stopped)
-                                       .where(net_time: TimerSession::MINIMUM_DURATION..)
-                                       .order(created_at: :desc)
+    @devlogs = @project.devlogs
+    @ship_events = @project.ship_events
+    @timeline = (@devlogs + @ship_events).sort_by(&:created_at)
 
     @stonks = @project.stonks.includes(:user).order(amount: :desc)
 
