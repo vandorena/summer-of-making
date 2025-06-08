@@ -228,7 +228,7 @@ Rails.application.routes.draw do
   resources :votes, only: [ :new, :create ]
 
 
-  resources :shop_items, except: [:index ]
+  resources :shop_items, except: [ :index ]
   get "/shop", to: "shop_items#index"
 
   match "/404", to: "errors#not_found", via: :all

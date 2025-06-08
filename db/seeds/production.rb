@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Production seed data (essential records that should exist in all environments)
 
 puts "Loading essential production data..."

@@ -32,7 +32,7 @@
 class ShopOrder < ApplicationRecord
   include AASM
   include PublicActivity::Model
-  tracked only: [:create], owner: Proc.new{ |controller, model| controller&.current_user }
+  tracked only: [ :create ], owner: Proc.new { |controller, model| controller&.current_user }
 
   belongs_to :user
   belongs_to :shop_item
@@ -42,17 +42,17 @@ class ShopOrder < ApplicationRecord
   end
 
   aasm timestamps: true do # SAGA PATTERN TIME BABEY
-                                              # NORMAL STATES: steps we'd like orders to take on their journeys
+    # NORMAL STATES: steps we'd like orders to take on their journeys
 
     state :pending, initial: true             # submitted, awaiting shoperations rubber-stampage
     state :awaiting_periodical_fulfillment    # waiting for one of:
-                                              # - shop ops to order something from amazon or smth
-                                              # - nightly warehouse coalesce job
-                                              # - next minuteman run
-                                              # - other "approved but waiting state"
+    # - shop ops to order something from amazon or smth
+    # - nightly warehouse coalesce job
+    # - next minuteman run
+    # - other "approved but waiting state"
     state :fulfilled                          # we did it reddit! nora lives another day
 
-                                              # EXCEPTION STATES: sometimes things happen.
+    # EXCEPTION STATES: sometimes things happen.
 
     state :rejected                           # shoperations rejected an order
     state :in_verification_limbo              # special case for free stickers
@@ -72,7 +72,7 @@ class ShopOrder < ApplicationRecord
 
     event :mark_fulfilled do
       transitions to: :fulfilled
-      before do |external_ref=nil|
+      before do |external_ref = nil|
         self.external_ref = external_ref
       end
     end
@@ -88,6 +88,5 @@ class ShopOrder < ApplicationRecord
     event :user_was_verified do
       transitions from: :in_verification_limbo, to: :awaiting_periodical_fulfillment
     end
-
   end
 end
