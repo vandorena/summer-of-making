@@ -7,8 +7,11 @@
   </div>
 
   <div class="absolute top-4 right-4 z-20">
-    <a href="/auth/slack" class="btn-fancy text-white py-2 px-4 text-base md:text-lg flex items-center bg-gradient-to-br from-[#E06540] to-[#EC8153]">
-      Sign In!
+    <a href="/auth/slack" class="btn-fancy text-white py-2 px-4 text-base md:text-lg flex items-center justify-center gap-2 bg-gradient-to-br from-[#E06540] to-[#EC8153] rounded-lg shadow-lg hover:shadow-xl transition-all">
+      <span class="flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" viewBox="0 0 24 24"><path fill="currentColor" d="M13 21q-.425 0-.712-.288T12 20t.288-.712T13 19h6V5h-6q-.425 0-.712-.288T12 4t.288-.712T13 3h6q.825 0 1.413.588T21 5v14q0 .825-.587 1.413T19 21zm-1.825-8H4q-.425 0-.712-.288T3 12t.288-.712T4 11h7.175L9.3 9.125q-.275-.275-.275-.675t.275-.7t.7-.313t.725.288L14.3 11.3q.3.3.3.7t-.3.7l-3.575 3.575q-.3.3-.712.288T9.3 16.25q-.275-.3-.262-.712t.287-.688z"/></svg>
+        <span class="flex items-center h-6">Sign In!</span>
+      </span>
     </a>
   </div>
 
@@ -22,9 +25,9 @@
         <%= image_tag "mos.png", class: "-ml-16 lg:-ml-36" %>
 
         <h2 class="head-med text-2xl md:text-3xl text-white font-medium">
-          <span class="">Build stuff. </span>
+          <span class="">Build stuff.</span>
           <br class="hidden md:block"/>
-          <span class="ml-0 md:ml-16">Get stuff. </span>
+          <span class="ml-0 md:ml-16">Get stuff.</span>
           <br class="hidden md:block"/>
           <span class="font-bold ml-0 md:ml-32">Repeat.</span>
         </h2>
@@ -80,31 +83,31 @@
         <div class="text-center p-4 lg:p-8 animate-wave max-w-80 sm:max-w-96 md:max-w-80 lg:max-w-96 bg-size-[100%_100%] bg-center bg-no-repeat" style="background-image: url('<%= asset_path('card.png') %>');">
           <h3 class="head-med text-2xl font-bold mb-4 text-[#E06540]">Build Stuff</h3>
           <p class="font-['Fredoka',sans-serif] font-normal text-lg" style="color: #333;">
-            Websites, games, apps—ship personal coding projects of any kind to earn <span class="italic">shells<image src="/shell.png" class="inline-block mx-1 mb-1 w-5 h-5"></image></span>
+            Websites, games, apps—ship personal coding projects of any kind to earn <span class="italic">shells<img src="/shell.png" class="inline-block mx-1 mb-1 w-5 h-5" alt="shell"></span>
           </p>
         </div>
 
         <div class="text-center p-4 lg:p-8 animate-wave max-w-80 sm:max-w-96 md:max-w-80 lg:max-w-96 bg-size-[100%_100%] bg-center bg-no-repeat" style="background-image: url('<%= asset_path('card.png') %>'); animation-delay: 2s;">
           <h3 class="head-med text-2xl font-bold mb-4 text-[#E06540]">Get Stuff</h3>
           <p class="font-['Fredoka',sans-serif] font-normal text-lg" style="color: #333;">
-            Redeem your <span class="">shells<image src="/shell.png" class="inline-block mx-1 mb-1 w-5 h-5"></image></span> for Raspberry Pis, Framework Laptops, 3D printers, and dozens of other awesome prizes to power your next project.
+            Redeem your <span class="">shells<img src="/shell.png" class="inline-block mx-1 mb-1 w-5 h-5" alt="shell"></span> for Raspberry Pis, Framework Laptops, 3D printers, and dozens of other awesome prizes to power your next project.
           </p>
         </div>
 
         <div class="absolute mx-auto md:hidden block left-0">
-          <image src="/arc_arrow_top_bottom.png" class="relative max-h-40 sm:max-h-48 -left-4 sm:-left-16 aspect-auto rotate-180"></image>
+          <img src="/arc_arrow_top_bottom.png" class="relative max-h-40 sm:max-h-48 -left-4 sm:-left-16 aspect-auto rotate-180" alt="arrow">
         </div>
 
         <div class="absolute mx-auto md:hidden block right-0">
-          <image src="/arc_arrow_top_bottom.png" class="relative max-h-40 sm:max-h-48 -right-4 sm:-right-16 aspect-auto"></image>
+          <img src="/arc_arrow_top_bottom.png" class="relative max-h-40 sm:max-h-48 -right-4 sm:-right-16 aspect-auto" alt="arrow">
         </div>
 
         <div class="absolute mx-auto -top-8 hidden md:block">
-          <image src="/arc_arrow_left_right.png" class="max-w-48 aspect-auto"></image>
+          <img src="/arc_arrow_left_right.png" class="max-w-48 aspect-auto" alt="arrow">
         </div>
 
         <div class="absolute mx-auto -bottom-8 hidden md:block">
-          <image src="/arc_arrow_left_right.png" class="max-w-48 aspect-auto rotate-180"></image>
+          <img src="/arc_arrow_left_right.png" class="max-w-48 aspect-auto rotate-180" alt="arrow">
         </div>
       </div>
     </div>
