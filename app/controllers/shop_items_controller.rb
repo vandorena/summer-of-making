@@ -5,7 +5,7 @@ class ShopItemsController < ApplicationController
   before_action :require_admin!, except: [ :index ]
 
   def index
-    @shop_items = ShopItem.order(cost: :asc)
+    @shop_items = ShopItem.order(ticket_cost: :asc)
     @shop_item_types = available_shop_item_types
   end
 

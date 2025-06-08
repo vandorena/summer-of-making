@@ -25,7 +25,7 @@ module ShopItemsHelper
       safe_join([
                   content_tag(:div, class: "item", style: "display: flex; flex-direction: column;") do
                     tag = if field_type == :image
-                            image_tag item.image.variant(:thumb)
+                            image_tag item.image.variant(:thumb) if item.image.attached?
                     else
                             content_tag(:p, "#{display_prefix}#{item.public_send(field_name)}", class: style)
                     end
