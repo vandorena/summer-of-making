@@ -68,6 +68,10 @@
         • <%= pluralize(devlog.project.stonks.count, 'stonker') %>
         </span>
         <% end %>
+
+        <span class="text-gray-600 text-xs sm:text-sm 2xl:text-base"> • </span>
+        <% position = devlog.project.devlogs.where("created_at < ?", devlog.created_at).count + 1 %>
+        <span class="text-gray-600 text-xs sm:text-sm 2xl:text-base"><%= position.ordinalize %> devlog</span>
       </div>
     </div>
   </div>
