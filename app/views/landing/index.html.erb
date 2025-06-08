@@ -49,7 +49,7 @@
   </div>
 </div>
 
-<div class="py-20 px-4 sm:px-8 bg-gradient-to-br from-[#F3ECD8] via-[#E4DCC6] to-[#D4C4A8]">
+<div class="py-20 px-4 sm:px-8 bg-gradient-to-br from-[#F3ECD8] via-[#E4DCC6] to-[#D4C4A8]" data-controller="video-modal">
   <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-10">
     <div class="md:w-1/2 w-full mb-8 md:mb-0">
       <p class="font-['Fredoka',sans-serif] font-normal text-xl opacity-80 mb-4 text-[#8B4513]">
@@ -59,15 +59,40 @@
         The Virgin Islands are mountain peaks rising from the Caribbean ocean floor.[6] The trade winds (prevailing east-to-west winds near Earth's equator) dominate its climate and local weather, with stronger winds and less rain during winter.[7]
       </p>
     </div>
-    <div class="card-box relative w-full md:w-1/2 max-w-3xl mx-auto rounded-2xl overflow-hidden shadow-2xl bg-white/95 aspect-[16/9]">
-      <iframe
-        class="absolute inset-0 w-full h-full"
-        src="https://streamable.com/e/ay62z2"
-        title="Epic Maker Tutorial"
-        frameborder="0"
-        allow="fullscreen"
-        allowfullscreen>
-      </iframe>
+    <div class="card-box relative w-full md:w-1/2 max-w-3xl mx-auto rounded-2xl overflow-hidden shadow-2xl bg-white/95 aspect-[16/9] cursor-pointer hover:scale-[1.02] transition-transform duration-300" 
+         data-action="click->video-modal#open" 
+         >
+      <img
+        class="absolute inset-0 w-full h-full object-cover"
+        src="https://files.catbox.moe/w9c4bz.png"
+        alt="Video Preview Thumbnail"
+      />
+      <div class="absolute inset-0 flex items-center justify-center bg-black/20">
+        <div class="bg-white/90 rounded-full p-2 shadow-lg hover:bg-white hover:scale-110 transition-all duration-300">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-[#E06540]"  viewBox="0 0 24 24"><path fill="currentColor" d="M8 17.175V6.825q0-.425.3-.713t.7-.287q.125 0 .263.037t.262.113l8.15 5.175q.225.15.338.375t.112.475t-.112.475t-.338.375l-8.15 5.175q-.125.075-.262.113T9 18.175q-.4 0-.7-.288t-.3-.712"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div data-video-modal-target="modal" class="hidden fixed inset-0 z-50 bg-black/80" data-action="click->video-modal#closeBackground">
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+      <div class="relative w-full max-w-6xl aspect-video bg-black rounded-lg overflow-hidden shadow-2xl" data-video-modal-target="container">
+        <button class="absolute top-4 right-4 z-10 text-white hover:text-gray-300 transition-colors p-2 cursor-pointer bg-black/50 hover:bg-black/70 rounded-full backdrop-blur-sm" data-action="click->video-modal#close">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+        <iframe
+          data-video-modal-target="iframe"
+          class="w-full h-full"
+          src=""
+          title="Video Preview"
+          style="border:none; width:100%; height:100%; position:absolute; left:0px; top:0px; overflow:hidden;"
+          allow="fullscreen;autoplay"
+          allowfullscreen>
+        </iframe>
+      </div>
     </div>
   </div>
 </div>
