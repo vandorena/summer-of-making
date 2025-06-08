@@ -211,6 +211,10 @@ class User < ApplicationRecord
     5 - staked_projects_count
   end
 
+  def balance
+    payouts.sum(&:amount)
+  end
+
   # Avo backtraces
   def is_developer?
     slack_id == "U03DFNYGPCN"
