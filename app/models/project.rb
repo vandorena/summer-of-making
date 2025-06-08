@@ -123,7 +123,7 @@ class Project < ApplicationRecord
     {
       devlogs: {
         met: devlogs_since_last_ship.count >= 1,
-        message: "You must have at least one devlog before shipping"
+        message: "You must have at least one devlog #{ship_events.count > 0 ? "since the last ship" : ""}"
       },
       repo_link: {
         met: repo_link.present?,
