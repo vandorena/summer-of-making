@@ -5,14 +5,16 @@ module Admin
     include Pagy::Backend
     before_action :set_shop_order, except: [:index, :pending]
 
-    SCOPE = ShopOrder.all.includes(:user, :shop_item).order(created_at: :desc)
+    def scope
+      ShopOrder.all.includes(:user, :shop_item).order(created_at: :desc)
+    end
 
     def index
-      @pagy, @shop_orders = pagy(SCOPE)
+      @pagy, @shop_orders = pagy(scope)
     end
 
     def pending
-      @pagy, @shop_orders = pagy(SCOPE.pending)
+      @pagy, @shop_orders = pagy(scope.pending)
       render :index, locals: { title: "pending " }
     end
 
