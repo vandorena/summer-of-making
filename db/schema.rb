@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema[8.0].define(version: 2025_06_08_115805) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_08_150835) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -124,6 +123,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_08_115805) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_magic_links_on_user_id"
+  end
+
+  create_table "payouts", force: :cascade do |t|
+    t.decimal "amount", precision: 6, scale: 2
+    t.string "payable_type"
+    t.bigint "payable_id"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["payable_type", "payable_id"], name: "index_payouts_on_payable"
+    t.index ["user_id"], name: "index_payouts_on_user_id"
   end
 
   create_table "project_follows", force: :cascade do |t|
