@@ -22,13 +22,14 @@
   --font-steven: "Steven", "sans-serif";
   --font-dynapuff: "DynaPuff", "sans-serif";
   --font-pagaki: "Pagaki", "sans-serif";
-  --color-forest: #508364;
-  --color-warm: #e6c58e;
-  --color-bread: #f9e8c7;
-  --color-vintage-red: #b94d3a;
-  --color-nice-blue: #4a7ba7; /* blue is my favirite color, ty */
-  --color-soft-bone: #f5d9a5;
-  --color-saddle-taupe: #ac6d3c;
+
+  --color-forest: hsl(143.53, 24.17%, 41.37%);
+  --color-warm: hsl(37.5, 63.77%, 72.94%);
+  --color-bread: hsl(39.6, 80.65%, 87.84%);
+  --color-vintage-red: hsl(8.98, 52.26%, 47.65%);
+  --color-nice-blue: hsl(208.39, 38.59%, 47.25%);
+  --color-soft-bone: hsl(39, 80%, 80.39%);
+  --color-saddle-taupe: hsl(26.25, 48.28%, 45.49%);
 
   /* These colors are in HSL not in Hex. Please use HSL */
   --color-burn-sienna: hsl(20, 60%, 50%);
