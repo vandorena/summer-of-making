@@ -1,0 +1,43 @@
+<div class="h-full flex flex-col">
+  <%# Top parchment header %>
+  <div class="w-full flex">
+    <div>
+      <%= inline_svg("container/container-tl.svg", class: "-mr-[1px]") %>
+    </div>
+
+    <%= inline_svg("container/container-tm.svg", class: "w-full -mr-[1px]", preserve_aspect_ratio: "none") %>
+  
+    <div>
+      <%= inline_svg("container/container-tr.svg") %>
+    </div>
+  </div>
+
+  <div class="flex -mt-[1px]">
+    <div class="h-full w-[46px] ml-[1px]">
+      <%= inline_svg("container/container-ml.svg") %>
+    </div>
+
+    <%# Actual content here! %>
+    <div class="bg-[#e6d4be] w-full">
+        <%= yield %>
+    </div>
+
+    <div class="h-full w-[46px]">
+      <%= inline_svg("container/container-mr.svg") %>
+    </div>
+  </div>
+
+  <%# Bottom parchment header %>
+  <div class="w-full flex ml-[1px]">
+    <div>
+      <%= inline_svg("container/container-bl.svg", class: "-mr-[1px]") %>
+    </div>
+
+    <%= inline_svg("container/container-bm.svg", class: "w-full -mr-[1px]", preserve_aspect_ratio: "none") %>
+  
+    <div>
+      <%= inline_svg("container/container-br.svg") %>
+    </div>
+  </div>
+
+</div>
