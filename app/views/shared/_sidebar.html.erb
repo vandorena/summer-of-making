@@ -26,11 +26,6 @@
         <% end %>
       </li>
       <li class="flex justify-start">
-        <%= link_to gallery_path, class: "px-4 py-2 block #{'organic-card' if current_page?(gallery_path)}" do %>
-          <span data-sidebar-target="content" class="ml-2">Gallery</span>
-        <% end %>
-      </li>
-      <li class="flex justify-start">
         <%= link_to my_projects_path, class: "px-4 py-2 block #{'organic-card' if current_page?(my_projects_path) || (controller_name == 'projects' && action_name == 'show' && @project&.user == current_user)}" do %>
           <span data-sidebar-target="content" class="ml-2">My Projects</span>
         <% end %>
