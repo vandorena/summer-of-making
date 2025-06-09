@@ -1,19 +1,27 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["emailInput"];
+  static targets = ["emailInput", "msg"];
+
+  connect() {
+    this.emailInputTarget.addEventListener("input", () => {
+      this.hideError();
+    });
+  }
 
   startWizard() {
     const x = this.emailInputTarget.value.trim();
 
+    this.hideError();
+
     if (!x) {
-      alert("pls enter your email");
+      this.error("pls enter your email");
       this.emailInputTarget.focus();
       return;
     }
 
     if (!this.isValidEmail(x)) {
-      alert("pls enter a real email");
+      this.error("pls enter a valid email address");
       this.emailInputTarget.focus();
       return;
     }
@@ -37,5 +45,18 @@ export default class extends Controller {
   isValidEmail(a) {
     const b = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return b.test(a);
+  }
+
+  error(message) {
+    if (this.hasMsgTarget) {
+      this.msgTarget.textContent = message;
+      this.msgTarget.classList.remove("hidden");
+    }
+  }
+
+  hideError() {
+    if (this.hasMsgTarget) {
+      this.msgTarget.classList.add("hidden");
+    }
   }
 }
