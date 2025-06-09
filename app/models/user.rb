@@ -102,27 +102,8 @@ class User < ApplicationRecord
     )
   end
 
-  # Checks if the User is Eligible and ensures YSWS DB is the source of truth for FN, MN, LN
-  # def self.check_eligibility(slack_id)
-  #     user_table = Airrecord.table(ENV["AIRTABLE_API_KEY"], ENV["AIRTABLE_BASE_ID"], "Users")
-  #     airtable_records = user_table.all(filter: "{Hack Club Slack ID} = '#{slack_id}'")
-
-  #     if airtable_records.empty?
-  #         raise StandardError, "Please verify at https://forms.hackclub.com/eligibility"
-  #     end
-
-  #     valid_statuses = [ "Eligible L1", "Eligible L2" ]
-  #     eligible_record = airtable_records.find { |record| valid_statuses.include?(record.fields["Verification Status"]) }
-
-  #     unless eligible_record
-  #         raise StandardError, "You are not eligible. If you think this is an error, please DM @Bartosz on Slack."
-  #     end
-
-  #     eligible_record
-  # end
-
   def self.check_hackatime(slack_id)
-    response = Faraday.get("https://hackatime.hackclub.com/api/summary?user=#{slack_id}&from=2025-05-16&to=#{Time.zone.today.strftime('%Y-%m-%d')}")
+    response = Faraday.get("https://hackatime.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects")
     result = JSON.parse(response.body)
     return unless result["user_id"] == slack_id
 

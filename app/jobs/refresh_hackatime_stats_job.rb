@@ -7,12 +7,7 @@ class RefreshHackatimeStatsJob < ApplicationJob
     user = User.find_by(id: user_id)
     return unless user&.has_hackatime
 
-    query_params = { user: user.slack_id }
-    query_params[:from] = options[:from].to_s if options[:from]
-    query_params[:to] = options[:to].to_s if options[:to]
-
-    uri = URI("https://hackatime.hackclub.com/api/summary")
-    uri.query = URI.encode_www_form(query_params)
+    uri = URI("https://hackatime.hackclub.com/api/v1/users/#{user.slack_id}/stats?features=projects")
 
     response = Faraday.get(uri.to_s)
     return unless response.success?
