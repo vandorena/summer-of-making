@@ -16,8 +16,6 @@
 
   <%= image_tag item.image.variant(:thumb) if item.image.attached? %>
 
-  <%= image_field_editable(item, :image) %>
-
   <%= number_field_editable(item, :ticket_cost, display_prefix: "🐚") %>
 
   <% admin_tool do %>
