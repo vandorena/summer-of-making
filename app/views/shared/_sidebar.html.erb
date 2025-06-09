@@ -1,7 +1,9 @@
 <%= render "shared/container" do %>
 
-<div class="h-full bg-[#F3ECD8] flex flex-col transition-all duration-300 text-black rounded-tr-3xl rounded-br-3xl overflow-hidden"
-     data-sidebar-target="sidebar">
+<div
+  class="h-full bg-[#F3ECD8] flex flex-col transition-all duration-300 text-black rounded-tr-3xl rounded-br-3xl overflow-hidden"
+  data-sidebar-target="sidebar"
+>
   <div class="flex justify-between items-center p-4" data-sidebar-target="topContainer">
     <div class="cursor-pointer">
       <%= link_to payouts_path, class: "flex items-center gap-2 ml-4" do %>
@@ -9,12 +11,19 @@
         <p class="text-[#fad85c] text-xl"><%= current_user.balance %></p>
       <% end %>
     </div>
-    <button id="collapse-sidebar" class="hover:scale-110 transition-transform cursor-pointer"
-           data-action="click->sidebar#toggle">
-        <%= inline_svg "chevrom-yessa.svg", class: "2xl:h-12 2xl:w-12 transition-transform duration-300 h-10 w-10",
-                                       data: { 'sidebar-target': 'collapseIcon' } %>
+
+    <button id="collapse-sidebar"
+      class="hover:scale-110 transition-transform cursor-pointer"
+      data-action="click->sidebar#toggle"
+    >
+        <%=
+          inline_svg "chevrom-yessa.svg",
+            class: "2xl:h-12 2xl:w-12 transition-transform duration-300 h-10 w-10",
+            data: { 'sidebar-target': 'collapseIcon' }
+        %>
     </button>
   </div>
+
   <nav class="flex-1 px-4 flex items-center text-justify text-3xl 2xl:text-4xl">
     <ul class="space-y-4 w-full">
       <li class="flex justify-start">
@@ -22,26 +31,31 @@
           <span data-sidebar-target="content" class="ml-2">Signpost</span>
         <% end %>
       </li>
+
       <li class="flex justify-start">
         <%= link_to explore_path, class: "px-4 py-2 block #{'organic-card' if current_page?(explore_path)}" do %>
           <span data-sidebar-target="content" class="ml-2">Explore</span>
         <% end %>
       </li>
+
       <li class="flex justify-start">
         <%= link_to my_projects_path, class: "px-4 py-2 block #{'organic-card' if current_page?(my_projects_path) || (controller_name == 'projects' && action_name == 'show' && @project&.user == current_user)}" do %>
           <span data-sidebar-target="content" class="ml-2">My Projects</span>
         <% end %>
       </li>
+
       <li class="flex justify-start">
         <%= link_to new_vote_path, class: "px-4 py-2 block #{'organic-card' if current_page?(new_vote_path)}" do %>
           <span data-sidebar-target="content" class="ml-2">Vote</span>
         <% end %>
       </li>
+
       <li class="flex justify-start">
         <%= link_to shop_path, class: "px-4 py-2 block #{'organic-card' if current_page?(shop_path)}" do %>
           <span data-sidebar-target="content" class="ml-2">Shop</span>
         <% end %>
       </li>
+      
       <% admin_tool do %>
         <li class="flex justify-start">
           <%= link_to admin_root_path, class: "px-4 py-2 block" do %>
@@ -69,4 +83,3 @@
 </div>
 
 <% end %>
-
