@@ -21,6 +21,14 @@ class ProjectsController < ApplicationController
       # end
 
       @show_create_project = true if @projects.empty?
+    elsif params[:tab] == "gallery"
+      @projects = Project.includes(:user)
+                         .order(rating: :asc)
+
+      @projects = @projects.sort_by do |project|
+        weight = rand + (project.devlogs.count.positive? ? 1.5 : 0)
+        -weight
+      end
     elsif params[:tab] == "following"
       @followed_projects = current_user.followed_projects.includes(:user)
       @recent_devlogs = Devlog.joins(:project)
@@ -46,6 +54,12 @@ class ProjectsController < ApplicationController
                             .order(created_at: :desc)
 
       @pagy, @recent_devlogs = pagy(devlogs_query, items: 5)
+      
+      @projects = Project.includes(:user).order(rating: :asc)
+      @projects = @projects.sort_by do |project|
+        weight = rand + (project.devlogs.count.positive? ? 1.5 : 0)
+        -weight
+      end
     end
   end
 
