@@ -7,6 +7,7 @@ class ProjectsController < ApplicationController
                 only: %i[show edit update follow unfollow ship stake_stonks unstake_stonks destroy]
   before_action :check_if_shipped, only: %i[edit update]
   before_action :authorize_user, only: [ :destroy ]
+  before_action :require_hackatime, only: [ :create ]
 
   def index
     if params[:action] == "my_projects"
@@ -504,6 +505,12 @@ class ProjectsController < ApplicationController
   # end
 
   private
+
+  def require_hackatime
+    return if current_user&.has_hackatime?
+
+    redirect_to my_projects_path, alert: "You must link your HackaTime account before creating a project. Please go to Settings to link your account."
+  end
 
   def set_project
     @project = Project.includes(:user, devlogs: :user).find(params[:id])
