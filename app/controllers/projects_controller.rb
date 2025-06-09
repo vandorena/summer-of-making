@@ -54,7 +54,7 @@ class ProjectsController < ApplicationController
                             .order(created_at: :desc)
 
       @pagy, @recent_devlogs = pagy(devlogs_query, items: 5)
-      
+
       @projects = Project.includes(:user).order(rating: :asc)
       @projects = @projects.sort_by do |project|
         weight = rand + (project.devlogs.count.positive? ? 1.5 : 0)
