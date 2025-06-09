@@ -1,0 +1,22 @@
+<div class="flex flex-col justify-between items-start mb-4 md:mb-6 px-4 md:px-8 pt-2 md:pt-8 pb-2">
+  <h1 class="text-4xl sm:text-5xl mb-0">Your payouts</h1>
+
+  <ul class="flex flex-col gap-2 mt-4">
+    <% @payouts.each do |payout| %>
+      <li class="bg-[#F3ECD8] rounded-xl border-5 border-[#E4DCC6] p-4">
+        <p class="flex items-center">
+          <span class="inline-flex items-center gap-2">
+            <img src="/shell.png" alt="shell" width=32 />
+            <span class="text-[#BEA234] font-bold"><%= payout.amount %>&nbsp;</span>
+          </span>
+          <%= time_ago_in_words payout.created_at %> ago on <%= indefinite_articlerize payout.payable_type.underscore.humanize.downcase %>
+
+          <% payable = payout.payable_type.constantize.find(payout.payable_id) %>
+          <% if payable.is_a? ShipEvent %>
+              <span>&nbsp;for <%= link_to "project #{payable.project.title}", project_path(payable.project), class: "underline" %></span>
+          <% end %>
+        </p>
+      </li>
+    <% end %>
+  </ul>
+</div>
