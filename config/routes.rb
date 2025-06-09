@@ -167,6 +167,8 @@
 #                  avo_private_design GET    /avo_private/design(.:format)                                                                      avo/private#design
 
 Rails.application.routes.draw do
+  get "signpost/index"
+  get "signpost/show"
   mount_avo
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
