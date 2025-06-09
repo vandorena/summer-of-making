@@ -252,6 +252,8 @@ Rails.application.routes.draw do
 
   post "tutorial/complete_step", to: "tutorial_progress#complete_step"
 
+  get "/payouts", to: "payouts#index"
+
   # API routes
   namespace :api do
     namespace :v1 do
