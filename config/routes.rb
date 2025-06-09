@@ -188,8 +188,8 @@ Rails.application.routes.draw do
   get "/auth/failure", to: "sessions#failure"
   delete "/logout", to: "sessions#destroy", as: :logout
 
-  get "/magic-link", to: "sessions#magic_link", as: :magic_link
-  post "/explorpheus/magic-link", to: "magic_link#get_secret_magic_url"
+  get "/magic-link", to: "sessions#magic_link", as: :magic_link # For users signing in
+  post "/explorpheus/magic-link", to: "magic_link#get_secret_magic_url" # For the welcome bot to fetch the magic link.
 
   # Identity Vault routes
   get "users/identity_vault_callback", to: "users#identity_vault_callback", as: :identity_vault_callback
