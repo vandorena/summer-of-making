@@ -48,10 +48,10 @@
   </nav>
 
   <div class="flex flex-col m-4 gap-4">
-    <div class="flex items-center gap-2 ml-4">
+    <%= link_to payouts_path, class: "flex items-center gap-2 ml-4" do %>
       <img src="/shell.png" alt="shell" width=32 />
       <p class="text-[#BEA234] text-xl"><%= current_user.balance %></p>
-    </div>
+    <% end %>
 
     <div class="hover:scale-105 transition-transform p-4 flex items-center justify-between text-[#E06540] bg-[#E06540]/40 rounded-4xl" data-sidebar-target="logoutContainer">
       <div class="flex items-center">
