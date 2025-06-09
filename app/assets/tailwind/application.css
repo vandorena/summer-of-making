@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@import url('https://fonts.googleapis.com/css2?family=National+Park:wght@200..800&display=swap');
+
 @font-face {
   font-family: "Steven";
   font-weight: bold;
@@ -22,6 +24,7 @@
   --font-steven: "Steven", "sans-serif";
   --font-dynapuff: "DynaPuff", "sans-serif";
   --font-pagaki: "Pagaki", "sans-serif";
+  --font-national-park: "National Park", "sans-serif";
 
   --color-forest: hsl(143.53, 24.17%, 41.37%);
   --color-warm: hsl(37.5, 63.77%, 72.94%);
