@@ -1,8 +1,11 @@
-<div class="h-full bg-[#F3ECD8] flex flex-col transition-all duration-300 text-black"
+<div class="h-full bg-[#F3ECD8] flex flex-col transition-all duration-300 text-black rounded-tr-3xl rounded-br-3xl overflow-hidden"
      data-sidebar-target="sidebar">
   <div class="flex justify-between items-center p-4" data-sidebar-target="topContainer">
     <div class="cursor-pointer">
-      <%= link_to inline_svg("icon.svg", class: "2xl:h-12 2xl:w-12 h-10 w-10", data: { 'sidebar-target': 'icon' }), root_path %>
+      <%= link_to payouts_path, class: "flex items-center gap-2 ml-4" do %>
+        <img src="/shell.png" alt="shell" width=32>
+        <p class="text-[#fad85c] text-xl"><%= current_user.balance %></p>
+      <% end %>
     </div>
     <button id="collapse-sidebar" class="hover:scale-110 transition-transform cursor-pointer"
            data-action="click->sidebar#toggle">
@@ -10,7 +13,7 @@
                                        data: { 'sidebar-target': 'collapseIcon' } %>
     </button>
   </div>
-  <nav class="flex-1 px-4 flex items-center text-justify text-4xl 2xl:text-5xl">
+  <nav class="flex-1 px-4 flex items-center text-justify text-3xl 2xl:text-4xl">
     <ul class="space-y-4 w-full">
       <li class="flex justify-start">
         <%= link_to signpost_path, class: "px-4 py-2 block #{'organic-card' if current_page?(signpost_path)}" do %>
@@ -53,11 +56,6 @@
   </nav>
 
   <div class="flex flex-col m-4 gap-4">
-    <%= link_to payouts_path, class: "flex items-center gap-2 ml-4" do %>
-      <img src="/shell.png" alt="shell" width=32>
-      <p class="text-[#BEA234] text-xl"><%= current_user.balance %></p>
-    <% end %>
-
     <div class="hover:scale-105 transition-transform p-4 flex items-center justify-between text-[#E06540] bg-[#E06540]/40 rounded-4xl" data-sidebar-target="logoutContainer">
       <div class="flex items-center">
         <%= image_tag current_user.avatar, class: "h-12 w-12 rounded-full", data: { 'sidebar-target': 'avatar' } %>
