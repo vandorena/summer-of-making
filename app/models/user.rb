@@ -151,12 +151,15 @@ class User < ApplicationRecord
   end
 
   def refresh_hackatime_data_now
-    return unless has_hackatime?
-
     response = Faraday.get("https://hackatime.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects")
     return unless response.success?
 
     result = JSON.parse(response.body)
+    return unless result.dig("data", "status") == "ok"
+
+    unless has_hackatime?
+      update!(has_hackatime: true)
+    end
 
     stats = hackatime_stat || build_hackatime_stat
     stats.update(data: result, last_updated_at: Time.current)
