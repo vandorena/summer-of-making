@@ -10,6 +10,7 @@ export default class extends Controller {
     "logoutContainer",
     "topContainer",
     "mainContent",
+    "collapsedOverlay",
   ];
 
   connect() {
@@ -21,6 +22,10 @@ export default class extends Controller {
       this.expanded = false;
       if (this.hasCollapseIconTarget) {
         this.collapseIconTarget.classList.add("rotate-180");
+      }
+    } else {
+      if (this.hasCollapsedOverlayTarget) {
+        this.collapsedOverlayTarget.classList.add("hidden");
       }
     }
   }
@@ -53,14 +58,15 @@ export default class extends Controller {
       element.classList.add("hidden");
     });
 
-    // Hide icons and avatar
+    // Hide icons but keep avatar visible when collapsed
     this.iconTargets.forEach((element) => {
       element.classList.add("hidden");
     });
 
-    if (this.hasAvatarTarget) {
-      this.avatarTarget.classList.add("hidden");
-    }
+    // Don't hide the avatar when collapsed - we want to show just the profile picture
+    // if (this.hasAvatarTarget) {
+    //   this.avatarTarget.classList.add("hidden");
+    // }
 
     // Centre the top container
     if (this.hasTopContainerTarget) {
@@ -91,8 +97,15 @@ export default class extends Controller {
       element.classList.remove("hidden");
     });
 
-    if (this.hasAvatarTarget) {
-      this.avatarTarget.classList.remove("hidden");
+    // Avatar is already visible, no need to explicitly show it
+    // if (this.hasAvatarTarget) {
+    //   this.avatarTarget.classList.remove("hidden");
+    // }
+
+    // Hide collapsed overlay when expanded
+    if (this.hasCollapsedOverlayTarget) {
+      this.collapsedOverlayTarget.classList.add("hidden");
+      this.collapsedOverlayTarget.classList.remove("hidden");
     }
 
     if (this.hasTopContainerTarget) {
