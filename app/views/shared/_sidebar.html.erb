@@ -56,15 +56,15 @@
   </nav>
 
   <div class="flex flex-col m-4 gap-4">
-    <div class="hover:scale-105 transition-transform p-4 flex items-center justify-between text-[#E06540] bg-[#E06540]/40 rounded-4xl" data-sidebar-target="logoutContainer">
-      <div class="flex items-center">
-        <%= image_tag current_user.avatar, class: "h-12 w-12 rounded-full", data: { 'sidebar-target': 'avatar' } %>
-        <span class="text-xl underline ml-2" data-sidebar-target="content">@<%= current_user.display_name %></span>
+    <div class="group relative transition-all duration-300 p-4 flex items-center text-[#E06540] bg-[#E06540]/40 rounded-3xl overflow-hidden" data-sidebar-target="logoutContainer">
+      <div class="flex items-center w-full">
+        <%= image_tag current_user.avatar, class: "h-12 w-12 rounded-full flex-shrink-0", data: { 'sidebar-target': 'avatar' } %>
+        <span class="text-xl ml-3 whitespace-nowrap" data-sidebar-target="content"><%= current_user.display_name %></span>
       </div>
 
-      <div class="hover:scale-110 transition-transform cursor-pointer">
-        <%= button_to logout_path, method: :delete, class: "bg-transparent border-0 p-0 cursor-pointer" do %>
-          <p class="text-3xl font-bold">[></p>
+      <div class="absolute inset-0 bg-[#ecb59b] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer">
+        <%= button_to logout_path, method: :delete, class: "bg-transparent border-0 p-0 cursor-pointer hover:scale-110 transition-transform" do %>
+          <p class="text-3xl font-bold text-[#E06540]">Sign Out [></p>
         <% end %>
       </div>
     </div>
