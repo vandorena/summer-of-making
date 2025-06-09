@@ -62,8 +62,8 @@ class SignpostController < ApplicationController
       },
       {
         id: "my_projects",
-        title: "Create Your Projects",
-        description: "Set up your own projects and start building",
+        title: "My Projects",
+        description: "This is where you can see all your projects and create new ones.",
         path: "/projects",
         completed: tutorial_completed?("my_projects")
       },
