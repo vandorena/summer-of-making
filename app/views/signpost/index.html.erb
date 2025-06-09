@@ -103,13 +103,13 @@
                   </svg>
                   Completed
                 </div>
-                <a href="<%= signpost_path(reset: tutorial[:id]) %>" 
+                <a href="<%= signpost_path(reset: tutorial[:id]) %>"
                    class="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 text-center no-underline">
                   Replay
                 </a>
               </div>
             <% else %>
-              <a href="<%= tutorial[:path] %>" 
+              <a href="<%= tutorial[:path] %>"
                  class="w-full mt-2 inline-flex justify-center items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 text-center no-underline">
                 Start Tutorial
               </a>
@@ -151,7 +151,7 @@
               </p>
             </div>
             <% if announcement[:action_url] %>
-              <a href="<%= announcement[:action_url] %>" 
+              <a href="<%= announcement[:action_url] %>"
                  class="ml-4 inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                 Take Action
               </a>
@@ -166,7 +166,7 @@
     <!-- Collapsed below announcements -->
     <div class="mb-8">
       <div class="bg-white rounded-lg border">
-        <button type="button" 
+        <button type="button"
                 class="w-full flex items-center justify-between p-4 text-left focus:outline-none focus:ring-2 focus:ring-blue-500"
                 onclick="toggleTutorials()">
           <div class="flex items-center">
@@ -180,7 +180,7 @@
           </div>
           <%= inline_svg_tag "chevron-down.svg", class: "h-5 w-5 text-gray-400 transform transition-transform duration-200", id: "tutorials-chevron" %>
         </button>
-        
+
         <div id="tutorials-content" class="hidden border-t border-gray-200 p-4">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <% @tutorials.each do |tutorial| %>
@@ -203,7 +203,7 @@
                     </svg>
                     Completed
                   </div>
-                  <a href="<%= signpost_path(reset: tutorial[:id]) %>" 
+                  <a href="<%= signpost_path(reset: tutorial[:id]) %>"
                      class="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 text-center no-underline">
                     Replay
                   </a>
@@ -219,7 +219,7 @@
       function toggleTutorials() {
         const content = document.getElementById('tutorials-content');
         const chevron = document.getElementById('tutorials-chevron');
-        
+
         if (content.classList.contains('hidden')) {
           content.classList.remove('hidden');
           chevron.classList.add('rotate-180');

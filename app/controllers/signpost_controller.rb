@@ -3,7 +3,7 @@ class SignpostController < ApplicationController
 
   def index
     @user = current_user
-    
+
     if params[:reset].present? && @user&.tutorial_progress
       @user.tutorial_progress.reset_step!(params[:reset])
 
@@ -11,7 +11,7 @@ class SignpostController < ApplicationController
       tutorial_path = tutorial&.[](:path) || signpost_path
       redirect_to tutorial_path, notice: "Tutorial reset! You can now replay the #{params[:reset].humanize} tutorial."
     end
-    
+
     @account_status = build_account_status
     @announcements = get_announcements
     @tutorials = get_tutorials
@@ -42,7 +42,7 @@ class SignpostController < ApplicationController
       type: "info",
       created_at: Time.now
     }
-    
+
     announcements
   end
 
