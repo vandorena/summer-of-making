@@ -58,8 +58,9 @@
     </div>
     <div class="card-box relative w-full md:w-1/2 max-w-3xl mx-auto rounded-2xl overflow-hidden shadow-2xl bg-white/95 aspect-[16/9] cursor-pointer hover:scale-[1.02] transition-transform duration-300" data-action="click->video-modal#open">
       <img
-        class="absolute inset-0 w-full h-full object-cover"
-        src="https://files.catbox.moe/w9c4bz.png"
+        id="thumb"
+        class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
+        src="https://files.catbox.moe/o8g880.png"
         alt="Video Preview Thumbnail">
       <div class="absolute inset-0 flex items-center justify-center bg-black/20">
         <div class="bg-white/90 rounded-full p-2 shadow-lg hover:bg-white hover:scale-110 transition-all duration-300">
@@ -67,6 +68,21 @@
         </div>
       </div>
     </div>
+    <script>
+      (function() {
+        const i = document.getElementById('thumb');
+        if (!i) return;
+        const a = new Image();
+        a.onload = function() {
+          i.style.opacity = '0';
+          setTimeout(() => {
+            i.src = a.src;
+            i.style.opacity = '1';
+          }, 250);
+        };
+        a.src = 'https://files.catbox.moe/ys2h7s.webp';
+      })();
+    </script>
   </div>
 
   <div data-video-modal-target="modal" class="hidden fixed inset-0 z-50 bg-black/80" data-action="click->video-modal#closeBackground">
