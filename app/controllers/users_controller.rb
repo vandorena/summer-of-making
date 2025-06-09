@@ -54,6 +54,23 @@ class UsersController < ApplicationController
     redirect_to current_user.identity_vault_oauth_link(identity_vault_callback_url), allow_other_host: true
   end
 
+  def hackatime_auth_redirect
+    redirect_to root_path, notice: "huh?" if current_user.has_hackatime?
+    res = Faraday.new do |f|
+      f.request :url_encoded
+      f.response :json, parser_options: { symbolize_names: true }
+      f.headers['Authorization'] = "Bearer #{Rails.application.credentials.dig(:hackatime, :internal_key)}"
+    end
+           .post(
+             "https://hackatime.hackclub.com/api/internal/can_i_have_a_magic_link_for/#{current_user.slack_id}",
+             {
+               email: current_user.email,
+             }
+           ).body
+    pp res
+    redirect_to res[:magic_link] || root_path, allow_other_host: true
+  end
+
   private
 
   def authenticate_api_key
