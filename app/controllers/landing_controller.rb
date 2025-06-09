@@ -179,6 +179,24 @@ class LandingController < ApplicationController
         image: "https://files.catbox.moe/h7vt5n.png"
       }
     ]
+
+    @prizes = @prizes.map do |prize|
+      hours =
+        if prize[:time].to_s.include?(">500")
+          9999
+        elsif prize[:time].to_s =~ /([0-9]+)/
+          prize[:time].to_s.include?("~") ? $1.to_i : $1.to_i
+        else
+          0
+        end
+      prize.merge(
+        numeric_hours: hours,
+        display_time: hours >= 500 ? ">500 hours" : prize[:time],
+        random_transform: "rotate(#{rand(-3..3)}deg) scale(#{(rand(97..103).to_f/100).round(2)}) translateY(#{rand(-8..8)}px)"
+      )
+    end
+
+    @prizes = @prizes.sort_by { |p| p[:numeric_hours] }
   end
 
   def sign_up
