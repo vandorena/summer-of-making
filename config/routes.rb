@@ -231,9 +231,16 @@ Rails.application.routes.draw do
   get "devlogs", to: "devlogs#index"
   resources :votes, only: [ :new, :create ]
 
-
-  resources :shop_items, except: [ :index ]
-  get "/shop", to: "shop_items#index"
+  scope :shop do
+    get "/", to: "shop_items#index", as: :shop
+    resources :shop_items, except: [ :index ], path: :items do
+      member do
+        get :buy, to: "shop_orders#new", as: :order
+        post :buy, to: "shop_orders#create", as: :checkout
+      end
+    end
+    resources :shop_orders, path: :orders, except: %i[edit update new]
+  end
 
   match "/404", to: "errors#not_found", via: :all
   match "/500", to: "errors#internal_server_error", via: :all
@@ -277,7 +284,7 @@ Rails.application.routes.draw do
 
   namespace :admin do
     get "/", to: "static_pages#index", as: :root
-    resources :users, only: [] do
+    resources :users, only: [ :index, :show ] do
       member do
         post :internal_notes
       end
