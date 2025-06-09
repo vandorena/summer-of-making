@@ -195,6 +195,8 @@ Rails.application.routes.draw do
   get "users/identity_vault_callback", to: "users#identity_vault_callback", as: :identity_vault_callback
   get "users/link_identity_vault", to: "users#link_identity_vault", as: :link_identity_vault
 
+  get "users/hackatime_auth_redirect", to: "users#hackatime_auth_redirect", as: :hackatime_auth_redirect
+
   # Dashboard
   # get "dashboard", to: "dashboard#index"
 
