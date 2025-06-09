@@ -2,6 +2,7 @@
 
 require 'net/http'
 require 'json'
+require 'open-uri'
 
 # Airtable data import
 puts "Loading Airtable data..."
@@ -32,38 +33,33 @@ begin
 
     puts "Found #{records.count} records in Airtable"
 
-    # Show available fields from first record for debugging
-    if records.any?
-    puts "Available fields in first record: #{records.first['fields'].keys.inspect}"
-    end
-
     records.each do |record|
-    fields = record['fields']
+      fields = record['fields']
 
-    name_field = fields['Name'] || fields['name'] || fields['Title'] || fields['title'] || fields['Item Name']
+      name_field = fields['Name'] || fields['name'] || fields['Title'] || fields['title'] || fields['Item Name']
 
-    unless name_field.present?
-      puts "  ⚠️  Skipping record - no name field found"
+      unless name_field.present?
+        puts "  ⚠️  Skipping record - no name field found"
         next
-    end
+      end
 
       item_type = if fields['agh_skus'].present?
                     'ShopItem::WarehouseItem'
-      elsif fields['hcb_grant_merchants'].present? || fields['hcb_grant_amount_cents'].present?
+                  elsif fields['hcb_grant_merchants'].present? || fields['hcb_grant_amount_cents'].present?
                     'ShopItem::HCBGrant'
-      elsif fields['hq_mail_item_description'].present?
+                  elsif fields['hq_mail_item_description'].present?
                     'ShopItem::HQMailItem'
-      elsif [ 'third_party_physical', 'special_fulfillment' ].include?(fields['fulfillment_type'])
+                  elsif ['third_party_physical', 'special_fulfillment'].include?(fields['fulfillment_type'])
                     'ShopItem::SpecialFulfillmentItem'
-      else
+                  else
                     puts "  ❌ ERROR: Cannot determine type for #{name_field} - no identifying fields found"
                     next
       end
 
       existing_item = ShopItem.find_by(name: name_field)
       if existing_item
-        puts "  ⏭️  Skipped existing: #{existing_item.name}"
-        next
+        puts "  🗑️  Deleting existing: #{existing_item.name}"
+        existing_item.destroy
       end
 
       shop_item = ShopItem.create(name: name_field) do |item|
@@ -74,6 +70,16 @@ begin
         item.usd_cost = fields['unit_cost']&.to_f || fields['fair_market_value']&.to_f || 0
         item.hacker_score = fields['hacker_score']&.to_i || 0
         item.requires_black_market = false
+
+        if fields['image_url'].present?
+          begin
+            image_uri = URI.parse(fields['image_url'])
+            downloaded_image = image_uri.open
+            item.image.attach(io: downloaded_image, filename: File.basename(image_uri.path))
+          rescue => e
+            puts "    ⚠️  Could not download image for #{name_field}: #{e.message}"
+          end
+        end
 
         # Set type-specific fields
         if item_type == 'ShopItem::WarehouseItem' && fields['agh_skus'].present?
