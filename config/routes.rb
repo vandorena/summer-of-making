@@ -167,8 +167,6 @@
 #                  avo_private_design GET    /avo_private/design(.:format)                                                                      avo/private#design
 
 Rails.application.routes.draw do
-  get "signpost/index"
-  get "signpost/show"
   mount_avo
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -207,6 +205,8 @@ Rails.application.routes.draw do
   get "my_projects", to: "projects#my_projects"
   post "check_link", to: "projects#check_link"
   get "check_github_readme", to: "projects#check_github_readme"
+  get "signpost", to: "signpost#index"
+  get "signpost/show"
 
   # Global timer session check - must be before projects resource
   get "timer_sessions/active", to: "timer_sessions#global_active"
