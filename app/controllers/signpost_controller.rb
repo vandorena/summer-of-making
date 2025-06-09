@@ -83,7 +83,7 @@ class SignpostController < ApplicationController
         description: "Participate in the community by voting on projects",
         difficulty: "beginner",
         estimated_time: "like 1 sec dude",
-        path: "/vote",
+        path: "/vote/new",
         completed: tutorial_completed?("vote")
       },
       {
