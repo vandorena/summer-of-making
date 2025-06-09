@@ -104,7 +104,7 @@ class User < ApplicationRecord
 
   def self.check_hackatime(slack_id)
     response = Faraday.get("https://hackatime.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects")
-    result = JSON.parse(response.body)
+    result = JSON.parse(response.body)&.dig("data")
     return unless result["user_id"] == slack_id
 
     user = User.find_by(slack_id: slack_id)
