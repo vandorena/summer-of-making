@@ -43,8 +43,6 @@ class SignpostController < ApplicationController
         id: "signpost",
         title: "This is the signpost!",
         description: "This is where you can see all the announcements and stuff. It's also where you can see your progress and complete the tutorials and post tutorials this'll serve as your dashboard. (and you can restart tutorials anytime you want)",
-        difficulty: "beginner",
-        estimated_time: "like 1 sec dude",
         path: "/signpost",
         completed: tutorial_completed?("signpost")
       },
@@ -52,8 +50,6 @@ class SignpostController < ApplicationController
         id: "explore",
         title: "Explore Projects",
         description: "Discover amazing projects from the community",
-        difficulty: "beginner",
-        estimated_time: "like 1 sec dude",
         path: "/explore",
         completed: tutorial_completed?("explore")
       },
@@ -61,8 +57,6 @@ class SignpostController < ApplicationController
         id: "gallery",
         title: "Browse Gallery",
         description: "Check out the project gallery and get inspired",
-        difficulty: "beginner",
-        estimated_time: "like 1 sec dude",
         path: "/gallery",
         completed: tutorial_completed?("gallery")
       },
@@ -70,8 +64,6 @@ class SignpostController < ApplicationController
         id: "my_projects",
         title: "Create Your Projects",
         description: "Set up your own projects and start building",
-        difficulty: "beginner",
-        estimated_time: "like 1 sec dude",
         path: "/projects",
         completed: tutorial_completed?("my_projects")
       },
@@ -79,8 +71,6 @@ class SignpostController < ApplicationController
         id: "vote",
         title: "Vote on Projects",
         description: "Participate in the community by voting on projects",
-        difficulty: "beginner",
-        estimated_time: "like 1 sec dude",
         path: "/vote/new",
         completed: tutorial_completed?("vote")
       },
@@ -88,8 +78,6 @@ class SignpostController < ApplicationController
         id: "shop",
         title: "Visit the Shop",
         description: "Explore available rewards and merchandise",
-        difficulty: "beginner",
-        estimated_time: "like 1 sec dude",
         path: "/shop",
         completed: tutorial_completed?("shop")
       }
