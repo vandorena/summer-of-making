@@ -123,15 +123,14 @@ class User < ApplicationRecord
   def hackatime_projects
     return [] unless has_hackatime?
 
-    data = hackatime_stat&.data
-    projects = data["projects"] || []
+    projects = hackatime_stat&.data&.dig("data", "projects") || []
 
     projects.map do |project|
       {
-        key: project["key"],
-        name: project["name"] || project["key"],
-        total_seconds: project["total"] || 0,
-        formatted_time: format_seconds(project["total"] || 0)
+        key: project["name"],
+        name: project["name"],
+        total_seconds: project["total_seconds"],
+        formatted_time: project["text"]
       }
     end.sort_by { |p| p[:name] }
   end
@@ -154,14 +153,7 @@ class User < ApplicationRecord
   def refresh_hackatime_data_now
     return unless has_hackatime?
 
-    from = "2025-05-16"
-    to = Time.zone.today.strftime("%Y-%m-%d")
-
-    query_params = { user: slack_id, from: from, to: to }
-    uri = URI("https://hackatime.hackclub.com/api/summary")
-    uri.query = URI.encode_www_form(query_params)
-
-    response = Faraday.get(uri.to_s)
+    response = Faraday.get("https://hackatime.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects")
     return unless response.success?
 
     result = JSON.parse(response.body)
