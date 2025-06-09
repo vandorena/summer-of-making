@@ -2,7 +2,6 @@
 
 class VotesController < ApplicationController
   before_action :authenticate_user!
-  # before_action :check_projects, only: %i[new create]
   before_action :set_projects, only: %i[new create]
 
   def new
@@ -45,26 +44,20 @@ class VotesController < ApplicationController
 
   private
 
-  def check_projects
-    if current_user.projects.count < 2
-      redirect_to projects_path, alert: "You need to create at least 2 projects before you can vote on other projects!"
-      nil
-    end
-  end
 
   def set_projects
     voted_winner_ids = current_user.votes.pluck(:winner_id)
     voted_loser_ids = current_user.votes.pluck(:loser_id)
     voted_project_ids = voted_winner_ids + voted_loser_ids
 
+    # TODO: Make sure to check for is_shipped: true before launch
     eligible_user_ids = Project
-                        .where.not(id: voted_project_ids)
-                        .where.not(user_id: current_user.id)
-                        # .where(is_shipped: true) READD THIS BACK IN BEFORE LAUNCH
-                        .distinct
-                        .pluck(:user_id)
-                        .shuffle
-                        .first(2)
+                         .where.not(id: voted_project_ids)
+                         .where.not(user_id: current_user.id)
+                         .distinct
+                         .pluck(:user_id)
+                         .shuffle
+                         .first(2)
 
     if eligible_user_ids.size < 2
       @projects = []
