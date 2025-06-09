@@ -195,9 +195,9 @@
       <span class="glow-y text-[#E7E76B]">All prizes are available while supplies last.</span>
     </p>
 
-    <div class="relative mx-15 md:mx-15 sm:mx-10" data-controller="carousel" data-carousel-row-value="1">
-      <div class="slider-box overflow-hidden relative rounded-2xl py-4">
-        <div class="carousel-track flex gap-4 md:gap-4 sm:gap-2" data-carousel-target="container">
+    <div class="relative mx-15 md:mx-15 sm:mx-10" data-controller="carousel" data-carousel-row-value="1" style="transform: rotate(-3deg);">
+      <div class="slider-box overflow-hidden relative rounded-2xl p-4">
+        <div class="carousel-track flex gap-4 md:gap-4 sm:gap-2" data-carousel-target="container" >
           <% @prizes.each do |prize| %>
             <div class="carousel-slide flex-none w-40 md:w-44 sm:w-36" style="transform: <%= prize[:random_transform] %>">
               <div class="prize-card bg-white/95 backdrop-blur-lg rounded-2xl border-2 border-white/30 shadow-lg p-3 md:p-3 sm:p-2 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:scale-105">
@@ -217,8 +217,8 @@
       </div>
     </div>
 
-    <div class="relative mx-15 md:mx-15 sm:mx-10" data-controller="carousel" data-carousel-row-value="2">
-      <div class="slider-box overflow-hidden relative rounded-2xl py-4">
+    <div class="relative mt-25 mx-15 md:mx-15 sm:mx-10" data-controller="carousel" data-carousel-row-value="2" style="transform: rotate(2deg);">
+      <div class="slider-box overflow-hidden relative rounded-2xl p-4">
         <div class="carousel-track-rev flex gap-4 md:gap-4 sm:gap-2" data-carousel-target="container">
           <% @prizes.each do |prize| %>
             <div class="carousel-slide flex-none w-40 md:w-44 sm:w-36" style="transform: <%= prize[:random_transform] %>">
