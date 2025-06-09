@@ -1,5 +1,5 @@
 class SignpostController < ApplicationController
-  before_action :authenticate_user!, only: [:index]
+  before_action :authenticate_user!, only: [ :index ]
 
   def index
     @user = current_user
@@ -19,7 +19,7 @@ class SignpostController < ApplicationController
     {
       hackatime_linked: @user.has_hackatime?,
       id_verified: @user.ysws_verified?,
-      identity_vault_linked: @user.identity_vault_id.present?,
+      identity_vault_linked: @user.identity_vault_id.present?
     }
   end
 
@@ -42,63 +42,63 @@ class SignpostController < ApplicationController
   def get_tutorials
     tutorials = [
       {
-        id: 'signpost',
+        id: "signpost",
         title: "This is the signpost!",
         description: "This is where you can see all the announcements and stuff. It's also where you can see your progress and complete the tutorials and post tutorials this'll serve as your dashboard. (and you can restart tutorials anytime you want)",
         difficulty: "beginner",
         estimated_time: "like 1 sec dude",
         path: "/signpost",
-        completed: tutorial_completed?('signpost')
+        completed: tutorial_completed?("signpost")
       },
       {
-        id: 'explore',
+        id: "explore",
         title: "Explore Projects",
         description: "Discover amazing projects from the community",
         difficulty: "beginner",
         estimated_time: "like 1 sec dude",
         path: "/explore",
-        completed: tutorial_completed?('explore')
+        completed: tutorial_completed?("explore")
       },
       {
-        id: 'gallery',
+        id: "gallery",
         title: "Browse Gallery",
         description: "Check out the project gallery and get inspired",
-        difficulty: "beginner", 
+        difficulty: "beginner",
         estimated_time: "like 1 sec dude",
         path: "/gallery",
-        completed: tutorial_completed?('gallery')
+        completed: tutorial_completed?("gallery")
       },
       {
-        id: 'my_projects',
+        id: "my_projects",
         title: "Create Your Projects",
         description: "Set up your own projects and start building",
         difficulty: "beginner",
-        estimated_time: "like 1 sec dude", 
+        estimated_time: "like 1 sec dude",
         path: "/projects",
-        completed: tutorial_completed?('my_projects')
+        completed: tutorial_completed?("my_projects")
       },
       {
-        id: 'vote',
+        id: "vote",
         title: "Vote on Projects",
         description: "Participate in the community by voting on projects",
         difficulty: "beginner",
         estimated_time: "like 1 sec dude",
-        path: "/vote", 
-        completed: tutorial_completed?('vote')
+        path: "/vote",
+        completed: tutorial_completed?("vote")
       },
       {
-        id: 'shop',
-        title: "Visit the Shop", 
+        id: "shop",
+        title: "Visit the Shop",
         description: "Explore available rewards and merchandise",
         difficulty: "beginner",
         estimated_time: "like 1 sec dude",
         path: "/shop",
-        completed: tutorial_completed?('shop')
+        completed: tutorial_completed?("shop")
       }
     ]
 
     # Sort tutorials so incomplete ones appear first
-    tutorials.sort_by { |t| [t[:completed] ? 1 : 0, t[:id]] }
+    tutorials.sort_by { |t| [ t[:completed] ? 1 : 0, t[:id] ] }
   end
 
   def tutorial_completed?(step_name)
