@@ -15,199 +15,166 @@ class LandingController < ApplicationController
     @prizes = [
       {
         name: "Flipper Zero Device",
-        cost: 120,
         time: "~120 hours",
         image: "https://files.catbox.moe/3xaxax.png"
       },
       {
         name: "Framework Laptop 16",
-        cost: 800,
-        time: "~800 hours",
+        time: ">500 hours",
         image: "https://files.catbox.moe/tyvnfm.png"
       },
       {
         name: "3D Printer Filament",
-        cost: 40,
         time: "~40 hours",
         image: "https://files.catbox.moe/momszq.png"
       },
       {
         name: "Pinecil Soldering Iron",
-        cost: 30,
         time: "~30 hours",
         image: "https://files.catbox.moe/g796u0.png"
       },
       {
         name: "Cloudflare Credits",
-        cost: 50,
         time: "~50 hours",
         image: "https://files.catbox.moe/dlxfqe.png"
       },
       {
         name: "Codespaces Credits",
-        cost: 75,
         time: "~75 hours",
         image: "https://files.catbox.moe/m2d3g6.png"
       },
       {
         name: "DigitalOcean Credits",
-        cost: 60,
         time: "~60 hours",
         image: "https://files.catbox.moe/9rh45c.png"
       },
       {
         name: "PCB Credits - JLCPCB",
-        cost: 30,
         time: "~30 hours",
         image: "https://files.catbox.moe/91z02d.png"
       },
       {
         name: "Electronics Credits - Digikey",
-        cost: 80,
         time: "~80 hours",
         image: "https://files.catbox.moe/8dmgvm.png"
       },
       {
         name: "Domain Registration",
-        cost: 25,
         time: "~25 hours",
         image: "https://files.catbox.moe/7t427r.png"
       },
       {
         name: "iPad with Apple Pencil",
-        cost: 450,
-        time: "~450 hours",
+        time: ">500 hours",
         image: "https://files.catbox.moe/t5bh39.png"
       },
       {
         name: "Mode Design Sonnet Keyboard",
-        cost: 300,
         time: "~300 hours",
         image: "https://files.catbox.moe/6iq56a.png"
       },
       {
         name: "Ben Eater 8-bit Computer Kit",
-        cost: 200,
         time: "~200 hours",
         image: "https://files.catbox.moe/5z0gzz.png"
       },
       {
         name: "Raspberry Pi 5 Making Kit",
-        cost: 90,
         time: "~90 hours",
         image: "https://files.catbox.moe/343tqt.png"
       },
       {
         name: "Raspberry Pi Zero 2 W Kit",
-        cost: 35,
         time: "~35 hours",
         image: "https://files.catbox.moe/lfml8k.png"
       },
       {
         name: "ThinkPad X1 (Renewed)",
-        cost: 600,
-        time: "~600 hours",
+        time: ">500 hours",
         image: "https://files.catbox.moe/m2r3md.png"
       },
       {
         name: "BLÅHAJ Soft Toy Shark",
-        cost: 20,
         time: "~20 hours",
         image: "https://files.catbox.moe/g7vbdo.png"
       },
       {
         name: "Sony XM4 Headphones",
-        cost: 250,
         time: "~250 hours",
         image: "https://files.catbox.moe/o210o5.png"
       },
       {
         name: "Bose QuietComfort 45",
-        cost: 280,
         time: "~280 hours",
         image: "https://files.catbox.moe/zpf595.png"
       },
       {
         name: "Logitech MX Master 3S Mouse",
-        cost: 80,
         time: "~80 hours",
         image: "https://files.catbox.moe/oz5ey8.png"
       },
       {
         name: "Logitech Pro X Superlight Mouse",
-        cost: 150,
         time: "~150 hours",
         image: "https://files.catbox.moe/34ncyk.png"
       },
       {
         name: "Steam Game - Factorio",
-        cost: 25,
         time: "~25 hours",
         image: "https://files.catbox.moe/ld6igi.png"
       },
       {
         name: "Steam Game - Satisfactory",
-        cost: 30,
         time: "~30 hours",
         image: "https://files.catbox.moe/2zjc85.png"
       },
       {
         name: "Cricut Explore 3 Cutting Machine",
-        cost: 180,
         time: "~180 hours",
         image: "https://files.catbox.moe/1trazc.png"
       },
       {
         name: "Yummy Fudge from HQ",
-        cost: 35,
         time: "~35 hours",
         image: "https://files.catbox.moe/djmsr8.png"
       },
       {
         name: "Hack Club Sticker Pack",
-        cost: 10,
         time: "~10 hours",
         image: "https://files.catbox.moe/hx87j5.png"
       },
       {
         name: "Signed Photo of Zack Latta",
-        cost: 100,
         time: "~100 hours",
         image: "https://files.catbox.moe/1e4e17.png"
       },
       {
         name: "Personal Drawing from MSW",
-        cost: 200,
         time: "~200 hours",
         image: "https://files.catbox.moe/xxug1g.png"
       },
       {
         name: "Random Object from HQ",
-        cost: 15,
         time: "~15 hours",
         image: nil
       },
       {
         name: "Bottom Half of Chromebook",
-        cost: 25,
         time: "~25 hours",
         image: nil
       },
       {
         name: "Mystery eBay Treasure",
-        cost: 30,
         time: "~30 hours",
         image: "https://files.catbox.moe/m9n9vj.png"
       },
       {
         name: "Top Half of Chromebook",
-        cost: 25,
         time: "~25 hours",
         image: "https://files.catbox.moe/kv740i.png"
       },
       {
         name: "Bottom Half of Chromebook",
-        cost: 30,
         time: "~30 hours",
         image: "https://files.catbox.moe/h7vt5n.png"
       }
