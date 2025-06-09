@@ -13,7 +13,7 @@
       has_unlinked_timer_sessions = @unlinked_timer_sessions && @unlinked_timer_sessions.any?
 
       time_since_last = @project.user.hackatime_stat.time_since_last_update_for_project(@project)
-      has_hackatime_time = time_since_last > 300 # Only count as having time if more than 5 minutes (300 seconds)
+      has_hackatime_time = time_since_last > 0 # Only count as having time if more than 5 minutes (300 seconds)
     %>
 
     <%= form_with(model: [@project, @project.devlogs.build], class: "space-y-3 md:space-y-4", data: { controller: "form", action: "submit->form#preventDoubleSubmission" }) do |f| %>
