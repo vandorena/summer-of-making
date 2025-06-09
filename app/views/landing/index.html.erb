@@ -9,12 +9,11 @@
   <div class="absolute top-4 right-4 z-20">
     <a href="/auth/slack" class="btn-fancy text-white py-2 px-4 text-base md:text-lg flex items-center justify-center gap-2 bg-gradient-to-br from-[#E06540] to-[#EC8153] rounded-lg shadow-lg hover:shadow-xl transition-all">
       <span class="flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" viewBox="0 0 24 24"><path fill="currentColor" d="M13 21q-.425 0-.712-.288T12 20t.288-.712T13 19h6V5h-6q-.425 0-.712-.288T12 4t.288-.712T13 3h6q.825 0 1.413.588T21 5v14q0 .825-.587 1.413T19 21zm-1.825-8H4q-.425 0-.712-.288T3 12t.288-.712T4 11h7.175L9.3 9.125q-.275-.275-.275-.675t.275-.7t.7-.313t.725.288L14.3 11.3q.3.3.3.7t-.3.7l-3.575 3.575q-.3.3-.712.288T9.3 16.25q-.275-.3-.262-.712t.287-.688z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" viewBox="0 0 24 24"><path fill="currentColor" d="M13 21q-.425 0-.712-.288T12 20t.288-.712T13 19h6V5h-6q-.425 0-.712-.288T12 4t.288-.712T13 3h6q.825 0 1.413.588T21 5v14q0 .825-.587 1.413T19 21zm-1.825-8H4q-.425 0-.712-.288T3 12t.288-.712T4 11h7.175L9.3 9.125q-.275-.275-.275-.675t.275-.7t.7-.313t.725.288L14.3 11.3q.3.3.3.7t-.3.7l-3.575 3.575q-.3.3-.712.288T9.3 16.25q-.275-.3-.262-.712t.287-.688z" /></svg>
         <span class="flex items-center h-6">Sign In!</span>
       </span>
     </a>
   </div>
-
 
   <div class="relative z-15 flex items-center min-h-screen">
     <div class="w-full max-w-7xl mx-auto px-4 sm:px-8 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
@@ -25,9 +24,9 @@
 
         <h2 class="head-med text-2xl md:text-3xl text-white font-medium">
           <span class="">Build stuff.</span>
-          <br class="hidden md:block"/>
+          <br class="hidden md:block">
           <span class="ml-0 md:ml-16">Get stuff.</span>
-          <br class="hidden md:block"/>
+          <br class="hidden md:block">
           <span class="font-bold ml-0 md:ml-32">Repeat.</span>
         </h2>
 
@@ -36,8 +35,7 @@
         </div>
 
         <p class="font-['Fredoka',sans-serif] font-normal text-lg text-white opacity-90">
-          From Hack Club with love. For teenagers 18 and under <3
-        </p>
+          From Hack Club with love. For teenagers 18 and under <3>
       </div>
 
       <div class="flex justify-center lg:justify-end">
@@ -62,11 +60,10 @@
       <img
         class="absolute inset-0 w-full h-full object-cover"
         src="https://files.catbox.moe/w9c4bz.png"
-        alt="Video Preview Thumbnail"
-      />
+        alt="Video Preview Thumbnail">
       <div class="absolute inset-0 flex items-center justify-center bg-black/20">
         <div class="bg-white/90 rounded-full p-2 shadow-lg hover:bg-white hover:scale-110 transition-all duration-300">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-[#E06540]"  viewBox="0 0 24 24"><path fill="currentColor" d="M8 17.175V6.825q0-.425.3-.713t.7-.287q.125 0 .263.037t.262.113l8.15 5.175q.225.15.338.375t.112.475t-.112.475t-.338.375l-8.15 5.175q-.125.075-.262.113T9 18.175q-.4 0-.7-.288t-.3-.712"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-[#E06540]" viewBox="0 0 24 24"><path fill="currentColor" d="M8 17.175V6.825q0-.425.3-.713t.7-.287q.125 0 .263.037t.262.113l8.15 5.175q.225.15.338.375t.112.475t-.112.475t-.338.375l-8.15 5.175q-.125.075-.262.113T9 18.175q-.4 0-.7-.288t-.3-.712" /></svg>
         </div>
       </div>
     </div>
@@ -190,7 +187,7 @@
               <div class="prize-card bg-white/95 backdrop-blur-lg rounded-2xl border-2 border-white/30 shadow-lg p-6 md:p-6 sm:p-4 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:scale-105">
                 <div class="prize-image w-full h-full flex items-center justify-center mb-4 rounded-xl bg-yellow-100/20">
                   <% if prize[:image] && prize[:image] != "" %>
-                    <img src="<%= prize[:image] %>" alt="<%= prize[:name] %>" class="w-full h-full object-cover rounded-xl" />
+                    <img src="<%= prize[:image] %>" alt="<%= prize[:name] %>" class="w-full h-full object-cover rounded-xl">
                   <% else %>
                     <%= image_tag "clubhuman.png", alt: "Prize", class: "w-full h-full object-cover rounded-xl" %>
                   <% end %>
@@ -212,7 +209,7 @@
               <div class="prize-card bg-white/95 backdrop-blur-lg rounded-2xl border-2 border-white/30 shadow-lg p-6 md:p-6 sm:p-4 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:scale-105">
                 <div class="prize-image w-full h-full flex items-center justify-center mb-4 rounded-xl bg-yellow-100/20">
                   <% if prize[:image] && prize[:image] != "" %>
-                    <img src="<%= prize[:image] %>" alt="<%= prize[:name] %>" class="w-full h-full object-cover rounded-xl" />
+                    <img src="<%= prize[:image] %>" alt="<%= prize[:name] %>" class="w-full h-full object-cover rounded-xl">
                   <% else %>
                     <%= image_tag "clubhuman.png", alt: "Prize", class: "w-full h-full object-cover rounded-xl" %>
                   <% end %>
@@ -254,10 +251,10 @@
     </div>
     <div class="mt-12">
       <p class="font-['Fredoka',sans-serif] font-normal text-base opacity-90 text-[#6B3F13] max-w-3xl mx-auto bg-white/80 rounded-xl px-6 py-4 shadow">
-      <strong>Hack Club</strong> is a registered 501(c)(3) nonprofit supporting a global network of over 60,000 teenagers. We believe the best way to learn is by building, so we provide community, resources, and funding to help teens create. We've run programs like 
-      <a href="https://highseas.hackclub.com/" target="_blank" class="text-[#E06540] underline underline-offset-2 hover:text-[#EC8153] transition-colors font-semibold">High Seas</a>, a global coding challenge where teens build personal projects, websites, apps, or games, to earn doubloons and redeem for prizes like Raspberry Pis and 3D printers; 
-      <a href="https://juice.hackclub.com/" target="_blank" class="text-[#E06540] underline underline-offset-2 hover:text-[#EC8153] transition-colors font-semibold">Juice</a>, a two-month game jam where participants create video games and are flown to Shanghai, China, to showcase their games at a pop-up cafe; and 
-      <a href="https://trail.hackclub.com/" target="_blank" class="text-[#E06540] underline underline-offset-2 hover:text-[#EC8153] transition-colors font-semibold">The Trail</a>, a seven-day hike along the Pacific Crest Trail where 30 teens build their own technical hiking equipment.<br /><br />
+      <strong>Hack Club</strong> is a registered 501(c)(3) nonprofit supporting a global network of over 60,000 teenagers. We believe the best way to learn is by building, so we provide community, resources, and funding to help teens create. We've run programs like
+      <a href="https://highseas.hackclub.com/" target="_blank" class="text-[#E06540] underline underline-offset-2 hover:text-[#EC8153] transition-colors font-semibold">High Seas</a>, a global coding challenge where teens build personal projects, websites, apps, or games, to earn doubloons and redeem for prizes like Raspberry Pis and 3D printers;
+      <a href="https://juice.hackclub.com/" target="_blank" class="text-[#E06540] underline underline-offset-2 hover:text-[#EC8153] transition-colors font-semibold">Juice</a>, a two-month game jam where participants create video games and are flown to Shanghai, China, to showcase their games at a pop-up cafe; and
+      <a href="https://trail.hackclub.com/" target="_blank" class="text-[#E06540] underline underline-offset-2 hover:text-[#EC8153] transition-colors font-semibold">The Trail</a>, a seven-day hike along the Pacific Crest Trail where 30 teens build their own technical hiking equipment.<br><br>
       At Hack Club, students aren’t just learning—they're shipping.
       </p>
     </div>
