@@ -109,20 +109,6 @@ class ProjectsController < ApplicationController
     render :index
   end
 
-  def gallery
-    @projects = Project.includes(:user)
-                       .order(rating: :asc)
-
-    @projects = @projects.sort_by do |project|
-      weight = rand + (project.devlogs.count.positive? ? 1.5 : 0)
-      -weight
-    end
-
-    @feed_type = "projects"
-
-    render :index
-  end
-
   # Gotta say I love turbo frames and turbo streams and flashes in general
   def follow
     if current_user == @project.user
