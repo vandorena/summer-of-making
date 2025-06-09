@@ -26,16 +26,14 @@ class SignpostController < ApplicationController
   def get_announcements
     announcements = []
 
-    if @user&.tutorial_progress && !@user.tutorial_progress.completed?
-      announcements << {
-        id: 1,
-        title: "Welcome to Summer of Making!",
-        content: "Complete the tutorials yada yada yada. I just created this section, but might put it at top because I remember signpost in HS had smth similar. Anyways, we have a space to post announcements and stuff. I'm not sure if we'll use it, but it's here. Need to implement dismiss",
-        type: "info",
-        created_at: Time.now
-      }
-    end
-
+    announcements << {
+      id: 1,
+      title: "Welcome to Summer of Making!",
+      content: "Complete the tutorials yada yada yada. I just created this section, but might put it at top because I remember signpost in HS had smth similar. Anyways, we have a space to post announcements and stuff. I'm not sure if we'll use it, but it's here. Need to implement dismiss",
+      type: "info",
+      created_at: Time.now
+    }
+    
     announcements
   end
 
