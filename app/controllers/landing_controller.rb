@@ -49,12 +49,12 @@ class LandingController < ApplicationController
         image: "https://files.catbox.moe/9rh45c.png"
       },
       {
-        name: "PCB Credits - JLCPCB",
+        name: "JLCPCB Credits",
         time: "~30 hours",
         image: "https://files.catbox.moe/91z02d.png"
       },
       {
-        name: "Electronics Credits - Digikey",
+        name: "Digikey Credits",
         time: "~80 hours",
         image: "https://files.catbox.moe/8dmgvm.png"
       },
