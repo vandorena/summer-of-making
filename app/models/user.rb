@@ -239,7 +239,7 @@ class User < ApplicationRecord
     idv_data = fetch_idv[:identity]
 
     case idv_data[:verification_status]
-    when "pending"
+    when "pending", "needs_submission"
       :pending
     when "needs_resubmission"
       :needs_resubmission
