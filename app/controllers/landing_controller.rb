@@ -14,7 +14,7 @@ class LandingController < ApplicationController
 
     @prizes = [
       {
-        name: "Flipper Zero",
+        name: "Flipper Zero Device",
         cost: 120,
         time: "~120 hours",
         image: "https://files.catbox.moe/3xaxax.png"
@@ -26,7 +26,7 @@ class LandingController < ApplicationController
         image: "https://files.catbox.moe/tyvnfm.png"
       },
       {
-        name: "3D Printer Filament Bundle",
+        name: "3D Printer Filament",
         cost: 40,
         time: "~40 hours",
         image: "https://files.catbox.moe/momszq.png"
@@ -44,7 +44,7 @@ class LandingController < ApplicationController
         image: "https://files.catbox.moe/dlxfqe.png"
       },
       {
-        name: "GitHub Codespaces Credits",
+        name: "Codespaces Credits",
         cost: 75,
         time: "~75 hours",
         image: "https://files.catbox.moe/m2d3g6.png"
@@ -68,7 +68,7 @@ class LandingController < ApplicationController
         image: "https://files.catbox.moe/8dmgvm.png"
       },
       {
-        name: "Domain Registration Credits",
+        name: "Domain Registration",
         cost: 25,
         time: "~25 hours",
         image: "https://files.catbox.moe/7t427r.png"
@@ -92,31 +92,31 @@ class LandingController < ApplicationController
         image: "https://files.catbox.moe/5z0gzz.png"
       },
       {
-        name: "Raspberry Pi 5",
+        name: "Raspberry Pi 5 Making Kit",
         cost: 90,
         time: "~90 hours",
         image: "https://files.catbox.moe/343tqt.png"
       },
       {
-        name: "Raspberry Pi Zero 2 W",
+        name: "Raspberry Pi Zero 2 W Kit",
         cost: 35,
         time: "~35 hours",
         image: "https://files.catbox.moe/lfml8k.png"
       },
       {
-        name: "ThinkPad X1 Carbon (Renewed)",
+        name: "ThinkPad X1 (Renewed)",
         cost: 600,
         time: "~600 hours",
         image: "https://files.catbox.moe/m2r3md.png"
       },
       {
-        name: "BLÅHAJ Soft Toy",
+        name: "BLÅHAJ Soft Toy Shark",
         cost: 20,
         time: "~20 hours",
         image: "https://files.catbox.moe/g7vbdo.png"
       },
       {
-        name: "Sony WH-1000XM4 Headphones",
+        name: "Sony XM4 Headphones",
         cost: 250,
         time: "~250 hours",
         image: "https://files.catbox.moe/o210o5.png"
@@ -152,13 +152,13 @@ class LandingController < ApplicationController
         image: "https://files.catbox.moe/2zjc85.png"
       },
       {
-        name: "Cricut Explore 3",
+        name: "Cricut Explore 3 Cutting Machine",
         cost: 180,
         time: "~180 hours",
         image: "https://files.catbox.moe/1trazc.png"
       },
       {
-        name: "MORE FUDGE!",
+        name: "Yummy Fudge from HQ",
         cost: 35,
         time: "~35 hours",
         image: "https://files.catbox.moe/djmsr8.png"
