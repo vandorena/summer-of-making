@@ -14,204 +14,189 @@ class LandingController < ApplicationController
 
     @prizes = [
       {
-        name: "Flipper Zero",
-        cost: 120,
+        name: "Flipper Zero Device",
         time: "~120 hours",
         image: "https://files.catbox.moe/3xaxax.png"
       },
       {
         name: "Framework Laptop 16",
-        cost: 800,
-        time: "~800 hours",
+        time: ">500 hours",
         image: "https://files.catbox.moe/tyvnfm.png"
       },
       {
-        name: "3D Printer Filament Bundle",
-        cost: 40,
+        name: "3D Printer Filament",
         time: "~40 hours",
         image: "https://files.catbox.moe/momszq.png"
       },
       {
         name: "Pinecil Soldering Iron",
-        cost: 30,
         time: "~30 hours",
         image: "https://files.catbox.moe/g796u0.png"
       },
       {
         name: "Cloudflare Credits",
-        cost: 50,
         time: "~50 hours",
         image: "https://files.catbox.moe/dlxfqe.png"
       },
       {
-        name: "GitHub Codespaces Credits",
-        cost: 75,
+        name: "Codespaces Credits",
         time: "~75 hours",
         image: "https://files.catbox.moe/m2d3g6.png"
       },
       {
         name: "DigitalOcean Credits",
-        cost: 60,
         time: "~60 hours",
         image: "https://files.catbox.moe/9rh45c.png"
       },
       {
-        name: "PCB Credits - JLCPCB",
-        cost: 30,
+        name: "JLCPCB Credits",
         time: "~30 hours",
         image: "https://files.catbox.moe/91z02d.png"
       },
       {
-        name: "Electronics Credits - Digikey",
-        cost: 80,
+        name: "Digikey Credits",
         time: "~80 hours",
         image: "https://files.catbox.moe/8dmgvm.png"
       },
       {
-        name: "Domain Registration Credits",
-        cost: 25,
+        name: "Domain Registration",
         time: "~25 hours",
         image: "https://files.catbox.moe/7t427r.png"
       },
       {
         name: "iPad with Apple Pencil",
-        cost: 450,
-        time: "~450 hours",
+        time: ">500 hours",
         image: "https://files.catbox.moe/t5bh39.png"
       },
       {
         name: "Mode Design Sonnet Keyboard",
-        cost: 300,
         time: "~300 hours",
         image: "https://files.catbox.moe/6iq56a.png"
       },
       {
         name: "Ben Eater 8-bit Computer Kit",
-        cost: 200,
         time: "~200 hours",
         image: "https://files.catbox.moe/5z0gzz.png"
       },
       {
-        name: "Raspberry Pi 5",
-        cost: 90,
+        name: "Raspberry Pi 5 Making Kit",
         time: "~90 hours",
         image: "https://files.catbox.moe/343tqt.png"
       },
       {
-        name: "Raspberry Pi Zero 2 W",
-        cost: 35,
+        name: "Raspberry Pi Zero 2 W Kit",
         time: "~35 hours",
         image: "https://files.catbox.moe/lfml8k.png"
       },
       {
-        name: "ThinkPad X1 Carbon (Renewed)",
-        cost: 600,
-        time: "~600 hours",
+        name: "ThinkPad X1 (Renewed)",
+        time: ">500 hours",
         image: "https://files.catbox.moe/m2r3md.png"
       },
       {
-        name: "BLÅHAJ Soft Toy",
-        cost: 20,
+        name: "BLÅHAJ Soft Toy Shark",
         time: "~20 hours",
         image: "https://files.catbox.moe/g7vbdo.png"
       },
       {
-        name: "Sony WH-1000XM4 Headphones",
-        cost: 250,
+        name: "Sony XM4 Headphones",
         time: "~250 hours",
         image: "https://files.catbox.moe/o210o5.png"
       },
       {
         name: "Bose QuietComfort 45",
-        cost: 280,
         time: "~280 hours",
         image: "https://files.catbox.moe/zpf595.png"
       },
       {
         name: "Logitech MX Master 3S Mouse",
-        cost: 80,
         time: "~80 hours",
         image: "https://files.catbox.moe/oz5ey8.png"
       },
       {
         name: "Logitech Pro X Superlight Mouse",
-        cost: 150,
         time: "~150 hours",
         image: "https://files.catbox.moe/34ncyk.png"
       },
       {
         name: "Steam Game - Factorio",
-        cost: 25,
         time: "~25 hours",
         image: "https://files.catbox.moe/ld6igi.png"
       },
       {
         name: "Steam Game - Satisfactory",
-        cost: 30,
         time: "~30 hours",
         image: "https://files.catbox.moe/2zjc85.png"
       },
       {
-        name: "Cricut Explore 3",
-        cost: 180,
+        name: "Cricut Explore 3 Cutting Machine",
         time: "~180 hours",
         image: "https://files.catbox.moe/1trazc.png"
       },
       {
-        name: "MORE FUDGE!",
-        cost: 35,
+        name: "Yummy Fudge from HQ",
         time: "~35 hours",
         image: "https://files.catbox.moe/djmsr8.png"
       },
       {
         name: "Hack Club Sticker Pack",
-        cost: 10,
         time: "~10 hours",
         image: "https://files.catbox.moe/hx87j5.png"
       },
       {
         name: "Signed Photo of Zack Latta",
-        cost: 100,
         time: "~100 hours",
         image: "https://files.catbox.moe/1e4e17.png"
       },
       {
         name: "Personal Drawing from MSW",
-        cost: 200,
         time: "~200 hours",
         image: "https://files.catbox.moe/xxug1g.png"
       },
       {
         name: "Random Object from HQ",
-        cost: 15,
         time: "~15 hours",
         image: nil
       },
       {
         name: "Bottom Half of Chromebook",
-        cost: 25,
         time: "~25 hours",
         image: nil
       },
       {
         name: "Mystery eBay Treasure",
-        cost: 30,
         time: "~30 hours",
         image: "https://files.catbox.moe/m9n9vj.png"
       },
       {
         name: "Top Half of Chromebook",
-        cost: 25,
         time: "~25 hours",
         image: "https://files.catbox.moe/kv740i.png"
       },
       {
         name: "Bottom Half of Chromebook",
-        cost: 30,
         time: "~30 hours",
         image: "https://files.catbox.moe/h7vt5n.png"
       }
     ]
+
+    @prizes = @prizes.map do |prize|
+      hours =
+        if prize[:time].to_s.include?(">500")
+          9999
+        elsif prize[:time].to_s =~ /([0-9]+)/
+          prize[:time].to_s.include?("~") ? $1.to_i : $1.to_i
+        else
+          0
+        end
+      prize.merge(
+        numeric_hours: hours,
+        display_time: hours >= 500 ? ">500 hours" : prize[:time],
+        random_transform: "rotate(#{rand(-3..3)}deg) scale(#{(rand(97..103).to_f/100).round(2)}) translateY(#{rand(-8..8)}px)"
+      )
+    end
+
+    @prizes = @prizes.sort_by { |p| p[:numeric_hours] }
   end
 
   def sign_up

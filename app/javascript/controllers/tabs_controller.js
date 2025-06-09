@@ -28,27 +28,43 @@ export default class extends Controller {
   }
 
   loadTabContent(tab) {
-    const devlogsListContainer = document.getElementById(
-      "devlogs-list-container",
-    );
+    this.contentTargets.forEach((content) => {
+      content.classList.add("hidden");
+    });
 
-    if (devlogsListContainer) {
-      devlogsListContainer.innerHTML = `
-        <div class="space-y-4 sm:space-y-6" id="devlogs-list">
-        </div>
-        <div id="load-more-devlogs">
-        </div>
-      `;
-    }
+    if (tab === "gallery") {
+      const galleryContent = document.querySelector('[data-tab-content="gallery"]');
+      if (galleryContent) {
+        galleryContent.classList.remove("hidden");
+      }
+    } else {
+      const devlogsContent = document.querySelector('[data-tab-content="explore"]');
+      if (devlogsContent) {
+        devlogsContent.classList.remove("hidden");
+      }
 
-    const devlogsList = document.getElementById("devlogs-list");
-    const newInitialFrame = document.createElement("turbo-frame");
-    newInitialFrame.id = "initial-devlogs";
-    newInitialFrame.src = `/explore?tab=${tab}&format=turbo_stream`;
-    newInitialFrame.loading = "eager";
+      const devlogsListContainer = document.getElementById(
+        "devlogs-list-container",
+      );
 
-    if (devlogsList) {
-      devlogsList.appendChild(newInitialFrame);
+      if (devlogsListContainer) {
+        devlogsListContainer.innerHTML = `
+          <div class="space-y-4 sm:space-y-6" id="devlogs-list">
+          </div>
+          <div id="load-more-devlogs">
+          </div>
+        `;
+      }
+
+      const devlogsList = document.getElementById("devlogs-list");
+      const newInitialFrame = document.createElement("turbo-frame");
+      newInitialFrame.id = "initial-devlogs";
+      newInitialFrame.src = `/explore?tab=${tab}&format=turbo_stream`;
+      newInitialFrame.loading = "eager";
+
+      if (devlogsList) {
+        devlogsList.appendChild(newInitialFrame);
+      }
     }
   }
 }

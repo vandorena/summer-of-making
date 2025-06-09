@@ -3,7 +3,7 @@
 <div class="font-['Fredoka',sans-serif] leading-normal min-h-screen w-full relative overflow-hidden bg-gradient-to-b from-[#97D8F8] via-[#87CEEB] to-[#42A5E7]" data-controller="clouds" data-clouds-cloud-count-value="8" data-clouds-speed-value="0.3" data-clouds-cloud-color-value="rgba(255, 255, 255, 0.4)">
   <div class="absolute inset-0 w-full h-full overflow-hidden" data-clouds-target="container"></div>
   <div class="absolute top-0 left-4 z-20">
-    <img src="https://assets.hackclub.com/flag-orpheus-top.png" alt="Island" class="w-30 animate-float">
+    <%= image_tag "flag-orpheus-top.png", alt: "Island", class: "w-30 animate-float" %>
   </div>
 
   <div class="absolute top-4 right-4 z-20">
@@ -29,19 +29,16 @@
           <br class="hidden md:block">
           <span class="font-bold ml-0 md:ml-32">Repeat.</span>
         </h2>
-
         <div class="flex flex-col sm:flex-row gap-4 pt-4">
             <%= render "signup" %>
         </div>
-
         <p class="font-['Fredoka',sans-serif] font-normal text-lg text-white opacity-90">
-          From Hack Club with love. For teenagers 18 and under <3>
+          From Hack Club with love. For teenagers 18 and under &lt;3
+        </p>
       </div>
-
       <div class="flex justify-center lg:justify-end">
         <img src="https://files.catbox.moe/2ehrvm.png" alt="Island" class="w-80 h-80 lg:w-96 lg:h-96 object-contain drop-shadow-2xl animate-wiggle">
       </div>
-
     </div>
   </div>
 </div>
@@ -58,8 +55,9 @@
     </div>
     <div class="card-box relative w-full md:w-1/2 max-w-3xl mx-auto rounded-2xl overflow-hidden shadow-2xl bg-white/95 aspect-[16/9] cursor-pointer hover:scale-[1.02] transition-transform duration-300" data-action="click->video-modal#open">
       <img
-        class="absolute inset-0 w-full h-full object-cover"
-        src="https://files.catbox.moe/w9c4bz.png"
+        id="thumb"
+        class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
+        src="https://files.catbox.moe/o8g880.png"
         alt="Video Preview Thumbnail">
       <div class="absolute inset-0 flex items-center justify-center bg-black/20">
         <div class="bg-white/90 rounded-full p-2 shadow-lg hover:bg-white hover:scale-110 transition-all duration-300">
@@ -67,6 +65,21 @@
         </div>
       </div>
     </div>
+    <script>
+      (function() {
+        const i = document.getElementById('thumb');
+        if (!i) return;
+        const a = new Image();
+        a.onload = function() {
+          i.style.opacity = '0';
+          setTimeout(() => {
+            i.src = a.src;
+            i.style.opacity = '1';
+          }, 250);
+        };
+        a.src = 'https://files.catbox.moe/ys2h7s.webp';
+      })();
+    </script>
   </div>
 
   <div data-video-modal-target="modal" class="hidden fixed inset-0 z-50 bg-black/80" data-action="click->video-modal#closeBackground">
@@ -91,7 +104,7 @@
   </div>
 </div>
 
-<div id="how-it-works" class="pt-20 px-4 sm:px-8 bg-gradient-to-br from-[#F3ECD8] via-[#E4DCC6] to-[#D4C4A8]">
+<div id="how-it-works" class="pt-20 px-4 mb-10 sm:px-8 bg-gradient-to-br from-[#F3ECD8] via-[#E4DCC6] to-[#D4C4A8]">
   <div class="max-w-6xl mx-auto">
   <h2 class="head-big text-5xl md:text-6xl font-bold text-center mb-12 text-[#E06540]">
     How this works
@@ -131,31 +144,31 @@
     </div>
   </div>
   <div class="flex items-start justify-center mb-8">
-      <img src="https://files.catbox.moe/ztikz5.png" class="w-16 h-16 rounded-full shadow-lg mr-4 border-2 border-yellow-300 bg-white">
-      <div class="relative max-w-xl">
-        <div class="bg-white/90 border border-yellow-200 rounded-2xl px-6 py-4 shadow-md text-left text-[#8B4513] font-['Fredoka',sans-serif] font-normal text-xl opacity-80">
-          Building projects?? That sounds like a lot of work!<br>
-        </div>
-        <svg class="absolute -left-4 top-6" width="24" height="24" viewBox="0 0 24 24">
-        <polygon points="24,0 0,12 24,24" fill="#fff" fill-opacity="0.9" stroke="#ffe082" stroke-width="1" />
-        </svg>
+    <img src="https://files.catbox.moe/ztikz5.png" class="w-16 h-16 rounded-full shadow-lg mr-4 border-2 border-yellow-300 bg-white">
+    <div class="relative max-w-xl">
+      <div class="bg-white/90 border border-yellow-200 rounded-2xl px-6 py-4 shadow-md text-left text-[#8B4513] font-['Fredoka',sans-serif] font-normal text-xl opacity-80">
+        Building projects?? That sounds like a lot of work!<br>
       </div>
+      <svg class="absolute -left-4 top-6" width="24" height="24" viewBox="0 0 24 24">
+        <polygon points="24,0 0,12 24,24" fill="#fff" fill-opacity="0.9" stroke="#ffe082" stroke-width="1" />
+      </svg>
+    </div>
   </div>
   <div class="flex items-start justify-center mb-8 flex-row-reverse">
-      <img src="https://files.catbox.moe/d3hyls.png" class="w-16 h-16 rounded-full shadow-lg ml-4 border-2 border-yellow-300 bg-white">
-      <div class="relative max-w-xl">
-        <div class="bg-white/90 border border-yellow-200 rounded-2xl px-6 py-4 shadow-md text-left text-[#8B4513] font-['Fredoka',sans-serif] font-normal text-xl opacity-80">
-          Don't sweat it! It is really easy! Let's look at a example!
-        </div>
-        <svg class="absolute -right-4 top-6" width="24" height="24" viewBox="0 0 24 24">
-          <polygon points="0,0 24,12 0,24" fill="#fff" fill-opacity="0.9" stroke="#ffe082" stroke-width="1" />
-        </svg>
+    <img src="https://files.catbox.moe/d3hyls.png" class="w-16 h-16 rounded-full shadow-lg ml-4 border-2 border-yellow-300 bg-white">
+    <div class="relative max-w-xl">
+      <div class="bg-white/90 border border-yellow-200 rounded-2xl px-6 py-4 shadow-md text-left text-[#8B4513] font-['Fredoka',sans-serif] font-normal text-xl opacity-80">
+        Don't sweat it! It is really easy! Let's look at a example!
       </div>
+      <svg class="absolute -right-4 top-6" width="24" height="24" viewBox="0 0 24 24">
+        <polygon points="0,0 24,12 0,24" fill="#fff" fill-opacity="0.9" stroke="#ffe082" stroke-width="1" />
+      </svg>
+    </div>
   </div>
 
   <%= render "example_project" %>
 
-  <div class="flex items-start justify-center mb-8 flex-row-reverse">
+  <div class="flex items-start justify-center pb-8 flex-row-reverse">
     <img src="https://files.catbox.moe/d3hyls.png" class="w-16 h-16 rounded-full shadow-lg ml-4 border-2 border-yellow-300 bg-white">
     <div class="relative max-w-xl">
       <div class="bg-white/90 border border-yellow-200 rounded-2xl px-6 py-4 shadow-md text-left text-[#8B4513] font-['Fredoka',sans-serif] font-normal text-xl opacity-80">
@@ -179,47 +192,85 @@
       <span class="glow-y text-[#E7E76B]">All prizes are available while supplies last.</span>
     </p>
 
-    <div class="relative mx-15 md:mx-15 sm:mx-10" data-controller="carousel" data-carousel-row-value="1">
-      <div class="slider-box overflow-hidden relative rounded-2xl py-8">
-        <div class="carousel-track flex gap-8 md:gap-8 sm:gap-6" data-carousel-target="container">
-          <% @prizes.each do |prize| %>
-            <div class="carousel-slide flex-none w-50 md:w-50 sm:w-40">
-              <div class="prize-card bg-white/95 backdrop-blur-lg rounded-2xl border-2 border-white/30 shadow-lg p-6 md:p-6 sm:p-4 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:scale-105">
-                <div class="prize-image w-full h-full flex items-center justify-center mb-4 rounded-xl bg-yellow-100/20">
-                  <% if prize[:image] && prize[:image] != "" %>
-                    <img src="<%= prize[:image] %>" alt="<%= prize[:name] %>" class="w-full h-full object-cover rounded-xl">
-                  <% else %>
-                    <%= image_tag "clubhuman.png", alt: "Prize", class: "w-full h-full object-cover rounded-xl" %>
-                  <% end %>
-                </div>
-                <h3 class="prize-name font-['Fredoka'] font-semibold text-lg md:text-lg sm:text-base text-orange-600 leading-tight m-0"><%= prize[:name] %></h3>
-                <p class="text-sm text-gray-600 mt-2"><%= prize[:time] %></p>
+    <div class="relative mx-15 md:mx-15 sm:mx-10" data-controller="carousel" data-carousel-row-value="1" style="transform: rotate(-3deg);">
+      <div class="carousel-track flex gap-4 md:gap-4 sm:gap-2" data-carousel-target="container" >
+        <% @prizes.each do |prize| %>
+          <div class="carousel-slide flex-none w-40 md:w-44 sm:w-36" style="transform: <%= prize[:random_transform] %>">
+            <div class="prize-card bg-white/95 backdrop-blur-lg rounded-2xl border-2 border-white/30 shadow-lg p-3 md:p-3 sm:p-2 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:scale-105">
+              <div class="prize-image w-full h-full flex items-center justify-center mb-2 rounded-xl bg-yellow-100/20">
+                <% if prize[:image] && prize[:image] != "" %>
+                  <img src="<%= prize[:image] %>" alt="<%= prize[:name] %>" class="w-full h-full object-cover rounded-xl">
+                <% else %>
+                  <%= image_tag "clubhuman.png", alt: "Prize", class: "w-full h-full object-cover rounded-xl" %>
+                <% end %>
               </div>
+              <h3 class="prize-name font-['Fredoka'] font-semibold text-base md:text-base sm:text-sm text-orange-600 leading-tight m-0"><%= prize[:name] %></h3>
+              <p class="text-xs text-gray-600 mt-1"><%= prize[:display_time] %></p>
             </div>
-          <% end %>
-        </div>
+          </div>
+        <% end %>
       </div>
     </div>
 
-    <div class="relative mx-15 md:mx-15 sm:mx-10" data-controller="carousel" data-carousel-row-value="2">
-      <div class="slider-box overflow-hidden relative rounded-2xl">
-        <div class="carousel-track-rev flex gap-8 py-4 md:gap-8 sm:gap-6" data-carousel-target="container">
-          <% @prizes.each do |prize| %>
-            <div class="carousel-slide flex-none w-50 md:w-50 sm:w-40">
-              <div class="prize-card bg-white/95 backdrop-blur-lg rounded-2xl border-2 border-white/30 shadow-lg p-6 md:p-6 sm:p-4 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:scale-105">
-                <div class="prize-image w-full h-full flex items-center justify-center mb-4 rounded-xl bg-yellow-100/20">
-                  <% if prize[:image] && prize[:image] != "" %>
-                    <img src="<%= prize[:image] %>" alt="<%= prize[:name] %>" class="w-full h-full object-cover rounded-xl">
-                  <% else %>
-                    <%= image_tag "clubhuman.png", alt: "Prize", class: "w-full h-full object-cover rounded-xl" %>
-                  <% end %>
-                </div>
-                <h3 class="prize-name font-['Fredoka'] font-semibold text-lg md:text-lg sm:text-base text-orange-600 leading-tight m-0"><%= prize[:name] %></h3>
-                <p class="text-sm text-gray-600 mt-2"><%= prize[:time] %></p>
+    <div class="relative mt-25 mx-15 md:mx-15 sm:mx-10" data-controller="carousel" data-carousel-row-value="2" style="transform: rotate(2deg);">
+      <div class="carousel-track-rev flex gap-4 md:gap-4 sm:gap-2" data-carousel-target="container">
+        <% @prizes.each do |prize| %>
+          <div class="carousel-slide flex-none w-40 md:w-44 sm:w-36" style="transform: <%= prize[:random_transform] %>">
+            <div class="prize-card bg-white/95 backdrop-blur-lg rounded-2xl border-2 border-white/30 shadow-lg p-3 md:p-3 sm:p-2 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:scale-105">
+              <div class="prize-image w-full h-full flex items-center justify-center mb-2 rounded-xl bg-yellow-100/20">
+                <% if prize[:image] && prize[:image] != "" %>
+                  <img src="<%= prize[:image] %>" alt="<%= prize[:name] %>" class="w-full h-full object-cover rounded-xl">
+                <% else %>
+                  <%= image_tag "clubhuman.png", alt: "Prize", class: "w-full h-full object-cover rounded-xl" %>
+                <% end %>
               </div>
+              <h3 class="prize-name font-['Fredoka'] font-semibold text-base md:text-base sm:text-sm text-orange-600 leading-tight m-0"><%= prize[:name] %></h3>
+              <p class="text-xs text-gray-600 mt-1"><%= prize[:display_time] %></p>
             </div>
-          <% end %>
-        </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="py-20 px-4 sm:px-8 bg-gradient-to-br from-[#97D8F8] via-[#87CEEB] to-[#42A5E7]">
+  <div class="max-w-7xl mx-auto">
+    <h2 class="head-big text-5xl md:text-6xl font-bold text-center mb-16 text-white glow-w">
+      FAQ
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-center-safe mx-auto max-w-6xl">
+      <div class="bg-white/95 backdrop-blur-lg rounded-2xl border-2 border-white/30 shadow-lg p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+      <h3 class="font-['Fredoka'] font-bold text-xl text-[#E06540] mb-3">Who is eligible?</h3>
+      <p class="font-['Fredoka'] font-normal text-lg text-[#8B4513]">You need to be a high schooler (or younger).</p>
+      </div>
+
+      <div class="bg-white/95 backdrop-blur-lg rounded-2xl border-2 border-white/30 shadow-lg p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+      <h3 class="font-['Fredoka'] font-bold text-xl text-[#E06540] mb-3">How much does it cost?</h3>
+      <p class="font-['Fredoka'] font-normal text-lg text-[#8B4513]">100% free - all the prizes are donated to us or paid for by us!</p>
+      </div>
+
+      <div class="bg-white/95 backdrop-blur-lg rounded-2xl border-2 border-white/30 shadow-lg p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+      <h3 class="font-['Fredoka'] font-bold text-xl text-[#E06540] mb-3">What types of projects count?</h3>
+      <p class="font-['Fredoka'] font-normal text-lg text-[#8B4513]">Anything that you've programmed and is open-source!</p>
+      </div>
+
+      <div class="bg-white/95 backdrop-blur-lg rounded-2xl border-2 border-white/30 shadow-lg p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+      <h3 class="font-['Fredoka'] font-bold text-xl text-[#E06540] mb-3">How many projects can I build?</h3>
+      <p class="font-['Fredoka'] font-normal text-lg text-[#8B4513]">All the projects! The land's the limit! (But seriously, you could build as many as you want.)</p>
+      </div>
+
+      <div class="bg-white/95 backdrop-blur-lg rounded-2xl border-2 border-white/30 shadow-lg p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+      <h3 class="font-['Fredoka'] font-bold text-xl text-[#E06540] mb-3">I need help!</h3>
+      <p class="font-['Fredoka'] font-normal text-lg text-[#8B4513]">Read the big FAQ. Still stuck? Reach out in #high-seas-help channel of the Hack Club Slack and we'll help you out!</p>
+      </div>
+
+      <div class="bg-white/95 backdrop-blur-lg rounded-2xl border-2 border-white/30 shadow-lg p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 md:col-span-2 lg:col-span-1">
+      <h3 class="font-['Fredoka'] font-bold text-xl text-[#E06540] mb-3">Is this legit?</h3>
+      <p class="font-['Fredoka'] font-normal text-lg text-[#8B4513]">
+        Yup! Last winter, we ran <a href="https://highseas.hackclub.com/" target="_blank" class="text-[#E06540] underline underline-offset-2 hover:text-[#EC8153] transition-colors font-semibold">High Seas</a>, which gave out similar prizes for working on personal projects.
+      </p>
       </div>
     </div>
   </div>
@@ -227,12 +278,12 @@
 
 <div class="py-20 px-4 sm:px-8 bg-[#e6c58e]">
   <div class="max-w-6xl mx-auto text-center">
-    <h3 class="head-big text-4xl font-bold mb-8 glow-y text-[#E7E76B]">
+    <h3 class="head-big text-4xl font-bold mb-8 text-[#E7E76B]">
       "Make stuff. Get stuff. Repeat."
     </h3>
     <p class="font-['Fredoka',sans-serif] font-normal text-xl mb-8 opacity-80 text-[#8B4513]">
-      Ready to start your island adventure? Join thousands of makers!<br>
-      Sign up with your email to get started on your making journey!
+      Sounds good?<br>
+      Sign up with your email to get started!
     </p>
     <div class="flex items-center justify-center max-w-3xl mx-auto">
       <%= render "signup" %>
@@ -250,8 +301,8 @@
       </div>
     </div>
     <div class="mt-12">
-      <p class="font-['Fredoka',sans-serif] font-normal text-base opacity-90 text-[#6B3F13] max-w-3xl mx-auto bg-white/80 rounded-xl px-6 py-4 shadow">
-      <strong>Hack Club</strong> is a registered 501(c)(3) nonprofit supporting a global network of over 60,000 teenagers. We believe the best way to learn is by building, so we provide community, resources, and funding to help teens create. We've run programs like
+      <p class="font-['Fredoka',sans-serif] font-normal text-base opacity-90 text-[#6B3F13] max-w-5xl mx-auto">
+      <a href="https://hackclub.com/" target="_blank" class="text-[#E06540] underline underline-offset-2 hover:text-[#EC8153] transition-colors font-semibold">Hack Club</a> is a nonprofit supporting a global network of over 60,000 teenagers. We believe the best way to learn is by building, so we provide community, resources, and funding to help teens create. We've run programs like
       <a href="https://highseas.hackclub.com/" target="_blank" class="text-[#E06540] underline underline-offset-2 hover:text-[#EC8153] transition-colors font-semibold">High Seas</a>, a global coding challenge where teens build personal projects, websites, apps, or games, to earn doubloons and redeem for prizes like Raspberry Pis and 3D printers;
       <a href="https://juice.hackclub.com/" target="_blank" class="text-[#E06540] underline underline-offset-2 hover:text-[#EC8153] transition-colors font-semibold">Juice</a>, a two-month game jam where participants create video games and are flown to Shanghai, China, to showcase their games at a pop-up cafe; and
       <a href="https://trail.hackclub.com/" target="_blank" class="text-[#E06540] underline underline-offset-2 hover:text-[#EC8153] transition-colors font-semibold">The Trail</a>, a seven-day hike along the Pacific Crest Trail where 30 teens build their own technical hiking equipment.<br><br>

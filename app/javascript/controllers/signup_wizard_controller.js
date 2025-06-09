@@ -167,7 +167,7 @@ export default class extends Controller {
         <h2 class="text-4xl font-bold text-forest mb-6">Welcome aboard! ✨</h2>
         <p class="text-xl">Check your inbox (<strong>${
           rd.email
-        }</strong>) to confirm your address.</p>
+        }</strong>) for a email from Slack</p>
         
         ${
           rd.ok
