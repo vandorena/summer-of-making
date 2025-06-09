@@ -2,7 +2,7 @@
 
 class VotesController < ApplicationController
   before_action :authenticate_user!
-  before_action :check_projects, only: %i[new create]
+  # before_action :check_projects, only: %i[new create]
   before_action :set_projects, only: %i[new create]
 
   def new
