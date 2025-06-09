@@ -59,12 +59,12 @@ class UsersController < ApplicationController
     res = Faraday.new do |f|
       f.request :url_encoded
       f.response :json, parser_options: { symbolize_names: true }
-      f.headers['Authorization'] = "Bearer #{Rails.application.credentials.dig(:hackatime, :internal_key)}"
+      f.headers["Authorization"] = "Bearer #{Rails.application.credentials.dig(:hackatime, :internal_key)}"
     end
            .post(
              "https://hackatime.hackclub.com/api/internal/can_i_have_a_magic_link_for/#{current_user.slack_id}",
              {
-               email: current_user.email,
+               email: current_user.email
              }
            ).body
     pp res
