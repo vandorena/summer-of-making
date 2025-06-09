@@ -285,6 +285,7 @@ Rails.application.routes.draw do
   post "users/check_hackatime_connection", to: "users#check_hackatime_connection"
 
   namespace :admin do
+    mount Blazer::Engine, at: "blazer"
     get "/", to: "static_pages#index", as: :root
     resources :users, only: [ :index, :show ] do
       member do
