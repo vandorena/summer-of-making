@@ -24,12 +24,12 @@
     <%end %>
   >
     <% if local_assigns[:icon] %>
-      <%= inline_svg "icons/#{icon}.svg", class: "" %>
+      <%= inline_svg "icons/#{icon}.svg", class: "w-6 mr-4" %>
     <% end %>
-    <span><%= text %></span>
+    <span class="text-nowrap tracking-tight"><%= text %></span>
   </span>
 
   <div class=
-    "absolute bottom-0 left-0 w-full h-6 bg-[#C7A077] rounded-full z-0 group-hover:opacity-100 <%= "#{'opacity-0' if not highlight}" %>"
+    "absolute bottom-1 -right-1 w-full pr-3 box-content h-6 bg-[#C7A077] rounded-full z-0 group-hover:opacity-100 <%= "#{'opacity-0' if not highlight}" %>"
   ></div>
 <% end %>

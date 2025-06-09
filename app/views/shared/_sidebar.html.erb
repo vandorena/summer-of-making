@@ -1,9 +1,10 @@
-<%= render "shared/container" do %>
+<%= render layout: "shared/container", locals: { full_height: true } do %>
 
 <div
-  class="flex flex-col transition-all duration-300 text-[#4A2D24] overflow-hidden"
+  class="flex flex-col transition-all duration-300 text-[#4A2D24] h-full justify-between"
   data-sidebar-target="sidebar"
 >
+  <% if false %>
   <div class="flex justify-between items-center" data-sidebar-target="topContainer">
     <div class="cursor-pointer">
       <%= link_to payouts_path, class: "flex items-center gap-2 ml-4" do %>
@@ -23,9 +24,10 @@
         %>
     </button>
   </div>
+  <% end %>
 
-  <nav class="flex-1 flex items-center text-justify text-3xl 2xl:text-4xl">
-    <ul class="space-y-4 w-full">
+  <nav class="flex items-center text-justify text-3xl 2xl:text-4xl">
+    <ul class="space-y-1 w-full">
       <li class="flex justify-start">
         <%= render partial: "shared/link", locals: {
           target: signpost_path,
@@ -86,18 +88,28 @@
     </ul>
   </nav>
 
-  <div class="flex flex-col m-4 gap-4">
-    <div class="group relative transition-all duration-300 p-4 flex items-center text-[#E06540] bg-[#E06540]/40 rounded-3xl overflow-hidden" data-sidebar-target="logoutContainer">
+  <div class="flex flex-col gap-4">
+    <div class="relative flex items-center" data-sidebar-target="logoutContainer">
       <div class="flex items-center w-full">
         <%= image_tag current_user.avatar, class: "h-12 w-12 rounded-full flex-shrink-0", data: { 'sidebar-target': 'avatar' } %>
-        <span class="text-xl ml-3 whitespace-nowrap" data-sidebar-target="content"><%= current_user.display_name %></span>
+        
+        <div class="flex flex-col ml-3">
+          <div class="h-4">Hello,</div>
+          <div class="text-xl whitespace-nowrap" data-sidebar-target="content">@<%= current_user.display_name %>!</div>
+        </div>
       </div>
 
-      <div class="absolute inset-0 bg-[#ecb59b] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer">
-        <%= button_to logout_path, method: :delete, class: "bg-transparent border-0 p-0 cursor-pointer hover:scale-110 transition-transform" do %>
-          <p class="text-3xl font-bold text-[#E06540]">Sign Out [></p>
-        <% end %>
-      </div>
+      <%= button_to logout_path, method: :delete, class: "cursor-pointer block" do %>
+        <%= inline_svg("icons/exit.svg", class: "w-6") %>
+      <% end %>
+
+      <% if false %>
+        <div class="absolute inset-0 bg-[#ecb59b] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer">
+          <%= button_to logout_path, method: :delete, class: "bg-transparent border-0 p-0 cursor-pointer hover:scale-110 transition-transform" do %>
+            <p class="text-3xl font-bold text-[#E06540]">Sign Out [></p>
+          <% end %>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>

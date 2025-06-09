@@ -1,3 +1,11 @@
+<%#
+  Parameters:
+    - full_height: If true, the container will fill up all vertical space available to it.
+    .              Defaults to false.
+%>
+
+<% full_height = local_assigns.fetch(:full_height, false) %>
+
 <div class="flex flex-col">
   <%# Top parchment header %>
   <div class="w-full h-min flex">
@@ -12,13 +20,13 @@
     </div>
   </div>
 
-  <div class="flex -mt-[1px]">
+  <div class="flex -mt-[1px] <%= 'h-full' if full_height %>">
     <div class="w-[46px] ml-[1px] h-full shrink">
       <%= inline_svg("container/container-ml.svg", class: "h-full", preserve_aspect_ratio: "none") %>
     </div>
 
     <%# Actual content here! %>
-    <div class="bg-linear-to-b from-[#E6D4BE] to-[#F6DBBA] h-min w-full">
+    <div class="bg-linear-to-b from-[#E6D4BE] to-[#F6DBBA] h-full w-full">
         <%= yield %>
     </div>
 
