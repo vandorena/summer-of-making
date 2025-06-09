@@ -13,6 +13,11 @@
   <nav class="flex-1 px-4 flex items-center text-justify text-4xl 2xl:text-5xl">
     <ul class="space-y-4 w-full">
       <li class="flex justify-start">
+        <%= link_to signpost_path, class: "px-4 py-2 block #{'organic-card' if current_page?(signpost_path)}" do %>
+          <span data-sidebar-target="content" class="ml-2">Signpost</span>
+        <% end %>
+      </li>
+      <li class="flex justify-start">
         <%= link_to explore_path, class: "px-4 py-2 block #{'organic-card' if current_page?(explore_path)}" do %>
           <span data-sidebar-target="content" class="ml-2">Explore</span>
         <% end %>
