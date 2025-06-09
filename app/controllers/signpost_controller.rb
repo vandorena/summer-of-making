@@ -2,7 +2,16 @@ class SignpostController < ApplicationController
   before_action :authenticate_user!, only: [ :index ]
 
   def index
-    @user = current_user  
+    @user = current_user
+    
+    if params[:reset].present? && @user&.tutorial_progress
+      @user.tutorial_progress.reset_step!(params[:reset])
+
+      tutorial = get_tutorials.find { |t| t[:id] == params[:reset] }
+      tutorial_path = tutorial&.[](:path) || signpost_path
+      redirect_to tutorial_path, notice: "Tutorial reset! You can now replay the #{params[:reset].humanize} tutorial."
+    end
+    
     @account_status = build_account_status
     @announcements = get_announcements
     @tutorials = get_tutorials
@@ -64,7 +73,7 @@ class SignpostController < ApplicationController
         id: "my_projects",
         title: "My Projects",
         description: "This is where you can see all your projects and create new ones.",
-        path: "/projects",
+        path: "/my_projects",
         completed: tutorial_completed?("my_projects")
       },
       {
