@@ -1,0 +1,35 @@
+<%#
+  Parameters:
+    - target: required. Will be passed to link_to.
+    - text: required. The text to display in the link.
+    - class: The classes to apply.
+    - icon: An icon identifier. You can find all icons in '/app/assets/images/icons'. You
+    .       shouldn't include the '.svg' extension.
+    - highlight: If true, the link will always be highlighted. Defaults to false.
+    - content_attr: The attributes to assign to the content.
+%>
+<% raise "shared/link requires 'text' as a local" unless local_assigns[:text] %>
+<% raise "shared/link requires 'target' as a local" unless local_assigns[:target] %>
+
+<% highlight = local_assigns.fetch(:highlight, false) %>
+
+<% base_class = "relative inline-block group py-2" %>
+<% final_class = [base_class, local_assigns[:class]].compact.join(" ") %>
+
+<%= link_to target, class: final_class do %>
+  <span
+    class="relative z-10 flex items-center space-x-2"
+    <% if local_assigns[:content_attr] %>
+      <%= raw(content_attr) %>
+    <%end %>
+  >
+    <% if local_assigns[:icon] %>
+      <%= inline_svg "icons/#{icon}.svg", class: "" %>
+    <% end %>
+    <span><%= text %></span>
+  </span>
+
+  <div class=
+    "absolute bottom-0 left-0 w-full h-6 bg-[#C7A077] rounded-full z-0 group-hover:opacity-100 <%= "#{'opacity-0' if not highlight}" %>"
+  ></div>
+<% end %>

@@ -1,10 +1,10 @@
 <%= render "shared/container" do %>
 
 <div
-  class="flex flex-col transition-all duration-300 text-black rounded-tr-3xl rounded-br-3xl overflow-hidden"
+  class="flex flex-col transition-all duration-300 text-[#4A2D24] overflow-hidden"
   data-sidebar-target="sidebar"
 >
-  <div class="flex justify-between items-center p-4" data-sidebar-target="topContainer">
+  <div class="flex justify-between items-center" data-sidebar-target="topContainer">
     <div class="cursor-pointer">
       <%= link_to payouts_path, class: "flex items-center gap-2 ml-4" do %>
         <img src="/shell.png" alt="shell" width=32>
@@ -24,36 +24,56 @@
     </button>
   </div>
 
-  <nav class="flex-1 px-4 flex items-center text-justify text-3xl 2xl:text-4xl">
+  <nav class="flex-1 flex items-center text-justify text-3xl 2xl:text-4xl">
     <ul class="space-y-4 w-full">
       <li class="flex justify-start">
-        <%= link_to signpost_path, class: "px-4 py-2 block #{'organic-card' if current_page?(signpost_path)}" do %>
-          <span data-sidebar-target="content" class="ml-2">Signpost</span>
-        <% end %>
+        <%= render partial: "shared/link", locals: {
+          target: signpost_path,
+          text: "Signpost",
+          icon: "map",
+          highlight: current_page?(signpost_path),
+          content_attr: 'data-sidebar-target="content"'
+        } %>
       </li>
 
       <li class="flex justify-start">
-        <%= link_to explore_path, class: "px-4 py-2 block #{'organic-card' if current_page?(explore_path)}" do %>
-          <span data-sidebar-target="content" class="ml-2">Explore</span>
-        <% end %>
+        <%= render partial: "shared/link", locals: {
+          target: explore_path,
+          text: "Explore",
+          icon: "compass",
+          highlight: current_page?(explore_path),
+          content_attr: 'data-sidebar-target="content"'
+        } %>
       </li>
 
       <li class="flex justify-start">
-        <%= link_to my_projects_path, class: "px-4 py-2 block #{'organic-card' if current_page?(my_projects_path) || (controller_name == 'projects' && action_name == 'show' && @project&.user == current_user)}" do %>
-          <span data-sidebar-target="content" class="ml-2">My Projects</span>
-        <% end %>
+        <%= render partial: "shared/link", locals: {
+          target: my_projects_path,
+          text: "My Projects",
+          icon: "user",
+          highlight: current_page?(my_projects_path),
+          content_attr: 'data-sidebar-target="content"'
+        } %>
       </li>
 
       <li class="flex justify-start">
-        <%= link_to new_vote_path, class: "px-4 py-2 block #{'organic-card' if current_page?(new_vote_path)}" do %>
-          <span data-sidebar-target="content" class="ml-2">Vote</span>
-        <% end %>
+        <%= render partial: "shared/link", locals: {
+          target: new_vote_path,
+          text: "Vote",
+          icon: "vote",
+          highlight: current_page?(new_vote_path),
+          content_attr: 'data-sidebar-target="content"'
+        } %>
       </li>
 
       <li class="flex justify-start">
-        <%= link_to shop_path, class: "px-4 py-2 block #{'organic-card' if current_page?(shop_path)}" do %>
-          <span data-sidebar-target="content" class="ml-2">Shop</span>
-        <% end %>
+        <%= render partial: "shared/link", locals: {
+          target: shop_path,
+          text: "Shop",
+          icon: "shop",
+          highlight: current_page?(shop_path),
+          content_attr: 'data-sidebar-target="content"'
+        } %>
       </li>
 
       <% admin_tool do %>
