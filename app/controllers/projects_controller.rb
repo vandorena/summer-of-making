@@ -2,7 +2,7 @@
 
 class ProjectsController < ApplicationController
   include ActionView::RecordIdentifier
-  before_action :authenticate_user!, except: %i[index gallery show]
+  before_action :authenticate_user!, except: %i[index show]
   before_action :set_project,
                 only: %i[show edit update follow unfollow ship stake_stonks unstake_stonks destroy]
   before_action :check_if_shipped, only: %i[edit update]
