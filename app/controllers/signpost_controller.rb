@@ -2,7 +2,7 @@ class SignpostController < ApplicationController
   before_action :authenticate_user!, only: [ :index ]
 
   def index
-    @user = current_user
+    @user = current_user  
     @account_status = build_account_status
     @announcements = get_announcements
     @tutorials = get_tutorials
@@ -71,7 +71,7 @@ class SignpostController < ApplicationController
         id: "vote",
         title: "Vote on Projects",
         description: "Participate in the community by voting on projects",
-        path: "/vote/new",
+        path: "/votes/new",
         completed: tutorial_completed?("vote")
       },
       {
