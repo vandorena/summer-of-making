@@ -201,7 +201,6 @@ Rails.application.routes.draw do
   # get "dashboard", to: "dashboard#index"
 
   get "explore", to: "projects#index"
-  get "gallery", to: "projects#gallery"
   get "my_projects", to: "projects#my_projects"
   post "check_link", to: "projects#check_link"
   get "check_github_readme", to: "projects#check_github_readme"
