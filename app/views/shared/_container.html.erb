@@ -1,6 +1,6 @@
-<div class="h-full flex flex-col">
+<div class="flex flex-col">
   <%# Top parchment header %>
-  <div class="w-full flex">
+  <div class="w-full h-min flex">
     <div>
       <%= inline_svg("container/container-tl.svg", class: "-mr-[1px]") %>
     </div>
@@ -13,17 +13,17 @@
   </div>
 
   <div class="flex -mt-[1px]">
-    <div class="h-full w-[46px] ml-[1px]">
-      <%= inline_svg("container/container-ml.svg") %>
+    <div class="w-[46px] ml-[1px] h-full shrink">
+      <%= inline_svg("container/container-ml.svg", class: "h-full", preserve_aspect_ratio: "none") %>
     </div>
 
     <%# Actual content here! %>
-    <div class="bg-[#e6d4be] w-full">
+    <div class="bg-linear-to-b from-[#E6D4BE] to-[#F6DBBA] h-min w-full">
         <%= yield %>
     </div>
 
-    <div class="h-full w-[46px]">
-      <%= inline_svg("container/container-mr.svg") %>
+    <div class="w-[46px] h-full shrink">
+      <%= inline_svg("container/container-mr.svg", class: "h-full", preserve_aspect_ratio: "none") %>
     </div>
   </div>
 

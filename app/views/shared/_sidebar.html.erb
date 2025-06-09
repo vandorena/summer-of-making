@@ -1,7 +1,7 @@
 <%= render "shared/container" do %>
 
 <div
-  class="h-full bg-[#F3ECD8] flex flex-col transition-all duration-300 text-black rounded-tr-3xl rounded-br-3xl overflow-hidden"
+  class="flex flex-col transition-all duration-300 text-black rounded-tr-3xl rounded-br-3xl overflow-hidden"
   data-sidebar-target="sidebar"
 >
   <div class="flex justify-between items-center p-4" data-sidebar-target="topContainer">
@@ -55,7 +55,7 @@
           <span data-sidebar-target="content" class="ml-2">Shop</span>
         <% end %>
       </li>
-      
+
       <% admin_tool do %>
         <li class="flex justify-start">
           <%= link_to admin_root_path, class: "px-4 py-2 block" do %>
