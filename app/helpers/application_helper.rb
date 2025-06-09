@@ -25,4 +25,8 @@ module ApplicationHelper
     concat content_tag(element,
                        class: "p-2 border-2 border-dashed border-orange-500 bg-orange-500/10 w-fit h-fit #{class_name}", **, &)
   end
+
+  def indefinite_articlerize(params_word)
+    %w(a e i o u).include?(params_word[0].downcase) ? "an #{params_word}" : "a #{params_word}"
+  end
 end
