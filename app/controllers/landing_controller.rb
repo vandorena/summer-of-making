@@ -213,6 +213,7 @@ class LandingController < ApplicationController
     unless email.match?(URI::MailTo::EMAIL_REGEXP)
       return respond_to do |format|
         format.html { redirect_to request.referer || projects_path, alert: "Invalid email format" }
+        format.json { render json: { ok: false, error: "Invalid email format" }, status: :bad_request }
         format.turbo_stream do
           flash.now[:alert] = "Invalid email format"
           render turbo_stream: turbo_stream.update("flash-container", partial: "shared/flash"),
@@ -231,9 +232,10 @@ class LandingController < ApplicationController
     body = JSON.parse(slack_invite_response.body)
     Rails.logger.debug body
 
-    @response_data = body
+    @response_data = body.merge("email" => email)
 
     respond_to do |format|
+      format.json { render json: @response_data }
       format.turbo_stream do
         render turbo_stream: [
           turbo_stream.update("modal-content", partial: "landing/signup_modal"),
