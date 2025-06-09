@@ -4,7 +4,14 @@ require "open-uri"
 
 class LandingController < ApplicationController
   def index
-    redirect_to explore_path if user_signed_in?
+    if user_signed_in?
+      if current_user.tutorial_progress.completed_at.nil?
+        redirect_to signpost_path
+      else
+        redirect_to explore_path
+      end
+    end
+
     @prizes = [
       {
         name: "Flipper Zero",
