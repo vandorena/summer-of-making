@@ -42,6 +42,15 @@ class SignpostController < ApplicationController
   def get_tutorials
     tutorials = [
       {
+        id: 'signpost',
+        title: "This is the signpost!",
+        description: "This is where you can see all the announcements and stuff. It's also where you can see your progress and complete the tutorials and post tutorials this'll serve as your dashboard. (and you can restart tutorials anytime you want)",
+        difficulty: "beginner",
+        estimated_time: "like 1 sec dude",
+        path: "/signpost",
+        completed: tutorial_completed?('signpost')
+      },
+      {
         id: 'explore',
         title: "Explore Projects",
         description: "Discover amazing projects from the community",
