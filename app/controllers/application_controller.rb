@@ -11,6 +11,8 @@ class ApplicationController < ActionController::Base
     Rails.logger.info ">>> Request IP: #{request.remote_ip}, User-Agent: #{request.user_agent}"
   end
 
+  before_action :fetch_hackatime_data_if_needed
+
   helper_method :current_user, :user_signed_in?, :current_verification_status
 
   def current_user
@@ -27,5 +29,16 @@ class ApplicationController < ActionController::Base
 
   def authenticate_user!
     redirect_to root_path, alert: "Please sign in to access this page" unless user_signed_in?
+  end
+
+  private
+
+  def fetch_hackatime_data_if_needed
+    return unless user_signed_in?
+    return unless current_user.has_hackatime?
+
+    Rails.cache.fetch("hackatime_fetch_#{current_user.id}", expires_in: 5.seconds) do
+      current_user.refresh_hackatime_data_now
+    end
   end
 end
