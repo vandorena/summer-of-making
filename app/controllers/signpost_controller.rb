@@ -51,42 +51,47 @@ class SignpostController < ApplicationController
       {
         id: "signpost",
         title: "This is the signpost!",
-        description: "This is where you can see all the announcements and stuff. It's also where you can see your progress and complete the tutorials and post tutorials this'll serve as your dashboard. (and you can restart tutorials anytime you want)",
+        description: "This is where you'll see announcements, tutorials, account status and anything that needs your attention. Think of it as your notification/action center!",
         path: "/signpost",
+        order: 1,
         completed: tutorial_completed?("signpost")
       },
       {
         id: "explore",
         title: "Explore Projects",
-        description: "Discover amazing projects from the community",
+        description: "This is like a social feed where you'll see devlogs – mini blogs from other hackers sharing what they're working on. Follow other hackers to see their projects! Check the Following tab for projects you've hit follow on, and browse the Gallery for all the cool stuff hackers have built.",
         path: "/explore",
+        order: 2,
         completed: tutorial_completed?("explore")
       },
       {
         id: "my_projects",
-        title: "My Projects",
-        description: "This is where you can see all your projects and create new ones.",
+        title: "Visit My Projects",
+        description: "This is where you can see all your projects, create new ones, and edit or delete them. Go crazy!",
         path: "/my_projects",
+        order: 3,
         completed: tutorial_completed?("my_projects")
       },
       {
         id: "vote",
-        title: "Vote on Projects",
-        description: "Participate in the community by voting on projects",
+        title: "Check out the Arena",
+        description: "This is where you'll vote on other hackers' projects and where your own projects will get voted on too. The better your projects perform, the more shells you'll earn. Go ahead – pick left, right, or maybe call it a tie?",
         path: "/votes/new",
+        order: 4,
         completed: tutorial_completed?("vote")
       },
       {
         id: "shop",
         title: "Visit the Shop",
-        description: "Explore available rewards and merchandise",
+        description: "This is where you can buy stuff with your shells. You'll earn shells by working on your projects and shipping them! PS: Take a look at the shop items – they're all made by hackers for hackers. (go ahead, get greedy!)",
         path: "/shop",
+        order: 5,
         completed: tutorial_completed?("shop")
       }
     ]
 
-    # Sort tutorials so incomplete ones appear first
-    tutorials.sort_by { |t| [ t[:completed] ? 1 : 0, t[:id] ] }
+    # Sort tutorials by order
+    tutorials.sort_by { |t| t[:order] }
   end
 
   def tutorial_completed?(step_name)
