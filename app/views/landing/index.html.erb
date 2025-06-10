@@ -2,7 +2,7 @@
 <%= stylesheet_link_tag "parchment", "data-turbo-track": "reload" %>
 <%= stylesheet_link_tag "faq_container", "data-turbo-track": "reload" %>
 
-<div class="font-['Fredoka',sans-serif] leading-normal min-h-screen w-full relative overflow-hidden bg-gradient-to-b from-[#e6d7b8] via-[#d1c1a0] to-[#f1e4c3]">
+<div class="font-['Fredoka',sans-serif] leading-normal min-h-screen w-full relative overflow-hidden bg-gradient-to-b from-[#e6d7b8] via-[#d1c1a0] to-[#f1e4c3]" data-controller="smooth-scroll">
   <div class="absolute top-0 left-4 z-20">
     <%= image_tag "flag-orpheus-top.png", alt: "Island", class: "w-30 animate-float" %>
   </div>
@@ -33,7 +33,7 @@
             <%= render "signup" %>
         </div>
         <p class="font-['Fredoka',sans-serif] font-normal text-lg text-[#3a2f25] opacity-90">
-          From Hack Club with love. For teenagers 18 and under &lt;3
+            From <a href="#about-hack-club" class="text-[#8B4513] underline hover:text-[#a8956b] transition-colors font-semibold">Hack Club</a> with love. For teenagers 18 and under &lt;3
         </p>
       </div>
       <div class="flex justify-center lg:justify-end">
@@ -46,9 +46,13 @@
 <div class="py-20 px-4 sm:px-8 bg-gradient-to-br from-[#F3ECD8] via-[#E4DCC6] to-[#D4C4A8]" data-controller="video-modal">
   <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-10">
     <div class="md:w-1/2 w-full mb-8 md:mb-0">
-      <p class="font-['Fredoka',sans-serif] font-normal text-xl opacity-80 mb-4 text-[#8B4513]">
-        Atlantis! Once lost, now found—and soon to be <span class="italic">filled</span> with teenage hackers. Build great things, make new friends, and earn sicknasty prizes on an island continent where high schoolers create the world they want to live in.
-      </p>
+      <%= render "shared/container" do %>
+        <div class="p-5 relative">
+          <p class="font-['Fredoka',sans-serif] font-normal text-xl mb-4">
+            Atlantis! Once lost, now found—and soon to be <span class="italic">filled</span> with teenage hackers. Build great things, make new friends, and earn sicknasty prizes on an island continent where high schoolers create the world they want to live in.
+          </p>
+        </div>
+      <% end %>
     </div>
     <div class="card-box organic-card relative w-full md:w-1/2 max-w-3xl mx-auto rounded-2xl overflow-hidden shadow-2xl bg-white/95 aspect-[16/9] cursor-pointer hover:scale-[1.02] transition-transform duration-300" data-action="click->video-modal#open">
       <img
@@ -296,7 +300,7 @@
           <div class="p-5 relative">
             <h3 class="font-['DynaPuff'] font-bold text-xl text-[#8B4513] mb-3 z-10">Is this legit?</h3>
             <p class="font-['Fredoka'] font-normal text-lg text-[#3a2f25] z-10">
-              Yup! Last winter, we ran <a href="https://highseas.hackclub.com/" target="_blank" class="text-[#8B4513] underline underline-offset-2 hover:text-[#a8956b] transition-colors font-semibold">High Seas</a>, which gave out similar prizes for working on personal projects.
+              Yup! Last winter, we ran <a href="https://highseas.hackclub.com/" target="_blank" class="text-[#8B4513] underline hover:text-[#a8956b] transition-colors font-semibold">High Seas</a>, which gave out similar prizes for working on personal projects.
             </p>
           </div>
         <% end %>
@@ -332,17 +336,26 @@
   </div>
 </div>
 
-<div class="py-16 px-4 sm:px-8 relative h-120" style="background: linear-gradient(to bottom, #d1c1a0 0%, rgba(209,193,160,0.7) 60%, rgba(209,193,160,0.0) 100%), url('https://files.catbox.moe/yc5gr5.png') center/cover no-repeat;">
-  <div class="max-w-6xl mx-auto text-center relative z-10">
-    <h4 class="text-2xl font-bold mb-4 text-[#3a2f25] font-['DynaPuff',sans-serif]">About Hack Club</h4>
-    <p class="font-['Fredoka',sans-serif] font-normal text-base opacity-90 text-[#6B3F13] max-w-5xl mx-auto">
-      <a href="https://hackclub.com/" target="_blank" class="text-[#E06540] underline underline-offset-2 hover:text-[#a8956b] transition-colors font-semibold">Hack Club</a> is a nonprofit supporting a global network of over 60,000 teenagers. We believe the best way to learn is by building, so we provide community, resources, and funding to help teens create. We've run programs like
-      <a href="https://highseas.hackclub.com/" target="_blank" class="text-[#E06540] underline underline-offset-2 hover:text-[#a8956b] transition-colors font-semibold">High Seas</a>, a global coding challenge where teens build personal projects, websites, apps, or games, to earn doubloons and redeem for prizes like Raspberry Pis and 3D printers;
-      <a href="https://juice.hackclub.com/" target="_blank" class="text-[#E06540] underline underline-offset-2 hover:text-[#a8956b] transition-colors font-semibold">Juice</a>, a two-month game jam where participants create video games and are flown to Shanghai, China, to showcase their games at a pop-up cafe; and
-      <a href="https://trail.hackclub.com/" target="_blank" class="text-[#E06540] underline underline-offset-2 hover:text-[#a8956b] transition-colors font-semibold">The Trail</a>, a seven-day hike along the Pacific Crest Trail where 30 teens build their own technical hiking equipment.<br><br>
-      At Hack Club, students aren’t just learning—they're shipping.
-    </p>
+<div class="relative min-h-[60vh] flex flex-col" style="background: linear-gradient(to bottom, #d1c1a0 0%, rgba(209,193,160,0.7) 40%, rgba(209,193,160,0.0) 100%), url('https://files.catbox.moe/yc5gr5.png') center/cover no-repeat;" id="about-hack-club">
+  <div class="max-w-6xl mx-auto text-center relative z-10 pt-16 pb-8 px-4 sm:px-8 md:py-20 lg:py-24">
+    <h4 class="text-2xl font-bold mb-6 md:mb-8 text-[#3a2f25] font-['DynaPuff',sans-serif]">About Hack Club</h4>
+    <%= render "shared/container", custom_class: 'p-2 md:p-4' do %>
+      <div class="relative">
+        <p class="font-['Fredoka',sans-serif] font-normal text-base md:text-lg max-w-5xl mx-auto">
+          <a href="https://hackclub.com/" target="_blank" class="text-[#592f31] underline hover:text-[#8B4513] transition-colors font-semibold">Hack Club</a> is a nonprofit supporting a global network of over 60,000 teenagers. We believe the best way to learn is by building, so we provide community, resources, and funding to help teens create. We've run programs like
+          <a href="https://highseas.hackclub.com/" target="_blank" class="text-[#592f31] underline hover:text-[#8B4513] transition-colors font-semibold">High Seas</a>, a global coding challenge where over 5,000 teens logged over 130,000 hours of coding and we shipped out 11,112 prizes to 119 countries;
+          <a href="https://juice.hackclub.com/" target="_blank" class="text-[#592f31] underline hover:text-[#8B4513] transition-colors font-semibold">Juice</a>, a two-month game jam where 100 teens created their own video games;
+          <a href="https://trail.hackclub.com/" target="_blank" class="text-[#592f31] underline hover:text-[#8B4513] transition-colors font-semibold">The Trail</a>, a seven-day hike along the Pacific Crest Trail where 30 teens build their own technical hiking equipment.
+        </p>
+        <p class="font-['Fredoka',sans-serif] font-normal text-base md:text-lg mt-4">
+          At Hack Club, students aren't just learning, they're shipping.
+        </p>
+      </div>
+    <% end %>
   </div>
+  
+  <div class="flex-grow min-h-[10vh] md:min-h-[10vh] lg:min-h-[10vh]"></div>
+  
   <div class="absolute inset-0 pointer-events-none" aria-hidden="true"></div>
 </div>
 
