@@ -12,7 +12,7 @@
     <div class="cursor-pointer">
       <%= link_to payouts_path, class: "flex items-center gap-2 ml-4" do %>
         <img src="/shell.png" alt="shell" width=32>
-        <p class="text-[#fad85c] text-xl"><%= current_user.balance %></p>
+        <p class="text-[#fad85c] text-xl data-[sidebar-collapsed=true]:hidden" data-sidebar-collapsed="false"><%= current_user.balance %></p>
       <% end %>
     </div>
   </div>
@@ -78,7 +78,7 @@
       <% admin_tool do %>
         <li class="flex justify-start">
           <%= link_to admin_root_path, class: "px-4 py-2 block" do %>
-            <span data-sidebar-target="content" class="ml-2">Admin</span>
+            <span class="ml-2 data-[sidebar-collapsed=true]:hidden" data-sidebar-collapsed="false">Admin</span>
           <% end %>
         </li>
       <% end %>
