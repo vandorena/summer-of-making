@@ -27,7 +27,7 @@ class SignpostController < ApplicationController
     return {} unless @user
 
     {
-      hackatime_linked: @user.has_hackatime?,
+      hackatime_linked: @user.has_hackatime?
     }
   end
 
