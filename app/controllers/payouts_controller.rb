@@ -5,6 +5,7 @@ class PayoutsController < ApplicationController
     respond_to do |format|
       format.json do
         user = User.find_by(slack_id: params[:slack_id])
+
         return render json: { error: "User not found" }, status: :not_found unless user
 
         render json: {
@@ -14,15 +15,6 @@ class PayoutsController < ApplicationController
       end
       format.html { @payouts = current_user.payouts }
     end
-  end
-
-  def balance
-    user = User.find_by(slack_id: params[:slack_id])
-
-    render json: {
-      balance: user.balance,
-      payouts: user.payouts
-    }
   end
 
   private
