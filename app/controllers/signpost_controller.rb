@@ -53,6 +53,7 @@ class SignpostController < ApplicationController
         title: "This is the signpost!",
         description: "This is where you'll see announcements, tutorials, account status and anything that needs your attention. Think of it as your notification/action center!",
         path: "/signpost",
+        order: 1,
         completed: tutorial_completed?("signpost")
       },
       {
@@ -60,6 +61,7 @@ class SignpostController < ApplicationController
         title: "Explore Projects",
         description: "This is like a social feed where you'll see devlogs – mini blogs from other hackers sharing what they're working on. Follow other hackers to see their projects! Check the Following tab for projects you've hit follow on, and browse the Gallery for all the cool stuff hackers have built.",
         path: "/explore",
+        order: 2,
         completed: tutorial_completed?("explore")
       },
       {
@@ -67,6 +69,7 @@ class SignpostController < ApplicationController
         title: "Visit My Projects",
         description: "This is where you can see all your projects, create new ones, and edit or delete them. Go crazy!",
         path: "/my_projects",
+        order: 3,
         completed: tutorial_completed?("my_projects")
       },
       {
@@ -74,6 +77,7 @@ class SignpostController < ApplicationController
         title: "Check out the Arena",
         description: "This is where you'll vote on other hackers' projects and where your own projects will get voted on too. The better your projects perform, the more shells you'll earn. Go ahead – pick left, right, or maybe call it a tie?",
         path: "/votes/new",
+        order: 4,
         completed: tutorial_completed?("vote")
       },
       {
@@ -81,12 +85,13 @@ class SignpostController < ApplicationController
         title: "Visit the Shop",
         description: "This is where you can buy stuff with your shells. You'll earn shells by working on your projects and shipping them! PS: Take a look at the shop items – they're all made by hackers for hackers. (go ahead, get greedy!)",
         path: "/shop",
+        order: 5,
         completed: tutorial_completed?("shop")
       }
     ]
 
-    # Sort tutorials so incomplete ones appear first
-    tutorials.sort_by { |t| [ t[:completed] ? 1 : 0, t[:id] ] }
+    # Sort tutorials by order
+    tutorials.sort_by { |t| t[:order] }
   end
 
   def tutorial_completed?(step_name)
