@@ -7,7 +7,7 @@
       <%= inline_svg "arrow-left.svg", class: "h-5 w-5 mr-2" if defined?(inline_svg) %>
       <span class="text-lg">← My Orders</span>
     <% end %>
-    
+
     <%= link_to shop_path, class: "text-saddle-taupe hover:text-darker-taupe transition-colors duration-200" do %>
       <span class="text-lg">Continue Shopping →</span>
     <% end %>
@@ -22,9 +22,9 @@
           Placed on <%= @order.created_at.strftime("%B %d, %Y at %I:%M %p") %>
         </p>
       </div>
-      
+
       <div class="text-right">
-        <span class="inline-flex items-center px-4 py-2 text-lg font-medium rounded-full <%= 
+        <span class="inline-flex items-center px-4 py-2 text-lg font-medium rounded-full <%=
           case @order.aasm_state
           when 'pending' then 'bg-yellow-100 text-yellow-800'
           when 'awaiting_periodical_fulfillment' then 'bg-blue-100 text-blue-800'
@@ -32,7 +32,8 @@
           when 'rejected' then 'bg-red-100 text-red-800'
           when 'on_hold' then 'bg-orange-100 text-orange-800'
           else 'bg-gray-100 text-gray-800'
-          end %>">
+          end
+                                                                                         %>">
           <%= @order.aasm_state.humanize %>
         </span>
       </div>
@@ -43,7 +44,7 @@
       <div class="flex items-start space-x-6">
         <% if @order.shop_item.image.attached? %>
           <div class="w-32 h-32 bg-soft-bone card-pixel p-4 flex-shrink-0">
-            <%= image_tag @order.shop_item.image.variant(:thumb), 
+            <%= image_tag @order.shop_item.image.variant(:thumb),
                 class: "w-full h-full object-contain",
                 alt: @order.shop_item.name %>
           </div>
@@ -52,19 +53,19 @@
             <span class="text-4xl">📦</span>
           </div>
         <% end %>
-        
+
         <div class="flex-grow">
           <h2 class="text-2xl font-bold text-darker-taupe mb-2"><%= @order.shop_item.name %></h2>
           <% if @order.shop_item.description.present? %>
             <p class="text-saddle-taupe mb-4"><%= @order.shop_item.description %></p>
           <% end %>
-          
+
           <div class="grid md:grid-cols-2 gap-4">
             <div>
               <span class="font-semibold text-darker-taupe">Quantity:</span>
               <span class="text-saddle-taupe"><%= @order.quantity %></span>
             </div>
-            
+
             <% if @order.frozen_item_price.present? %>
               <div>
                 <span class="font-semibold text-darker-taupe">Total Cost:</span>
@@ -82,7 +83,7 @@
     <!-- Order Status & Tracking -->
     <div class="bg-white card-pixel p-6 mb-6">
       <h3 class="text-xl font-bold text-darker-taupe mb-4">Order Status & Tracking</h3>
-      
+
       <!-- Timeline -->
       <div class="space-y-4">
         <!-- Pending Acceptance -->
@@ -96,7 +97,7 @@
             <% end %>
           </div>
         </div>
-        
+
         <!-- Pending Fulfillment (for manually fulfilled items) -->
         <% if @order.shop_item.manually_fulfilled? %>
           <div class="flex items-center space-x-4">
@@ -114,7 +115,7 @@
             </div>
           </div>
         <% end %>
-        
+
         <!-- Fulfilled -->
         <div class="flex items-center space-x-4">
           <div class="w-4 h-4 <%= @order.fulfilled? ? 'bg-green-500' : 'bg-gray-300' %> rounded-full flex-shrink-0"></div>
@@ -133,7 +134,7 @@
             <% end %>
           </div>
         </div>
-        
+
         <!-- Rejection (if applicable) -->
         <% if @order.rejected? %>
           <div class="flex items-center space-x-4">
@@ -181,9 +182,9 @@
 
     <!-- Actions -->
     <div class="flex flex-col sm:flex-row gap-4 mt-8">
-      <%= link_to "View My Orders", shop_orders_path, 
+      <%= link_to "View My Orders", shop_orders_path,
           class: "bg-forest hover:bg-forest/90 text-white font-bold py-3 px-6 btn-pixel text-center transition-colors duration-200" %>
-      <%= link_to "Continue Shopping", shop_path, 
+      <%= link_to "Continue Shopping", shop_path,
           class: "bg-soft-bone hover:bg-saddle-taupe/10 text-darker-taupe font-bold py-3 px-6 btn-pixel text-center border-2 border-saddle-taupe/30 transition-colors duration-200" %>
     </div>
   </div>
@@ -191,13 +192,13 @@
 
 <style>
 .btn-pixel {
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.1), 
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.1),
               2px 2px 0 0 rgba(0,0,0,0.1);
 }
 
 .btn-pixel:hover {
   transform: translate(1px, 1px);
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.1), 
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.1),
               1px 1px 0 0 rgba(0,0,0,0.1);
 }
 

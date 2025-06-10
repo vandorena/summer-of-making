@@ -13,7 +13,7 @@
       <div class="space-y-6">
         <% if @item.image.attached? %>
           <div class="bg-white p-4 card-pixel">
-            <%= image_tag @item.image.variant(:thumb), 
+            <%= image_tag @item.image.variant(:thumb),
                 class: "w-full h-64 object-contain mx-auto",
                 alt: @item.name %>
           </div>
@@ -25,11 +25,11 @@
 
         <div class="space-y-3">
           <h1 class="text-3xl font-bold text-darker-taupe"><%= @item.name %></h1>
-          
+
           <% if @item.description.present? %>
             <p class="text-lg text-saddle-taupe leading-relaxed"><%= @item.description %></p>
           <% end %>
-          
+
           <% if current_user&.is_admin? && @item.internal_description.present? %>
             <div class="bg-vintage-red/10 p-3 card-pixel">
               <p class="text-sm text-vintage-red font-semibold">Internal Description:</p>
@@ -42,7 +42,7 @@
       <!-- Purchase form -->
       <div class="bg-white card-pixel p-6">
         <h2 class="text-2xl font-bold text-darker-taupe mb-6">Complete Your Order</h2>
-        
+
         <!-- Price display -->
         <div class="space-y-4 mb-6">
           <% if @item.ticket_cost.present? && @item.ticket_cost > 0 %>
@@ -72,9 +72,9 @@
           <div class="space-y-2">
             <%= f.label :quantity, class: "block text-lg font-semibold text-darker-taupe" %>
             <% max_quantity = @item.one_per_person_ever? ? 1 : (@item.max_qty || 10) %>
-            <%= f.number_field :quantity, 
-                value: 1, 
-                min: 1, 
+            <%= f.number_field :quantity,
+                value: 1,
+                min: 1,
                 max: max_quantity,
                 class: "w-full px-4 py-3 border-2 border-saddle-taupe/30 rounded-none bg-white text-lg text-center font-semibold focus:border-forest focus:outline-none transition-colors duration-200" %>
             <p class="text-sm text-saddle-taupe">
@@ -88,9 +88,9 @@
 
           <!-- Address picker for all orders -->
           <div class="space-y-2">
-            <%= render 'shared/address_picker', 
-                user: current_user, 
-                form: f, 
+            <%= render 'shared/address_picker',
+                user: current_user,
+                form: f,
                 field_name: 'shipping_address_id',
                 label_text: 'Shipping Address' %>
           </div>
@@ -172,7 +172,7 @@
           <% end %>
 
           <!-- Submit button -->
-          <% 
+          <%
             is_one_per_person = @item.one_per_person_ever?
             has_existing_order = current_user.shop_orders.where(shop_item_id: @item.id).exists?
             already_ordered = is_one_per_person && has_existing_order
@@ -184,7 +184,7 @@
               "w-full bg-forest hover:bg-forest/90 text-white font-bold py-4 px-6 btn-pixel text-lg transition-colors duration-200 cursor-pointer"
             end
           %>
-          <%= f.submit button_text, 
+          <%= f.submit button_text,
               id: "purchase-button",
               disabled: button_disabled,
               class: button_classes %>
@@ -209,13 +209,13 @@
 
 <style>
 .btn-pixel {
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.1), 
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.1),
               2px 2px 0 0 rgba(0,0,0,0.1);
 }
 
 .btn-pixel:hover {
   transform: translate(1px, 1px);
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.1), 
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.1),
               1px 1px 0 0 rgba(0,0,0,0.1);
 }
 
@@ -235,19 +235,19 @@ document.addEventListener('DOMContentLoaded', function() {
   const shortageAmount = document.getElementById('shortage-amount');
   const submitButton = document.getElementById('purchase-button');
   const orderSummary = totalCostContainer?.closest('.bg-forest\\/10');
-  
+
   const itemPrice = <%= @item.ticket_cost || 0 %>;
   const userBalance = <%= current_user.balance || 0 %>;
-  
+
   if (quantityInput && quantityDisplay && totalCostDisplay && totalCostContainer) {
     function updateCostPreview() {
       const quantity = parseInt(quantityInput.value) || 1;
       const totalCost = itemPrice * quantity;
       const canAfford = userBalance >= totalCost;
-      
+
       quantityDisplay.textContent = quantity;
       totalCostDisplay.textContent = totalCost.toLocaleString();
-      
+
       // Update styling based on affordability
       if (canAfford) {
         // Can afford - green styling
@@ -280,10 +280,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       }
     }
-    
+
     quantityInput.addEventListener('input', updateCostPreview);
     quantityInput.addEventListener('change', updateCostPreview);
-    
+
     // Run initial update
     updateCostPreview();
   }

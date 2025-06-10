@@ -5,8 +5,7 @@
 
 <div
   class="flex flex-col transition-all duration-300 text-[#4A2D24] h-full w-[220px] justify-between"
-  data-sidebar-target="sidebar"
->
+  data-sidebar-target="sidebar">
   <% if false %>
   <div class="flex justify-between items-center">
     <div class="cursor-pointer">
@@ -89,15 +88,15 @@
     <div class="relative flex items-center">
       <div class="flex items-center w-full">
         <%= image_tag current_user.avatar, class: "h-12 w-12 rounded-full flex-shrink-0" %>
-        
+
         <div class="flex flex-col ml-3" data-sidebar-target="collapseHide">
           <div class="h-4">Hello,</div>
           <div class="text-xl whitespace-nowrap">@<%= current_user.display_name %>!</div>
         </div>
       </div>
 
-      <%= button_to logout_path, method: :delete, 
-          class: "group relative cursor-pointer flex items-center justify-center", 
+      <%= button_to logout_path, method: :delete,
+          class: "group relative cursor-pointer flex items-center justify-center",
           data: { sidebar_target: "collapseHide" } do %>
         <div class="flex items-center overflow-hidden transition-all duration-300 h-10 w-10 group-hover:w-28 bg-transparent group-hover:bg-[#E06540] rounded-full">
           <div class="flex items-center justify-center min-w-10">

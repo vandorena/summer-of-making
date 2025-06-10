@@ -9,7 +9,7 @@
     - content_attr: The attributes to assign to the content.
     - text_attr: The attributes to assign to the text (NOT the icon).
     - as_button: If defined, a <button> will be produced instead of a link. The given
-    .            attributes will be assigned to it as well. 
+    .            attributes will be assigned to it as well.
     - underline_attr: The attributes to assign to the underline decoration.
 %>
 <% raise "shared/link requires 'text' as a local" unless local_assigns[:text] %>
@@ -28,8 +28,7 @@
       class="relative z-10 flex items-center space-x-2"
       <% if local_assigns[:content_attr] %>
         <%= raw(content_attr) %>
-      <% end %>
-    >
+      <% end %>>
       <% if local_assigns[:icon] %>
         <%= inline_svg "icons/#{icon}.svg", class: "w-6 mr-4" %>
       <% end %>
@@ -37,16 +36,14 @@
         class="text-nowrap tracking-tight"
         <% if local_assigns[:text_attr] %>
           <%= raw(text_attr) %>
-        <% end %>
-      ><%= text %></span>
+        <% end %>><%= text %></span>
     </span>
 
     <div
       data-kind="underline"
       class="absolute bottom-1 -right-1 w-full pr-3 box-content h-6
              bg-[#C7A077] rounded-full z-0 group-hover:opacity-100
-             <%= 'opacity-0' unless highlight %>"
-    ></div>
+             <%= 'opacity-0' unless highlight %>"></div>
   <% end %>
 <% else %>
   <% raise "shared/link requires 'target' as a local" unless local_assigns[:target] %>
@@ -56,8 +53,7 @@
       class="relative z-10 flex items-center space-x-2"
       <% if local_assigns[:content_attr] %>
         <%= raw(content_attr) %>
-      <% end %>
-    >
+      <% end %>>
       <% if local_assigns[:icon] %>
         <%= inline_svg "icons/#{icon}.svg", class: "w-6 mr-4" %>
       <% end %>
@@ -65,8 +61,7 @@
         class="text-nowrap tracking-tight"
         <% if local_assigns[:text_attr] %>
           <%= raw(text_attr) %>
-        <% end %>
-      ><%= text %></span>
+        <% end %>><%= text %></span>
     </span>
 
     <div
@@ -74,7 +69,6 @@
              group-hover:opacity-100 <%= 'opacity-0' unless highlight %>"
       <% if local_assigns[:underline_attr] %>
         <%= raw(underline_attr) %>
-      <% end %>
-    ></div>
+      <% end %>></div>
   <% end %>
 <% end %>
