@@ -4,6 +4,7 @@
   show_project_title ||= false             # Whether to show project title
   show_project_navigation ||= false        # Whether the card should navigate to project
   show_likes ||= false                     # Whether to show like button
+  show_project_link ||= false              # Whether to show project link
   show_comment_modal ||= false             # Whether to show comment button/icon (w/ number of comments)
   show_comments_inline ||= false           # Whether to show comments inline
   show_stonks ||= false                    # Whether to show stonks count
@@ -27,7 +28,18 @@
         <img src="<%= devlog.user.avatar %>" alt="<%= devlog.user.display_name %>" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3">
       <% end %>
       <div>
-        <span class="text-base sm:text-lg 2xl:text-xl"><%= devlog.user.display_name %></span>
+        <% if show_project_link %>
+        <span class="text-base sm:text-lg 2xl:text-xl">
+          <%= devlog.user.display_name %> <span class="opacity-50">worked on</span> 
+          <a href="<%= project_path(devlog.project) %>" class="transition-colors duration-200 hover:underline decoration-1 underline-offset-2">
+            <%= devlog.project.title %>
+          </a>
+        </span>
+        <% else %>
+        <span class="text-base sm:text-lg 2xl:text-xl">
+          <%= devlog.user.display_name %>
+        </span>
+        <% end %>
 
         <div class="text-[#B89576]">
           <!-- Time info -->
