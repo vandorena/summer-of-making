@@ -3,7 +3,7 @@
     <% project_image = @project.banner.presence || @project.devlogs.find { |u| u.attachment.present? }&.attachment || "https://raw.githubusercontent.com/hackclub/dinosaurs/main/confused_dinosaur.png" %>
     <%= image_tag project_image, alt: @project.title %>
 
-    <div class="absolute inset-0 bg-transparent group-hover:bg-[#F3ECD8]/75 transition-colors duration-300 flex flex-col justify-center">
+    <div class="absolute inset-0 bg-transparent group-hover:bg-[#F3ECD8]/75 transition-colors duration-300 flex flex-col justify-center pointer-events-none">
       <p class="text-transparent group-hover:text-black text-center duration-300 transition-colors z-1">Click to upload a new banner image</p>
     </div>
 
