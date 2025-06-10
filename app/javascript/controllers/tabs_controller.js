@@ -18,11 +18,12 @@ export default class extends Controller {
   updateTabButtons() {
     this.tabButtonTargets.forEach((button) => {
       const isActive = button.dataset.tab === this.currentTabValue;
+      const underline = button.querySelector('[data-kind="underline"]');
 
       if (isActive) {
-        button.className = "px-6 tab-element py-2 text-xl text-black";
+        underline.classList.remove("opacity-0");
       } else {
-        button.className = "px-6 py-2 text-xl text-black";
+        underline.classList.add("opacity-0");
       }
     });
   }

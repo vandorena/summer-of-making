@@ -2,34 +2,49 @@
   <div class="flex flex-col justify-between items-start mb-4 md:mb-6 px-4 md:px-8 pt-2 md:pt-8 pb-2">
     <div class="flex justify-between items-center w-full flex-wrap">
       <% if params[:action] == 'my_projects' %>
-        <h1 class="text-4xl sm:text-5xl mb-0">My Projects</h1>
+        <h1 class="text-4xl sm:text-5xl mb-0">Projects</h1>
       <% elsif @feed_type == 'projects' %>
         <h1 class="text-4xl sm:text-5xl mb-0">Gallery</h1>
       <% else %>
-        <div class="flex justify-center w-full">
-            <div class="flex tab-container">
-                <button
-                    data-action="click->tabs#switchTab"
-                    data-tab="explore"
-                    class="px-6 py-2 text-xl text-black"
-                    data-tabs-target="tabButton">
-                    Explore
-                </button>
-                <button
-                    data-action="click->tabs#switchTab"
-                    data-tab="following"
-                    class="px-6 py-2 text-xl text-black"
-                    data-tabs-target="tabButton">
-                    Following
-                </button>
-                <button
-                    data-action="click->tabs#switchTab"
-                    data-tab="gallery"
-                    class="px-6 py-2 text-xl text-black"
-                    data-tabs-target="tabButton">
-                    Gallery
-                </button>
-            </div>
+        <div class="flex justify-center gap-16 w-full">
+          <%=
+            render "shared/link",
+              text: "Everything",
+              icon: "globe",
+              as_button: {
+                data: {
+                  action: "click->tabs#switchTab",
+                  tab: "explore",
+                  tabs_target: "tabButton"
+                }
+              }
+          %>
+
+          <%=
+            render "shared/link",
+              text: "Following",
+              icon: "heart",
+              as_button: {
+                data: {
+                  action: "click->tabs#switchTab",
+                  tab: "following",
+                  tabs_target: "tabButton"
+                }
+              }
+          %>
+
+          <%=
+            render "shared/link",
+              text: "Gallery",
+              icon: "map",
+              as_button: {
+                data: {
+                  action: "click->tabs#switchTab",
+                  tab: "gallery",
+                  tabs_target: "tabButton"
+                }
+              }
+          %>
         </div>
       <% end %>
     </div>
