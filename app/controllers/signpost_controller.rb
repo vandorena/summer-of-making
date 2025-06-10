@@ -15,6 +15,7 @@ class SignpostController < ApplicationController
     @account_status = build_account_status
     @announcements = get_announcements
     @tutorials = get_tutorials
+    @tutorial_progress = get_tutorial_progress
   end
 
   def show
@@ -92,6 +93,25 @@ class SignpostController < ApplicationController
 
     # Sort tutorials by order
     tutorials.sort_by { |t| t[:order] }
+  end
+
+  def get_next_tutorial
+    tutorials = get_tutorials
+    next_tutorial = tutorials.find { |t| !t[:completed] }
+    next_tutorial
+  end
+
+  def get_tutorial_progress
+    tutorials = get_tutorials
+    completed_count = tutorials.count { |t| t[:completed] }
+    total_count = tutorials.length
+    
+    {
+      completed: completed_count,
+      total: total_count,
+      percentage: (completed_count.to_f / total_count * 100).round,
+      next_tutorial: get_next_tutorial
+    }
   end
 
   def tutorial_completed?(step_name)
