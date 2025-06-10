@@ -10,7 +10,7 @@
       <!-- All Tutorials Overview -->
       <div class="bg-white rounded-xl border shadow-sm">
         <div class="px-6 py-4 border-b border-gray-200">
-          <h3 class="text-lg font-semibold text-gray-900">Tutorial Roadmap</h3>
+          <h3 class="text-lg  text-gray-900">Tutorial Roadmap</h3>
           <p class="text-sm text-gray-600 font-national-park font-bold tracking-tight">Here's what we'll cover to get you up and running</p>
         </div>
 
@@ -41,7 +41,7 @@
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center justify-between">
                     <div>
-                      <h4 class="text-sm font-medium text-gray-900 flex items-center">
+                      <h4 class="text-sm  text-gray-900 flex items-center">
                         <%= tutorial[:title] %>
                       </h4>
                       <p class="text-sm text-gray-600 font-national-park font-bold tracking-tight"><%= tutorial[:description] %></p>
@@ -50,16 +50,16 @@
                     <div class="ml-4 flex-shrink-0">
                       <% if tutorial[:completed] %>
                         <a href="<%= signpost_path(reset: tutorial[:id]) %>"
-                           class="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                           class="text-sm text-blue-600 hover:text-blue-700 ">
                           Replay
                         </a>
                       <% elsif tutorial == @tutorial_progress[:next_tutorial] %>
                         <a href="<%= tutorial[:path] %>"
-                           class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-md">
+                           class="bg-blue-600 hover:bg-blue-700 text-white text-sm  px-4 py-2 rounded-md">
                           Start
                         </a>
                       <% else %>
-                        <span class="text-sm text-gray-400 font-medium">Coming up...</span>
+                        <span class="text-sm text-gray-400 ">Coming up...</span>
                       <% end %>
                     </div>
                   </div>
@@ -73,23 +73,23 @@
   <% end %>
     <!-- Account Status Section -->
   <div class="mb-8">
-    <h2 class="text-xl font-semibold text-gray-900 mb-4">Account Status</h2>
+    <h2 class="text-xl  text-gray-900 mb-4">Account Status</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <div class="bg-white rounded-lg border p-4">
         <div class="flex items-center justify-between">
           <div>
-            <h3 class="font-medium text-gray-900">Hackatime</h3>
+            <h3 class="text-gray-900">Hackatime</h3>
           </div>
           <% if @account_status[:hackatime_linked] %>
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs bg-green-100 text-green-800">
               Connected
             </span>
           <% else %>
             <div class="flex flex-col items-end space-y-2">
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs bg-red-100 text-red-800">
                 Not Connected
               </span>
-              <%= link_to "Connect", hackatime_auth_redirect_path, class: "inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500", target: "_blank" %>
+              <%= link_to "Connect", hackatime_auth_redirect_path, class: "inline-flex items-center px-3 py-1 border border-transparent text-xs  rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500", target: "_blank" %>
             </div>
           <% end %>
         </div>
@@ -98,35 +98,35 @@
       <div class="bg-white rounded-lg border p-4">
         <div class="flex items-center justify-between">
           <div>
-            <h3 class="font-medium text-gray-900">Identity Verification</h3>
+            <h3 class=" text-gray-900">Identity Verification</h3>
           </div>
           <% case current_verification_status %>
           <% when :not_linked %>
             <div class="flex flex-col items-end space-y-2">
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs  bg-red-100 text-red-800">
                 Not Started
               </span>
-              <%= link_to "Verify", link_identity_vault_path, class: "inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500", target: "_blank" %>
+              <%= link_to "Verify", link_identity_vault_path, class: "inline-flex items-center px-3 py-1 border border-transparent text-xs  rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500", target: "_blank" %>
             </div>
           <% when :needs_resubmission %>
             <div class="flex flex-col items-end space-y-2">
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs  bg-yellow-100 text-yellow-800">
                 Needs Submission
               </span>
-              <%= link_to "Submit", "https://idv-staging.a.hackclub.dev/", class: "inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500", target: "_blank" %>
+              <%= link_to "Submit", "https://idv-staging.a.hackclub.dev/", class: "inline-flex items-center px-3 py-1 border border-transparent text-xs  rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500", target: "_blank" %>
             </div>
           <% when :pending %>
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs  bg-blue-100 text-blue-800">
               Pending Review
             </span>
           <% when :ineligible %>
             <div class="flex flex-col items-end space-y-2">
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs  bg-red-100 text-red-800">
                 Ineligible
               </span>
             </div>
           <% else %>
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs  bg-green-100 text-green-800">
               Verified
             </span>
           <% end %>
@@ -137,21 +137,21 @@
 
   <!-- Announcements Section -->
   <div class="mb-8">
-    <h2 class="text-xl font-semibold text-gray-900 mb-4">Announcements</h2>
+    <h2 class="text-xl  text-gray-900 mb-4">Announcements</h2>
     <div class="space-y-4">
       <% @announcements.each do |announcement| %>
         <div class="bg-white rounded-lg border p-4">
           <div class="flex items-start justify-between">
             <div class="flex-1">
               <div class="flex items-center mb-2">
-                <h3 class="font-medium text-gray-900 mr-2"><%= announcement[:title] %></h3>
+                <h3 class=" text-gray-900 mr-2"><%= announcement[:title] %></h3>
                 <% case announcement[:type] %>
                 <% when 'info' %>
-                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs  bg-blue-100 text-blue-800">
                     Info
                   </span>
                 <% when 'warning' %>
-                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs  bg-yellow-100 text-yellow-800">
                     Important
                   </span>
                 <% end %>
@@ -163,7 +163,7 @@
             </div>
             <% if announcement[:action_url] %>
               <a href="<%= announcement[:action_url] %>"
-                 class="ml-4 inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                 class="ml-4 inline-flex items-center px-3 py-1 border border-transparent text-sm  rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                 Take Action
               </a>
             <% end %>
@@ -181,8 +181,8 @@
                 class="w-full flex items-center justify-between p-4 text-left focus:outline-none focus:ring-2 focus:ring-blue-500"
                 onclick="toggleTutorials()">
           <div class="flex items-center">
-            <h2 class="text-lg font-semibold text-gray-900 mr-3">Tutorial Roadmap</h2>
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+            <h2 class="text-lg  text-gray-900 mr-3">Tutorial Roadmap</h2>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm  bg-green-100 text-green-800">
               <svg class="mr-1 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
               </svg>
@@ -206,14 +206,14 @@
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center justify-between">
                     <div>
-                      <h4 class="text-sm font-medium text-gray-900 flex items-center">
+                      <h4 class="text-sm  text-gray-900 flex items-center">
                         <%= tutorial[:title] %>
                       </h4>
                       <p class="text-sm text-gray-600 font-national-park font-bold tracking-tight"><%= tutorial[:description] %></p>
                     </div>
                     <div class="ml-4 flex-shrink-0">
                       <a href="<%= signpost_path(reset: tutorial[:id]) %>"
-                         class="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                         class="text-sm text-blue-600 hover:text-blue-700 ">
                         Replay
                       </a>
                     </div>
