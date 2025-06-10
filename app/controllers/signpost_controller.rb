@@ -105,7 +105,7 @@ class SignpostController < ApplicationController
     tutorials = get_tutorials
     completed_count = tutorials.count { |t| t[:completed] }
     total_count = tutorials.length
-    
+
     {
       completed: completed_count,
       total: total_count,
