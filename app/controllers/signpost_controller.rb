@@ -28,8 +28,6 @@ class SignpostController < ApplicationController
 
     {
       hackatime_linked: @user.has_hackatime?,
-      id_verified: @user.ysws_verified?,
-      identity_vault_linked: @user.identity_vault_id.present?
     }
   end
 
