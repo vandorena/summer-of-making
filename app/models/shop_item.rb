@@ -31,4 +31,9 @@ class ShopItem < ApplicationRecord
   def manually_fulfilled?
     true
   end
+
+  def can_afford?(user)
+    user.balance > self.ticket_cost
+  end
+      
 end
