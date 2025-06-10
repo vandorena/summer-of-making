@@ -25,7 +25,6 @@ module Avo
         field :agh_contents, as: :code
         field :image, as: :file
       end
-
     end
   end
 end

@@ -45,13 +45,13 @@ begin
 
       item_type = if fields['agh_skus'].present?
                     'ShopItem::WarehouseItem'
-                  elsif fields['hcb_grant_merchants'].present? || fields['hcb_grant_amount_cents'].present?
+      elsif fields['hcb_grant_merchants'].present? || fields['hcb_grant_amount_cents'].present?
                     'ShopItem::HCBGrant'
-                  elsif fields['hq_mail_item_description'].present?
+      elsif fields['hq_mail_item_description'].present?
                     'ShopItem::HQMailItem'
-                  elsif ['third_party_physical', 'special_fulfillment'].include?(fields['fulfillment_type'])
+      elsif [ 'third_party_physical', 'special_fulfillment' ].include?(fields['fulfillment_type'])
                     'ShopItem::SpecialFulfillmentItem'
-                  else
+      else
                     puts "  ❌ ERROR: Cannot determine type for #{name_field} - no identifying fields found"
                     next
       end
