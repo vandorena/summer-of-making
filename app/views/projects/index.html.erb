@@ -19,7 +19,7 @@
                 }
               }
           %>
-          
+
           <% if user_signed_in? && current_user.followed_projects.any? %>
             <%=
               render "shared/link",
