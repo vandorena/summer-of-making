@@ -56,45 +56,63 @@
         <% if @projects.any? %>
           <% @projects.each do |project| %>
             <%= link_to project_path(project) do %>
-              <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] transform hover:scale-[1.02] transition-transform duration-300 flex flex-col h-full">
+              <%=
+                render layout: "shared/container", locals: {
+                  class: "transform hover:scale-[1.02] transition-transform duration-300"
+                } do
+              %>
+
+              <div class="flex flex-col h-full gap-3">
                 <% project_image = project.banner.attached? ? url_for(project.banner) : (project.devlogs.find { |u| u.attachment.present? }&.attachment || "https://raw.githubusercontent.com/hackclub/dinosaurs/main/confused_dinosaur.png") %>
-                <div class="h-36 md:h-48 overflow-hidden relative">
-                    <img src="<%= project_image %>" alt="<%= project.title %>" class="w-full h-full object-cover rounded-xl">
+                <div class="h-36 md:h-48">
+                  <img src="<%= project_image %>" alt="<%= project.title %>" class="w-full h-full object-cover rounded-xl">
                 </div>
 
-                <div class="p-4 md:p-6 flex flex-col flex-grow">
-                    <div class="flex items-center justify-between mb-2 md:mb-3">
-                    <h2 class="text-xl md:text-2xl 2xl:text-3xl line-clamp-1"><%= project.title %></h2>
-                    <% if user_signed_in? && current_user != project.user %>
-                        <div>
-                        <%= render "projects/follow_button", project: project %>
-                        </div>
-                    <% end %>
-                    </div>
-                    <p class="mb-4 md:mb-6 line-clamp-3 text-sm md:text-base 2xl:text-lg text-gray-600 break-words overflow-wrap-anywhere"><%= project.description %></p>
+                <div class="flex flex-col flex-grow">
+                  <%
+                    timer_total_time = project.timer_sessions.where(status: :stopped).sum(:net_time)
+                    hackatime_total_time = project.hackatime_total_time
+                    total_time_seconds = timer_total_time + hackatime_total_time
+                  %>
 
-                    <%
-                      timer_total_time = project.timer_sessions.where(status: :stopped).sum(:net_time)
+                  <div class="flex items-center justify-between">
+                  <h2 class="text-xl md:text-2xl 2xl:text-3xl line-clamp-1"><%= project.title %></h2>
+                  <% if user_signed_in? && current_user != project.user %>
+                      <div>
+                      <%= render "projects/follow_button", project: project %>
+                      </div>
+                  <% end %>
+                  </div>
 
-                      hackatime_total_time = project.hackatime_total_time
+                  <p class="mb-2 line-clamp-3 text-sm md:text-base 2xl:text-lg text-[#B89576] break-words overflow-wrap-anywhere">
+                    by @<%= project.user.display_name %>  •  <%= project.devlogs.count %> devlogs  •  <%= format_seconds(total_time_seconds) %>
+                  </p>
 
-                      total_time_seconds = timer_total_time + hackatime_total_time
-                    %>
-                    <p class="text-gray-400">
-                        <%= format_seconds(total_time_seconds) %>
-                        <br>
-                        <%= project.devlogs.count %> devlogs
-                    </p>
+                  <p>
+                    <%= project.description %>
+                  </p>
                 </div>
-                </div>
+              </div>
+
+              <% end %>
             <% end %>
           <% end %>
 
-          <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] transform hover:scale-[1.02] transition-transform duration-300 flex flex-col h-full items-center justify-center p-6">
-            <button data-action="click->modal#open" data-modal-type="create-project" class="px-6 md:px-8 py-3 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 text-center btn-pixel text-lg md:text-xl 2xl:text-2xl">
-              Create Project
-            </button>
-          </div>
+          <%= render layout: "shared/container", locals: { full_height: true } do %>
+            <div class="transform hover:scale-[1.02] transition-transform duration-300 flex flex-col h-full items-center justify-center p-6">
+              <%=
+                render "shared/link",
+                  text: "Create Project",
+                  icon: "add",
+                  as_button: {
+                    data: {
+                      action: "click->modal#open",
+                      modal_type: "create-project"
+                    }
+                  }
+              %>
+            </div>
+          <% end %>
         <% else %>
           <div class="col-span-full flex flex-col items-center justify-center bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] p-6 md:p-8 mt-2 md:mt-0">
             <div class="flex justify-center items-center">
