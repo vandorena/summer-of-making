@@ -10,6 +10,7 @@
  */
 
 @import "tutorial.css";
+@import "tooltips.css";
 
 ::-webkit-scrollbar {
     width: 8px;

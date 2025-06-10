@@ -186,9 +186,16 @@
 
       <div class="max-h-[calc(90vh-100px)] overflow-y-auto overflow-x-hidden">
         <%= form_with model: Project.new, class: "p-3 md:p-6 mx-auto w-[calc(100%-2px)]", data: { controller: "project-form repo-autofill", action: "submit->project-form#validateForm" } do |f| %>
+
           <div class="space-y-2 md:space-y-4">
             <div class="mb-2 md:mb-4">
-              <%= f.label :title, class: "block text-sm font-medium mb-1" %>
+              <div class="tooltip-label-container">
+                <%= f.label :title, class: "block text-sm font-medium" %>
+                <div class="tooltip">
+                  <span class="question-mark">?</span>
+                  <span class="tooltiptext">Give your project a cool title!</span>
+                </div>
+              </div>
               <%= f.text_field :title, class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm md:text-base", id: "title", data: { project_form_target: "title" } %>
               <div class="flex justify-end">
                 <p class="mt-1 text-xs md:text-sm text-vintage-red">Required</p>
@@ -197,7 +204,13 @@
             </div>
 
             <div class="mb-2 md:mb-4">
-              <%= f.label :description, class: "block text-sm font-medium mb-1" %>
+              <div class="tooltip-label-container">
+                <%= f.label :description, class: "block text-sm font-medium" %>
+                <div class="tooltip">
+                  <span class="question-mark">?</span>
+                  <span class="tooltiptext">Describe what your project does, how you made it, and what makes it special. This helps others understand your work.</span>
+                </div>
+              </div>
               <%= f.text_area :description, rows: 3, class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm md:text-base", id: "description", data: { project_form_target: "description" } %>
               <div class="flex justify-end">
                 <p class="mt-1 text-xs md:text-sm text-vintage-red">Required</p>
@@ -215,7 +228,13 @@
             </style> -->
 
             <div class="mb-2 md:mb-4" data-controller="category-selector">
-              <%= f.label :category, class: "block text-sm font-medium mb-1" %>
+              <div class="tooltip-label-container">
+                <%= f.label :category, class: "block text-sm font-medium" %>
+                <div class="tooltip">
+                  <span class="question-mark">?</span>
+                  <span class="tooltiptext">Choose the category that best describes your project.</span>
+                </div>
+              </div>
               <%= f.hidden_field :category, data: { category_selector_target: "hiddenField" } %>
                 <div class="flex justify-between tab-container">
                   <button
@@ -259,7 +278,13 @@
             </div>
 
             <div class="mb-3 md:mb-6">
-              <%= f.label :repo_link, "Repository Link", class: "block text-sm font-medium mb-1" %>
+              <div class="tooltip-label-container">
+                <%= f.label :repo_link, "Repository Link", class: "block text-sm font-medium" %>
+                <div class="tooltip">
+                  <span class="question-mark">?</span>
+                  <span class="tooltiptext">Link to your project's GitHub, GitLab, or other remote repository.</span>
+                </div>
+              </div>
               <%= f.url_field :repo_link, placeholder: "https://github.com/hackclub/journey", class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm md:text-base", id: "repo", data: { project_form_target: "repo", repo_autofill_target: "repoInput", action: "input->repo-autofill#repoInputChanged" } %>
               <div class="flex justify-end">
                 <p class="mt-1 text-xs md:text-sm text-gray-700">Optional</p>
@@ -268,7 +293,13 @@
             </div>
 
             <div class="mb-2 md:mb-4">
-              <%= f.label :readme_link, "Readme Link", class: "block text-sm font-medium mb-1" %>
+              <div class="tooltip-label-container">
+                <%= f.label :readme_link, "Readme Link", class: "block text-sm font-medium" %>
+                <div class="tooltip">
+                  <span class="question-mark">?</span>
+                  <span class="tooltiptext">Direct link to your README file (usually the raw GitHub URL). This will be rendered in the arena.</span>
+                </div>
+              </div>
               <%= f.url_field :readme_link, placeholder: "https://raw.githubusercontent.com/hackclub/journey/main/README.md", class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm md:text-base", id: "readme", data: { project_form_target: "readme", repo_autofill_target: "readmeInput", action: "input->repo-autofill#validateReadmeUrl" } %>
               <div class="flex justify-end">
                 <p class="mt-1 text-xs md:text-sm text-gray-700">Optional</p>
@@ -277,7 +308,13 @@
             </div>
 
             <div class="mb-2 md:mb-4">
-              <%= f.label :demo_link, "Demo Link", class: "block text-sm font-medium mb-1" %>
+              <div class="tooltip-label-container">
+                <%= f.label :demo_link, "Demo Link", class: "block text-sm font-medium" %>
+                <div class="tooltip">
+                  <span class="question-mark">?</span>
+                  <span class="tooltiptext">Link to a live demo, deployed version, or video demonstration of your project in action.</span>
+                </div>
+              </div>
               <%= f.url_field :demo_link, placeholder: "https://journey.hackclub.com", class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm md:text-base", id: "demo", data: { project_form_target: "demo" } %>
               <div class="flex justify-end">
                 <p class="mt-1 text-xs md:text-sm text-gray-700">Optional</p>
@@ -289,6 +326,10 @@
               <div class="mb-3 md:mb-6 border-t border-saddle-taupe border-opacity-30 pt-3">
                 <div class="flex items-center mb-2">
                   <h4 class="text-base md:text-lg">Link HackaTime Projects</h4>
+                  <div class="tooltip">
+                    <span class="question-mark">?</span>
+                    <span class="tooltiptext">Connect your existing HackaTime projects to automatically track time spent coding.</span>
+                  </div>
                 </div>
 
                 <div id="hackatime-projects" data-project-form-target="hackatimeProjects" class="space-y-2">
