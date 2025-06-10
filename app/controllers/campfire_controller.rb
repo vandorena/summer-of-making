@@ -1,4 +1,4 @@
-class SignpostController < ApplicationController
+class CampfireController < ApplicationController
   before_action :authenticate_user!, only: [ :index ]
 
   def index
@@ -8,7 +8,7 @@ class SignpostController < ApplicationController
       @user.tutorial_progress.reset_step!(params[:reset])
 
       tutorial = get_tutorials.find { |t| t[:id] == params[:reset] }
-      tutorial_path = tutorial&.[](:path) || signpost_path
+      tutorial_path = tutorial&.[](:path) || campfire_path
       redirect_to tutorial_path, notice: "Tutorial reset! You can now replay the #{params[:reset].humanize} tutorial."
     end
 
@@ -37,7 +37,7 @@ class SignpostController < ApplicationController
     announcements << {
       id: 1,
       title: "Welcome to Summer of Making!",
-      content: "Complete the tutorials yada yada yada. I just created this section, but might put it at top because I remember signpost in HS had smth similar. Anyways, we have a space to post announcements and stuff. I'm not sure if we'll use it, but it's here. Need to implement dismiss",
+      content: "Complete the tutorials yada yada yada. I just created this section, but might put it at top because I remember campfire in HS had smth similar. Anyways, we have a space to post announcements and stuff. I'm not sure if we'll use it, but it's here. Need to implement dismiss",
       type: "info",
       created_at: Time.now
     }
@@ -48,12 +48,12 @@ class SignpostController < ApplicationController
   def get_tutorials
     tutorials = [
       {
-        id: "signpost",
-        title: "This is the signpost!",
+        id: "campfire",
+        title: "This is the campfire!",
         description: "This is where you'll see announcements, tutorials, account status and anything that needs your attention. Think of it as your notification/action center!",
-        path: "/signpost",
+        path: "/campfire",
         order: 1,
-        completed: tutorial_completed?("signpost")
+        completed: tutorial_completed?("campfire")
       },
       {
         id: "explore",

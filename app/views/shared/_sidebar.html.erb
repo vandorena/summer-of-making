@@ -21,10 +21,10 @@
     <ul class="space-y-1 w-full transition-transform duration-150" data-sidebar-target="links">
       <li class="flex justify-start">
         <%= render partial: "shared/link", locals: {
-          target: signpost_path,
-          text: "Signpost",
+          target: campfire_path,
+          text: "Campfire",
           icon: "map",
-          highlight: current_page?(signpost_path),
+          highlight: current_page?(campfire_path),
           text_attr: 'data-sidebar-target="collapseFade"',
           underline_attr: 'data-sidebar-target="underline"'
         } %>
