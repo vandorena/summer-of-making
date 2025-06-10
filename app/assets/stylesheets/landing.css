@@ -101,13 +101,11 @@
 
 .head-big {
   font-family: "Dynapuff", cursive;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .head-med {
   font-family: "Dynapuff", sans-serif;
   font-weight: 500;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* hella fancy, i mean like ripped off of codepen fancy */
@@ -220,17 +218,6 @@
   50% {
     transform: translateY(-8px);
   }
-}
-
-/* :sparkle: */
-.glow-y {
-  text-shadow: 0 0 10px rgba(231, 231, 107, 0.8),
-    0 0 20px rgba(231, 231, 107, 0.6), 0 0 30px rgba(231, 231, 107, 0.4);
-}
-
-.glow-w {
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8),
-    0 0 20px rgba(255, 255, 255, 0.6), 0 0 30px rgba(255, 255, 255, 0.4);
 }
 
 .carousel-track {
