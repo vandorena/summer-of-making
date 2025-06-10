@@ -12,12 +12,6 @@ export default class extends Controller {
   static targets = [
     "sidebar",
     "content",
-    "collapseIcon",
-    "icon",
-    "avatar",
-    "logoutContainer",
-    "topContainer",
-    "mainContent",
     "collapseHide",
     "collapseFade",
     "underline",

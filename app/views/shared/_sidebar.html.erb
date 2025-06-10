@@ -15,17 +15,6 @@
         <p class="text-[#fad85c] text-xl"><%= current_user.balance %></p>
       <% end %>
     </div>
-
-    <button id="collapse-sidebar"
-      class="hover:scale-110 transition-transform cursor-pointer"
-      data-action="click->sidebar#toggle"
-    >
-        <%=
-          inline_svg "chevrom-yessa.svg",
-            class: "2xl:h-12 2xl:w-12 transition-transform duration-300 h-10 w-10",
-            data: { 'sidebar-target': 'collapseIcon' }
-        %>
-    </button>
   </div>
   <% end %>
 
@@ -99,7 +88,7 @@
   <div class="flex flex-col gap-4">
     <div class="relative flex items-center">
       <div class="flex items-center w-full">
-        <%= image_tag current_user.avatar, class: "h-12 w-12 rounded-full flex-shrink-0", data: { 'sidebar-target': 'avatar' } %>
+        <%= image_tag current_user.avatar, class: "h-12 w-12 rounded-full flex-shrink-0" %>
         
         <div class="flex flex-col ml-3" data-sidebar-target="collapseHide">
           <div class="h-4">Hello,</div>
