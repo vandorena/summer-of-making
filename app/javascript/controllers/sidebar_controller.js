@@ -27,19 +27,18 @@ export default class extends Controller {
     this.collapseFadeTargets.forEach(element => {
       element.classList.add("transition-opacity", `duration-${FADE_DURATION}`)
     })
-  
-    // Store sidebar state in localStorage to persist across page loads (exists cause I don't want state to reset when user clicks on another button)
-    if (localStorage.getItem("sidebarCollapsed") === "true") {
-      this.collapse();
-      this.expanded = false;
-      if (this.hasCollapseIconTarget) {
-        this.collapseIconTarget.classList.add("rotate-180");
+
+    // Collapse after a couple of seconds, given the user didn't interact with the
+    // sidebar. This is intended to:
+    //    1) teach new users that the sidebar expands.
+    //    2) give time for us to register if the user is hovering over the sidebar,
+    //       so that between navigations we don't collapse it for a split second,
+    //       which looks quite janky.
+    setTimeout(() => {
+      if (!this.mouseEntered && !this.sidebarTarget.matches(":hover")) {
+        this.collapse();
       }
-    } else {
-      if (this.hasCollapsedOverlayTarget) {
-        this.collapsedOverlayTarget.classList.add("hidden");
-      }
-    }
+    }, 1000);
   }
   
   disconnect() {
@@ -91,16 +90,9 @@ export default class extends Controller {
     } else {
       this.expand();
     }
-    
-    localStorage.setItem('sidebarCollapsed', !this.expanded)
-    
-    // Rotate. I'm not asking darlene to design another icon :D
-    if (this.hasCollapseIconTarget) {
-      this.collapseIconTarget.classList.toggle("rotate-180");
-    }
   }
 
-  collapse() {
+  collapse(immediate = false) {
     // Each element that needs to be hidden when the sidebar is collapsed should
     // be marked with the "collapseHide" target. 
     //
@@ -111,13 +103,22 @@ export default class extends Controller {
     // When collapsing the sidebar, we calculate its expanded width. We assign that
     // width as a fixed one in CSS (hopefully not causing any layout shifting in the process),
     // and then, one animation frame later, we set the width to a known, expected value.
-    this.transitioning = true;
-
-    this.sidebarTarget.style.width = this.prevKnownSize = `${this.sidebarTarget.clientWidth}px`;
-    setTimeout(() => {
+    if (!immediate) {
+      this.transitioning = true;
+      this.sidebarTarget.style.width = this.prevKnownSize = `${this.sidebarTarget.clientWidth}px`;
+      
+      setTimeout(() => {
+        this.sidebarTarget.style.width = "48px";
+        this.transitioning = false;
+      }, 16);
+    }
+    else {
+      // We don't want a transition, so just set it out-right.
+      this.sidebarTarget.classList.add("disable-transitions");
       this.sidebarTarget.style.width = "48px";
-      this.transitioning = false;
-    }, 16);
+
+      setTimeout(() => this.sidebarTarget.classList.remove("disable-transitions"), 1);
+    }
 
     this.sidebarTarget.classList.add("collapsed")
     this.collapseHideTargets.forEach(element => {
@@ -145,13 +146,14 @@ export default class extends Controller {
     this.transitioning = true;
 
     this.sidebarTarget.style.width = this.prevKnownSize;
+    this.sidebarTarget.style.overflow = "hidden";
     setTimeout(() => {
       this.sidebarTarget.style.width = "";
+      this.sidebarTarget.style.overflow = "";
       this.transitioning = false;
-    }, 16);
+    }, 150);
 
-    this.sidebarTarget.classList.remove("collapsed")
-    this.sidebarTarget.classList.remove("w-[30px]")
+    this.sidebarTarget.classList.remove("collapsed", "w-[30px]")
     this.collapseHideTargets.forEach(element => {
       element.classList.remove("hidden")
     })

@@ -100,3 +100,11 @@ body::before {
 main {
     background: transparent !important;
 }
+
+.disable-transitions {
+    transition: none !important;
+
+    & * {
+        transition: none !important;
+    }
+}
