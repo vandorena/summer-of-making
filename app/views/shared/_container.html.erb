@@ -2,13 +2,15 @@
   Parameters:
     - attr: The attributes to apply to the main element of the container.
     - full_height: If true, the container will fill up all vertical space available to it.
+    - custom_class: override css
     .              Defaults to false.
 %>
 
 <% full_height = local_assigns.fetch(:full_height, false) %>
+<% custom_class = local_assigns.fetch(:custom_class, '') %>
 
 <div
-  class="flex flex-col"
+  class="flex flex-col <%= custom_class %>"
   <% if local_assigns[:attr] %>
     <%= raw(attr) %>
   <% end %>>
@@ -39,6 +41,9 @@
 
     <%# Actual content here! %>
     <div class="bg-linear-to-b from-[#E6D4BE] to-[#F6DBBA] h-full w-full flex-1">
+        <% if custom_class.include?('faq-con') %>
+          <div class="parchment-texture"></div>
+        <% end %>
         <%= yield %>
     </div>
 
