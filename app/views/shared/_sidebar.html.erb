@@ -1,11 +1,14 @@
-<%= render layout: "shared/container", locals: { full_height: true } do %>
+<%= render layout: "shared/container", locals: {
+  full_height: true,
+  attr: 'data-action="mouseover->sidebar#handleMouseEnter mouseleave->sidebar#handleMouseExit"'
+} do %>
 
 <div
   class="flex flex-col transition-all duration-300 text-[#4A2D24] h-full justify-between"
   data-sidebar-target="sidebar"
 >
   <% if false %>
-  <div class="flex justify-between items-center" data-sidebar-target="topContainer">
+  <div class="flex justify-between items-center">
     <div class="cursor-pointer">
       <%= link_to payouts_path, class: "flex items-center gap-2 ml-4" do %>
         <img src="/shell.png" alt="shell" width=32>
@@ -27,14 +30,15 @@
   <% end %>
 
   <nav class="flex items-center text-justify text-3xl 2xl:text-4xl">
-    <ul class="space-y-1 w-full">
+    <ul class="space-y-1 w-full transition-transform duration-150" data-sidebar-target="links">
       <li class="flex justify-start">
         <%= render partial: "shared/link", locals: {
           target: signpost_path,
           text: "Signpost",
           icon: "map",
           highlight: current_page?(signpost_path),
-          content_attr: 'data-sidebar-target="content"'
+          text_attr: 'data-sidebar-target="collapseFade"',
+          underline_attr: 'data-sidebar-target="underline"'
         } %>
       </li>
 
@@ -44,7 +48,8 @@
           text: "Explore",
           icon: "compass",
           highlight: current_page?(explore_path),
-          content_attr: 'data-sidebar-target="content"'
+          text_attr: 'data-sidebar-target="collapseFade"',
+          underline_attr: 'data-sidebar-target="underline"'
         } %>
       </li>
 
@@ -54,7 +59,8 @@
           text: "My Projects",
           icon: "user",
           highlight: current_page?(my_projects_path),
-          content_attr: 'data-sidebar-target="content"'
+          text_attr: 'data-sidebar-target="collapseFade"',
+          underline_attr: 'data-sidebar-target="underline"'
         } %>
       </li>
 
@@ -64,7 +70,8 @@
           text: "Vote",
           icon: "vote",
           highlight: current_page?(new_vote_path),
-          content_attr: 'data-sidebar-target="content"'
+          text_attr: 'data-sidebar-target="collapseFade"',
+          underline_attr: 'data-sidebar-target="underline"'
         } %>
       </li>
 
@@ -74,7 +81,8 @@
           text: "Shop",
           icon: "shop",
           highlight: current_page?(shop_path),
-          content_attr: 'data-sidebar-target="content"'
+          text_attr: 'data-sidebar-target="collapseFade"',
+          underline_attr: 'data-sidebar-target="underline"'
         } %>
       </li>
 
@@ -89,26 +97,18 @@
   </nav>
 
   <div class="flex flex-col gap-4">
-    <div class="relative flex items-center" data-sidebar-target="logoutContainer">
+    <div class="relative flex items-center">
       <div class="flex items-center w-full">
         <%= image_tag current_user.avatar, class: "h-12 w-12 rounded-full flex-shrink-0", data: { 'sidebar-target': 'avatar' } %>
         
-        <div class="flex flex-col ml-3">
+        <div class="flex flex-col ml-3" data-sidebar-target="collapseHide">
           <div class="h-4">Hello,</div>
-          <div class="text-xl whitespace-nowrap" data-sidebar-target="content">@<%= current_user.display_name %>!</div>
+          <div class="text-xl whitespace-nowrap">@<%= current_user.display_name %>!</div>
         </div>
       </div>
 
-      <%= button_to logout_path, method: :delete, class: "cursor-pointer block" do %>
+      <%= button_to logout_path, method: :delete, data: { sidebar_target: "collapseHide" }, class: "cursor-pointer block" do %>
         <%= inline_svg("icons/exit.svg", class: "w-6") %>
-      <% end %>
-
-      <% if false %>
-        <div class="absolute inset-0 bg-[#ecb59b] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer">
-          <%= button_to logout_path, method: :delete, class: "bg-transparent border-0 p-0 cursor-pointer hover:scale-110 transition-transform" do %>
-            <p class="text-3xl font-bold text-[#E06540]">Sign Out [></p>
-          <% end %>
-        </div>
       <% end %>
     </div>
   </div>

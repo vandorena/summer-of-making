@@ -7,8 +7,10 @@
     .       shouldn't include the '.svg' extension.
     - highlight: If true, the link will always be highlighted. Defaults to false.
     - content_attr: The attributes to assign to the content.
+    - text_attr: The attributes to assign to the text (NOT the icon).
     - as_button: If defined, a <button> will be produced instead of a link. The given
     .            attributes will be assigned to it as well. 
+    - underline_attr: The attributes to assign to the underline decoration.
 %>
 <% raise "shared/link requires 'text' as a local" unless local_assigns[:text] %>
 
@@ -24,14 +26,19 @@
   <%= content_tag :button, btn_opts do %>
     <span
       class="relative z-10 flex items-center space-x-2"
-      <% if local_assigns[:content_attr] %>>
+      <% if local_assigns[:content_attr] %>
         <%= raw(content_attr) %>
       <% end %>
     >
       <% if local_assigns[:icon] %>
         <%= inline_svg "icons/#{icon}.svg", class: "w-6 mr-4" %>
       <% end %>
-      <span class="text-nowrap tracking-tight"><%= text %></span>
+      <span
+        class="text-nowrap tracking-tight"
+        <% if local_assigns[:text_attr] %>
+          <%= raw(text_attr) %>
+        <% end %>
+      ><%= text %></span>
     </span>
 
     <div
@@ -54,12 +61,20 @@
       <% if local_assigns[:icon] %>
         <%= inline_svg "icons/#{icon}.svg", class: "w-6 mr-4" %>
       <% end %>
-      <span class="text-nowrap tracking-tight"><%= text %></span>
+      <span
+        class="text-nowrap tracking-tight"
+        <% if local_assigns[:text_attr] %>
+          <%= raw(text_attr) %>
+        <% end %>
+      ><%= text %></span>
     </span>
 
     <div
-      class="absolute bottom-1 -right-1 w-full pr-3 box-content h-6 bg-[#C7A077] rounded-full z-0
+      class="absolute transition-all duration-150 bottom-1 w-full pr-3 box-content h-6 bg-[#C7A077] rounded-full z-0
              group-hover:opacity-100 <%= 'opacity-0' unless highlight %>"
+      <% if local_assigns[:underline_attr] %>
+        <%= raw(underline_attr) %>
+      <% end %>
     ></div>
   <% end %>
 <% end %>

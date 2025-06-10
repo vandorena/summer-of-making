@@ -56,15 +56,15 @@
               </div>
             <% end %>
 
-            <div class="flex h-full min-h-0">
-          <%= render "shared/sidebar" %>
-          <main class="overflow-auto w-full" data-sidebar-target="mainContent">
-            <div id="flash-container">
-              <%= render "shared/flash" %>
-            </div>
-            <%= yield %>
-          </main>
-            </div>
+          <div class="flex h-full min-h-0">
+            <%= render "shared/sidebar" %>
+            <main class="overflow-auto w-full" data-sidebar-target="mainContent">
+              <div id="flash-container">
+                <%= render "shared/flash" %>
+              </div>
+              <%= yield %>
+            </main>
+          </div>
         </div>
         <% end %>
       </div>
