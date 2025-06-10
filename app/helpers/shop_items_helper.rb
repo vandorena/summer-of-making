@@ -29,11 +29,15 @@ module ShopItemsHelper
       safe_join([
                   content_tag(:div, class: "item", style: "display: flex; flex-direction: column;") do
                     tag = if field_type == :image
-                            image_tag item.image.variant(:thumb) if item.image.attached?
+                            if item.image.attached?
+                              image_tag item.image.variant(:thumb)
+                            else
+                              content_tag(:div, "No image uploaded", class: "text-gray-400 italic")
+                            end
                     elsif field_type == :checkbox
                             content_tag(:p, "#{display_prefix}: #{item.public_send(field_name) ? 'Yes' : 'No'}", class: style)
                     else
-                            content_tag(:p, "#{display_prefix}#{item.public_send(field_name)}", class: style)
+                            content_tag(:p, "#{display_prefix}#{item.public_send(field_name)}".html_safe, class: style)
                     end
 
                     concat tag
