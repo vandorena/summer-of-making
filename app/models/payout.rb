@@ -19,6 +19,8 @@ class Payout < ApplicationRecord
   belongs_to :payable, polymorphic: true
   belongs_to :user
 
+  validates_presence_of :amount
+
   before_validation :set_user_id
 
   private

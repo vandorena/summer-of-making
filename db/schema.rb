@@ -241,6 +241,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_09_201352) do
     t.jsonb "agh_contents"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "one_per_person_ever", default: false
+    t.integer "max_qty", default: 10
     t.check_constraint "hacker_score >= 0 AND hacker_score <= 100", name: "hacker_score_percentage_check"
   end
 
