@@ -1,4 +1,4 @@
-import { Controller } from "@hotwired/stimulus"
+import { Controller } from "@hotwired/stimulus";
 
 // After how many milliseconds should we collapse the sidebar when the user is not hovering
 // over it?
@@ -29,11 +29,15 @@ export default class extends Controller {
     })
   
     // Store sidebar state in localStorage to persist across page loads (exists cause I don't want state to reset when user clicks on another button)
-    if (localStorage.getItem('sidebarCollapsed') === 'true') {
-      this.collapse()
-      this.expanded = false
+    if (localStorage.getItem("sidebarCollapsed") === "true") {
+      this.collapse();
+      this.expanded = false;
       if (this.hasCollapseIconTarget) {
-        this.collapseIconTarget.classList.add("rotate-180")
+        this.collapseIconTarget.classList.add("rotate-180");
+      }
+    } else {
+      if (this.hasCollapsedOverlayTarget) {
+        this.collapsedOverlayTarget.classList.add("hidden");
       }
     }
   }
@@ -79,23 +83,23 @@ export default class extends Controller {
   
   toggle(event) {
     if (event) {
-      event.stopPropagation()
+      event.stopPropagation();
     }
-    
+
     if (this.expanded) {
-      this.collapse()
+      this.collapse();
     } else {
-      this.expand()
+      this.expand();
     }
     
     localStorage.setItem('sidebarCollapsed', !this.expanded)
     
     // Rotate. I'm not asking darlene to design another icon :D
     if (this.hasCollapseIconTarget) {
-      this.collapseIconTarget.classList.toggle("rotate-180")
+      this.collapseIconTarget.classList.toggle("rotate-180");
     }
   }
-  
+
   collapse() {
     // Each element that needs to be hidden when the sidebar is collapsed should
     // be marked with the "collapseHide" target. 
@@ -136,7 +140,7 @@ export default class extends Controller {
   
     this.expanded = false
   }
-  
+
   expand() {
     this.transitioning = true;
 
