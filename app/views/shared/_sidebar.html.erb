@@ -1,10 +1,12 @@
-<div class="h-full bg-[#F3ECD8] flex flex-col transition-all duration-300 text-black rounded-tr-3xl rounded-br-3xl overflow-hidden"
-     data-sidebar-target="sidebar">
-  <div class="flex justify-between items-center p-4" data-sidebar-target="topContainer">
+<div class="h-full bg-[#F3ECD8] flex flex-col transition-all duration-300 text-black rounded-tr-3xl rounded-br-3xl overflow-hidden
+            data-[sidebar-collapsed=false]:w-[280px] data-[sidebar-collapsed=true]:w-[100px]"
+     data-sidebar-collapsed="false">
+  <div class="flex data-[sidebar-collapsed=false]:justify-between data-[sidebar-collapsed=true]:justify-center items-center p-4"
+       data-sidebar-collapsed="false">
     <div class="cursor-pointer">
       <%= link_to payouts_path, class: "flex items-center gap-2 ml-4" do %>
         <img src="/shell.png" alt="shell" width=32>
-        <p class="text-[#fad85c] text-xl"><%= current_user.balance %></p>
+        <p class="text-[#fad85c] text-xl data-[sidebar-collapsed=true]:hidden" data-sidebar-collapsed="false"><%= current_user.balance %></p>
       <% end %>
     </div>
     <button id="collapse-sidebar" class="hover:scale-110 transition-transform cursor-pointer"
@@ -17,33 +19,33 @@
     <ul class="space-y-4 w-full">
       <li class="flex justify-start">
         <%= link_to signpost_path, class: "px-4 py-2 block #{'organic-card' if current_page?(signpost_path)}" do %>
-          <span data-sidebar-target="content" class="ml-2">Signpost</span>
+          <span class="ml-2 data-[sidebar-collapsed=true]:hidden" data-sidebar-collapsed="false">Signpost</span>
         <% end %>
       </li>
       <li class="flex justify-start">
         <%= link_to explore_path, class: "px-4 py-2 block #{'organic-card' if current_page?(explore_path)}" do %>
-          <span data-sidebar-target="content" class="ml-2">Explore</span>
+          <span class="ml-2 data-[sidebar-collapsed=true]:hidden" data-sidebar-collapsed="false">Explore</span>
         <% end %>
       </li>
       <li class="flex justify-start">
         <%= link_to my_projects_path, class: "px-4 py-2 block #{'organic-card' if current_page?(my_projects_path) || (controller_name == 'projects' && action_name == 'show' && @project&.user == current_user)}" do %>
-          <span data-sidebar-target="content" class="ml-2">My Projects</span>
+          <span class="ml-2 data-[sidebar-collapsed=true]:hidden" data-sidebar-collapsed="false">My Projects</span>
         <% end %>
       </li>
       <li class="flex justify-start">
         <%= link_to new_vote_path, class: "px-4 py-2 block #{'organic-card' if current_page?(new_vote_path)}" do %>
-          <span data-sidebar-target="content" class="ml-2">Vote</span>
+          <span class="ml-2 data-[sidebar-collapsed=true]:hidden" data-sidebar-collapsed="false">Vote</span>
         <% end %>
       </li>
       <li class="flex justify-start">
         <%= link_to shop_path, class: "px-4 py-2 block #{'organic-card' if current_page?(shop_path)}" do %>
-          <span data-sidebar-target="content" class="ml-2">Shop</span>
+          <span class="ml-2 data-[sidebar-collapsed=true]:hidden" data-sidebar-collapsed="false">Shop</span>
         <% end %>
       </li>
       <% admin_tool do %>
         <li class="flex justify-start">
           <%= link_to admin_root_path, class: "px-4 py-2 block" do %>
-            <span data-sidebar-target="content" class="ml-2">Admin</span>
+            <span class="ml-2 data-[sidebar-collapsed=true]:hidden" data-sidebar-collapsed="false">Admin</span>
           <% end %>
         </li>
       <% end %>
@@ -51,22 +53,36 @@
   </nav>
 
   <div class="flex flex-col m-4 gap-4">
-    <div class="group relative transition-all duration-300 p-4 flex items-center text-[#E06540] bg-[#E06540]/40 rounded-3xl overflow-hidden" data-sidebar-target="logoutContainer">
+    <!-- Expanded state: Show with background, avatar and name -->
+    <div class="group relative transition-all duration-300 p-4 flex items-center text-[#E06540] bg-[#E06540]/40 rounded-3xl overflow-hidden
+                data-[sidebar-collapsed=false]:flex data-[sidebar-collapsed=true]:hidden"
+         data-sidebar-collapsed="false">
       <div class="flex items-center w-full">
-        <%= image_tag current_user.avatar, class: "h-12 w-12 rounded-full flex-shrink-0", data: { 'sidebar-target': 'avatar' } %>
-        <span class="text-xl ml-3 whitespace-nowrap" data-sidebar-target="content"><%= current_user.display_name %></span>
+        <%= image_tag current_user.avatar, class: "h-12 w-12 rounded-full flex-shrink-0" %>
+        <span class="text-xl ml-3 whitespace-nowrap"><%= current_user.display_name %></span>
       </div>
 
-      <div class="absolute inset-0 bg-[#ecb59b] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer" data-sidebar-target="content">
+      <div class="absolute inset-0 bg-[#ecb59b] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer">
         <%= button_to logout_path, method: :delete, class: "bg-transparent border-0 p-0 cursor-pointer hover:scale-110 transition-transform" do %>
           <p class="text-3xl font-bold text-[#E06540]">Sign Out [></p>
         <% end %>
       </div>
-
-      <div class="absolute inset-0 bg-[#ecb59b] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer hidden" data-sidebar-target="collapsedOverlay">
-        <%= button_to logout_path, method: :delete, class: "bg-transparent border-0 p-0 cursor-pointer hover:scale-110 transition-transform" do %>
-          <p class="text-2xl font-bold text-[#E06540]">[></p>
-        <% end %>
+    </div>
+    
+    <!-- Collapsed state: Just show avatar with hover effect -->
+    <div class="group relative transition-all duration-300 flex justify-center items-center 
+                data-[sidebar-collapsed=true]:flex data-[sidebar-collapsed=false]:hidden"
+         data-sidebar-collapsed="false">
+      <div class="relative">
+        <%= image_tag current_user.avatar, class: "h-14 w-14 rounded-full flex-shrink-0" %>
+        
+        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer">
+            <%= button_to logout_path, method: :delete, class: "bg-transparent border-0 p-0 cursor-pointer hover:scale-110 transition-transform flex items-center justify-center h-14 w-14" do %>
+            <div class="flex items-center justify-center text-[#E06540] bg-[#E06540] rounded-full h-14 w-14">
+                <p class="text-2xl font-bold text-white flex items-center justify-center h-full w-full m-0">[&gt;</p>
+            </div>
+            <% end %>
+        </div>
       </div>
     </div>
   </div>

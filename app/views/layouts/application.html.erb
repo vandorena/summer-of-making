@@ -35,10 +35,10 @@
     <% if user_signed_in? %>
       <%= render "tutorial/tutorial" %>
 
-      <div data-controller="sidebar">
+      <div data-controller="sidebar" data-sidebar-collapsed-value="false">
         <% if mobile_device? %>
           <%= render "shared/mobile_nav" %>
-          <main class="pb-20 pt-12 px-4" data-sidebar-target="mainContent">
+          <main class="pb-20 pt-12 px-4">
             <div id="flash-container">
               <%= render "shared/flash" %>
             </div>
@@ -58,7 +58,8 @@
 
             <div class="flex h-full min-h-0">
           <%= render "shared/sidebar" %>
-          <main class="overflow-auto w-full" data-sidebar-target="mainContent">
+          <main class="overflow-auto w-full transition-all duration-300"
+                 data-sidebar-collapsed="false">
             <div id="flash-container">
               <%= render "shared/flash" %>
             </div>
