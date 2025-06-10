@@ -33,6 +33,6 @@ class ShopItem < ApplicationRecord
   end
 
   def can_afford?(user)
-    user.balance > self.ticket_cost
+    user.balance >= self.ticket_cost
   end
 end
