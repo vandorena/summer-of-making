@@ -19,16 +19,32 @@
     max-width: 90vw;
 }
 
-/* Main content card */
+/* 9 slice*/
 .tutorial-content-card {
-    background: white;
-    border-radius: 16px;
     padding: 1.5rem;
     max-width: 400px;
     min-width: 280px;
-    border: 1px solid rgba(0, 0, 0, 0.05);
     position: relative;
     animation: slideInUp 0.3s ease-out;
+    
+    background: 
+        /* Corners */
+        url('tutorial-container/top_left.png') top left no-repeat,
+        url('tutorial-container/top_right.png') top right no-repeat,
+        url('tutorial-container/bottom_left.png') bottom left no-repeat,
+        url('tutorial-container/bottom_right.png') bottom right no-repeat,
+        /* Edges */
+        url('tutorial-container/top.png') top center repeat-x,
+        url('tutorial-container/bottom.png') bottom center repeat-x,
+        url('tutorial-container/left_edge.png') center left repeat-y,
+        url('tutorial-container/right_edge.png') center right repeat-y,
+        /* Center fill */
+        url('tutorial-container/center.png') center repeat;
+    
+    background-size: 
+        auto auto, auto auto, auto auto, auto auto,  /* corners - natural size */
+        auto auto, auto auto, auto auto, auto auto,  /* edges - stretch appropriately */
+        auto auto;  /* center - repeat */
 }
 
 .tutorial-header {
@@ -41,16 +57,16 @@
 
 .tutorial-title {
     font-size: 1.25rem;
-    font-weight: 600;
-    color: #1a202c;
+    font-weight: 700;
+    color: #4a3b2a;
     margin: 0 0 0.5rem 0;
     line-height: 1.3;
 }
 
 .tutorial-description {
-    color: #4a5568;
+    color: #6b5b4f;
     font-size: 0.95rem;
-    line-height: 1.5;
+    line-height: 1.6;
     margin: 0;
 }
 
@@ -66,40 +82,26 @@
 
 .tutorial-continue-btn {
     width: 100%;
-    background: #000000;
-    color: white;
-    border: none;
-    border-radius: 8px;
+    background: linear-gradient(135deg, #8b6f47 0%, #a0845c 50%, #8b6f47 100%);
+    color: #f5f1eb;
+    border: 2px solid #6b5439;
+    border-radius: 12px;
     padding: 0.75rem 1.5rem;
-    font-weight: 500;
+    font-weight: 600;
     font-size: 0.95rem;
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(90, 103, 216, 0.2);
 }
 
 .tutorial-continue-btn:hover {
-    background: #000dff;
+    background: linear-gradient(135deg, #9d7b52 0%, #b8936a 50%, #9d7b52 100%);
     transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(90, 103, 216, 0.3);
+    box-shadow: 0 4px 8px rgba(107, 84, 57, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    border-color: #7a6148;
 }
 
 .tutorial-continue-btn:active {
     transform: translateY(0);
-}
-
-/* Speech bubble tail */
-.tutorial-speech-tail {
-    position: absolute;
-    bottom: 1.5rem;
-    right: -8px;
-    width: 16px;
-    height: 16px;
-    background: white;
-    border-right: 1px solid rgba(0, 0, 0, 0.05);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    transform: rotate(-45deg);
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 /* Mascot */
