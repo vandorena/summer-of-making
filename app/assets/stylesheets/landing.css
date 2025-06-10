@@ -3,6 +3,18 @@
 /* most generic ahhh font */
 @import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Pacifico&display=swap");
 
+/* Enable smooth scrolling for the entire page */
+html {
+  scroll-behavior: smooth;
+}
+
+/* For users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 /* get jiggy with it */
 @keyframes wiggle {
   0%,
