@@ -1,7 +1,5 @@
 @import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=National+Park:wght@200..800&display=swap');
-
 @font-face {
   font-family: "Steven";
   font-weight: bold;
@@ -20,6 +18,12 @@
   src: url("Pagaki.ttf") format(truetype);
 }
 
+@font-face {
+  font-family: "National Park";
+  font-weight: 200 800;
+  src: url("NationalPark.ttf") format(truetype);
+}
+
 @theme {
   --font-steven: "Steven", "sans-serif";
   --font-dynapuff: "DynaPuff", "sans-serif";
@@ -34,7 +38,6 @@
   --color-soft-bone: hsl(39, 80%, 80.39%);
   --color-saddle-taupe: hsl(26.25, 48.28%, 45.49%);
 
-  /* These colors are in HSL not in Hex. Please use HSL */
   --color-burn-sienna: hsl(20, 60%, 50%);
   --color-dark-sienna: hsl(14, 72%, 56%);
 
