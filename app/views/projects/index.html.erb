@@ -19,19 +19,21 @@
                 }
               }
           %>
-
-          <%=
-            render "shared/link",
-              text: "Following",
-              icon: "heart",
-              as_button: {
-                data: {
-                  action: "click->tabs#switchTab",
-                  tab: "following",
-                  tabs_target: "tabButton"
+          
+          <% if user_signed_in? && current_user.followed_projects.any? %>
+            <%=
+              render "shared/link",
+                text: "Following",
+                icon: "heart",
+                as_button: {
+                  data: {
+                    action: "click->tabs#switchTab",
+                    tab: "following",
+                    tabs_target: "tabButton"
+                  }
                 }
-              }
-          %>
+            %>
+          <% end %>
 
           <%=
             render "shared/link",
