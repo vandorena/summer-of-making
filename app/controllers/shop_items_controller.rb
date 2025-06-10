@@ -5,7 +5,15 @@ class ShopItemsController < ApplicationController
   before_action :require_admin!, except: [ :index ]
 
   def index
-    @shop_items = ShopItem.order(ticket_cost: :asc)
+    if current_user.ysws_verified?
+      scope = ShopItem.where.not(type: "ShopItem::FreeStickers")
+      scope = scope.not_black_market unless current_user.has_black_market?
+      @shop_items = scope.order(ticket_cost: :asc)
+    else
+      scope = ShopItem.where(type: "ShopItem::FreeStickers")
+      scope = scope.not_black_market unless current_user.has_black_market?
+      @shop_items = scope.order(ticket_cost: :asc)
+    end
     @shop_item_types = available_shop_item_types
   end
 
