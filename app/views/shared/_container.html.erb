@@ -1,19 +1,17 @@
 <%#
   Parameters:
     - attr: The attributes to apply to the main element of the container.
-    - class: The classes to apply to the main element of the container.
     - full_height: If true, the container will fill up all vertical space available to it.
     .              Defaults to false.
 %>
 
 <% full_height = local_assigns.fetch(:full_height, false) %>
-<% classes     = local_assigns.fetch(:class, "") %>
 
-<div
-  class="flex flex-col <%= classes %>"
-  <% if local_assigns[:attr] %>
-    <%= raw(attr) %>
-  <% end %>>
+<% attrs            = local_assigns.fetch(:attr, {}) %>
+<% default_classes  = "flex flex-col" %>
+<% attrs[:class]    = [default_classes, attrs[:class]].compact.join(" ") %>
+
+<%= tag.div(**attrs) do %>
   <%# Top parchment header %>
   <div class="w-full h-min flex">
     <div>
@@ -63,4 +61,4 @@
     </div>
   </div>
 
-</div>
+<% end %>

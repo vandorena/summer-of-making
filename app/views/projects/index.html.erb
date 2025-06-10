@@ -58,7 +58,9 @@
             <%= link_to project_path(project) do %>
               <%=
                 render layout: "shared/container", locals: {
-                  class: "transform hover:scale-[1.02] transition-transform duration-300"
+                  attr: {
+                    class: "transform hover:scale-[1.02] transition-transform duration-300"
+                  }
                 } do
               %>
 

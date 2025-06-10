@@ -1,6 +1,10 @@
 <%= render layout: "shared/container", locals: {
   full_height: true,
-  attr: 'data-action="mouseover->sidebar#handleMouseEnter mouseleave->sidebar#handleMouseExit"'
+  attr: {
+    data: {
+      action: "mouseover->sidebar#handleMouseEnter mouseleave->sidebar#handleMouseExit"
+    }
+  }
 } do %>
 
 <div
