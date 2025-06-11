@@ -144,7 +144,7 @@ class LandingController < ApplicationController
         image: "https://files.catbox.moe/hx87j5.png"
       },
       {
-        name: "Signed Photo of Zack Latta",
+        name: "Signed Photo of Zach Latta",
         time: "~100 hours",
         image: "https://files.catbox.moe/1e4e17.png"
       },
