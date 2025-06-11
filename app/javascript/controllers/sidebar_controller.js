@@ -101,12 +101,17 @@ export default class extends Controller {
    * @param {MouseEvent} event 
    */
   handleMouseExit(event) {
+    this.mouseEntered = false
+
     if (this.transitioning) {
-      console.log("'handleMouseExit' invoked while playing the sidebar transition animation. Ignoring.");
+      this.registerAnimationTimer(100, () => {
+        if (!this.mouseEntered) {
+          this.handleMouseExit(event);
+        }
+      });
+
       return;
     }
-
-    this.mouseEntered = false
 
     setTimeout(() => {
       // If after .5s the user hasn't moved the mouse back inside the sidebar, hide it.
@@ -129,6 +134,9 @@ export default class extends Controller {
   }
 
   collapse(immediate = false) {
+    if (!this.expanded)
+      return;
+
     this.interruptAnimationTimers();
 
     // Each element that needs to be hidden when the sidebar is collapsed should
@@ -198,15 +206,18 @@ export default class extends Controller {
   }
 
   expand() {
+    if (this.expanded)
+      return;
+
     this.interruptAnimationTimers();
     this.transitioning = true;
 
     this.sidebarTarget.style.width = this.prevKnownSize;
-    this.sidebarTarget.style.overflow = "hidden";
+    this.sidebarTarget.style.overflowX = "hidden";
 
     this.registerAnimationTimer(150, () => {
       this.sidebarTarget.style.width = ""
-      this.sidebarTarget.style.overflow = ""
+      this.sidebarTarget.style.overflowX = ""
       this.transitioning = false
     })
 
