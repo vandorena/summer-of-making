@@ -102,11 +102,10 @@
       <%= button_to logout_path, method: :delete,
           class: "group relative cursor-pointer flex items-center justify-center",
           data: { sidebar_target: "collapseHide" } do %>
-        <div class="flex items-center overflow-hidden transition-all duration-300 h-10 w-10 group-hover:w-28 bg-transparent group-hover:bg-[#E06540] rounded-full">
+        <div class="flex items-center overflow-hidden transition-all duration-300 h-10 w-10">
           <div class="flex items-center justify-center min-w-10">
             <%= inline_svg("icons/exit.svg", class: "w-6 text-[#4A2D24] group-hover:text-white") %>
           </div>
-          <span class="font-medium text-[#4A2D24] pr-3 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Logout</span>
         </div>
       <% end %>
     </div>
