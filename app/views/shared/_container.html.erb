@@ -3,10 +3,12 @@
     - attr: The attributes to apply to the main element of the container.
     - full_height: If true, the container will fill up all vertical space available to it.
     - classes: Defines custom classes to apply to the main element of the container.
+    - no_padding: If true, no upper + horizontal padding will be applied. The parchment texture will overlap the content.
 %>
 
 <% full_height = local_assigns.fetch(:full_height, false) %>
-<% classes = local_assigns.fetch(:classes, '') %>
+<% no_padding  = local_assigns.fetch(:no_padding, false) %>
+<% classes     = local_assigns.fetch(:classes, '') %>
 
 <% attrs            = local_assigns.fetch(:attr, {}) %>
 <% default_classes  = "flex flex-col" %>
@@ -14,17 +16,38 @@
 
 <%= tag.div(**attrs) do %>
   <%# Top parchment header %>
-  <div class="w-full h-min flex">
+
+  <%#
+    If we are in no-padding mode, then we create the actual, invisible "layout" element,
+    which holds the display header, which is absolutely positioned.
+  %>
+  <% if no_padding %>
+    <div class="w-full h-[20px] flex relative">
+  <% end %>
+
+  <div class="flex w-full <%= 'h-min absolute z-10' if no_padding %>">
     <div>
       <%= inline_svg("container/container-tl.svg", class: "-mr-[1px]") %>
     </div>
 
-    <%= inline_svg("container/container-tm.svg", class: "w-full -mr-[1px]", preserve_aspect_ratio: "none") %>
+    <% if no_padding %>
+      <%= inline_svg("container/container-tm-np.svg", class: "w-full -mr-[1px]", preserve_aspect_ratio: "none") %>
+    <% else %>
+      <%= inline_svg("container/container-tm.svg", class: "w-full -mr-[1px]", preserve_aspect_ratio: "none") %>
+    <% end %>
 
     <div>
-      <%= inline_svg("container/container-tr.svg") %>
+      <% if no_padding %>
+        <%= inline_svg("container/container-tr-np.svg") %>
+      <% else %>
+        <%= inline_svg("container/container-tr.svg") %>
+      <% end %>
     </div>
   </div>
+
+  <% if no_padding %>
+    </div>
+  <% end %>
 
   <div class="flex -mt-[1px] relative <%= 'h-full' if full_height %>">
     <%#
@@ -33,9 +56,23 @@
       scaling of the vectors, the second element is absolutely-positioned.
     %>
 
-    <div class="w-[46px] h-full"></div>
-    <div class="ml-[1px] h-full absolute top-0 bottom-0">
-      <%= inline_svg("container/container-ml.svg", class: "h-full", preserve_aspect_ratio: "none") %>
+    <% if no_padding %>
+      <div class="w-[23px] h-full"></div>
+    <% else %>
+      <div class="w-[46px] h-full"></div>
+    <% end %>
+
+    <div
+      class="ml-[1px] h-full absolute top-0 bottom-0"
+      <% if no_padding %>
+        style="clip-path: inset(28px 0 0 0)"
+      <% end %>
+    >
+      <% if no_padding %>
+        <%= inline_svg("container/container-ml-np.svg", class: "h-full", preserve_aspect_ratio: "none") %>
+      <% else %>
+        <%= inline_svg("container/container-ml.svg", class: "h-full", preserve_aspect_ratio: "none") %>
+      <% end %>
     </div>
 
     <%# Actual content here! %>
@@ -47,9 +84,24 @@
         <%= yield %>
     </div>
 
-    <div class="w-[36px] h-full"></div>
-    <div class="h-full absolute top-0 bottom-0 right-0">
-      <%= inline_svg("container/container-mr.svg", class: "h-full", preserve_aspect_ratio: "none") %>
+    <% if no_padding %>
+      <div class="w-[18px] h-full"></div>
+    <% else %>
+      <div class="w-[36px] h-full"></div>
+    <% end %>
+    
+    <div
+      class="h-full absolute top-0 bottom-0 right-0"
+      <% if no_padding %>
+        style="clip-path: inset(28px 0 0 0)"
+      <% end %>
+    >
+      <% if no_padding %>
+        <%= inline_svg("container/container-mr-np.svg", class: "h-full", preserve_aspect_ratio: "none") %>
+      <% else %>
+        <%= inline_svg("container/container-mr.svg", class: "h-full", preserve_aspect_ratio: "none") %>
+      <% end %>
+
     </div>
   </div>
 
