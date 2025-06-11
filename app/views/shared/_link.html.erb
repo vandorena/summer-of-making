@@ -36,11 +36,13 @@
 <% base_class   = "relative inline-block group py-2 cursor-pointer #{'text-2xl' if large}" %>
 <% final_class  = [base_class, local_assigns[:class]].compact.join(" ") %>
 
+<% icon_class = "#{large ? 'w-6 mr-4' : 'w-4'} h-min" %>
 <% underline_class = "
-  absolute transition-all duration-150 bottom-1 w-full pr-3 box-content h-6
+  absolute transition-all duration-150 bottom-1 w-full pr-3 box-content
   bg-[#C7A077] rounded-full z-0 group-hover:opacity-100
-  #{'opacity-0' unless highlight}
-  #{underline_attr.delete(:class)}
+  #{ large ? 'h-6' : 'h-4 -right-[6px]' }
+  #{ 'opacity-0' unless highlight }
+  #{ underline_attr.delete(:class) }
 ".strip %>
 
 <% if as_button %>
@@ -53,7 +55,7 @@
       **content_attr
     ) do %>
       <% if local_assigns[:icon] %>
-        <%= inline_svg "icons/#{icon}.svg", class: "#{large ? 'w-6' : 'w-4'} h-min mr-4" %>
+        <%= inline_svg "icons/#{icon}.svg", class: icon_class %>
       <% end %>
 
       <%= tag.span(
@@ -77,7 +79,7 @@
       **content_attr
     ) do %>
       <% if local_assigns[:icon] %>
-        <%= inline_svg "icons/#{icon}.svg", class: "w-6 h-min mr-4" %>
+        <%= inline_svg "icons/#{icon}.svg", class: icon_class %>
       <% end %>
 
       <%= tag.span(
