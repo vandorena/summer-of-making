@@ -1,5 +1,7 @@
 ---
 glob: "**/*.html{+*,}.erb"
+exclude:
+  - "**/vendor/**/*"
 linters:
   AllowedScriptType:
     enabled: true
