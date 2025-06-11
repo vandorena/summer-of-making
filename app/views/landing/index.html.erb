@@ -46,7 +46,7 @@
 <div class="py-20 px-4 sm:px-8 bg-gradient-to-br from-[#F3ECD8] via-[#E4DCC6] to-[#D4C4A8]" data-controller="video-modal">
   <div class="max-w-6xl mx-auto">
     <div class="flex flex-col md:flex-row items-center gap-10 mb-20">
-      <div class="md:w-1/2 w-full mb-8 md:mb-0">
+      <div class="md:w-1/2 w-full mb-8 md:mb-0" style="transform: rotate(-2deg);">
         <%= render "shared/container" do %>
           <div class="p-5 relative">
             <p class="font-['Fredoka',sans-serif] font-normal text-xl mb-4">
@@ -91,19 +91,23 @@
 
       <div class="relative mb-16 flex flex-col items-center">
         <div class="relative flex flex-col md:flex-row gap-8 mx-auto justify-center items-center md:items-stretch">
-          <div class="text-center p-4 lg:p-8 animate-wave max-w-80 sm:max-w-96 md:max-w-80 lg:max-w-96 bg-size-[100%_100%] bg-center bg-no-repeat organic-card" style="background-image: url('<%= asset_path('card.png') %>');">
-            <h3 class="head-med text-2xl font-bold mb-4 text-[#3a2f25] font-['DynaPuff',sans-serif]">Build Stuff</h3>
-            <p class="font-['Fredoka',sans-serif] font-normal text-lg" style="color: #3a2f25;">
-              Websites, games, apps—ship personal coding projects of any kind to earn <span class="italic">shells<img src="/shell.png" class="inline-block mx-1 mb-1 w-5 h-5" alt="shell"></span>
-            </p>
-          </div>
+          <%= render "shared/container", classes: ' h-full max-w-80 sm:max-w-96 md:max-w-80 lg:max-w-96 animate-wave' do %>
+            <div class="p-5 relative text-center">
+              <h3 class="head-med text-2xl font-bold mb-4 text-[#3a2f25] font-['DynaPuff',sans-serif]">Build Stuff</h3>
+              <p class="font-['Fredoka',sans-serif] font-normal text-lg text-[#3a2f25]">
+                Create and ship open-source coding projects, websites, games, apps, tools, to showcase your skills and earn precious <span class="italic">shells<img src="/shell.png" class="inline-block mx-1 mb-1 w-5 h-5" alt="shell"></span>
+              </p>
+            </div>
+          <% end %>
 
-          <div class="text-center p-4 lg:p-8 animate-wave max-w-80 sm:max-w-96 md:max-w-80 lg:max-w-96 bg-size-[100%_100%] bg-center bg-no-repeat organic-card" style="background-image: url('<%= asset_path('card.png') %>'); animation-delay: 2s;">
-            <h3 class="head-med text-2xl font-bold mb-4 text-[#3a2f25] font-['DynaPuff',sans-serif]">Get Stuff</h3>
-            <p class="font-['Fredoka',sans-serif] font-normal text-lg" style="color: #3a2f25;">
-              Redeem your <span class="">shells<img src="/shell.png" class="inline-block mx-1 mb-1 w-5 h-5" alt="shell"></span> for Raspberry Pis, Framework Laptops, 3D printers, and dozens of other awesome prizes to power your next project.
-            </p>
-          </div>
+          <%= render "shared/container", classes: ' h-full max-w-80 sm:max-w-96 md:max-w-80 lg:max-w-96 animate-wave' do %>
+            <div class="p-5 relative text-center" style="animation-delay: 2s;">
+              <h3 class="head-med text-2xl font-bold mb-4 text-[#3a2f25] font-['DynaPuff',sans-serif]">Get Stuff</h3>
+              <p class="font-['Fredoka',sans-serif] font-normal text-lg text-[#3a2f25]">
+                Redeem your <span class="">shells<img src="/shell.png" class="inline-block mx-1 mb-1 w-5 h-5" alt="shell"></span> for awesome prizes like Raspberry Pis, Server hosting credits, 3D printers, and more to fuel your next creation.
+              </p>
+            </div>
+          <% end %>
 
           <div class="absolute mx-auto md:hidden block left-0">
             <img src="/arc_arrow_top_bottom.png" class="relative max-h-40 sm:max-h-48 -left-4 sm:-left-16 aspect-auto rotate-180" alt="arrow">
