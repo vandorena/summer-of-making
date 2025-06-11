@@ -1,17 +1,19 @@
 <div class="container mx-auto px-4 sm:px-4 pt-2 md:pt-8">
-  <h1 class="text-4xl sm:text-5xl mb-4 sm:text-center">Vote</h1>
+  <h1 class="text-4xl sm:text-5xl mb-2 sm:text-center">Vote</h1>
   <p class="text-center text-nice-blue text-lg mb-6">You have voted <%= @user_vote_count %> times.</p>
 
   <% if @projects.size < 2 %>
-    <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] p-6 sm:p-12 text-center mt-8">
-      <div class="flex justify-center items-center">
-        <%= image_tag 'sad.png', class: 'w-32 h-32 sm:w-32 sm:h-32 mb-4 sm:mb-6 transform scale-x-[-1]' %>
+    <%= render layout: "shared/container" do %>
+      <div class="h-full text-center mt-8">
+        <div class="flex justify-center items-center">
+          <%= image_tag 'sad.png', class: 'w-32 h-32 sm:w-32 sm:h-32 mb-4 sm:mb-6 transform scale-x-[-1]' %>
+        </div>
+        <p class="mb-6 sm:mb-8 text-black text-large sm:text-xl 2xl:text-2xl">There aren't enough projects in the pool to vote on. Check back later for more projects!</p>
+        <%= link_to explore_path, class: "px-4 sm:px-6 py-2 sm:py-3 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 text-base sm:text-lg 2xl:text-xl btn-pixel" do %>
+          Explore Projects
+        <% end %>
       </div>
-      <p class="mb-6 sm:mb-8 text-black text-large sm:text-xl 2xl:text-2xl">There aren't enough projects in the pool to vote on. Check back later for more projects!</p>
-      <%= link_to explore_path, class: "px-4 sm:px-6 py-2 sm:py-3 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 text-base sm:text-lg 2xl:text-xl btn-pixel" do %>
-        Explore Projects
-      <% end %>
-    </div>
+    <% end %>
   <% else %>
     <div data-controller="voting-steps"
          data-action="music:played@window->voting-steps#handleMusicPlayed"
