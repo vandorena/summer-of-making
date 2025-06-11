@@ -129,6 +129,22 @@ export default class extends Controller {
       element.classList.add("opacity-0")
     })
 
+    // We can't hide these targets, since that would cause a nasty layout shift.
+    // However, if we *don't* hide the targets, that would mean that someone of them
+    // would "stick out" of the sidebar, even if they're invisible and not contributing
+    // to the box model. This would mean that we'd detect a hover event even if the user
+    // isn't actually hovering over the sidebar.
+    //
+    // We change the width of these elements to 0px, so that they still contribute to the
+    // vertical layout, but don't "stick out". This will probably need to be changed if
+    // we define any collapseFade targets that meaningfully contribute to the horizontal
+    // box model.
+    setTimeout(() => {
+      this.collapseFadeTargets.forEach(element => {
+        element.classList.add("w-[0px]")
+      })
+    }, 250);
+
     this.underlineTargets.forEach(element => {
       element.classList.remove("w-full")
       element.classList.add("w-[36px]")
@@ -159,7 +175,7 @@ export default class extends Controller {
     })
 
     this.collapseFadeTargets.forEach(element => {
-      element.classList.remove("opacity-0")
+      element.classList.remove("opacity-0", "w-[0px]")
     })
 
     this.underlineTargets.forEach(element => {
