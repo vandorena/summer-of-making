@@ -36,6 +36,13 @@
 <% base_class   = "relative inline-block group py-2 cursor-pointer #{'text-2xl' if large}" %>
 <% final_class  = [base_class, local_assigns[:class]].compact.join(" ") %>
 
+<% underline_class = "
+  absolute transition-all duration-150 bottom-1 w-full pr-3 box-content h-6
+  bg-[#C7A077] rounded-full z-0 group-hover:opacity-100
+  #{'opacity-0' unless highlight}
+  #{underline_attr.delete(:class)}
+".strip %>
+
 <% if as_button %>
   <% btn_opts = { type: 'button', class: final_class } %>
   <% btn_opts[:data] = as_button[:data] if as_button[:data].is_a?(Hash) %>
@@ -58,11 +65,7 @@
     <% end %>
 
     <%= tag.div(
-      class: "
-        absolute bottom-1 -right-1 w-full pr-3 box-content h-6
-        bg-[#C7A077] rounded-full z-0 group-hover:opacity-100
-        #{'opacity-0' unless highlight}
-        #{underline_attr.delete(:class)}".strip,
+      class: underline_class,
       data: { kind: "underline" }.merge(underline_attr.delete(:data) || {}),
       **underline_attr
     ) %>
@@ -86,11 +89,7 @@
     <% end %>
 
     <%= tag.div(
-      class: "
-        absolute transition-all duration-150 bottom-1 w-full pr-3 box-content h-6
-        bg-[#C7A077] rounded-full z-0 group-hover:opacity-100
-        #{'opacity-0' unless highlight}
-        #{underline_attr.delete(:class)}".strip,
+      class: underline_class,
       data: { kind: "underline" }.merge(underline_attr.delete(:data) || {}),
       **underline_attr
     ) %>
