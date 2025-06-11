@@ -24,6 +24,7 @@ export default class extends Controller {
     this.expanded = true
     this.transitioning = false
     this.mouseEntered = false
+    this.animationTimers = []
     this.prevKnownSize = this.hasSidebarTarget ? this.sidebarTarget.clientWidth + "px" : "100px";
 
     this.collapseFadeTargets.forEach(element => {
@@ -51,6 +52,29 @@ export default class extends Controller {
         }
       }, 1000);
     }
+  }
+
+  /**
+   * Queues an animation task to run after the specified amount of milliseconds. Animation
+   * timers may be interrupted if another animation is played.
+   * @param {number} delay 
+   * @param {TimerHandler} handler 
+   */
+  registerAnimationTimer(delay, handler) {
+    const timerId = setTimeout(() => {
+      this.animationTimers = this.animationTimers.filter(x => x != timerId)
+      handler()
+    }, delay)
+
+    this.animationTimers.push(timerId)
+  }
+
+  interruptAnimationTimers() {
+    for (const timer of this.animationTimers) {
+      clearTimeout(timer);
+    }
+
+    this.animationTimers = [];
   }
   
   disconnect() {
@@ -105,6 +129,8 @@ export default class extends Controller {
   }
 
   collapse(immediate = false) {
+    this.interruptAnimationTimers();
+
     // Each element that needs to be hidden when the sidebar is collapsed should
     // be marked with the "collapseHide" target. 
     //
@@ -151,11 +177,11 @@ export default class extends Controller {
     // vertical layout, but don't "stick out". This will probably need to be changed if
     // we define any collapseFade targets that meaningfully contribute to the horizontal
     // box model.
-    setTimeout(() => {
+    this.registerAnimationTimer(250, () => {
       this.collapseFadeTargets.forEach(element => {
         element.classList.add("w-[0px]")
       })
-    }, 250);
+    })
 
     this.underlineTargets.forEach(element => {
       element.classList.remove("w-full")
@@ -172,15 +198,17 @@ export default class extends Controller {
   }
 
   expand() {
+    this.interruptAnimationTimers();
     this.transitioning = true;
 
     this.sidebarTarget.style.width = this.prevKnownSize;
     this.sidebarTarget.style.overflow = "hidden";
-    setTimeout(() => {
-      this.sidebarTarget.style.width = "";
-      this.sidebarTarget.style.overflow = "";
-      this.transitioning = false;
-    }, 150);
+
+    this.registerAnimationTimer(150, () => {
+      this.sidebarTarget.style.width = ""
+      this.sidebarTarget.style.overflow = ""
+      this.transitioning = false
+    })
 
     this.sidebarTarget.classList.remove("collapsed", "w-[30px]")
     this.collapseHideTargets.forEach(element => {
