@@ -13,6 +13,7 @@ class ApplicationController < ActionController::Base
     Rails.logger.info ">>> Request IP: #{request.remote_ip}, User-Agent: #{request.user_agent}"
   end
 
+  before_action :authenticate_user!
   before_action :fetch_hackatime_data_if_needed
 
   helper_method :current_user, :user_signed_in?, :current_verification_status
