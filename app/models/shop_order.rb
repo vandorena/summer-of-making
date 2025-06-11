@@ -37,7 +37,7 @@ class ShopOrder < ApplicationRecord
   belongs_to :user
   belongs_to :shop_item
 
-  has_many :payouts, as: :payable
+  has_many :payouts, as: :payable, dependent: :destroy
 
   validate :check_one_per_person_ever_limit
   validate :check_max_quantity_limit
@@ -144,7 +144,8 @@ class ShopOrder < ApplicationRecord
 
     user.payouts.create!(
       amount: -total_cost,
-      payable: self
+      payable: self,
+      reason: "Shop order of #{shop_item.name.pluralize(quantity)}"
     )
   end
 end
