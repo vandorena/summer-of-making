@@ -150,58 +150,62 @@
       </div>
     </div>
   </div>
-</div>
 
-<div class="section-z py-32 px-4 sm:px-8 bg-gradient-to-br from-[#e6d7b8] via-[#d1c1a0] to-[#f1e4c3]">
-  <div class="max-w-8xl mx-auto">
-    <h2 class="head-big text-5xl md:text-6xl font-bold text-center mb-4 text-[#4A2D24] relative font-['DynaPuff',sans-serif]">
-      Amazing Prizes
-    </h2>
-    <p class="font-['Fredoka',sans-serif] font-normal text-center text-xl mb-16 text-[#8B4513] opacity-90">
-      Redeem these prizes with your shells! We cover shipping costs, so you can focus on making!<br>
-      <span class="text-[#E06540]">All prizes are available while supplies last.</span>
-    </p>
-
-    <div class="relative mx-15 md:mx-15 sm:mx-10" data-controller="carousel" data-carousel-row-value="1" style="transform: rotate(-3deg);">
-      <div class="carousel-track flex gap-4 md:gap-4 sm:gap-2" data-carousel-target="container">
-        <% @prizes.each_with_index do |prize, index| %>
-          <div class="carousel-slide flex-none w-40 md:w-44 sm:w-36" style="transform: <%= prize[:random_transform] %>; animation-delay: <%= (index * 0.5) %>s;">
-            <div class="parchment-prize-card p-3 md:p-3 sm:p-2 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:scale-105" style="animation-delay: <%= (index * 0.3) %>s;">
-              <div class="parchment-texture"></div>
-              <div class="parchment-prize-image w-full h-full flex items-center justify-center mb-2 rounded-xl">
-                <% if prize[:image] && prize[:image] != "" %>
-                  <img src="<%= prize[:image] %>" alt="<%= prize[:name] %>" class="w-full h-full object-cover rounded-xl">
-                <% else %>
-                  <%= image_tag "clubhuman.png", alt: "Prize", class: "w-full h-full object-cover rounded-xl" %>
-                <% end %>
+  <div class="max-w-9xl mx-auto mt-25" style="transform: rotate(-2deg);">
+    <%= render "shared/container", classes: 'mx-auto max-w-7xl w-full relative' do %>
+      <div class="p-5 relative">
+        <div class="parchment-texture"></div>
+        
+        <h2 class="head-big text-5xl md:text-6xl font-bold text-center mb-4 text-[#4A2D24] relative font-['DynaPuff',sans-serif]">
+          Amazing Prizes
+        </h2>
+        <p class="font-['Fredoka',sans-serif] font-normal text-center text-xl mb-16 text-[#8B4513] opacity-90">
+          Redeem these prizes with your shells! We cover shipping costs, so you can focus on making!<br>
+          <span class="text-[#E06540]">All prizes are available while supplies last.</span>
+        </p>
+        
+        <div class="relative mx-15 md:mx-15 sm:mx-10 z-20" data-controller="carousel" data-carousel-row-value="1" style="transform: rotate(-3deg);">
+          <div class="carousel-track flex gap-4 md:gap-4 sm:gap-2" data-carousel-target="container">
+            <% @prizes.each_with_index do |prize, index| %>
+              <div class="carousel-slide flex-none w-40 md:w-44 sm:w-36" style="transform: <%= prize[:random_transform] %>; animation-delay: <%= (index * 0.5) %>s;">
+                <div class="parchment-prize-card p-3 md:p-3 sm:p-2 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:scale-105" style="animation-delay: <%= (index * 0.3) %>s;">
+                  <div class="parchment-texture"></div>
+                  <div class="parchment-prize-image w-full h-full flex items-center justify-center mb-2 rounded-xl">
+                    <% if prize[:image] && prize[:image] != "" %>
+                      <img src="<%= prize[:image] %>" alt="<%= prize[:name] %>" class="w-full h-full object-cover rounded-xl">
+                    <% else %>
+                      <%= image_tag "clubhuman.png", alt: "Prize", class: "w-full h-full object-cover rounded-xl" %>
+                    <% end %>
+                  </div>
+                  <h3 class="parchment-prize-name font-['Fredoka'] font-semibold text-base md:text-base sm:text-sm leading-tight m-0"><%= prize[:name] %></h3>
+                  <p class="parchment-prize-time text-xs mt-1"><%= prize[:display_time] %></p>
+                </div>
               </div>
-              <h3 class="parchment-prize-name font-['Fredoka'] font-semibold text-base md:text-base sm:text-sm leading-tight m-0"><%= prize[:name] %></h3>
-              <p class="parchment-prize-time text-xs mt-1"><%= prize[:display_time] %></p>
-            </div>
+            <% end %>
           </div>
-        <% end %>
-      </div>
-    </div>
+        </div>
 
-    <div class="relative mt-25 mx-15 md:mx-15 sm:mx-10" data-controller="carousel" data-carousel-row-value="2" style="transform: rotate(2deg);">
-      <div class="carousel-track-rev flex gap-4 md:gap-4 sm:gap-2" data-carousel-target="container">
-        <% @prizes.each_with_index do |prize, index| %>
-          <div class="carousel-slide flex-none w-40 md:w-44 sm:w-36" style="transform: <%= prize[:random_transform] %>; animation-delay: <%= (index * 0.4) %>s;">
-            <div class="parchment-prize-card p-3 md:p-3 sm:p-2 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:scale-105" style="animation-delay: <%= (index * 0.4) %>s;">
-              <div class="parchment-prize-image w-full h-full flex items-center justify-center mb-2 rounded-xl">
-                <% if prize[:image] && prize[:image] != "" %>
-                  <img src="<%= prize[:image] %>" alt="<%= prize[:name] %>" class="w-full h-full object-cover rounded-xl">
-                <% else %>
-                  <%= image_tag "clubhuman.png", alt: "Prize", class: "w-full h-full object-cover rounded-xl" %>
-                <% end %>
+        <div class="relative mt-25 mx-15 md:mx-15 sm:mx-10 z-20" data-controller="carousel" data-carousel-row-value="2" style="transform: rotate(2deg);">
+          <div class="carousel-track-rev flex gap-4 md:gap-4 sm:gap-2" data-carousel-target="container">
+            <% @prizes.each_with_index do |prize, index| %>
+              <div class="carousel-slide flex-none w-40 md:w-44 sm:w-36" style="transform: <%= prize[:random_transform] %>; animation-delay: <%= (index * 0.4) %>s;">
+                <div class="parchment-prize-card p-3 md:p-3 sm:p-2 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:scale-105" style="animation-delay: <%= (index * 0.4) %>s;">
+                  <div class="parchment-prize-image w-full h-full flex items-center justify-center mb-2 rounded-xl">
+                    <% if prize[:image] && prize[:image] != "" %>
+                      <img src="<%= prize[:image] %>" alt="<%= prize[:name] %>" class="w-full h-full object-cover rounded-xl">
+                    <% else %>
+                      <%= image_tag "clubhuman.png", alt: "Prize", class: "w-full h-full object-cover rounded-xl" %>
+                    <% end %>
+                  </div>
+                  <h3 class="parchment-prize-name font-['Fredoka'] font-semibold text-base md:text-base sm:text-sm leading-tight m-0"><%= prize[:name] %></h3>
+                  <p class="parchment-prize-time text-xs mt-1"><%= prize[:display_time] %></p>
+                </div>
               </div>
-              <h3 class="parchment-prize-name font-['Fredoka'] font-semibold text-base md:text-base sm:text-sm leading-tight m-0"><%= prize[:name] %></h3>
-              <p class="parchment-prize-time text-xs mt-1"><%= prize[:display_time] %></p>
-            </div>
+            <% end %>
           </div>
-        <% end %>
+        </div>
       </div>
-    </div>
+    <% end %>
   </div>
 </div>
 
