@@ -123,6 +123,13 @@ GEM
     base64 (0.3.0)
     bcrypt_pbkdf (1.1.1)
     benchmark (0.4.1)
+    better_html (2.1.1)
+      actionview (>= 6.0)
+      activesupport (>= 6.0)
+      ast (~> 2.0)
+      erubi (~> 1.4)
+      parser (>= 2.4)
+      smart_properties
     bigdecimal (3.2.2)
     bindex (0.8.1)
     blazer (3.3.0)
@@ -162,6 +169,13 @@ GEM
     drb (2.2.3)
     ed25519 (1.4.0)
     erb (5.0.1)
+    erb_lint (0.9.0)
+      activesupport
+      better_html (>= 2.0.1)
+      parser (>= 2.7.1.4)
+      rainbow
+      rubocop (>= 1)
+      smart_properties
     erubi (1.13.1)
     et-orbi (1.2.11)
       tzinfo
@@ -329,6 +343,8 @@ GEM
     public_suffix (6.0.2)
     puma (6.6.0)
       nio4r (~> 2.0)
+    pundit (2.5.0)
+      activesupport (>= 3.0.0)
     raabro (1.4.0)
     racc (1.8.1)
     rack (3.1.16)
@@ -451,6 +467,7 @@ GEM
       gli
       hashie
       logger
+    smart_properties (1.17.0)
     solid_cable (3.0.8)
       actioncable (>= 7.2)
       activejob (>= 7.2)
@@ -551,6 +568,7 @@ DEPENDENCIES
   chartkick (~> 5.1)
   debug
   dotenv-rails
+  erb_lint
   ferrum_pdf (~> 0.3.0)
   groupdate (~> 6.6)
   image_processing (~> 1.14)
@@ -564,6 +582,7 @@ DEPENDENCIES
   propshaft
   public_activity (~> 3.0)
   puma (>= 5.0)
+  pundit (~> 2.5)
   rails (~> 8.0.2)
   rails_live_reload
   redcarpet

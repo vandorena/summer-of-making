@@ -54,6 +54,9 @@ group :development, :test do
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
 
+  # ERB linting [https://github.com/Shopify/erb_lint]
+  gem "erb_lint", require: false
+
   gem "dotenv-rails"
 
   # Language Server Protocol for Ruby
@@ -115,3 +118,5 @@ gem "aasm", "~> 5.5"
 gem "public_activity", "~> 3.0"
 
 gem "blazer", "~> 3.3"
+
+gem "pundit", "~> 2.5"

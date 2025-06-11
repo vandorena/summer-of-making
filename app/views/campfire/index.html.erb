@@ -49,7 +49,7 @@
 
                     <div class="ml-4 flex-shrink-0">
                       <% if tutorial[:completed] %>
-                        <a href="<%= signpost_path(reset: tutorial[:id]) %>"
+                        <a href="<%= campfire_path(reset: tutorial[:id]) %>"
                            class="text-sm text-blue-600 hover:text-blue-700 ">
                           Replay
                         </a>
@@ -212,7 +212,7 @@
                       <p class="text-sm text-gray-600 font-national-park font-bold tracking-tight"><%= tutorial[:description] %></p>
                     </div>
                     <div class="ml-4 flex-shrink-0">
-                      <a href="<%= signpost_path(reset: tutorial[:id]) %>"
+                      <a href="<%= campfire_path(reset: tutorial[:id]) %>"
                          class="text-sm text-blue-600 hover:text-blue-700 ">
                         Replay
                       </a>

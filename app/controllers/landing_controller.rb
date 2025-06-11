@@ -6,7 +6,7 @@ class LandingController < ApplicationController
   def index
     if user_signed_in?
       if current_user.tutorial_progress.completed_at.nil?
-        redirect_to signpost_path
+        redirect_to campfire_path
       else
         redirect_to explore_path
       end
