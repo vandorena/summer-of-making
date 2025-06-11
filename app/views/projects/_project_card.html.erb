@@ -3,12 +3,14 @@
     <% project_image = @project.banner.presence || @project.devlogs.find { |u| u.attachment.present? }&.attachment || "https://raw.githubusercontent.com/hackclub/dinosaurs/main/confused_dinosaur.png" %>
     <%= image_tag project_image, alt: @project.title %>
 
-    <div class="absolute inset-0 bg-transparent group-hover:bg-[#F3ECD8]/75 transition-colors duration-300 flex flex-col justify-center pointer-events-none">
-      <p class="text-transparent group-hover:text-black text-center duration-300 transition-colors z-1">Click to upload a new banner image</p>
-    </div>
+    <% if current_user.is_admin? || @project.user == current_user %>
+      <div class="absolute inset-0 bg-transparent group-hover:bg-[#F3ECD8]/75 transition-colors duration-300 flex flex-col justify-center pointer-events-none">
+        <p class="text-transparent group-hover:text-black text-center duration-300 transition-colors z-1">Click to upload a new banner image</p>
+      </div>
 
-    <%= form_with(model: @project) do |f| %>
+      <%= form_with(model: @project) do |f| %>
         <%= f.file_field :banner, id: "banner-upload", class: "absolute inset-0 opacity-0" %>
+      <% end %>
     <% end %>
 
     <div class="absolute inset-0 bg-gradient-to-t from-[#F3ECD8] to-transparent pointer-events-none"></div>
@@ -27,7 +29,7 @@
       <h1 class="text-2xl md:text-3xl 2xl:text-4xl text-black md:flex-grow"><%= @project.title %></h1>
       <div class="flex items-center space-x-3 md:space-x-4">
         <% if user_signed_in? %>
-          <div class="ml-4 flex flex-wrap items-center gap-3 md:gap-4">
+          <div class="ml-4 flex flex-wrap items-center gap-6">
 
             <% if user_signed_in? && current_user != @project.user %>
               <%= render "projects/follow_button", project: @project %>

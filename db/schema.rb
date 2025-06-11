@@ -188,6 +188,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_11_214946) do
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "reason"
     t.index ["payable_type", "payable_id"], name: "index_payouts_on_payable"
     t.index ["user_id"], name: "index_payouts_on_user_id"
   end
