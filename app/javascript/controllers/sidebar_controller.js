@@ -8,6 +8,8 @@ const COLLAPSE_DELAY = 250;
 // This should be a value recognized by Tailwind.
 const FADE_DURATION = "200";
 
+const SS_SIDEBAR_EXPANDED_KEY = "som.sidebarExpanded";
+
 export default class extends Controller {
   static targets = [
     "sidebar",
@@ -28,17 +30,27 @@ export default class extends Controller {
       element.classList.add("transition-opacity", `duration-${FADE_DURATION}`)
     })
 
-    // Collapse after a couple of seconds, given the user didn't interact with the
-    // sidebar. This is intended to:
-    //    1) teach new users that the sidebar expands.
-    //    2) give time for us to register if the user is hovering over the sidebar,
-    //       so that between navigations we don't collapse it for a split second,
-    //       which looks quite janky.
-    setTimeout(() => {
-      if (!this.mouseEntered && !this.sidebarTarget.matches(":hover")) {
-        this.collapse();
-      }
-    }, 1000);
+    if (sessionStorage.getItem(SS_SIDEBAR_EXPANDED_KEY) === "false") {
+      // In this session, the sidebar *wasn't* previously expanded. This probably
+      // means that the user navigated somewhere without the use of the sidebar.
+      this.collapse(true);
+    }
+    else {
+      // In this session, there either wasn't any interaction with the sidebar before (null)
+      // or the sidebar was expanded.
+      //
+      // Collapse it after a couple of seconds, given the user didn't interact with the
+      // sidebar. This is intended to:
+      //    1) teach new users that the sidebar expands.
+      //    2) give time for us to register if the user is hovering over the sidebar,
+      //       so that between navigations we don't collapse it for a split second,
+      //       which looks quite janky.
+      setTimeout(() => {
+        if (!this.mouseEntered && !this.sidebarTarget.matches(":hover")) {
+          this.collapse();
+        }
+      }, 1000);
+    }
   }
   
   disconnect() {
@@ -156,6 +168,7 @@ export default class extends Controller {
     }
   
     this.expanded = false
+    sessionStorage.setItem(SS_SIDEBAR_EXPANDED_KEY, "false")
   }
 
   expand() {
@@ -189,5 +202,6 @@ export default class extends Controller {
     }
 
     this.expanded = true
+    sessionStorage.setItem(SS_SIDEBAR_EXPANDED_KEY, "true")
   }
 } 
