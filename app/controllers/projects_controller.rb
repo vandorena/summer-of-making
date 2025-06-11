@@ -97,7 +97,7 @@ class ProjectsController < ApplicationController
   end
 
   def update
-    if current_user == @project.user
+    if current_user == @project.user || current_user.is_admin?
       update_params = project_params
 
       if update_params[:hackatime_project_keys].present?
