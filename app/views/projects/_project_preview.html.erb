@@ -1,0 +1,52 @@
+<%#
+  Parameters:
+    - project: the project to render. Required.
+    - show_author: if false, the author is not shown. Defaults to true.
+%>
+
+<% show_author = local_assigns.fetch(:show_author, true) %>
+
+<%= link_to project_path(project) do %>
+  <%=
+    render layout: "shared/container", locals: {
+      no_padding: true,
+      attr: {
+        class: "transform hover:scale-[1.02] transition-transform duration-300"
+      }
+    } do
+  %>
+
+  <div class="flex flex-col h-full gap-3">
+    <% project_image = project.banner.attached? ? url_for(project.banner) : (project.devlogs.find { |u| u.attachment.present? }&.attachment || "https://raw.githubusercontent.com/hackclub/dinosaurs/main/confused_dinosaur.png") %>
+    <div class="h-36 md:h-48">
+      <img src="<%= project_image %>" alt="<%= project.title %>" class="w-full h-full object-cover">
+    </div>
+
+    <div class="flex flex-col flex-grow py-2 px-4">
+      <%
+        timer_total_time = project.timer_sessions.where(status: :stopped).sum(:net_time)
+        hackatime_total_time = project.hackatime_total_time
+        total_time_seconds = timer_total_time + hackatime_total_time
+      %>
+
+      <div class="flex items-center justify-between">
+      <h2 class="text-xl md:text-2xl 2xl:text-3xl line-clamp-1"><%= project.title %></h2>
+      <% if user_signed_in? && current_user != project.user %>
+          <div>
+          <%= render "projects/follow_button", project: project %>
+          </div>
+      <% end %>
+      </div>
+
+      <p class="mb-2 line-clamp-3 text-sm md:text-base 2xl:text-lg text-[#B89576] break-words overflow-wrap-anywhere">
+        <%= "by #{project.user.display_name}  •  " if show_author%><%= project.devlogs.count %> devlogs  •  <%= format_seconds(total_time_seconds) %>
+      </p>
+
+      <p>
+        <%= project.description %>
+      </p>
+    </div>
+  </div>
+
+  <% end %>
+<% end %>
