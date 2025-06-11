@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_09_201352) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_11_214946) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -217,6 +217,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_09_201352) do
     t.string "hackatime_project_keys", default: [], array: true
     t.boolean "is_deleted", default: false
     t.index ["user_id"], name: "index_projects_on_user_id"
+  end
+
+  create_table "readme_checks", force: :cascade do |t|
+    t.string "readme_link"
+    t.string "content"
+    t.integer "status", default: 0, null: false
+    t.integer "decision"
+    t.string "reason"
+    t.bigint "project_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id"], name: "index_readme_checks_on_project_id"
   end
 
   create_table "ship_events", force: :cascade do |t|
@@ -509,6 +521,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_09_201352) do
   add_foreign_key "project_follows", "projects"
   add_foreign_key "project_follows", "users"
   add_foreign_key "projects", "users"
+  add_foreign_key "readme_checks", "projects"
   add_foreign_key "ship_events", "projects"
   add_foreign_key "shop_orders", "shop_items"
   add_foreign_key "shop_orders", "users"
