@@ -28,9 +28,13 @@
           target: campfire_path,
           text: "Campfire",
           icon: "map",
+          large: true,
           highlight: current_page?(campfire_path),
-          text_attr: 'data-sidebar-target="collapseFade"',
-          underline_attr: 'data-sidebar-target="underline"'
+          text_attr: {
+            data: { sidebar_target: "collapseFade" },
+            class: "text-3xl"
+          },
+          underline_attr: { data: { sidebar_target: "underline" } }
         } %>
       </li>
 
@@ -39,9 +43,13 @@
           target: explore_path,
           text: "Explore",
           icon: "compass",
+          large: true,
           highlight: current_page?(explore_path),
-          text_attr: 'data-sidebar-target="collapseFade"',
-          underline_attr: 'data-sidebar-target="underline"'
+          text_attr: {
+            data: { sidebar_target: "collapseFade" },
+            class: "text-3xl"
+          },
+          underline_attr: { data: { sidebar_target: "underline" } }
         } %>
       </li>
 
@@ -50,9 +58,13 @@
           target: my_projects_path,
           text: "Projects",
           icon: "user",
+          large: true,
           highlight: current_page?(my_projects_path),
-          text_attr: 'data-sidebar-target="collapseFade"',
-          underline_attr: 'data-sidebar-target="underline"'
+          text_attr: {
+            data: { sidebar_target: "collapseFade" },
+            class: "text-3xl"
+          },
+          underline_attr: { data: { sidebar_target: "underline" } }
         } %>
       </li>
 
@@ -61,9 +73,13 @@
           target: new_vote_path,
           text: "Vote",
           icon: "vote",
+          large: true,
           highlight: current_page?(new_vote_path),
-          text_attr: 'data-sidebar-target="collapseFade"',
-          underline_attr: 'data-sidebar-target="underline"'
+          text_attr: {
+            data: { sidebar_target: "collapseFade" },
+            class: "text-3xl"
+          },
+          underline_attr: { data: { sidebar_target: "underline" } }
         } %>
       </li>
 
@@ -72,9 +88,13 @@
           target: shop_path,
           text: "Shop",
           icon: "shop",
+          large: true,
           highlight: current_page?(shop_path),
-          text_attr: 'data-sidebar-target="collapseFade"',
-          underline_attr: 'data-sidebar-target="underline"'
+          text_attr: {
+            data: { sidebar_target: "collapseFade" },
+            class: "text-3xl"
+          },
+          underline_attr: { data: { sidebar_target: "underline" } }
         } %>
       </li>
 
