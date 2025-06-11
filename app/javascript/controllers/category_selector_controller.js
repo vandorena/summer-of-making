@@ -18,11 +18,12 @@ export default class extends Controller {
   updateButtons() {
     this.buttonTargets.forEach((button) => {
       const isSelected = button.dataset.category === this.selectedValue;
-      
+      const underline = button.querySelector('[data-kind="underline"]');
+
       if (isSelected) {
-        button.classList.add("tab-element");
+        underline.classList.remove("opacity-0");
       } else {
-        button.classList.remove("tab-element");
+        underline.classList.add("opacity-0");
       }
     });
   }

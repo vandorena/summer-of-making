@@ -8,6 +8,8 @@ const COLLAPSE_DELAY = 250;
 // This should be a value recognized by Tailwind.
 const FADE_DURATION = "200";
 
+const SS_SIDEBAR_EXPANDED_KEY = "som.sidebarExpanded";
+
 export default class extends Controller {
   static targets = [
     "sidebar",
@@ -22,23 +24,57 @@ export default class extends Controller {
     this.expanded = true
     this.transitioning = false
     this.mouseEntered = false
+    this.animationTimers = []
     this.prevKnownSize = this.hasSidebarTarget ? this.sidebarTarget.clientWidth + "px" : "100px";
 
     this.collapseFadeTargets.forEach(element => {
       element.classList.add("transition-opacity", `duration-${FADE_DURATION}`)
     })
 
-    // Collapse after a couple of seconds, given the user didn't interact with the
-    // sidebar. This is intended to:
-    //    1) teach new users that the sidebar expands.
-    //    2) give time for us to register if the user is hovering over the sidebar,
-    //       so that between navigations we don't collapse it for a split second,
-    //       which looks quite janky.
-    setTimeout(() => {
-      if (!this.mouseEntered && !this.sidebarTarget.matches(":hover")) {
-        this.collapse();
-      }
-    }, 1000);
+    if (sessionStorage.getItem(SS_SIDEBAR_EXPANDED_KEY) === "false") {
+      // In this session, the sidebar *wasn't* previously expanded. This probably
+      // means that the user navigated somewhere without the use of the sidebar.
+      this.collapse(true);
+    }
+    else {
+      // In this session, there either wasn't any interaction with the sidebar before (null)
+      // or the sidebar was expanded.
+      //
+      // Collapse it after a couple of seconds, given the user didn't interact with the
+      // sidebar. This is intended to:
+      //    1) teach new users that the sidebar expands.
+      //    2) give time for us to register if the user is hovering over the sidebar,
+      //       so that between navigations we don't collapse it for a split second,
+      //       which looks quite janky.
+      setTimeout(() => {
+        if (!this.mouseEntered && !this.sidebarTarget.matches(":hover")) {
+          this.collapse();
+        }
+      }, 1000);
+    }
+  }
+
+  /**
+   * Queues an animation task to run after the specified amount of milliseconds. Animation
+   * timers may be interrupted if another animation is played.
+   * @param {number} delay 
+   * @param {TimerHandler} handler 
+   */
+  registerAnimationTimer(delay, handler) {
+    const timerId = setTimeout(() => {
+      this.animationTimers = this.animationTimers.filter(x => x != timerId)
+      handler()
+    }, delay)
+
+    this.animationTimers.push(timerId)
+  }
+
+  interruptAnimationTimers() {
+    for (const timer of this.animationTimers) {
+      clearTimeout(timer);
+    }
+
+    this.animationTimers = [];
   }
   
   disconnect() {
@@ -93,6 +129,8 @@ export default class extends Controller {
   }
 
   collapse(immediate = false) {
+    this.interruptAnimationTimers();
+
     // Each element that needs to be hidden when the sidebar is collapsed should
     // be marked with the "collapseHide" target. 
     //
@@ -129,6 +167,22 @@ export default class extends Controller {
       element.classList.add("opacity-0")
     })
 
+    // We can't hide these targets, since that would cause a nasty layout shift.
+    // However, if we *don't* hide the targets, that would mean that someone of them
+    // would "stick out" of the sidebar, even if they're invisible and not contributing
+    // to the box model. This would mean that we'd detect a hover event even if the user
+    // isn't actually hovering over the sidebar.
+    //
+    // We change the width of these elements to 0px, so that they still contribute to the
+    // vertical layout, but don't "stick out". This will probably need to be changed if
+    // we define any collapseFade targets that meaningfully contribute to the horizontal
+    // box model.
+    this.registerAnimationTimer(250, () => {
+      this.collapseFadeTargets.forEach(element => {
+        element.classList.add("w-[0px]")
+      })
+    })
+
     this.underlineTargets.forEach(element => {
       element.classList.remove("w-full")
       element.classList.add("w-[36px]")
@@ -140,18 +194,21 @@ export default class extends Controller {
     }
   
     this.expanded = false
+    sessionStorage.setItem(SS_SIDEBAR_EXPANDED_KEY, "false")
   }
 
   expand() {
+    this.interruptAnimationTimers();
     this.transitioning = true;
 
     this.sidebarTarget.style.width = this.prevKnownSize;
     this.sidebarTarget.style.overflow = "hidden";
-    setTimeout(() => {
-      this.sidebarTarget.style.width = "";
-      this.sidebarTarget.style.overflow = "";
-      this.transitioning = false;
-    }, 150);
+
+    this.registerAnimationTimer(150, () => {
+      this.sidebarTarget.style.width = ""
+      this.sidebarTarget.style.overflow = ""
+      this.transitioning = false
+    })
 
     this.sidebarTarget.classList.remove("collapsed", "w-[30px]")
     this.collapseHideTargets.forEach(element => {
@@ -159,7 +216,7 @@ export default class extends Controller {
     })
 
     this.collapseFadeTargets.forEach(element => {
-      element.classList.remove("opacity-0")
+      element.classList.remove("opacity-0", "w-[0px]")
     })
 
     this.underlineTargets.forEach(element => {
@@ -173,5 +230,6 @@ export default class extends Controller {
     }
 
     this.expanded = true
+    sessionStorage.setItem(SS_SIDEBAR_EXPANDED_KEY, "true")
   }
 } 

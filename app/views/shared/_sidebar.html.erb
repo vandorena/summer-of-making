@@ -1,10 +1,14 @@
 <%= render layout: "shared/container", locals: {
   full_height: true,
-  attr: 'data-action="mouseover->sidebar#handleMouseEnter mouseleave->sidebar#handleMouseExit"'
+  attr: {
+    data: {
+      action: "mouseover->sidebar#handleMouseEnter mouseleave->sidebar#handleMouseExit"
+    }
+  }
 } do %>
 
 <div
-  class="flex flex-col transition-all duration-300 text-[#4A2D24] h-full w-[220px] justify-between font-[Dynapuff]"
+  class="flex flex-col transition-all duration-300 text-[#4A2D24] h-full w-[220px] justify-between"
   data-sidebar-target="sidebar">
   <% if false %>
   <div class="flex justify-between items-center">
