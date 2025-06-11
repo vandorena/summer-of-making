@@ -259,38 +259,53 @@
               </div>
               <%= f.hidden_field :category, data: { category_selector_target: "hiddenField" } %>
                 <div class="flex justify-between tab-container">
-                  <button
-                    type="button"
-                    data-action="click->category-selector#selectCategory"
-                    data-category="Hardware"
-                    class="px-6 py-2 text-md text-black"
-                    data-category-selector-target="button">
-                    Hardware
-                  </button>
-                  <button
-                    type="button"
-                    data-action="click->category-selector#selectCategory"
-                    data-category="Software"
-                    class="px-6 py-2 text-md text-black"
-                    data-category-selector-target="button">
-                    Software
-                  </button>
-                  <button
-                    type="button"
-                    data-action="click->category-selector#selectCategory"
-                    data-category="Both Software & Hardware"
-                    class="px-6 py-2 text-md text-black"
-                    data-category-selector-target="button">
-                    Both
-                  </button>
-                  <button
-                    type="button"
-                    data-action="click->category-selector#selectCategory"
-                    data-category="Something else"
-                    class="px-6 py-2 text-md text-black"
-                    data-category-selector-target="button">
-                    Something Else
-                  </button>
+                  <%=
+                    render "shared/link",
+                      text: "Hardware",
+                      as_button: {
+                        data: {
+                          action: "click->category-selector#selectCategory",
+                          category: "Hardware",
+                          category_selector_target: "button"
+                        }
+                      }
+                  %>
+
+                  <%=
+                    render "shared/link",
+                      text: "Software",
+                      as_button: {
+                        data: {
+                          action: "click->category-selector#selectCategory",
+                          category: "Software",
+                          category_selector_target: "button"
+                        }
+                      }
+                  %>
+
+                  <%=
+                    render "shared/link",
+                      text: "Both",
+                      as_button: {
+                        data: {
+                          action: "click->category-selector#selectCategory",
+                          category: "Both Software & Hardware",
+                          category_selector_target: "button"
+                        }
+                      }
+                  %>
+
+                  <%=
+                    render "shared/link",
+                      text: "Something Else",
+                      as_button: {
+                        data: {
+                          action: "click->category-selector#selectCategory",
+                          category: "Something else",
+                          category_selector_target: "button"
+                        }
+                      }
+                  %>
                 </div>
               </div>
               <div class="flex justify-end">
