@@ -164,7 +164,7 @@
           <div class="carousel-slide flex-none w-40 md:w-44 sm:w-36" style="transform: <%= prize[:random_transform] %>; animation-delay: <%= (index * 0.5) %>s;">
             <div class="parchment-prize-card p-3 md:p-3 sm:p-2 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:scale-105" style="animation-delay: <%= (index * 0.3) %>s;">
               <div class="parchment-texture"></div>
-              <div class="parchment-prize-image w-full h-full flex items-center justify-center mb-2 rounded-xl bg-yellow-100/20">
+              <div class="parchment-prize-image w-full h-full flex items-center justify-center mb-2 rounded-xl">
                 <% if prize[:image] && prize[:image] != "" %>
                   <img src="<%= prize[:image] %>" alt="<%= prize[:name] %>" class="w-full h-full object-cover rounded-xl">
                 <% else %>
@@ -173,13 +173,6 @@
               </div>
               <h3 class="parchment-prize-name font-['Fredoka'] font-semibold text-base md:text-base sm:text-sm leading-tight m-0"><%= prize[:name] %></h3>
               <p class="parchment-prize-time text-xs mt-1"><%= prize[:display_time] %></p>
-              <div class="absolute bottom-1 right-1 w-8 h-8 opacity-30 transition-opacity duration-300 hover:opacity-60">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="#7C4A33" />
-                  <path d="M7 12L10 15L17 8" stroke="#F6DBBA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                  <path d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z" stroke="#4A2D24" stroke-width="0.5" />
-                </svg>
-              </div>
             </div>
           </div>
         <% end %>
@@ -191,7 +184,7 @@
         <% @prizes.each_with_index do |prize, index| %>
           <div class="carousel-slide flex-none w-40 md:w-44 sm:w-36" style="transform: <%= prize[:random_transform] %>; animation-delay: <%= (index * 0.4) %>s;">
             <div class="parchment-prize-card p-3 md:p-3 sm:p-2 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:scale-105" style="animation-delay: <%= (index * 0.4) %>s;">
-              <div class="parchment-prize-image w-full h-full flex items-center justify-center mb-2 rounded-xl bg-yellow-100/20">
+              <div class="parchment-prize-image w-full h-full flex items-center justify-center mb-2 rounded-xl">
                 <% if prize[:image] && prize[:image] != "" %>
                   <img src="<%= prize[:image] %>" alt="<%= prize[:name] %>" class="w-full h-full object-cover rounded-xl">
                 <% else %>
