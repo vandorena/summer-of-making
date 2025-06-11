@@ -32,7 +32,45 @@
 require "test_helper"
 
 class ShopOrderTest < ActiveSupport::TestCase
-  # test "the truth" do
-  #   assert true
-  # end
+  def setup
+    @user = users(:one)
+    @free_stickers = ShopItem::FreeStickers.create!(
+      name: "Free Stickers",
+      description: "Free stickers for everyone",
+      ticket_cost: 0
+    )
+  end
+
+  test "free sticker orders start in verification limbo when user is not verified" do
+    # Mock user verification status as not verified
+    @user.stub(:verification_status, :pending) do
+      order = @user.shop_orders.build(shop_item: @free_stickers, quantity: 1)
+      order.save!
+      assert_equal 'in_verification_limbo', order.aasm_state
+    end
+  end
+
+  test "free sticker orders start as awaiting_periodical_fulfillment when user is verified" do
+    # Mock user verification status as verified
+    @user.stub(:verification_status, :verified) do
+      order = @user.shop_orders.build(shop_item: @free_stickers, quantity: 1)
+      order.save!
+      assert_equal 'awaiting_periodical_fulfillment', order.aasm_state
+      assert_not_nil order.awaiting_periodical_fulfillment_at
+    end
+  end
+
+  test "non-free sticker orders always start as pending" do
+    regular_item = ShopItem.create!(
+      name: "Regular Item", 
+      description: "Not free stickers",
+      ticket_cost: 100
+    )
+    
+    @user.stub(:verification_status, :pending) do
+      order = @user.shop_orders.build(shop_item: regular_item, quantity: 1)
+      order.save!
+      assert_equal 'pending', order.aasm_state
+    end
+  end
 end
