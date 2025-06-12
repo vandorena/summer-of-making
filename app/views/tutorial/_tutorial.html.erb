@@ -27,9 +27,12 @@
 } %>
 
 <% tutorial_steps.each do |key, config| %>
+  <% is_soft = TutorialProgress::SOFT_TUTORIAL_STEPS.include?(key.to_s) %>
+  <% incomplete = is_soft && !current_user.tutorial_progress.soft_step_completed?(key) %>
   <%= render "tutorial/tutorial_step",
     tutorial_key: key,
     tutorial_path: config[:path],
     tutorial_title: config[:title],
-    tutorial_description: config[:description] %>
+    tutorial_description: config[:description],
+    show_shaking_question: incomplete %>
 <% end %>

@@ -4,12 +4,13 @@
 #
 # Table name: tutorial_progresses
 #
-#  id            :bigint           not null, primary key
-#  completed_at  :datetime
-#  step_progress :jsonb            not null
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  user_id       :bigint           not null
+#  id                  :bigint           not null, primary key
+#  completed_at        :datetime
+#  soft_tutorial_steps :jsonb            not null
+#  step_progress       :jsonb            not null
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  user_id             :bigint           not null
 #
 # Indexes
 #
@@ -23,6 +24,7 @@ class TutorialProgress < ApplicationRecord
   belongs_to :user
 
   TUTORIAL_STEPS = %w[hackatime_connected identity_verified free_stickers_ordered].freeze
+  SOFT_TUTORIAL_STEPS = %w[campfire explore my_projects vote shop].freeze
 
   after_initialize :setup_default_progress, if: :new_record?
 
@@ -64,12 +66,38 @@ class TutorialProgress < ApplicationRecord
     save!
   end
 
+  def complete_soft_step!(step_name)
+    return unless SOFT_TUTORIAL_STEPS.include?(step_name.to_s)
+
+    soft_tutorial_steps[step_name.to_s] ||= {}
+    soft_tutorial_steps[step_name.to_s]["completed_at"] = Time.current
+    save!
+  end
+
+  def soft_step_completed?(step_name)
+    soft_tutorial_steps.dig(step_name.to_s, "completed_at").present?
+  end
+
+  def reset_soft_step!(step_name)
+    return unless SOFT_TUTORIAL_STEPS.include?(step_name.to_s)
+    soft_tutorial_steps[step_name.to_s] = {}
+    save!
+  end
+
+  def reset_soft_steps!
+    setup_default_soft_steps
+    save!
+  end
+
   private
 
   def setup_default_progress
-    self.step_progress = TUTORIAL_STEPS.index_with do |_step|
-      {}
-    end
+    self.step_progress = TUTORIAL_STEPS.index_with { {} }
+    setup_default_soft_steps
+  end
+
+  def setup_default_soft_steps
+    self.soft_tutorial_steps = SOFT_TUTORIAL_STEPS.index_with { {} }
   end
 
   def check_overall_completion!
