@@ -34,11 +34,18 @@ export default class extends Controller {
       );
       if (z) {
         z.emailValue = x;
-        z.initialize();
-      }
 
-      y.classList.remove("hidden");
-      document.body.classList.add("overflow-hidden");
+        // Just remove the hidden class, the animation will be handled by the initialize method
+        y.classList.remove("hidden");
+        document.body.classList.add("overflow-hidden");
+
+        // Initialize the wizard after showing it
+        z.initialize();
+      } else {
+        // If the controller isn't available, just show the modal
+        y.classList.remove("hidden");
+        document.body.classList.add("overflow-hidden");
+      }
     }
   }
 
