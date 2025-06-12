@@ -3,7 +3,7 @@
 class VotesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_projects, only: %i[new create]
-  before_action :check_tutorial_completion
+  before_action :check_identity_verification
 
   def new
     @vote = Vote.new
@@ -45,11 +45,11 @@ class VotesController < ApplicationController
 
   private
 
+  
+  def check_identity_verification
+    return if current_user&.identity_vault_id.present? && current_user.verification_status != :ineligible
 
-  def check_tutorial_completion
-    return if current_user&.tutorial_progress&.completed?
-
-    redirect_to campfire_path, alert: "Please complete the tutorial to access this page."
+    redirect_to campfire_path, alert: "Please verify your identity to access this page."
   end
 
   def set_projects
