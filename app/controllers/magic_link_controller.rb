@@ -7,7 +7,8 @@ class MagicLinkController < ApplicationController
     slack_id = params.require(:slack_id)
     email = params.require(:email)
 
-    return render json: { success: false, error: "No email sign up found. Are you URL encoding the email?" } if EmailSignup.where(email:).empty?
+    signup = EmailSignup.find_by(email:)
+    return render json: { success: false, error: "No email sign up found. Are you URL encoding the email?" } if signup.nil?
 
     begin
       user = User.create_from_slack slack_id
