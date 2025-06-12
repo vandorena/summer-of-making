@@ -1,5 +1,7 @@
 class CampfireController < ApplicationController
   before_action :authenticate_user!, only: [ :index ]
+  before_action :build_account_status, only: [ :index ]
+  before_action :check_and_mark_tutorial_completion, only: [ :index ]
 
   def index
     @user = current_user
@@ -12,7 +14,6 @@ class CampfireController < ApplicationController
       redirect_to tutorial_path
     end
 
-    @account_status = build_account_status
     @announcements = get_announcements
     @tutorials = get_tutorials
     @tutorial_progress = get_tutorial_progress
@@ -23,11 +24,32 @@ class CampfireController < ApplicationController
 
   private
 
-  def build_account_status
-    return {} unless @user
+  def check_and_mark_tutorial_completion
+    return if current_user.tutorial_progress.completed?
 
-    {
-      hackatime_linked: @user.has_hackatime?
+    if @account_status[:hackatime_linked] && !current_user.tutorial_progress.step_completed?("hackatime")
+      current_user.tutorial_progress.complete_step!("hackatime_connected")
+    end
+
+    if current_user.identity_vault_id.present? && current_user.verification_status != :ineligible && !current_user.tutorial_progress.step_completed?("identity")
+      current_user.tutorial_progress.complete_step!("identity_verified")
+    end
+
+    if current_user.shop_orders.joins(:shop_item).where(shop_items: { type: "ShopItem::FreeStickers" }).exists? && !current_user.tutorial_progress.step_completed?("stickers")
+      current_user.tutorial_progress.complete_step!("free_stickers_ordered")
+    end
+
+    # Check if all steps are completed and mark tutorial as completed
+    if current_user.tutorial_progress.step_completed?("hackatime") &&
+       current_user.tutorial_progress.step_completed?("identity") &&
+       current_user.tutorial_progress.step_completed?("stickers")
+      current_user.tutorial_progress.mark_completed!
+    end
+  end
+
+  def build_account_status
+    @account_status = {
+      hackatime_linked: current_user.has_hackatime?
     }
   end
 
