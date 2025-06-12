@@ -49,6 +49,27 @@ html {
   }
 }
 
+/* Alternating wave animations for "How it works" section */
+@keyframes wave-up {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+@keyframes wave-down {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(15px);
+  }
+}
+
 @keyframes shimmer {
   0% {
     background-position: -200% 0;
@@ -135,6 +156,14 @@ html {
 
 .animate-wave {
   animation: wave 4s ease-in-out infinite;
+}
+
+.animate-wave-up {
+  animation: wave-up 4s ease-in-out infinite;
+}
+
+.animate-wave-down {
+  animation: wave-down 4s ease-in-out infinite;
 }
 
 .animate-shimmer {
