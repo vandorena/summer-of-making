@@ -37,4 +37,8 @@ class ShopItem < ApplicationRecord
   def can_afford?(user)
     user.balance >= self.ticket_cost
   end
+
+  def is_free?
+    self.ticket_cost.zero?
+  end
 end

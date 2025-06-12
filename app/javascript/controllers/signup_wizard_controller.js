@@ -1,228 +1,205 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = [
-    "step1",
-    "step2",
-    "step3",
-    "step4",
-    "stepIndicator",
-    "nextButton",
-    "prevButton",
-    "progressBar",
-  ];
+  static targets = ["videoContainer", "introVideo", "modal", "container"];
   static values = {
     email: String,
-    currentStep: { type: Number, default: 1 },
   };
 
+  emailSent = false;
+  videoLoopCount = 0;
+
   connect() {
-    this.h = this.h.bind(this);
-    document.addEventListener("keydown", this.h);
+    this.handleKeydown = this.handleKeydown.bind(this);
+    document.addEventListener("keydown", this.handleKeydown);
+    this.setCloseButtonEnabled(false);
+    this.videoLoopCount = 0;
   }
 
   initialize() {
-    this.s(1);
-    this.u();
-    this.b();
-    this.p();
+    if (this.hasIntroVideoTarget) {
+      this.introVideoTarget.currentTime = 0;
+      this.introVideoTarget.loop = false;
+      this.introVideoTarget.removeEventListener(
+        "ended",
+        this.handleVideoEndedBound
+      );
+      this.handleVideoEndedBound = this.handleVideoEnded.bind(this);
+      this.introVideoTarget.addEventListener(
+        "ended",
+        this.handleVideoEndedBound
+      );
+      const genericMsg = this.element.querySelector(
+        "#signup-wizard-generic-message"
+      );
+      if (genericMsg) {
+        genericMsg.style.display = "";
+      }
+      const specificMsg = this.element.querySelector(
+        "#signup-wizard-specific-message"
+      );
+      if (specificMsg) {
+        specificMsg.remove();
+      }
+      const emailSpan = this.element.querySelector(
+        "#signup-wizard-email-placeholder"
+      );
+      if (emailSpan) {
+        emailSpan.remove();
+      }
+      if (this.hasModalTarget && this.hasContainerTarget) {
+        this.modalTarget.style.opacity = "0";
+        this.containerTarget.style.transform = "scale(0.9)";
+        this.containerTarget.style.opacity = "0";
+
+        this.modalTarget.offsetHeight;
+
+        setTimeout(() => {
+          this.modalTarget.style.transition = "opacity 250ms ease-out";
+          this.containerTarget.style.transition = "all 250ms ease-out";
+          this.modalTarget.style.opacity = "1";
+          this.containerTarget.style.transform = "scale(1)";
+          this.containerTarget.style.opacity = "1";
+
+          setTimeout(() => {
+            this.playVideo();
+          }, 250);
+        }, 10);
+      } else {
+        setTimeout(() => {
+          this.playVideo();
+        }, 200);
+      }
+    }
+  }
+
+  playVideo() {
+    if (
+      this.hasIntroVideoTarget &&
+      !this.element.classList.contains("hidden")
+    ) {
+      this.introVideoTarget.play().catch((error) => {
+        console.warn("Video playback was prevented:", error);
+
+        if (!document.getElementById("manual-play-button")) {
+          const playButton = document.createElement("button");
+          playButton.id = "manual-play-button";
+          playButton.className =
+            "absolute inset-0 flex items-center justify-center bg-black/50 rounded-lg";
+          playButton.innerHTML = `
+            <div class="bg-white/80 rounded-full p-3 hover:bg-white transition-all">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-vintage-red" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M8 5.14v14l11-7l-11-7Z"/>
+              </svg>
+            </div>
+          `;
+          playButton.addEventListener("click", () => {
+            this.introVideoTarget.play();
+            playButton.remove();
+          });
+
+          const videoContainer = this.introVideoTarget.parentElement;
+          videoContainer.style.position = "relative";
+          videoContainer.appendChild(playButton);
+        }
+      });
+    }
+  }
+
+  handleVideoEnded() {
+    this.videoLoopCount = (this.videoLoopCount || 0) + 1;
+    if (this.videoLoopCount === 1) {
+      this.setCloseButtonEnabled(true);
+      const genericMsg = this.element.querySelector(
+        "#signup-wizard-generic-message"
+      );
+      if (genericMsg) {
+        const email = this.emailValue || "your email";
+        genericMsg.textContent = `Check your email (${email}) for the invite!`;
+        genericMsg.classList.remove("text-saddle-taupe");
+        genericMsg.classList.add("text-green-700", "font-semibold");
+      }
+    }
+    this.introVideoTarget.currentTime = 0;
+    this.introVideoTarget.play();
+  }
+
+  setCloseButtonEnabled(enabled) {
+    const closeBtn = this.element.querySelector(
+      '[data-action="click->signup-wizard#close"]'
+    );
+    if (closeBtn) {
+      closeBtn.disabled = !enabled;
+      if (!enabled) {
+        closeBtn.classList.remove("hover:text-vintage-red");
+        closeBtn.classList.add("text-gray-600");
+        closeBtn.classList.remove("text-vintage-red");
+      } else {
+        closeBtn.classList.remove("text-gray-600");
+        closeBtn.classList.add("text-vintage-red");
+        closeBtn.classList.add("hover:text-vintage-red");
+      }
+    }
   }
 
   disconnect() {
-    document.removeEventListener("keydown", this.h);
+    document.removeEventListener("keydown", this.handleKeydown);
+    if (this.hasIntroVideoTarget && this.handleVideoEndedBound) {
+      this.introVideoTarget.removeEventListener(
+        "ended",
+        this.handleVideoEndedBound
+      );
+    }
   }
 
-  h(e) {
-    if (e.key === "Escape" && !this.element.classList.contains("hidden")) {
+  handleKeydown(event) {
+    if (event.key === "Escape" && !this.element.classList.contains("hidden")) {
       this.close();
-      e.stopPropagation();
-    }
-  }
-
-  s(n) {
-    this.step1Target.classList.add("hidden");
-    this.step2Target.classList.add("hidden");
-    this.step3Target.classList.add("hidden");
-    this.step4Target.classList.add("hidden");
-
-    switch (n) {
-      case 1:
-        this.step1Target.classList.remove("hidden");
-        break;
-      case 2:
-        this.step2Target.classList.remove("hidden");
-        break;
-      case 3:
-        this.step3Target.classList.remove("hidden");
-        break;
-      case 4:
-        this.step4Target.classList.remove("hidden");
-        break;
-    }
-
-    this.currentStepValue = n;
-    this.u();
-    this.b();
-    this.p();
-  }
-
-  nextStep() {
-    if (this.currentStepValue < 4) {
-      this.s(this.currentStepValue + 1);
-    } else if (this.currentStepValue === 4) {
-      this.e();
-    }
-  }
-
-  prevStep() {
-    if (this.currentStepValue > 1) {
-      this.s(this.currentStepValue - 1);
-    }
-  }
-
-  u() {
-    if (this.hasStepIndicatorTarget) {
-      this.stepIndicatorTarget.textContent = this.currentStepValue;
-    }
-  }
-
-  p() {
-    if (this.hasProgressBarTarget) {
-      const w = (this.currentStepValue / 4) * 100;
-      this.progressBarTarget.style.width = `${w}%`;
-    }
-  }
-
-  b() {
-    if (this.hasPrevButtonTarget) {
-      if (this.currentStepValue === 1) {
-        this.prevButtonTarget.classList.add("opacity-50");
-        this.prevButtonTarget.disabled = true;
-      } else {
-        this.prevButtonTarget.classList.remove("opacity-50");
-        this.prevButtonTarget.disabled = false;
-      }
-    }
-
-    if (this.hasNextButtonTarget) {
-      if (this.currentStepValue === 4) {
-        this.nextButtonTarget.textContent = "Send Invite Email";
-        this.nextButtonTarget.classList.remove("bg-forest");
-        this.nextButtonTarget.classList.add("bg-vintage-red");
-      } else {
-        this.nextButtonTarget.textContent = "Next →";
-        this.nextButtonTarget.classList.remove("bg-vintage-red");
-        this.nextButtonTarget.classList.add("bg-forest");
-      }
-    }
-  }
-
-  async e() {
-    const btn = this.nextButtonTarget;
-    const txt = btn.textContent;
-
-    btn.textContent = "Sending...";
-    btn.disabled = true;
-    btn.classList.add("opacity-75");
-
-    try {
-      const r = await fetch("/sign-up", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRF-Token": document.querySelector('[name="csrf-token"]').content,
-        },
-        body: JSON.stringify({ email: this.emailValue }),
-      });
-
-      if (r.ok) {
-        const d = await r.json();
-        this.ss(d);
-      } else {
-        const ed = await r.json();
-        throw new Error(ed.error || "Failed to send signup email");
-      }
-    } catch (err) {
-      console.error("Error sending signup email:", err);
-      alert(`Error: ${err.message}`);
-
-      btn.textContent = "Try Again";
-      btn.disabled = false;
-      btn.classList.remove("opacity-75");
-
-      setTimeout(() => {
-        btn.textContent = txt;
-      }, 2000);
-    }
-  }
-
-  ss(rd) {
-    this.step1Target.classList.add("hidden");
-    this.step2Target.classList.add("hidden");
-    this.step3Target.classList.add("hidden");
-    this.step4Target.classList.add("hidden");
-
-    const sh = `
-      <div class="flex flex-col items-center justify-center h-full text-center space-y-8 max-w-3xl mx-auto">
-        <h2 class="text-4xl font-bold text-forest mb-6">Welcome aboard! ✨</h2>
-        <p class="text-xl">Check your inbox (<strong>${
-          rd.email
-        }</strong>) for a email from Slack</p>
-        
-        ${
-          rd.ok
-            ? '<p class="text-green-600 font-semibold text-lg">✅ Email sent successfully!</p>'
-            : `<p class="text-red-500 text-lg font-semibold">❌ Error: ${
-                rd.error || "Unknown error"
-              }</p>`
-        }
-
-        <button class="marble-button mt-8 px-8 py-4 text-lg" data-action="click->signup-wizard#close">
-          Close
-        </button>
-      </div>
-    `;
-
-    const se = document.createElement("div");
-    se.innerHTML = sh;
-    se.classList.add("flex-1", "flex", "items-center", "justify-center");
-
-    const cc = this.element.querySelector(".flex-1.p-8");
-    if (cc) {
-      cc.innerHTML = "";
-      cc.appendChild(se);
-    }
-
-    const f = this.element.querySelector(".border-t");
-    if (f) {
-      f.classList.add("hidden");
-    }
-
-    this.upt();
-  }
-
-  upt() {
-    if (this.hasProgressBarTarget) {
-      this.progressBarTarget.style.width = "100%";
-    }
-    if (this.hasStepIndicatorTarget) {
-      this.stepIndicatorTarget.textContent = "✓";
+      event.stopPropagation();
     }
   }
 
   close() {
-    this.element.classList.add("hidden");
-    document.body.classList.remove("overflow-hidden");
+    // Stop the video if it's playing
+    if (this.hasIntroVideoTarget) {
+      this.introVideoTarget.pause();
+      this.introVideoTarget.currentTime = 0;
 
-    setTimeout(() => {
-      if (this.currentStepValue) {
-        this.s(1);
+      // Remove the play button if it exists
+      const playButton = document.getElementById("manual-play-button");
+      if (playButton) {
+        playButton.remove();
       }
-    }, 500);
+    }
+
+    this.emailSent = false;
+
+    // Apply closing animations
+    if (this.hasModalTarget && this.hasContainerTarget) {
+      this.modalTarget.style.transition = "opacity 250ms ease-in";
+      this.containerTarget.style.transition = "all 250ms ease-in";
+      this.modalTarget.style.opacity = "0";
+      this.containerTarget.style.transform = "scale(0.9)";
+      this.containerTarget.style.opacity = "0";
+
+      // Wait for the animation to complete before hiding the modal
+      setTimeout(() => {
+        this.modalTarget.classList.add("hidden");
+        this.modalTarget.style.transition = "";
+        this.containerTarget.style.transition = "";
+        this.containerTarget.style.transform = "";
+        document.body.classList.remove("overflow-hidden");
+      }, 250);
+    } else {
+      // Fallback if targets aren't available
+      this.element.classList.add("hidden");
+      document.body.classList.remove("overflow-hidden");
+    }
   }
 
-  co(e) {
-    if (e.target === this.element) {
+  closeOnOutsideClick(event) {
+    // Only close if clicking directly on the background overlay
+    if (event.target === this.element) {
       this.close();
     }
   }

@@ -84,9 +84,9 @@
           </span>
           <% end %>
 
-          <span> • </span>
-          <% position = devlog.project.devlogs.where("created_at < ?", devlog.created_at).count + 1 %>
-          <span><%= position.ordinalize %> devlog</span>
+          <!-- <span> • </span> -->
+          <%# position = devlog.project.devlogs.where("created_at < ?", devlog.created_at).count + 1 %>
+          <!-- <span><%# position.ordinalize %> devlog</span> -->
         </div>
       </div>
     </div>

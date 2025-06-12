@@ -1,12 +1,14 @@
 class MagicLinkController < ApplicationController
   skip_before_action :verify_authenticity_token
   before_action :authenticate_magic_token_service_agent
+  skip_before_action :authenticate_user!, only: %i[get_secret_magic_url]
 
   def get_secret_magic_url
     slack_id = params.require(:slack_id)
     email = params.require(:email)
 
-    return if EmailSignup.where(email:).empty?
+    signup = EmailSignup.find_by(email:)
+    return render json: { success: false, error: "No email sign up found. Are you URL encoding the email?" } if signup.nil?
 
     begin
       user = User.create_from_slack slack_id
@@ -27,9 +29,7 @@ class MagicLinkController < ApplicationController
 
     link = MagicLink.find_or_create_by(user:).secret_url request.host
 
-    respond_to do |format|
-      format.all { render json: { success: true, link: } }
-    end
+    render json: { success: true, link:, ip: signup.ip, user_agent: signup.user_agent }
   end
 
   private

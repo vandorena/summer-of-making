@@ -3,14 +3,17 @@
 class ApplicationController < ActionController::Base
   include Pagy::Backend
   include PublicActivity::StoreController
+  include Pundit::Authorization
+
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
-  allow_browser versions: :modern
+  # allow_browser versions: :modern
   before_action do
     Rails.logger.info ">>> Session[:user_id] = #{session[:user_id]}"
     Rails.logger.info ">>> Current user ID: #{current_user&.id}"
     Rails.logger.info ">>> Request IP: #{request.remote_ip}, User-Agent: #{request.user_agent}"
   end
 
+  before_action :authenticate_user!
   before_action :fetch_hackatime_data_if_needed
 
   helper_method :current_user, :user_signed_in?, :current_verification_status
@@ -38,8 +41,7 @@ class ApplicationController < ActionController::Base
   private
 
   def fetch_hackatime_data_if_needed
-    return unless user_signed_in?
-    return if current_user.has_hackatime?
+    return if !user_signed_in? || current_user.has_hackatime?
 
     Rails.cache.fetch("hackatime_fetch_#{current_user.id}", expires_in: 5.seconds) do
       current_user.refresh_hackatime_data_now

@@ -89,6 +89,11 @@ class Project < ApplicationRecord
     end
   end
 
+  has_many :readme_checks, dependent: :destroy
+  def check_readme!
+    readme_checks.pending.first || ReadmeCheck.create(project: self)
+  end
+
   def total_stonks
     stonks.sum(:amount)
   end

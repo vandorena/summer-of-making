@@ -1,5 +1,5 @@
 <h1>User #<%= @user.id %></h1>
-<%= render @user %> <br/>
+<%= render @user %> <br>
 <b>IDV ID:</b> <%= @user.identity_vault_id || "None" %>
 
 <br><br>
@@ -25,7 +25,7 @@
     <%= f.submit "do it!" %>
   <% end %>
 </details>
-<br/><br/>
+<br><br>
 <b>audit lawg (incomplete):</b>
 <%= render_activities(@activities, layout: "activity") %>
 

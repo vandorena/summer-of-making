@@ -104,7 +104,7 @@ GEM
     avo-heroicons (0.1.1)
     awesome_print (1.9.2)
     aws-eventstream (1.4.0)
-    aws-partitions (1.1115.0)
+    aws-partitions (1.1116.0)
     aws-sdk-core (3.225.2)
       aws-eventstream (~> 1, >= 1.3.0)
       aws-partitions (~> 1, >= 1.992.0)
@@ -112,7 +112,7 @@ GEM
       base64
       jmespath (~> 1, >= 1.6.1)
       logger
-    aws-sdk-kms (1.104.0)
+    aws-sdk-kms (1.105.0)
       aws-sdk-core (~> 3, >= 3.225.0)
       aws-sigv4 (~> 1.5)
     aws-sdk-s3 (1.189.1)
@@ -144,6 +144,9 @@ GEM
     brakeman (7.0.2)
       racc
     builder (3.3.0)
+    bullet (8.0.8)
+      activesupport (>= 3.0.0)
+      uniform_notifier (~> 1.11)
     capybara (3.40.0)
       addressable
       matrix
@@ -221,6 +224,9 @@ GEM
     groupdate (6.7.0)
       activesupport (>= 7.1)
     hashie (5.0.0)
+    honeybadger (5.28.0)
+      logger
+      ostruct
     htmlcompressor (0.4.0)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
@@ -350,6 +356,8 @@ GEM
     raabro (1.4.0)
     racc (1.8.1)
     rack (3.1.16)
+    rack-mini-profiler (4.0.0)
+      rack (>= 1.2.0)
     rack-session (2.1.1)
       base64 (>= 0.1.0)
       rack (>= 3.0.0)
@@ -456,12 +464,8 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
-    sentry-rails (5.24.0)
-      railties (>= 5.0)
-      sentry-ruby (~> 5.24.0)
-    sentry-ruby (5.24.0)
-      bigdecimal
-      concurrent-ruby (~> 1.0, >= 1.0.2)
+    skylight (6.0.4)
+      activesupport (>= 5.2.0)
     slack-ruby-client (2.6.0)
       faraday (>= 2.0)
       faraday-mashify
@@ -524,6 +528,7 @@ GEM
     unicode-display_width (3.1.4)
       unicode-emoji (~> 4.0, >= 4.0.4)
     unicode-emoji (4.0.4)
+    uniform_notifier (1.17.0)
     uri (1.0.3)
     useragent (0.16.11)
     view_component (3.23.2)
@@ -567,6 +572,7 @@ DEPENDENCIES
   blazer (~> 3.3)
   bootsnap
   brakeman
+  bullet
   capybara
   chartkick (~> 5.1)
   debug
@@ -574,6 +580,7 @@ DEPENDENCIES
   erb_lint
   ferrum_pdf (~> 0.3.0)
   groupdate (~> 6.6)
+  honeybadger (~> 5.28)
   htmlcompressor (~> 0.4.0)
   image_processing (~> 1.14)
   importmap-rails
@@ -587,6 +594,7 @@ DEPENDENCIES
   public_activity (~> 3.0)
   puma (>= 5.0)
   pundit (~> 2.5)
+  rack-mini-profiler (~> 4.0)
   rails (~> 8.0.2)
   rails_live_reload
   redcarpet
@@ -594,8 +602,7 @@ DEPENDENCIES
   ruby-lsp
   ruby-openai (~> 8.1)
   selenium-webdriver
-  sentry-rails
-  sentry-ruby
+  skylight
   slack-ruby-client
   solid_cable
   solid_cache

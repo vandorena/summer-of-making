@@ -4,7 +4,7 @@
 
     <% case current_verification_status %>
         <% when :not_linked %>
-            <p>You haven't linked your ID. <%= link_to "You can add your ID here", link_identity_vault_path, class: "underline", data: { turbo: false } %></p>
+            <p>You haven't linked your ID. Order free stickers to fix that!</p>
         <% when :needs_resubmission %>
             <p>You need to resubmit your ID. <%= link_to "Do that here.", Rails.application.credentials.dig(:identity_vault, :host), class: "underline" %></p>
         <% when :pending %>
