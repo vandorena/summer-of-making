@@ -3,7 +3,8 @@
     <h1 class="text-3xl font-bold text-gray-900 mb-2">Campfire</h1>
     <p class="text-black">Ahhhhh Campfire is a thing.</p>
   </div>
-
+  
+  <% if current_user.tutorial_progress.completed? %>
     <!-- Account Status Section -->
   <div class="mb-8">
     <h2 class="text-xl  text-gray-900 mb-4">Account Status</h2>
@@ -105,4 +106,5 @@
       <% end %>
     </div>
   </div>
+  <% end %>
 </div>
