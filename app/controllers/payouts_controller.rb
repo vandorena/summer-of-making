@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class PayoutsController < ApplicationController
   before_action :verify_fraud_token, if: -> { request.format.json? }
 

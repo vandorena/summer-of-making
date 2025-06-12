@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class CampfireController < ApplicationController
   before_action :authenticate_user!, only: [ :index ]
   before_action :build_account_status, only: [ :index ]
@@ -37,7 +35,7 @@ class CampfireController < ApplicationController
       current_user.tutorial_progress.complete_step!("identity_verified")
     end
 
-    if current_user.shop_orders.joins(:shop_item).exists?(shop_items: { type: "ShopItem::FreeStickers" }) && !current_user.tutorial_progress.step_completed?("stickers")
+    if current_user.shop_orders.joins(:shop_item).where(shop_items: { type: "ShopItem::FreeStickers" }).exists? && !current_user.tutorial_progress.step_completed?("stickers")
       current_user.tutorial_progress.complete_step!("free_stickers_ordered")
     end
 
@@ -63,7 +61,7 @@ class CampfireController < ApplicationController
       title: "Welcome to Summer of Making!",
       content: "Complete the tutorials yada yada yada. I just created this section, but might put it at top because I remember campfire in HS had smth similar. Anyways, we have a space to post announcements and stuff. I'm not sure if we'll use it, but it's here. Need to implement dismiss",
       type: "info",
-      created_at: Time.zone.now
+      created_at: Time.now
     }
 
     announcements

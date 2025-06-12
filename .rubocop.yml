@@ -1,97 +1,9 @@
 # Omakase Ruby styling for Rails
-inherit_gem:
-  rubocop-rails-omakase: rubocop.yml
-
-inherit_mode:
-  merge:
-    - Exclude
+inherit_gem: { rubocop-rails-omakase: rubocop.yml }
 
 AllCops:
-  NewCops: enable
-  TargetRubyVersion: 3.2
   Exclude:
-    - 'db/**/*'
-    - 'config/**/*'
-    - 'script/**/*'
-    - 'bin/**/*'
-    - 'vendor/**/*'
-    - 'node_modules/**/*'
-    - 'tmp/**/*'
-    - 'public/**/*'
-    - 'storage/**/*'
-    - 'log/**/*'
-
-Style/Documentation:
-  Enabled: false
-
-Style/FrozenStringLiteralComment:
-  Enabled: true
-  EnforcedStyle: always
-
-Layout/LineLength:
-  Max: 120
-
-Metrics/BlockLength:
-  Exclude:
-    - 'spec/**/*'
-    - 'test/**/*'
-    - 'config/routes.rb'
-    - 'config/environments/*.rb'
-
-Metrics/MethodLength:
-  Max: 20
-
-Metrics/AbcSize:
-  Max: 30
-
-Metrics/ClassLength:
-  Max: 150
-
-Metrics/ModuleLength:
-  Max: 150
-
-Rails:
-  Enabled: true
-
-Rails/FilePath:
-  EnforcedStyle: arguments
-
-Rails/TimeZone:
-  EnforcedStyle: strict
-
-Rails/Date:
-  EnforcedStyle: strict
-
-Rails/Output:
-  Exclude:
-    - 'db/seeds.rb'
-    - 'lib/tasks/**/*'
-
-Rails/BulkChangeTable:
-  Enabled: true
-
-Rails/HasManyOrHasOneDependent:
-  Enabled: true
-
-Rails/InverseOf:
-  Enabled: true
-
-Rails/ReflectionClassName:
-  Enabled: true
-
-Rails/UniqueValidationWithoutIndex:
-  Enabled: true
-
-Rails/UnknownEnv:
-  Environments:
-    - development
-    - test
-    - production
-    - staging
-
-Rails/Validation:
-  Enabled: true
-
+    - "vendor/**/*"
 # Overwrite or add rules to create your own house style
 #
 # # Use `[a, [b, c]]` not `[ a, [ b, c ] ]`

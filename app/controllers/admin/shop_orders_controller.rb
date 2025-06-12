@@ -6,7 +6,7 @@ module Admin
     before_action :set_shop_order, except: [ :index, :pending ]
 
     def scope
-      ShopOrder.includes(:user, :shop_item).order(created_at: :desc)
+      ShopOrder.all.includes(:user, :shop_item).order(created_at: :desc)
     end
 
     def filtered_scope

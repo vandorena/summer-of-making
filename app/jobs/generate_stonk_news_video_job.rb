@@ -5,14 +5,14 @@ require "open3"
 require "uri"
 require "net/http"
 
-ASSETS_DIR = Rails.root.join("app", "assets", "images", "stonk_news")
+ASSETS_DIR = Rails.root.join("app/assets/images/stonk_news")
 IMG_SOUND  = ASSETS_DIR.join("talking.png").to_s
 IMG_SILENT = ASSETS_DIR.join("idle.png").to_s
 
 STEP       = 0.01 # seconds between frame changes
 THRESHOLD  = "-15dB" # silence threshold
 MINDUR     = 0.001 # minimum silence length (s)
-OUTFILE    = ASSETS_DIR.join("stonk_news_#{Time.zone.now.to_i}.mp4").to_s
+OUTFILE    = ASSETS_DIR.join("stonk_news_#{Time.now.to_i}.mp4").to_s
 FRAMES_TXT = "frames.txt" # list‑file we’ll generate right here
 E11_VOICE_ID = "CpgXlDvBprXc3q2PyB56"
 

@@ -67,7 +67,7 @@ class UsersController < ApplicationController
                email: current_user.email
              }
            ).body
-    Rails.logger.debug res
+    pp res
     redirect_to res[:magic_link] || root_path, allow_other_host: true
   end
 

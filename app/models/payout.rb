@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: payouts
@@ -22,7 +20,7 @@ class Payout < ApplicationRecord
   belongs_to :payable, polymorphic: true
   belongs_to :user
 
-  validates :amount, presence: true
+  validates_presence_of :amount
 
   before_validation :set_user_id
 

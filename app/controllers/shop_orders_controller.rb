@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class ShopOrdersController < ApplicationController
   before_action :set_shop_order, only: [ :show ]
   before_action :set_shop_item, only: [ :new, :create ]

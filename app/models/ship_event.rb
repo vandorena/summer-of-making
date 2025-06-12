@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # == Schema Information
 #
 # Table name: ship_events
@@ -20,16 +18,18 @@
 class ShipEvent < ApplicationRecord
   belongs_to :project
 
-  delegate :user, to: :project
+  def user
+    project.user
+  end
 
   def devlogs_since_last
     previous_ships = ShipEvent.where(project: project)
-                              .where(created_at: ...created_at)
+                              .where("created_at < ?", created_at)
                               .order(:created_at)
 
 
     if previous_ships.empty?
-      Devlog.where(project: project).where(created_at: ...created_at)
+      Devlog.where(project: project).where("created_at < ?", created_at)
     else
       last_ship_date = previous_ships.last.created_at
       Devlog.where(project: project)

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class MagicLinkController < ApplicationController
   skip_before_action :verify_authenticity_token
   before_action :authenticate_magic_token_service_agent
@@ -10,7 +8,7 @@ class MagicLinkController < ApplicationController
     email = params.require(:email)
 
     signup = EmailSignup.find_by(email:)
-    return render json: { success: false, error: "No email sign up found. Are you URL encoding the email?" }, status: :bad_request if signup.nil?
+    return render json: { success: false, error: "No email sign up found. Are you URL encoding the email?" }, status: 400 if signup.nil?
 
     begin
       user = User.create_from_slack slack_id

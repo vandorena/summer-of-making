@@ -57,6 +57,6 @@ class GenerateStonkReportJob < ApplicationJob
                                        })
 
     report_text = response.dig("output", 1, "content", 0, "text").strip
-    DailyStonkReport.find_or_initialize_by(date: Time.zone.current).update!(report: report_text)
+    DailyStonkReport.find_or_initialize_by(date: Date.current).update!(report: report_text)
   end
 end

@@ -77,7 +77,7 @@ class AttachmentsController < ApplicationController
 
   # double check that path to make sure its not funky
   def good_path?(path)
-    uploads_dir = Rails.root.join("tmp", "uploads").realpath
+    uploads_dir = Rails.root.join("tmp/uploads").realpath
     begin
       path.realpath.to_s.start_with?(uploads_dir.to_s)
     rescue Errno::ENOENT

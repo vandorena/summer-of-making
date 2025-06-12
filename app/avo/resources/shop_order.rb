@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class Avo::Resources::ShopOrder < Avo::BaseResource
   # self.includes = []
   # self.attachments = []
