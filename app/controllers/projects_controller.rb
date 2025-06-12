@@ -8,6 +8,7 @@ class ProjectsController < ApplicationController
   before_action :check_if_shipped, only: %i[edit update]
   before_action :authorize_user, only: [ :destroy ]
   before_action :require_hackatime, only: [ :create ]
+  before_action :check_tutorial_completion
 
   def index
     if params[:action] == "my_projects"
@@ -503,6 +504,12 @@ class ProjectsController < ApplicationController
   # end
 
   private
+
+  def check_tutorial_completion
+    return if current_user&.tutorial_progress&.completed?
+
+    redirect_to campfire_path, alert: "Please complete the tutorial to access this page."
+  end
 
   def require_hackatime
     return if current_user&.has_hackatime?

@@ -18,6 +18,9 @@ module Journey
 
     Rails.application.config.assets.paths << Rails.root.join("app", "assets", "videos")
 
+    # html minify
+    config.middleware.use HtmlCompressor::Rack
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files

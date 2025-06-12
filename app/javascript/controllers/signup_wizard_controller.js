@@ -2,178 +2,236 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   static targets = [
-    "step1",
-    "step2",
-    "step3",
-    "step4",
-    "stepIndicator",
-    "nextButton",
-    "prevButton",
-    "progressBar",
+    "videoContainer",
+    "introVideo",
+    "sendInviteButton",
+    "modal",
+    "container",
   ];
   static values = {
     email: String,
-    currentStep: { type: Number, default: 1 },
   };
 
   connect() {
-    this.h = this.h.bind(this);
-    document.addEventListener("keydown", this.h);
+    this.handleKeydown = this.handleKeydown.bind(this);
+    document.addEventListener("keydown", this.handleKeydown);
   }
 
   initialize() {
-    this.s(1);
-    this.u();
-    this.b();
-    this.p();
+    if (this.hasIntroVideoTarget) {
+      this.introVideoTarget.currentTime = 0;
+      if (this.hasModalTarget && this.hasContainerTarget) {
+        this.modalTarget.style.opacity = "0";
+        this.containerTarget.style.transform = "scale(0.9)";
+        this.containerTarget.style.opacity = "0";
+
+        this.modalTarget.offsetHeight;
+
+        setTimeout(() => {
+          this.modalTarget.style.transition = "opacity 250ms ease-out";
+          this.containerTarget.style.transition = "all 250ms ease-out";
+          this.modalTarget.style.opacity = "1";
+          this.containerTarget.style.transform = "scale(1)";
+          this.containerTarget.style.opacity = "1";
+
+          setTimeout(() => {
+            this.playVideo();
+          }, 250);
+        }, 10);
+      } else {
+        setTimeout(() => {
+          this.playVideo();
+        }, 200);
+      }
+    }
+  }
+
+  playVideo() {
+    if (
+      this.hasIntroVideoTarget &&
+      !this.element.classList.contains("hidden")
+    ) {
+      this.introVideoTarget.play().catch((error) => {
+        console.warn("Video playback was prevented:", error);
+
+        // autoplay failed, manual add button
+        if (!document.getElementById("manual-play-button")) {
+          const playButton = document.createElement("button");
+          playButton.id = "manual-play-button";
+          playButton.className =
+            "absolute inset-0 flex items-center justify-center bg-black/50 rounded-lg";
+          playButton.innerHTML = `
+            <div class="bg-white/80 rounded-full p-3 hover:bg-white transition-all">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-vintage-red" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M8 5.14v14l11-7l-11-7Z"/>
+              </svg>
+            </div>
+          `;
+          playButton.addEventListener("click", () => {
+            this.introVideoTarget.play();
+            playButton.remove();
+          });
+
+          const videoContainer = this.introVideoTarget.parentElement;
+          videoContainer.style.position = "relative";
+          videoContainer.appendChild(playButton);
+        }
+      });
+    }
   }
 
   disconnect() {
-    document.removeEventListener("keydown", this.h);
+    document.removeEventListener("keydown", this.handleKeydown);
   }
 
-  h(e) {
-    if (e.key === "Escape" && !this.element.classList.contains("hidden")) {
+  handleKeydown(event) {
+    if (event.key === "Escape" && !this.element.classList.contains("hidden")) {
       this.close();
-      e.stopPropagation();
+      event.stopPropagation();
     }
   }
 
-  s(n) {
-    this.step1Target.classList.add("hidden");
-    this.step2Target.classList.add("hidden");
-    this.step3Target.classList.add("hidden");
-    this.step4Target.classList.add("hidden");
+  videoEnded() {
+    if (this.hasSendInviteButtonTarget) {
+      this.sendInviteButtonTarget.disabled = false;
+      this.sendInviteButtonTarget.classList.remove("opacity-50");
 
-    switch (n) {
-      case 1:
-        this.step1Target.classList.remove("hidden");
-        break;
-      case 2:
-        this.step2Target.classList.remove("hidden");
-        break;
-      case 3:
-        this.step3Target.classList.remove("hidden");
-        break;
-      case 4:
-        this.step4Target.classList.remove("hidden");
-        break;
-    }
+      this.sendInviteButtonTarget.classList.add("animate-pulse");
 
-    this.currentStepValue = n;
-    this.u();
-    this.b();
-    this.p();
-  }
+      const buttonText = document.createElement("span");
+      buttonText.innerHTML =
+        "Send Slack Invite <span class='ml-2 text-yellow-100'>→</span>";
+      this.sendInviteButtonTarget.innerHTML = "";
+      this.sendInviteButtonTarget.appendChild(buttonText);
 
-  nextStep() {
-    if (this.currentStepValue < 4) {
-      this.s(this.currentStepValue + 1);
-    } else if (this.currentStepValue === 4) {
-      this.e();
+      this.sendInviteButtonTarget.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
     }
   }
 
-  prevStep() {
-    if (this.currentStepValue > 1) {
-      this.s(this.currentStepValue - 1);
-    }
-  }
+  async sendInviteEmail() {
+    const button = this.sendInviteButtonTarget;
+    const originalText = button.innerHTML;
 
-  u() {
-    if (this.hasStepIndicatorTarget) {
-      this.stepIndicatorTarget.textContent = this.currentStepValue;
-    }
-  }
-
-  p() {
-    if (this.hasProgressBarTarget) {
-      const w = (this.currentStepValue / 4) * 100;
-      this.progressBarTarget.style.width = `${w}%`;
-    }
-  }
-
-  b() {
-    if (this.hasPrevButtonTarget) {
-      if (this.currentStepValue === 1) {
-        this.prevButtonTarget.classList.add("opacity-50");
-        this.prevButtonTarget.disabled = true;
-      } else {
-        this.prevButtonTarget.classList.remove("opacity-50");
-        this.prevButtonTarget.disabled = false;
-      }
-    }
-
-    if (this.hasNextButtonTarget) {
-      if (this.currentStepValue === 4) {
-        this.nextButtonTarget.textContent = "Send Invite Email";
-        this.nextButtonTarget.classList.remove("bg-forest");
-        this.nextButtonTarget.classList.add("bg-vintage-red");
-      } else {
-        this.nextButtonTarget.textContent = "Next →";
-        this.nextButtonTarget.classList.remove("bg-vintage-red");
-        this.nextButtonTarget.classList.add("bg-forest");
-      }
-    }
-  }
-
-  async e() {
-    const btn = this.nextButtonTarget;
-    const txt = btn.textContent;
-
-    btn.textContent = "Sending...";
-    btn.disabled = true;
-    btn.classList.add("opacity-75");
+    button.innerHTML = "Sending...";
+    button.disabled = true;
+    button.classList.add("opacity-75");
+    button.classList.remove("animate-pulse");
 
     try {
-      const r = await fetch("/sign-up", {
+      // Get CSRF token with proper error handling
+      let csrfToken = "";
+      const metaTag = document.querySelector('meta[name="csrf-token"]');
+      if (metaTag) {
+        csrfToken = metaTag.content;
+      } else {
+        console.warn("CSRF token meta tag not found. Request may fail.");
+      }
+
+      const response = await fetch("/sign-up", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-CSRF-Token": document.querySelector('[name="csrf-token"]').content,
+          "X-CSRF-Token": csrfToken,
         },
         body: JSON.stringify({ email: this.emailValue }),
       });
 
-      if (r.ok) {
-        const d = await r.json();
-        this.ss(d);
+      if (response.ok) {
+        const data = await response.json();
+        this.showSuccessScreen(data);
       } else {
-        const ed = await r.json();
-        throw new Error(ed.error || "Failed to send signup email");
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to send signup email");
       }
-    } catch (err) {
-      console.error("Error sending signup email:", err);
-      alert(`Error: ${err.message}`);
+    } catch (error) {
+      console.error("Error sending signup email:", error);
 
-      btn.textContent = "Try Again";
-      btn.disabled = false;
-      btn.classList.remove("opacity-75");
+      // Show a more user-friendly error message
+      let errorMessage = "There was a problem sending your signup email.";
+      if (error.message && error.message !== "Failed to send signup email") {
+        errorMessage += ` Details: ${error.message}`;
+      }
+
+      alert(errorMessage);
+
+      button.innerHTML = "Try Again";
+      button.disabled = false;
+      button.classList.remove("opacity-75");
 
       setTimeout(() => {
-        btn.textContent = txt;
+        button.innerHTML = originalText;
       }, 2000);
     }
   }
 
-  ss(rd) {
-    this.step1Target.classList.add("hidden");
-    this.step2Target.classList.add("hidden");
-    this.step3Target.classList.add("hidden");
-    this.step4Target.classList.add("hidden");
+  showSuccessScreen(responseData) {
+    // Hide the video container with a fade-out effect
+    if (this.hasVideoContainerTarget) {
+      this.videoContainerTarget.style.transition = "opacity 250ms ease-out";
+      this.videoContainerTarget.style.opacity = "0";
 
-    const sh = `
+      setTimeout(() => {
+        this.videoContainerTarget.classList.add("hidden");
+
+        // Create and show success message with fade-in effect
+        const successElement = this.createSuccessElement(responseData);
+        successElement.style.opacity = "0";
+
+        const contentContainer = this.element.querySelector(".flex-1.p-8");
+        if (contentContainer) {
+          contentContainer.innerHTML = "";
+          contentContainer.appendChild(successElement);
+
+          // Force reflow before starting animation
+          successElement.offsetHeight;
+
+          // Fade in the success message
+          setTimeout(() => {
+            successElement.style.transition = "opacity 250ms ease-in";
+            successElement.style.opacity = "1";
+          }, 10);
+        }
+
+        // Hide the footer with the send button
+        const footer = this.element.querySelector(".border-t");
+        if (footer) {
+          footer.classList.add("hidden");
+        }
+      }, 250);
+    } else {
+      // Fallback if video container target isn't available
+      const successElement = this.createSuccessElement(responseData);
+
+      const contentContainer = this.element.querySelector(".flex-1.p-8");
+      if (contentContainer) {
+        contentContainer.innerHTML = "";
+        contentContainer.appendChild(successElement);
+      }
+
+      // Hide the footer with the send button
+      const footer = this.element.querySelector(".border-t");
+      if (footer) {
+        footer.classList.add("hidden");
+      }
+    }
+  }
+
+  createSuccessElement(responseData) {
+    const successHtml = `
       <div class="flex flex-col items-center justify-center h-full text-center space-y-8 max-w-3xl mx-auto">
         <h2 class="text-4xl font-bold text-forest mb-6">Welcome aboard! ✨</h2>
         <p class="text-xl">Check your inbox (<strong>${
-          rd.email
-        }</strong>) for a email from Slack</p>
+          responseData.email
+        }</strong>) for an email from Slack</p>
         
         ${
-          rd.ok
-            ? '<p class="text-green-600 font-semibold text-lg">✅ Email sent successfully!</p>'
-            : `<p class="text-red-500 text-lg font-semibold">❌ Error: ${
-                rd.error || "Unknown error"
+          responseData.ok
+            ? '<div class="text-6xl mb-4 animate-bounce">🎉</div><p class="text-green-600 font-semibold text-lg">✅ Email sent successfully!</p>'
+            : `<div class="text-6xl mb-4">😢</div><p class="text-red-500 text-lg font-semibold">❌ Error: ${
+                responseData.error || "Unknown error"
               }</p>`
         }
 
@@ -183,46 +241,65 @@ export default class extends Controller {
       </div>
     `;
 
-    const se = document.createElement("div");
-    se.innerHTML = sh;
-    se.classList.add("flex-1", "flex", "items-center", "justify-center");
+    const successElement = document.createElement("div");
+    successElement.innerHTML = successHtml;
+    successElement.classList.add(
+      "flex-1",
+      "flex",
+      "items-center",
+      "justify-center"
+    );
 
-    const cc = this.element.querySelector(".flex-1.p-8");
-    if (cc) {
-      cc.innerHTML = "";
-      cc.appendChild(se);
-    }
-
-    const f = this.element.querySelector(".border-t");
-    if (f) {
-      f.classList.add("hidden");
-    }
-
-    this.upt();
-  }
-
-  upt() {
-    if (this.hasProgressBarTarget) {
-      this.progressBarTarget.style.width = "100%";
-    }
-    if (this.hasStepIndicatorTarget) {
-      this.stepIndicatorTarget.textContent = "✓";
-    }
+    return successElement;
   }
 
   close() {
-    this.element.classList.add("hidden");
-    document.body.classList.remove("overflow-hidden");
+    // Stop the video if it's playing
+    if (this.hasIntroVideoTarget) {
+      this.introVideoTarget.pause();
+      this.introVideoTarget.currentTime = 0;
 
-    setTimeout(() => {
-      if (this.currentStepValue) {
-        this.s(1);
+      // Remove the play button if it exists
+      const playButton = document.getElementById("manual-play-button");
+      if (playButton) {
+        playButton.remove();
       }
-    }, 500);
+
+      // Reset the send invite button
+      if (this.hasSendInviteButtonTarget) {
+        this.sendInviteButtonTarget.disabled = true;
+        this.sendInviteButtonTarget.classList.add("opacity-50");
+        this.sendInviteButtonTarget.classList.remove("animate-pulse");
+        this.sendInviteButtonTarget.textContent = "Send Slack Invite";
+      }
+    }
+
+    // Apply closing animations
+    if (this.hasModalTarget && this.hasContainerTarget) {
+      this.modalTarget.style.transition = "opacity 250ms ease-in";
+      this.containerTarget.style.transition = "all 250ms ease-in";
+      this.modalTarget.style.opacity = "0";
+      this.containerTarget.style.transform = "scale(0.9)";
+      this.containerTarget.style.opacity = "0";
+
+      // Wait for the animation to complete before hiding the modal
+      setTimeout(() => {
+        this.modalTarget.classList.add("hidden");
+        this.modalTarget.style.transition = "";
+        this.containerTarget.style.transition = "";
+        this.containerTarget.style.transform = "";
+        document.body.classList.remove("overflow-hidden");
+      }, 250);
+    } else {
+      // Fallback if targets aren't available
+      this.element.classList.add("hidden");
+      document.body.classList.remove("overflow-hidden");
+    }
   }
 
-  co(e) {
-    if (e.target === this.element) {
+  closeOnOutsideClick(event) {
+    // Only close if clicking directly on the background overlay
+    if (event.target === this.element) {
       this.close();
     }
   }

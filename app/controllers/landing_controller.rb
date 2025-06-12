@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 require "open-uri"
-
+CHANNEL_LIST = [ "C08MYN7HVN2", "C08N1NWKEF4", "C016DEDUL87", "C75M7C0SY", "C090JKDJYN8", "C090B3T9R9R", "C0M8PUPU6", "C05B6DBN802" ]
 class LandingController < ApplicationController
   skip_before_action :authenticate_user!, only: %i[index sign_up]
 
@@ -17,32 +17,27 @@ class LandingController < ApplicationController
       {
         name: "Flipper Zero Device",
         time: "~120 hours",
-        image: "https://files.catbox.moe/3xaxax.png"
+        image: "https://files.catbox.moe/eiflg8.png"
       },
       {
         name: "Framework Laptop 16",
         time: ">500 hours",
-        image: "https://files.catbox.moe/tyvnfm.png"
+        image: "https://files.catbox.moe/g143bn.png"
       },
       {
         name: "3D Printer Filament",
         time: "~40 hours",
-        image: "https://files.catbox.moe/momszq.png"
+        image: "https://files.catbox.moe/9plgxa.png"
       },
       {
         name: "Pinecil Soldering Iron",
         time: "~30 hours",
-        image: "https://files.catbox.moe/g796u0.png"
+        image: "https://files.catbox.moe/l6txpc.png"
       },
       {
         name: "Cloudflare Credits",
         time: "~50 hours",
         image: "https://files.catbox.moe/dlxfqe.png"
-      },
-      {
-        name: "Codespaces Credits",
-        time: "~75 hours",
-        image: "https://files.catbox.moe/m2d3g6.png"
       },
       {
         name: "DigitalOcean Credits",
@@ -62,62 +57,62 @@ class LandingController < ApplicationController
       {
         name: "Domain Registration",
         time: "~25 hours",
-        image: "https://files.catbox.moe/7t427r.png"
+        image: "https://files.catbox.moe/523zji.png"
       },
       {
         name: "iPad with Apple Pencil",
         time: ">500 hours",
-        image: "https://files.catbox.moe/t5bh39.png"
+        image: "https://files.catbox.moe/44rj2b.png"
       },
       {
         name: "Mode Design Sonnet Keyboard",
         time: "~300 hours",
-        image: "https://files.catbox.moe/6iq56a.png"
+        image: "https://files.catbox.moe/r2f8ug.png"
       },
       {
-        name: "Ben Eater 8-bit Computer Kit",
-        time: "~200 hours",
-        image: "https://files.catbox.moe/5z0gzz.png"
+        name: "GitHub Notebook",
+        time: "~15 hours",
+        image: "https://files.catbox.moe/l12lhl.png"
       },
       {
         name: "Raspberry Pi 5 Making Kit",
         time: "~90 hours",
-        image: "https://files.catbox.moe/343tqt.png"
+        image: "https://files.catbox.moe/w3a964.png"
       },
       {
         name: "Raspberry Pi Zero 2 W Kit",
         time: "~35 hours",
-        image: "https://files.catbox.moe/lfml8k.png"
+        image: "https://files.catbox.moe/rcg0s0.png"
       },
       {
         name: "ThinkPad X1 (Renewed)",
         time: ">500 hours",
-        image: "https://files.catbox.moe/m2r3md.png"
+        image: "https://files.catbox.moe/fidiwz.png"
       },
       {
         name: "BLÅHAJ Soft Toy Shark",
         time: "~20 hours",
-        image: "https://files.catbox.moe/g7vbdo.png"
+        image: "https://files.catbox.moe/h16yjs.png"
       },
       {
         name: "Sony XM4 Headphones",
         time: "~250 hours",
-        image: "https://files.catbox.moe/o210o5.png"
+        image: "https://files.catbox.moe/vvn9cw.png"
       },
       {
         name: "Bose QuietComfort 45",
         time: "~280 hours",
-        image: "https://files.catbox.moe/zpf595.png"
+        image: "https://files.catbox.moe/5i8ff8.png"
       },
       {
         name: "Logitech MX Master 3S Mouse",
         time: "~80 hours",
-        image: "https://files.catbox.moe/oz5ey8.png"
+        image: "https://files.catbox.moe/iidxib.png"
       },
       {
         name: "Logitech Pro X Superlight Mouse",
         time: "~150 hours",
-        image: "https://files.catbox.moe/34ncyk.png"
+        image: "https://files.catbox.moe/uw1iu0.png"
       },
       {
         name: "Steam Game - Factorio",
@@ -132,7 +127,7 @@ class LandingController < ApplicationController
       {
         name: "Cricut Explore 3 Cutting Machine",
         time: "~180 hours",
-        image: "https://files.catbox.moe/1trazc.png"
+        image: "https://files.catbox.moe/cydelv.png"
       },
       {
         name: "Yummy Fudge from HQ",
@@ -142,42 +137,22 @@ class LandingController < ApplicationController
       {
         name: "Hack Club Sticker Pack",
         time: "~10 hours",
-        image: "https://files.catbox.moe/hx87j5.png"
+        image: "https://files.catbox.moe/uukr9a.png"
       },
       {
-        name: "Signed Photo of Zack Latta",
-        time: "~100 hours",
-        image: "https://files.catbox.moe/1e4e17.png"
+        name: "Speedcube",
+        time: "~20 hours",
+        image: "https://files.catbox.moe/sqltgo.png"
       },
       {
         name: "Personal Drawing from MSW",
         time: "~200 hours",
-        image: "https://files.catbox.moe/xxug1g.png"
+        image: "https://files.catbox.moe/aic9z4.png"
       },
       {
         name: "Random Object from HQ",
         time: "~15 hours",
         image: nil
-      },
-      {
-        name: "Bottom Half of Chromebook",
-        time: "~25 hours",
-        image: nil
-      },
-      {
-        name: "Mystery eBay Treasure",
-        time: "~30 hours",
-        image: "https://files.catbox.moe/m9n9vj.png"
-      },
-      {
-        name: "Top Half of Chromebook",
-        time: "~25 hours",
-        image: "https://files.catbox.moe/kv740i.png"
-      },
-      {
-        name: "Bottom Half of Chromebook",
-        time: "~30 hours",
-        image: "https://files.catbox.moe/h7vt5n.png"
       }
     ]
 
@@ -241,24 +216,33 @@ class LandingController < ApplicationController
   private
 
   def send_slack_invite(email)
-    ip = request.remote_ip
-    continent = fetch_continent(ip)
+  payload = {
+    token:  ENV["SLACK_XOXC"],
+    email: email,
+    invites: [
+    {
+      email: email,
+      type: "restricted",
+      mode: "manual"
+    }
+  ],
+    restricted: true,
+    channels: CHANNEL_LIST
+  }
+  uri = URI.parse("https://slack.com/api/users.admin.inviteBulk")
+  http = Net::HTTP.new(uri.host, uri.port)
+  http.use_ssl = true
 
-    uri = URI("https://toriel.hackclub.com/slack-invite")
-    request = Net::HTTP::Post.new(uri)
-    request["Content-Type"] = "application/json"
-    request["Authorization"] = "Bearer #{Rails.application.credentials.toriel_key}"
-    request.body = {
-      email:,
-      ip:,
-      continent:,
-      event: "Summer of Making 2025",
-      userAgent: "som25server(landing_controller#sign_up)"
-    }.to_json
 
-    Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == "https") do |http|
-      http.request(request)
-    end
+  request = Net::HTTP::Post.new(uri)
+  request["Content-Type"] = "application/json"
+  request["Cookie"] = "d=#{ENV['SLACK_XOXD']}"
+  request["Authorization"] = "Bearer #{ENV["SLACK_XOXC"]}"
+  request.body = JSON.generate(payload)
+
+  # Send the request
+  response = http.request(request)
+  response
   end
 
   def fetch_continent(ip)
