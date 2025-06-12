@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   class UsersController < ApplicationController
     include Pagy::Backend
@@ -20,7 +22,7 @@ module Admin
 
     def create_payout
       parameters = payout_params
-      unless parameters[:reason].present?
+      if parameters[:reason].blank?
         return redirect_to(admin_user_path(@user), notice: "Please provide a reason!")
       end
       @payout = @user.payouts.build(parameters.merge(payable: @user))
@@ -42,7 +44,7 @@ module Admin
     end
 
     def payout_params
-      params.require(:payout).permit(:amount, :reason)
+      params.expect(payout: [ :amount, :reason ])
     end
   end
 end

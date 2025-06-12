@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: shop_orders
@@ -43,8 +45,8 @@ class ShopOrder < ApplicationRecord
   validate :check_max_quantity_limit
   validate :check_black_market_access
   validate :check_user_balance
-  after_create :create_negative_payout
   after_initialize :set_initial_state_for_free_stickers
+  after_create :create_negative_payout
 
   def full_name
     "#{user.first_name} #{user.last_name}'s order for #{quantity} #{shop_item.name.pluralize(quantity)}"

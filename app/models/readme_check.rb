@@ -33,7 +33,7 @@ class ReadmeCheck < ApplicationRecord
   private
 
   def get_readme_content
-    return unless project.readme_link.present?
+    return if project.readme_link.blank?
     update(readme_link: project.readme_link)
 
     begin
