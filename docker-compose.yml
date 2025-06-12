@@ -30,4 +30,4 @@ services:
 
 volumes:
   harbor_postgres_data:
-  bundle_cache: 
+  bundle_cache:
