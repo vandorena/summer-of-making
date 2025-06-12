@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_11_214946) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_12_192157) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -151,6 +151,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_11_214946) do
     t.text "email", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.inet "ip"
+    t.string "user_agent"
   end
 
   create_table "hackatime_stats", force: :cascade do |t|
