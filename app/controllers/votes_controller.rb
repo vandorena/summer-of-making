@@ -45,7 +45,7 @@ class VotesController < ApplicationController
 
   private
 
-  
+
   def check_identity_verification
     return if current_user&.identity_vault_id.present? && current_user.verification_status != :ineligible
 
