@@ -16,6 +16,8 @@ Honeybadger.configure do |config|
     !should_ignore
   end
 
+  config.api_key = Rails.application.credentials.honeybadger_auth
+
   private
 
   def error_index_key(error)
