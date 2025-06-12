@@ -191,7 +191,7 @@ class LandingController < ApplicationController
       end
     end
 
-    EmailSignup.create!(email:)
+    EmailSignup.create!(email:, ip: request.remote_ip, user_agent: request.headers['User-Agent'])
 
     slack_invite_response = send_slack_invite(email)
 

@@ -41,8 +41,7 @@ class ApplicationController < ActionController::Base
   private
 
   def fetch_hackatime_data_if_needed
-    return unless user_signed_in?
-    return if current_user.has_hackatime?
+    return if !user_signed_in? || current_user.has_hackatime?
 
     Rails.cache.fetch("hackatime_fetch_#{current_user.id}", expires_in: 5.seconds) do
       current_user.refresh_hackatime_data_now
