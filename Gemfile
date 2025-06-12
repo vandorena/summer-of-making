@@ -72,6 +72,8 @@ group :development do
 
   # Auto-reload pages after a code change
   gem "rails_live_reload"
+
+  gem "rack-mini-profiler", "~> 4.0", require: false
 end
 
 group :test do
