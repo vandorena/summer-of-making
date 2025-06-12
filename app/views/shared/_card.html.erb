@@ -1,6 +1,6 @@
-<%# 
+<%#
   A flexible card component with common features:
-  
+
   Parameters:
     - title: Optional card title
     - subtitle: Optional card subtitle
@@ -12,69 +12,122 @@
     - classes: Additional classes to apply to the card
 %>
 
-<% 
+<%
   padding = local_assigns.fetch(:padding, 'md')
   hover = local_assigns.fetch(:hover, false)
   shadow = local_assigns.fetch(:shadow, 'md')
   classes = local_assigns.fetch(:classes, '')
-  
-  padding_classes = {
-    'sm' => 'p-3',
-    'md' => 'p-4',
-    'lg' => 'p-6'
-  }[padding]
-  
-  shadow_classes = {
-    'sm' => 'shadow',
-    'md' => 'shadow-md',
-    'lg' => 'shadow-lg'
-  }[shadow]
-  
-  hover_classes = hover ? 'transition-transform duration-200 hover:-translate-y-1' : ''
-  
-  # Generate a unique ID for this card instance
-  card_id = "card-#{SecureRandom.hex(4)}"
 %>
 
-<div id="<%= card_id %>" class="rounded-lg border-2 border-[#7C4A3380] <%= padding_classes %> <%= shadow_classes %> <%= hover_classes %> <%= classes %>">
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const card = document.getElementById('<%= card_id %>');
-      if (card) {
-        // Generate random center point between 30% and 70% of the card's dimensions
-        const centerX = Math.random() * 40 + 30;
-        const centerY = Math.random() * 40 + 30;
-        
-        card.style.background = `radial-gradient(circle at ${centerX}% ${centerY}%, #F6DBBA, #E6D4BE)`;
-      }
-    });
-  </script>
-
+<div class="card-with-gradient <%= classes %>" data-padding="<%= padding %>" data-hover="<%= hover %>" data-shadow="<%= shadow %>">
   <% if local_assigns[:image].present? %>
-    <div class="relative w-full h-48 mb-4">
-      <%= image_tag image, class: "w-full h-full object-cover rounded-t-lg" %>
+    <div class="card-image">
+      <%= image_tag image, class: "card-image-content" %>
     </div>
   <% end %>
 
   <% if local_assigns[:title].present? || local_assigns[:subtitle].present? %>
-    <div class="mb-4">
+    <div class="card-header">
       <% if local_assigns[:title].present? %>
-        <h3 class="text-xl font-semibold text-gray-900"><%= title %></h3>
+        <h3 class="card-title"><%= title %></h3>
       <% end %>
-      
+
       <% if local_assigns[:subtitle].present? %>
-        <p class="mt-1 text-sm text-gray-600"><%= subtitle %></p>
+        <p class="card-subtitle"><%= subtitle %></p>
       <% end %>
     </div>
   <% end %>
 
-  <div class="text-gray-700">
+  <div class="card-content">
     <%= yield %>
   </div>
 
   <% if local_assigns[:footer].present? %>
-    <div class="mt-4 pt-4 border-t border-gray-200">
+    <div class="card-footer">
       <%= footer %>
     </div>
   <% end %>
 </div>
+
+<% content_for :head do %>
+  <style>
+    .card-with-gradient {
+      border-radius: 0.5rem;
+      border: 2px solid rgba(124, 74, 51, 0.5);
+      background: radial-gradient(circle at 50% 50%, #F6DBBA, #E6D4BE);
+    }
+
+    .card-with-gradient[data-padding="sm"] { padding: 0.75rem; }
+    .card-with-gradient[data-padding="md"] { padding: 1rem; }
+    .card-with-gradient[data-padding="lg"] { padding: 1.5rem; }
+
+    .card-with-gradient[data-shadow="sm"] { box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
+    .card-with-gradient[data-shadow="md"] { box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
+    .card-with-gradient[data-shadow="lg"] { box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
+
+    .card-with-gradient[data-hover="true"] {
+      transition: transform 0.2s;
+    }
+    .card-with-gradient[data-hover="true"]:hover {
+      transform: translateY(-0.25rem);
+    }
+
+    .card-image {
+      position: relative;
+      width: 100%;
+      height: 12rem;
+      margin-bottom: 1rem;
+    }
+
+    .card-image-content {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-top-left-radius: 0.5rem;
+      border-top-right-radius: 0.5rem;
+    }
+
+    .card-header {
+      margin-bottom: 1rem;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: rgb(17, 24, 39);
+    }
+
+    .card-subtitle {
+      margin-top: 0.25rem;
+      font-size: 0.875rem;
+      color: rgb(75, 85, 99);
+    }
+
+    .card-content {
+      color: rgb(55, 65, 81);
+    }
+
+    .card-footer {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgb(229, 231, 235);
+    }
+  </style>
+
+  <script>
+    // Only define the function once
+    if (!window.applyCardGradients) {
+      window.applyCardGradients = function() {
+        document.querySelectorAll('.card-with-gradient').forEach(card => {
+          // Generate random center point between 30% and 70% of the card's dimensions
+          const centerX = Math.random() * 40 + 30;
+          const centerY = Math.random() * 40 + 30;
+          card.style.background = `radial-gradient(circle at ${centerX}% ${centerY}%, #F6DBBA, #E6D4BE)`;
+        });
+      };
+
+      // Apply gradients when DOM is loaded
+      document.addEventListener('DOMContentLoaded', window.applyCardGradients);
+    }
+  </script>
+<% end %>
