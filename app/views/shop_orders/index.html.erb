@@ -13,63 +13,7 @@
     <!-- Orders list -->
     <div class="space-y-6">
       <% @orders.each do |order| %>
-        <div class="bg-soft-bone card-pixel p-6">
-          <div class="grid md:grid-cols-4 gap-6 items-center">
-            <!-- Order info -->
-            <div class="md:col-span-2">
-              <div class="flex items-start space-x-4">
-                <% if order.shop_item.image.attached? %>
-                  <div class="w-16 h-16 bg-white card-pixel p-2 flex-shrink-0">
-                    <%= image_tag order.shop_item.image.variant(:thumb),
-                        class: "w-full h-full object-contain",
-                        alt: order.shop_item.name %>
-                  </div>
-                <% else %>
-                  <div class="w-16 h-16 bg-white card-pixel p-2 flex-shrink-0 flex items-center justify-center">
-                    <span class="text-2xl">📦</span>
-                  </div>
-                <% end %>
-
-                <div class="flex-grow min-w-0">
-                  <h3 class="text-lg font-bold text-darker-taupe truncate">
-                    <%= order.shop_item.name %>
-                  </h3>
-                  <p class="text-sm text-saddle-taupe">
-                    Quantity: <%= order.quantity %>
-                  </p>
-                  <p class="text-sm text-saddle-taupe">
-                    Order #<%= order.id %>
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Status -->
-            <div class="text-center">
-              <span class="inline-flex items-center px-3 py-1 text-sm font-medium rounded-full <%=
-                case order.aasm_state
-                when 'pending' then 'bg-yellow-100 text-yellow-800'
-                when 'awaiting_periodical_fulfillment' then 'bg-blue-100 text-blue-800'
-                when 'fulfilled' then 'bg-green-100 text-green-800'
-                when 'rejected' then 'bg-red-100 text-red-800'
-                when 'on_hold' then 'bg-orange-100 text-orange-800'
-                else 'bg-gray-100 text-gray-800'
-                end
-                                                                                               %>">
-                <%= order.aasm_state.humanize %>
-              </span>
-              <p class="text-xs text-saddle-taupe mt-1">
-                <%= order.created_at.strftime("%b %d, %Y") %>
-              </p>
-            </div>
-
-            <!-- Actions -->
-            <div class="text-right">
-              <%= link_to "View Details", shop_order_path(order),
-                  class: "bg-soft-bone hover:bg-saddle-taupe/10 text-darker-taupe font-bold py-2 px-4 btn-pixel border-2 border-saddle-taupe/30 transition-colors duration-200 text-sm" %>
-            </div>
-          </div>
-        </div>
+        <%= render 'order_list_item', order: order %>
       <% end %>
     </div>
 
@@ -85,7 +29,7 @@
           <p class="text-sm text-saddle-taupe">Fulfilled</p>
         </div>
         <div>
-          <p class="text-2xl font-bold text-yellow-600"><%= @orders.pending.count + @orders.awaiting_periodical_fulfillment.count %></p>
+          <p class="text-2xl font-bold text-yellow-600"><%= @orders.pending.count + @orders.awaiting_periodical_fulfillment.count + @orders.where(aasm_state: 'in_verification_limbo').count %></p>
           <p class="text-sm text-saddle-taupe">In Progress</p>
         </div>
       </div>

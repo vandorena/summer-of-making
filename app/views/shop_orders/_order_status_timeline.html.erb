@@ -1,0 +1,145 @@
+<!-- Order Status & Tracking -->
+<div class="bg-white card-pixel p-6 mb-6">
+  <h3 class="text-xl font-bold text-darker-taupe mb-4">Order Status & Tracking</h3>
+
+  <!-- Timeline -->
+  <div class="space-y-4">
+    <% if order.shop_item.is_a?(ShopItem::FreeStickers) %>
+      <!-- Free Stickers Flow -->
+      
+      <!-- Verification Step -->
+      <div class="flex items-center space-x-4">
+        <div class="w-4 h-4 <%= order.in_verification_limbo? ? 'bg-purple-500' : 'bg-green-500' %> rounded-full flex-shrink-0"></div>
+        <div>
+          <p class="font-semibold text-darker-taupe">Identity Verification</p>
+          <p class="text-sm text-saddle-taupe"><%= order.created_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+          <% if order.in_verification_limbo? %>
+            <p class="text-xs text-purple-600">Waiting for identity verification completion</p>
+          <% else %>
+            <p class="text-xs text-green-600">Verification complete</p>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Queued for Mailing -->
+      <div class="flex items-center space-x-4">
+        <div class="w-4 h-4 <%= order.awaiting_periodical_fulfillment? ? 'bg-blue-500' : (order.fulfilled? ? 'bg-green-500' : 'bg-gray-300') %> rounded-full flex-shrink-0"></div>
+        <div>
+          <p class="font-semibold text-darker-taupe">Queued for Next Mailing Run</p>
+          <% if order.awaiting_periodical_fulfillment_at %>
+            <p class="text-sm text-saddle-taupe"><%= order.awaiting_periodical_fulfillment_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+          <% end %>
+          <% if order.awaiting_periodical_fulfillment? %>
+            <p class="text-xs text-blue-600">Added to mailing queue</p>
+          <% elsif order.in_verification_limbo? %>
+            <p class="text-xs text-gray-500">Complete verification to proceed</p>
+          <% end %>
+        </div>
+      </div>
+    <% else %>
+      <!-- Regular Order Flow -->
+      
+      <!-- Pending Acceptance -->
+      <div class="flex items-center space-x-4">
+        <div class="w-4 h-4 <%= order.pending? ? 'bg-yellow-500' : 'bg-green-500' %> rounded-full flex-shrink-0"></div>
+        <div>
+          <p class="font-semibold text-darker-taupe">Pending Acceptance</p>
+          <p class="text-sm text-saddle-taupe"><%= order.created_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+          <% if order.pending? %>
+            <p class="text-xs text-yellow-600">Waiting for team review</p>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Pending Fulfillment (for manually fulfilled items, but not free stickers) -->
+    <% if order.shop_item.manually_fulfilled? && !order.shop_item.is_a?(ShopItem::FreeStickers) %>
+      <div class="flex items-center space-x-4">
+        <div class="w-4 h-4 <%= order.awaiting_periodical_fulfillment? ? 'bg-blue-500' : (order.fulfilled? ? 'bg-green-500' : 'bg-gray-300') %> rounded-full flex-shrink-0"></div>
+        <div>
+          <p class="font-semibold text-darker-taupe">Pending Fulfillment</p>
+          <% if order.awaiting_periodical_fulfillment_at %>
+            <p class="text-sm text-saddle-taupe"><%= order.awaiting_periodical_fulfillment_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+          <% end %>
+          <% if order.awaiting_periodical_fulfillment? %>
+            <p class="text-xs text-blue-600">Being prepared for fulfillment</p>
+          <% elsif !order.fulfilled? && !order.rejected? %>
+            <p class="text-xs text-gray-500">Awaiting acceptance before fulfillment</p>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Fulfilled -->
+    <div class="flex items-center space-x-4">
+      <div class="w-4 h-4 <%= order.fulfilled? ? 'bg-green-500' : 'bg-gray-300' %> rounded-full flex-shrink-0"></div>
+      <div>
+        <p class="font-semibold text-darker-taupe">Fulfilled</p>
+        <% if order.fulfilled_at %>
+          <p class="text-sm text-saddle-taupe"><%= order.fulfilled_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+          <% if order.external_ref.present? %>
+            <div class="mt-2 p-3 bg-forest/10 rounded">
+              <p class="text-sm font-semibold text-forest">Tracking:</p>
+              <p class="text-lg font-mono text-forest"><%= order.external_ref %></p>
+            </div>
+          <% end %>
+        <% else %>
+          <p class="text-xs text-gray-500">You'll receive updates when your order is complete</p>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Rejection (if applicable) -->
+    <% if order.rejected? %>
+      <div class="flex items-center space-x-4">
+        <div class="w-4 h-4 bg-red-500 rounded-full flex-shrink-0"></div>
+        <div>
+          <p class="font-semibold text-darker-taupe">Order Rejected</p>
+          <p class="text-sm text-saddle-taupe"><%= order.rejected_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+          <% if order.rejection_reason.present? %>
+            <p class="text-sm text-vintage-red bg-vintage-red/10 p-2 rounded mt-1">
+              <strong>Reason:</strong> <%= order.rejection_reason %>
+            </p>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Order info based on type -->
+  <% unless order.fulfilled? || order.rejected? %>
+    <div class="mt-6 p-4 bg-blue-50 rounded">
+      <h4 class="font-semibold text-blue-800 mb-2">📦 what's up?</h4>
+      <ul class="text-sm text-blue-700 space-y-1">
+        <% if order.shop_item.is_a?(ShopItem::FreeStickers) %>
+          <% if order.in_verification_limbo? %>
+            <li>• once your identity is verified, we'll mail these out with the next batch!</li>
+          <% else %>
+            <li>• Your order is queued for the next mailing run</li>
+            <li>• Stickers are mailed periodically in batches</li>
+            <li>• No manual review required</li>
+          <% end %>
+        <% else %>
+          <% case order.shop_item.type %>
+          <% when /Grant/i %>
+            <li>• Grant requests are reviewed by our team</li>
+            <li>• Approved grants are automatically processed</li>
+          <% when /HQMail/i %>
+            <li>• Mail is sent directly from Hack Club HQ</li>
+            <li>• Typical processing time: 2-4 business days</li>
+            <li>• Personal touch from the Hack Club team</li>
+          <% when /Special/i %>
+            <li>• This item requires special coordination by our team</li>
+            <li>• Processing time varies based on the specific request</li>
+            <li>• Someone from Hack Club will be in touch!</li>
+          <% else %>
+            <li>• Orders are processed during business hours</li>
+            <li>• Typical processing time: 3-5 business days</li>
+            <li>• You'll receive tracking info here once shipped</li>
+          <% end %>
+        <% end %>
+        <li>• Questions? Contact our support team</li>
+      </ul>
+    </div>
+  <% end %>
+</div>
