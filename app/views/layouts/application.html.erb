@@ -77,10 +77,6 @@
       <%= yield %>
     <% end %>
 
-    <% if user_signed_in? && current_user.has_hackatime %>
-      <%= render "shared/timer_indicator" %>
-    <% end %>
-
     <div id="modals"></div>
 
   </body>
