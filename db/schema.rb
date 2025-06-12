@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_12_192157) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_12_193330) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -467,6 +467,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_12_192157) do
     t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "soft_tutorial_steps", default: {}, null: false
     t.index ["user_id"], name: "index_tutorial_progresses_on_user_id"
   end
 

@@ -262,6 +262,7 @@ Rails.application.routes.draw do
   end
 
   post "tutorial/complete_step", to: "tutorial_progress#complete_step"
+  post "tutorial/complete_soft_tutorial_step", to: "tutorial_progress#complete_soft_step", as: :complete_soft_tutorial_step
 
   get "/payouts", to: "payouts#index"
 
