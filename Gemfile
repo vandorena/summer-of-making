@@ -96,10 +96,6 @@ gem "airrecord"
 # Honeybadger for team's error tracking
 gem "honeybadger", "~> 5.28"
 
-# Sentry for error tracking
-gem "sentry-ruby"
-gem "sentry-rails"
-
 gem "redcarpet"
 
 gem "pagy"
