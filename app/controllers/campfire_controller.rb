@@ -9,7 +9,7 @@ class CampfireController < ApplicationController
 
       tutorial = get_tutorials.find { |t| t[:id] == params[:reset] }
       tutorial_path = tutorial&.[](:path) || campfire_path
-      redirect_to tutorial_path, notice: "Tutorial reset! You can now replay the #{params[:reset].humanize} tutorial."
+      redirect_to tutorial_path
     end
 
     @account_status = build_account_status

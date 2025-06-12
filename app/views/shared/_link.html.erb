@@ -15,9 +15,15 @@
         The attributes to assign to the content.
     - text_attr:
         The attributes to assign to the text (NOT the icon).
+    - icon_size:
+        A string representing an integer that specifies the size of the icon. Overrides
+        the default icon sizes (different for when `large` is `true` or `false`).
     - as_button:
         If defined, a <button> will be produced instead of a link. The given attributes
         will be assigned to it as well.
+    - method:
+        If defined, instead of a regular `button` or `a` tag, `button_to` will be used
+        to use the different HTTP method with the `target`.
     - underline_attr:
         The attributes to assign to the underline decoration.
     - large:
@@ -32,11 +38,13 @@
 <% content_attr     = local_assigns.fetch(:content_attr, {}) %>
 <% text_attr        = local_assigns.fetch(:text_attr, {}) %>
 <% underline_attr   = local_assigns.fetch(:underline_attr, {}) %>
+<% icon_size        = local_assigns.fetch(:icon_size, large ? '6' : '4') %>
+<% http_method      = local_assigns.fetch(:method, :get) %>
 
 <% base_class   = "relative inline-block group py-2 cursor-pointer #{'text-2xl' if large}" %>
 <% final_class  = [base_class, local_assigns[:class]].compact.join(" ") %>
 
-<% icon_class = "#{large ? 'w-6 mr-4' : 'w-4'} h-min" %>
+<% icon_class = "w-#{icon_size} #{'mr-4' if large} h-min".strip %>
 <% underline_class = "
   absolute transition-all duration-150 bottom-1 w-full pr-3 box-content
   bg-[#C7A077] rounded-full z-0 group-hover:opacity-100
@@ -73,7 +81,7 @@
     ) %>
   <% end %>
 <% else %>
-  <%= link_to target, class: final_class do %>
+  <%= button_to target, method: http_method, class: final_class do %>
     <%= tag.span(
       class: "relative z-10 flex items-center space-x-2 #{content_attr.delete(:class)}".strip,
       **content_attr

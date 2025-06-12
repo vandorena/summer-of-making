@@ -8,7 +8,8 @@ module Admin
     end
 
     def show
-      @activities = @user.activities
+      @activities = @user.activities.order(created_at: :desc)
+      @payouts = @user.payouts.order(created_at: :desc)
     end
     def internal_notes
       @user.internal_notes = params[:internal_notes]
@@ -17,10 +18,31 @@ module Admin
       render :internal_notes, layout: false
     end
 
+    def create_payout
+      parameters = payout_params
+      unless parameters[:reason].present?
+        return redirect_to(admin_user_path(@user), notice: "Please provide a reason!")
+      end
+      @payout = @user.payouts.build(parameters.merge(payable: @user))
+
+      begin
+        @payout.save!
+        @user.create_activity("manual_payout", parameters:)
+        flash[:success] = "Successfully created payout!"
+        redirect_to admin_user_path(@user)
+      rescue ActiveRecord::RecordInvalid => e
+        redirect_to admin_user_path, notice: e.message
+      end
+    end
+
     private
 
     def set_user
       @user = User.find(params[:id])
+    end
+
+    def payout_params
+      params.require(:payout).permit(:amount, :reason)
     end
   end
 end

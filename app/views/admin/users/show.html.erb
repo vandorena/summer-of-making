@@ -1,8 +1,33 @@
 <h1>User #<%= @user.id %></h1>
-<%= render @user %>
+<%= render @user %> <br>
+<b>IDV ID:</b> <%= @user.identity_vault_id || "None" %>
 
+<br><br>
+<b>Payouts:</b>
+<ul>
+  <% @payouts.each do |payout| %>
+    <li id="<%= dom_id payout %>"><%= render payout %></li>
+  <% end %>
+</ul>
+<details>
+  <summary>
+    create manual adjustment payout
+  </summary>
+  <%= form_with url: create_payout_admin_user_path(@user), scope: :payout do |f| %>
+    <div>
+      <%= f.label :amount, "Amount: " %>
+      <%= f.number_field :amount %>
+    </div>
+    <div>
+      <%= f.label :reason, "Reason: " %>
+      <%= f.text_area :reason, placeholder: "i just want them to have some walkin' around money!", rows: 3 %>
+    </div>
+    <%= f.submit "do it!" %>
+  <% end %>
+</details>
 <br><br>
 <b>audit lawg (incomplete):</b>
 <%= render_activities(@activities, layout: "activity") %>
 
+<%= render 'admin/inspector', record: @user %>
 <br><br><%= link_to "← back", admin_users_path %>

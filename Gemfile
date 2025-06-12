@@ -41,6 +41,9 @@ gem "kamal", require: false
 # Add HTTP asset caching/compression and X-Sendfile acceleration to Puma [https://github.com/basecamp/thruster/]
 gem "thruster", require: false
 
+# Monitoring performance
+gem "skylight"
+
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 
@@ -72,6 +75,8 @@ group :development do
 
   # Auto-reload pages after a code change
   gem "rails_live_reload"
+
+  gem "rack-mini-profiler", "~> 4.0", require: false
 end
 
 group :test do
@@ -88,8 +93,11 @@ gem "inline_svg"
 
 gem "airrecord"
 
-gem "sentry-ruby"
+# Honeybadger for team's error tracking
+gem "honeybadger", "~> 5.28"
 
+# Sentry for error tracking
+gem "sentry-ruby"
 gem "sentry-rails"
 
 gem "redcarpet"
@@ -122,3 +130,5 @@ gem "blazer", "~> 3.3"
 gem "pundit", "~> 2.5"
 
 gem "htmlcompressor", "~> 0.4.0"
+
+gem "awesome_print", "~> 1.9"

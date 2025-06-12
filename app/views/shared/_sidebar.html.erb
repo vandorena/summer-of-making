@@ -27,7 +27,7 @@
         <%= render partial: "shared/link", locals: {
           target: campfire_path,
           text: "Campfire",
-          icon: "map",
+          icon: "campfire",
           large: true,
           highlight: current_page?(campfire_path),
           text_attr: {
@@ -39,48 +39,91 @@
       </li>
 
       <li class="flex justify-start">
-        <%= render partial: "shared/link", locals: {
-          target: explore_path,
-          text: "Explore",
-          icon: "compass",
-          large: true,
-          highlight: current_page?(explore_path),
-          text_attr: {
-            data: { sidebar_target: "collapseFade" },
-            class: "text-3xl"
-          },
-          underline_attr: { data: { sidebar_target: "underline" } }
-        } %>
+        <% if current_user.tutorial_progress.completed? %>
+          <%= render partial: "shared/link", locals: {
+            target: explore_path,
+            text: "Explore",
+            icon: "compass",
+            large: true,
+            highlight: current_page?(explore_path),
+            text_attr: {
+              data: { sidebar_target: "collapseFade" },
+              class: "text-3xl"
+            },
+            underline_attr: { data: { sidebar_target: "underline" } }
+          } %>
+        <% else %>
+          <%= render partial: "shared/link", locals: {
+            target: explore_path,
+            text: "Explore",
+            icon: "lock",
+            large: true,
+            highlight: current_page?(explore_path),
+            text_attr: {
+              data: { sidebar_target: "collapseFade" },
+              class: "text-3xl"
+            },
+            class: "opacity-50 cursor-not-allowed"
+          } %>
+        <% end %>
       </li>
 
       <li class="flex justify-start">
-        <%= render partial: "shared/link", locals: {
-          target: my_projects_path,
-          text: "Projects",
-          icon: "user",
-          large: true,
-          highlight: current_page?(my_projects_path),
-          text_attr: {
-            data: { sidebar_target: "collapseFade" },
-            class: "text-3xl"
-          },
-          underline_attr: { data: { sidebar_target: "underline" } }
-        } %>
+        <% if current_user.tutorial_progress.completed? %>
+          <%= render partial: "shared/link", locals: {
+            target: my_projects_path,
+            text: "Projects",
+            icon: "user",
+            large: true,
+            highlight: current_page?(my_projects_path),
+            text_attr: {
+              data: { sidebar_target: "collapseFade" },
+              class: "text-3xl"
+            },
+            underline_attr: { data: { sidebar_target: "underline" } }
+          } %>
+        <% else %>
+          <%= render partial: "shared/link", locals: {
+            text: "Projects",
+            icon: "lock",
+            large: true,
+            as_button: { disabled: true },
+            text_attr: {
+              data: { sidebar_target: "collapseFade" },
+              class: "text-3xl"
+            },
+            class: "opacity-50 cursor-not-allowed"
+          } %>
+        <% end %>
       </li>
 
       <li class="flex justify-start">
-        <%= render partial: "shared/link", locals: {
-          target: new_vote_path,
-          text: "Vote",
-          icon: "vote",
-          large: true,
-          highlight: current_page?(new_vote_path),
-          text_attr: {
-            data: { sidebar_target: "collapseFade" },
-            class: "text-3xl"
-          },
-          underline_attr: { data: { sidebar_target: "underline" } }
-        } %>
+        <% if current_user.tutorial_progress.completed? %>
+          <%= render partial: "shared/link", locals: {
+            target: new_vote_path,
+            text: "Vote",
+            icon: "vote",
+            large: true,
+            highlight: current_page?(new_vote_path),
+            text_attr: {
+              data: { sidebar_target: "collapseFade" },
+              class: "text-3xl"
+            },
+            underline_attr: { data: { sidebar_target: "underline" } }
+          } %>
+        <% else %>
+          <%= render partial: "shared/link", locals: {
+            text: "Vote",
+            icon: "lock",
+            large: true,
+            as_button: { disabled: true },
+            text_attr: {
+              data: { sidebar_target: "collapseFade" },
+              class: "text-3xl"
+            },
+            class: "opacity-50 cursor-not-allowed"
+          } %>
+        <% end %>
       </li>
 
       <li class="flex justify-start">
@@ -109,26 +152,30 @@
   </nav>
 
   <div class="flex flex-col gap-4">
-    <div class="relative flex items-center">
+    <div class="relative flex flex-col items-start">
       <div class="flex items-center w-full">
         <%= image_tag current_user.avatar, class: "h-12 w-12 rounded-full flex-shrink-0" %>
 
-        <div class="flex flex-col ml-3" data-sidebar-target="collapseHide">
+        <div class="flex flex-col w-full ml-3 overflow-ellipsis overflow-hidden" data-sidebar-target="collapseHide">
           <div class="h-4">Hello,</div>
-          <div class="text-xl whitespace-nowrap">@<%= current_user.display_name %>!</div>
+          <div class="text-xl whitespace-nowrap overflow-ellipsis"><%= current_user.display_name %>!</div>
         </div>
       </div>
 
-      <%= button_to logout_path, method: :delete, 
-          class: "group relative cursor-pointer flex items-center justify-center", 
-          data: { sidebar_target: "collapseHide" } do %>
-        <div class="flex items-center overflow-hidden transition-all duration-300 h-10 w-10 group-hover:w-28 bg-transparent group-hover:bg-[#E06540] rounded-full">
-          <div class="flex items-center justify-center min-w-10">
-            <%= inline_svg("icons/exit.svg", class: "w-6 text-[#4A2D24] group-hover:text-white") %>
-          </div>
-          <span class="font-bold text-[#4A2D24] pr-3 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Sign out</span>
-        </div>
-      <% end %>
+      <div class="ml-3 mt-2">
+        <%=
+          render "shared/link",
+            text: "Log out",
+            icon: "exit",
+            method: :delete,
+            target: logout_path,
+            icon_size: "6",
+            text_attr: {
+              data: { sidebar_target: "collapseFade" },
+              class: "text-xl"
+            }
+        %>
+      </div>
     </div>
   </div>
 </div>

@@ -15,7 +15,7 @@
 
   <div class="mb-6 text-center flex justify-center flex-col">
     <div class="flex flex-col sm:grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-      <% @shop_items.each do |item| %>
+      <% @shop_items.sort_by(&:ticket_cost).each do |item| %>
         <%= render "item", item: %>
       <% end %>
     </div>

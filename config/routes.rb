@@ -167,7 +167,6 @@
 #                  avo_private_design GET    /avo_private/design(.:format)                                                                      avo/private#design
 
 Rails.application.routes.draw do
-  mount_avo
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -285,10 +284,12 @@ Rails.application.routes.draw do
 
   namespace :admin do
     mount Blazer::Engine, at: "blazer"
+    mount_avo
     get "/", to: "static_pages#index", as: :root
     resources :users, only: [ :index, :show ] do
       member do
         post :internal_notes
+        post :create_payout
       end
     end
     resources :shop_orders do
