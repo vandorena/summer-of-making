@@ -119,8 +119,6 @@ class ProjectsController < ApplicationController
     @show_create_project = true
 
     current_user.refresh_hackatime_data if current_user.has_hackatime?
-
-    render :index
   end
 
   # Gotta say I love turbo frames and turbo streams and flashes in general
