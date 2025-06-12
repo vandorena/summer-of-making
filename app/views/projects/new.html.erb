@@ -1,0 +1,215 @@
+<div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] w-full max-w-2xl mx-2 md:mx-auto relative">
+    <div class="p-3 md:p-6 border-b border-saddle-taupe border-opacity-30">
+      <div class="flex justify-between items-center">
+        <h3 class="text-lg md:text-2xl">Create New Project</h3>
+        <%= link_to projects_path, class: "text-gray-600 hover:text-vintage-red cursor-pointer" do %>
+          <%= inline_svg_tag "close.svg", class: "h-6 w-6 2xl:h-8 2xl:w-8" %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="max-h-[calc(90vh-100px)] overflow-y-auto overflow-x-hidden">
+      <%= form_with model: Project.new, class: "p-3 md:p-6 mx-auto w-[calc(100%-2px)]", data: { controller: "project-form repo-autofill", action: "submit->project-form#validateForm" } do |f| %>
+
+        <div class="space-y-2 md:space-y-4">
+          <div class="mb-2 md:mb-4">
+            <div class="tooltip-label-container">
+              <%= f.label :title, class: "block text-sm" %>
+              <div class="tooltip">
+                <span class="question-mark">?</span>
+                <span class="tooltiptext">Give your project a cool title!</span>
+              </div>
+            </div>
+            <%= f.text_field :title, class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm md:text-base", id: "title", data: { project_form_target: "title" } %>
+            <div class="flex justify-end">
+              <p class="mt-1 text-xs md:text-sm text-vintage-red">Required</p>
+            </div>
+            <p class="mt-1 text-xs md:text-sm text-vintage-red hidden" id="titleError" data-project-form-target="titleError"></p>
+          </div>
+
+          <div class="mb-2 md:mb-4">
+            <div class="tooltip-label-container">
+              <%= f.label :description, class: "block text-sm" %>
+              <div class="tooltip">
+                <span class="question-mark">?</span>
+                <span class="tooltiptext">Describe what your project does, how you made it, and what makes it special. This helps others understand your work.</span>
+              </div>
+            </div>
+            <%= f.text_area :description, rows: 3, class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm md:text-base", id: "description", data: { project_form_target: "description" } %>
+            <div class="flex justify-end">
+              <p class="mt-1 text-xs md:text-sm text-vintage-red">Required</p>
+            </div>
+            <p class="mt-1 text-xs md:text-sm text-vintage-red hidden" id="descriptionError" data-project-form-target="descriptionError"></p>
+          </div>
+
+          <!-- <style>
+              .project-category-picker {
+                button {
+                    font-size: 1em;
+                    padding:
+                }
+              }
+          </style> -->
+
+          <div class="mb-2 md:mb-4" data-controller="category-selector">
+            <div class="tooltip-label-container">
+              <%= f.label :category, class: "block text-sm" %>
+              <div class="tooltip">
+                <span class="question-mark">?</span>
+                <span class="tooltiptext">Choose the category that best describes your project.</span>
+              </div>
+            </div>
+            <%= f.hidden_field :category, data: { category_selector_target: "hiddenField" } %>
+              <div class="flex justify-between tab-container">
+                <%=
+                  render "shared/link",
+                    text: "Hardware",
+                    as_button: {
+                      data: {
+                        action: "click->category-selector#selectCategory",
+                        category: "Hardware",
+                        category_selector_target: "button"
+                      }
+                    }
+                %>
+
+                <%=
+                  render "shared/link",
+                    text: "Software",
+                    as_button: {
+                      data: {
+                        action: "click->category-selector#selectCategory",
+                        category: "Software",
+                        category_selector_target: "button"
+                      }
+                    }
+                %>
+
+                <%=
+                  render "shared/link",
+                    text: "Both",
+                    as_button: {
+                      data: {
+                        action: "click->category-selector#selectCategory",
+                        category: "Both Software & Hardware",
+                        category_selector_target: "button"
+                      }
+                    }
+                %>
+
+                <%=
+                  render "shared/link",
+                    text: "Something Else",
+                    as_button: {
+                      data: {
+                        action: "click->category-selector#selectCategory",
+                        category: "Something else",
+                        category_selector_target: "button"
+                      }
+                    }
+                %>
+              </div>
+            </div>
+            <div class="flex justify-end">
+              <p class="mt-1 text-xs md:text-sm text-vintage-red">Required. You cannot change this later.</p>
+            </div>
+            <p class="mt-1 text-xs md:text-sm text-vintage-red hidden" id="categoryError" data-project-form-target="categoryError"></p>
+          </div>
+
+          <div class="mb-3 md:mb-6">
+            <div class="tooltip-label-container">
+              <%= f.label :repo_link, "Repository Link", class: "block text-sm" %>
+              <div class="tooltip">
+                <span class="question-mark">?</span>
+                <span class="tooltiptext">Link to your project's GitHub, GitLab, or other remote repository.</span>
+              </div>
+            </div>
+            <%= f.url_field :repo_link, placeholder: "https://github.com/hackclub/journey", class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm md:text-base", id: "repo", data: { project_form_target: "repo", repo_autofill_target: "repoInput", action: "input->repo-autofill#repoInputChanged" } %>
+            <div class="flex justify-end">
+              <p class="mt-1 text-xs md:text-sm text-gray-700">Optional</p>
+            </div>
+            <p class="mt-1 text-xs md:text-sm text-vintage-red hidden" id="repoError" data-project-form-target="repoError"></p>
+          </div>
+
+          <div class="mb-2 md:mb-4">
+            <div class="tooltip-label-container">
+              <%= f.label :readme_link, "Readme Link", class: "block text-sm" %>
+              <div class="tooltip">
+                <span class="question-mark">?</span>
+                <span class="tooltiptext">Direct link to your README file (usually the raw GitHub URL). This will be rendered in the arena.</span>
+              </div>
+            </div>
+            <%= f.url_field :readme_link, placeholder: "https://raw.githubusercontent.com/hackclub/journey/main/README.md", class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm md:text-base", id: "readme", data: { project_form_target: "readme", repo_autofill_target: "readmeInput", action: "input->repo-autofill#validateReadmeUrl" } %>
+            <div class="flex justify-end">
+              <p class="mt-1 text-xs md:text-sm text-gray-700">Optional</p>
+            </div>
+            <p class="mt-1 text-xs md:text-sm text-vintage-red hidden" id="readmeError" data-project-form-target="readmeError"></p>
+          </div>
+
+          <div class="mb-2 md:mb-4">
+            <div class="tooltip-label-container">
+              <%= f.label :demo_link, "Demo Link", class: "block text-sm" %>
+              <div class="tooltip">
+                <span class="question-mark">?</span>
+                <span class="tooltiptext">Link to a live demo, deployed version, or video demonstration of your project in action.</span>
+              </div>
+            </div>
+            <%= f.url_field :demo_link, placeholder: "https://journey.hackclub.com", class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm md:text-base", id: "demo", data: { project_form_target: "demo" } %>
+            <div class="flex justify-end">
+              <p class="mt-1 text-xs md:text-sm text-gray-700">Optional</p>
+            </div>
+            <p class="mt-1 text-xs md:text-sm text-vintage-red hidden" id="demoError" data-project-form-target="demoError"></p>
+          </div>
+
+          <% if current_user&.has_hackatime %>
+            <div class="mb-3 md:mb-6 border-t border-saddle-taupe border-opacity-30 pt-3">
+              <div class="flex items-center mb-2">
+                <h4 class="text-base md:text-lg">Link HackaTime Projects</h4>
+                <div class="tooltip">
+                  <span class="question-mark">?</span>
+                  <span class="tooltiptext">Connect your existing HackaTime projects to automatically track time spent coding.</span>
+                </div>
+              </div>
+
+              <div id="hackatime-projects" data-project-form-target="hackatimeProjects" class="space-y-2">
+                <% hackatime_projects = current_user.hackatime_projects %>
+                <% if hackatime_projects.present? %>
+                  <div class="hackatime-project-field mb-2">
+                    <select name="__temp_hackatime_select" class="w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm md:text-base" data-project-form-target="hackatimeSelect">
+                      <option value="">Select a project...</option>
+                      <% hackatime_projects.each do |project| %>
+                        <option value="<%= project[:key] %>">
+                          <%= project[:name] %> (<%= project[:formatted_time] %>)
+                        </option>
+                      <% end %>
+                    </select>
+                  </div>
+
+                  <div class="selected-hackatime-projects space-y-2" data-project-form-target="selectedProjects">
+                  </div>
+
+                <% else %>
+                  <div class="p-3 rounded">
+                    <p class="text-sm text-gray-700">
+                      No HackaTime projects found. Make sure your HackaTime account is connected and has projects.
+                    </p>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+
+          <p class="text-xs md:text-base text-gray-800 border-t border-saddle-taupe border-opacity-30 pt-3">
+            Only Title, Description, and Category are required. All other fields can be added later when you're ready to ship.
+          </p>
+        </div>
+
+        <div class="flex flex-row justify-end space-x-2 md:space-x-3 mt-3 md:mt-4">
+          <%= link_to projects_path, class: "px-3 md:px-4 py-1 md:py-2 bg-vintage-red text-white hover:scale-[1.05] btn-pixel text-sm md:text-base" do %>
+            Cancel
+          <% end %>
+          <%= f.submit "Create Project", class: "px-3 md:px-4 py-1 md:py-2 bg-forest text-white hover:scale-[1.05] btn-pixel text-sm md:text-base" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
