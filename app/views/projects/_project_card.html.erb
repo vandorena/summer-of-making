@@ -204,10 +204,10 @@
         all_requirements_met = @project.can_ship?
       %>
 
-      <input type="hidden" id="all-requirements-met" value="<%= all_requirements_met %>">
-      <input type="hidden" id="repo-link" value="<%= @project.repo_link %>">
-      <input type="hidden" id="readme-link" value="<%= @project.readme_link %>">
-      <input type="hidden" id="demo-link" value="<%= @project.demo_link %>">
+      <input type="hidden" id="all-requirements-met" value="<%= all_requirements_met.to_json %>">
+      <input type="hidden" id="repo-link" value="<%= @project.repo_link.to_json %>">
+      <input type="hidden" id="readme-link" value="<%= @project.readme_link.to_json %>">
+      <input type="hidden" id="demo-link" value="<%= @project.demo_link.to_json %>">
 
       <div class="mt-6 flex justify-center space-x-4">
         <button type="button" class="px-4 py-2 btn-pixel bg-nice-blue text-white hover:scale-[1.05] transition-transform 2xl:text-xl" data-ship-target="backButton1" data-action="ship#back1">
@@ -269,7 +269,7 @@
           <% end %>
 
           <div class="text-center mt-4 mb-1">
-            <button type="button" onclick="window.location.href='<%= edit_project_path(@project) %>'" class="text-sm text-nice-blue underline">
+            <button type="button" onclick="window.location.href='<%= edit_project_path(@project).to_json %>'" class="text-sm text-nice-blue underline">
               Edit Project Links
             </button>
           </div>

@@ -236,8 +236,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const submitButton = document.getElementById('purchase-button');
   const orderSummary = totalCostContainer?.closest('.bg-forest\\/10');
 
-  const itemPrice = <%= @item.ticket_cost || 0 %>;
-  const userBalance = <%= current_user.balance || 0 %>;
+  const itemPrice = <%= (@item.ticket_cost || 0).to_json %>;
+  const userBalance = <%= (current_user.balance || 0).to_json %>;
 
   if (quantityInput && quantityDisplay && totalCostDisplay && totalCostContainer) {
     function updateCostPreview() {
