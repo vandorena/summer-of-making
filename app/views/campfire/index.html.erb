@@ -18,13 +18,11 @@
             <div class="flex-shrink-0">
               <% if @account_status[:hackatime_linked] %>
                 <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                  <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
+                  <%= inline_svg "icons/check_fill.svg", class: "w-5 h-5 text-green-600" %>
                 </div>
               <% else %>
                 <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                  <span class="text-blue-600 font-semibold text-sm">1</span>
+                  <%= inline_svg "icons/to_do_fill.svg", class: "w-5 h-5 text-blue-600" %>
                 </div>
               <% end %>
             </div>
@@ -48,17 +46,11 @@
             <div class="flex-shrink-0">
               <% if current_verification_status == :verified %>
                 <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                  <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                </div>
-              <% elsif @account_status[:hackatime_linked] %>
-                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                  <span class="text-blue-600 font-semibold text-sm">2</span>
+                  <%= inline_svg "icons/check_fill.svg", class: "w-5 h-5 text-green-600" %>
                 </div>
               <% else %>
-                <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                  <span class="text-gray-400 font-semibold text-sm">2</span>
+                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                  <%= inline_svg "icons/to_do_fill.svg", class: "w-5 h-5 text-blue-600" %>
                 </div>
               <% end %>
             </div>
@@ -66,32 +58,28 @@
               <h3 class="text-lg font-semibold text-gray-900 mb-2">Verify your identity</h3>
               <p class="text-gray-600 mb-4">Hack Club is for people 18 and under, so we'll need to check that you're eligible before we can send you any of the cool stuff we've got</p>
 
-              <% if !@account_status[:hackatime_linked] %>
-                <p class="text-sm text-gray-500 italic">Complete step 1 first to unlock this step</p>
+              <% case current_verification_status %>
+              <% when :not_linked %>
+                <%= link_to "Start Verification", link_identity_vault_path, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500", target: "_blank" %>
+              <% when :needs_resubmission %>
+                <div class="space-y-2">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-800">
+                    Needs Submission
+                  </span>
+                  <%= link_to "Submit Documents", "https://idv-staging.a.hackclub.dev/", class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ml-2", target: "_blank" %>
+                </div>
+              <% when :pending %>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
+                  Pending Review
+                </span>
+              <% when :ineligible %>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-red-100 text-red-800">
+                  Ineligible
+                </span>
               <% else %>
-                <% case current_verification_status %>
-                <% when :not_linked %>
-                  <%= link_to "Start Verification", link_identity_vault_path, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500", target: "_blank" %>
-                <% when :needs_resubmission %>
-                  <div class="space-y-2">
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-800">
-                      Needs Submission
-                    </span>
-                    <%= link_to "Submit Documents", "https://idv-staging.a.hackclub.dev/", class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ml-2", target: "_blank" %>
-                  </div>
-                <% when :pending %>
-                  <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
-                    Pending Review
-                  </span>
-                <% when :ineligible %>
-                  <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-red-100 text-red-800">
-                    Ineligible
-                  </span>
-                <% else %>
-                  <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800">
-                    Verified
-                  </span>
-                <% end %>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800">
+                  Verified
+                </span>
               <% end %>
             </div>
           </div>
