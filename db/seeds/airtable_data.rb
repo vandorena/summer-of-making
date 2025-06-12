@@ -45,18 +45,18 @@ begin
 
       item_type = if fields["identifier"] == "item_free_stickers_41"
                     'ShopItem::FreeStickers'
-                  elsif fields['hcb_grant_merchants'].present? || fields['hcb_grant_amount_cents'].present?
+      elsif fields['hcb_grant_merchants'].present? || fields['hcb_grant_amount_cents'].present?
                     'ShopItem::HCBGrant'
-                  elsif fields['fulfillment_type'] = "hq_mail"
+      elsif fields['fulfillment_type'] = "hq_mail"
                     'ShopItem::HQMailItem'
-                  elsif ['third_party_physical', 'special_fulfillment'].include?(fields['fulfillment_type'])
+      elsif [ 'third_party_physical', 'special_fulfillment' ].include?(fields['fulfillment_type'])
                     'ShopItem::SpecialFulfillmentItem'
-                  elsif fields['agh_skus'].present?
+      elsif fields['agh_skus'].present?
                     'ShopItem::WarehouseItem'
-                  else
+      else
                     puts "  ❌ ERROR: Cannot determine type for #{name_field} - no identifying fields found"
                     next
-                  end
+      end
 
       existing_item = ShopItem.find_by(name: name_field)
       if existing_item

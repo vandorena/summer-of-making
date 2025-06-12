@@ -46,7 +46,7 @@ class ShopOrderTest < ActiveSupport::TestCase
     @user.stub(:verification_status, :pending) do
       order = @user.shop_orders.build(shop_item: @free_stickers, quantity: 1)
       order.save!
-      assert_equal 'in_verification_limbo', order.aasm_state
+      assert_equal "in_verification_limbo", order.aasm_state
     end
   end
 
@@ -55,22 +55,22 @@ class ShopOrderTest < ActiveSupport::TestCase
     @user.stub(:verification_status, :verified) do
       order = @user.shop_orders.build(shop_item: @free_stickers, quantity: 1)
       order.save!
-      assert_equal 'awaiting_periodical_fulfillment', order.aasm_state
+      assert_equal "awaiting_periodical_fulfillment", order.aasm_state
       assert_not_nil order.awaiting_periodical_fulfillment_at
     end
   end
 
   test "non-free sticker orders always start as pending" do
     regular_item = ShopItem.create!(
-      name: "Regular Item", 
+      name: "Regular Item",
       description: "Not free stickers",
       ticket_cost: 100
     )
-    
+
     @user.stub(:verification_status, :pending) do
       order = @user.shop_orders.build(shop_item: regular_item, quantity: 1)
       order.save!
-      assert_equal 'pending', order.aasm_state
+      assert_equal "pending", order.aasm_state
     end
   end
 end
