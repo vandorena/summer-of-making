@@ -45,7 +45,7 @@ class UsersController < ApplicationController
 
   def identity_vault_callback
     current_user.link_identity_vault_callback(identity_vault_callback_url, params[:code])
-    redirect_back_or_to root_path, notice: "Successfully linked your identity!"
+    redirect_to order_shop_item_path(ShopItem::FreeStickers.first), notice: "Successfully linked your identity!"
   end
 
   def link_identity_vault
