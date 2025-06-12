@@ -1,33 +1,25 @@
-<%# Always render the tutorial overlay so it can be triggered manually via the help button %>
+<% if current_page?(tutorial_path) %>
 <div class="tutorial-overlay"
      aria-live="polite"
      role="dialog"
-     aria-labelledby="tutorial-title"
-     style="display: none;">
+     aria-labelledby="tutorial-title-<%= tutorial_key %>"
+     style="display: none;"
+     data-tutorial-step="<%= tutorial_key %>">
   <div class="tutorial-step-container">
     <div class="tutorial-content-card">
       <div class="tutorial-header">
         <div class="tutorial-text">
-          <h3 id="tutorial-title" class="tutorial-title"><%= tutorial_title %></h3>
+          <h3 id="tutorial-title-<%= tutorial_key %>" class="tutorial-title"><%= tutorial_title %></h3>
           <p class="tutorial-description font-national-park font-bold tracking-tight"><%= tutorial_description %></p>
         </div>
       </div>
 
       <div class="tutorial-actions">
-        <% if !current_user.tutorial_progress.step_completed?(tutorial_key) && current_page?(tutorial_path) %>
-          <%# Only show the completion form if this is an active tutorial step %>
-          <%= form_with url: tutorial_complete_step_path, method: :post, local: true, data: { turbo: false }, class: "tutorial-form" do |form| %>
-            <%= form.hidden_field :step_name, value: tutorial_key %>
-            <%= form.submit "Got it!", class: "tutorial-continue-btn" %>
-          <% end %>
-        <% else %>
-          <%# Show a close button for manual tutorial viewing %>
-          <button type="button" 
-                  data-action="click->tutorial#toggle"
-                  class="tutorial-continue-btn">
-            Got it!
-          </button>
-        <% end %>
+        <button type="button" 
+                data-action="click->tutorial#toggle"
+                class="tutorial-continue-btn">
+          Got it!
+        </button>
       </div>
 
     </div>
@@ -37,3 +29,4 @@
     </div>
   </div>
 </div>
+<% end %>
