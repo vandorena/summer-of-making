@@ -77,6 +77,9 @@ group :development do
   gem "rails_live_reload"
 
   gem "rack-mini-profiler", "~> 4.0", require: false
+
+  # For catching N+1 queries and unused eager loading [https://github.com/flyerhzm/bullet]
+  gem "bullet"
 end
 
 group :test do
@@ -95,10 +98,6 @@ gem "airrecord"
 
 # Honeybadger for team's error tracking
 gem "honeybadger", "~> 5.28"
-
-# Sentry for error tracking
-gem "sentry-ruby"
-gem "sentry-rails"
 
 gem "redcarpet"
 
