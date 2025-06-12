@@ -26,7 +26,7 @@
             </div>
             <div class="flex-1">
               <h3 class="text-lg font-semibold text-gray-900 mb-2">Connect your Hackatime account</h3>
-              <p class="text-gray-600 mb-4">Hackatime tracks how much you code, and we use that time to give you shells as a reward for all your hard work!.</p>
+              <p class="text-gray-600 mb-4">Hackatime tracks how much you code, and we use that time to give you shells as a reward for all your hard work!</p>
               <% if @account_status[:hackatime_linked] %>
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800">
                   Connected
@@ -78,6 +78,40 @@
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800">
                   Verified
                 </span>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Order free stickers -->
+        <div class="bg-white rounded-lg border p-6">
+          <div class="flex items-start space-x-4">
+            <div class="flex-shrink-0">
+              <% if current_user.shop_orders.joins(:shop_item).where(shop_items: { type: "ShopItem::FreeStickers" }).exists? %>
+                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                  <%= inline_svg "icons/check_fill.svg", class: "w-5 h-5 text-green-600" %>
+                </div>
+              <% else %>
+                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                  <%= inline_svg "icons/to_do_fill.svg", class: "w-5 h-5 text-blue-600" %>
+                </div>
+              <% end %>
+            </div>
+            <div class="flex-1">
+              <h3 class="text-lg font-semibold text-gray-900 mb-2">Order your free stickers</h3>
+              <p class="text-gray-600 mb-4">Well, now you have linked your Hackatime account, and verified your identity soo maybe.... order your free stickers!!!</p>
+              <% if current_user.shop_orders.joins(:shop_item).where(shop_items: { type: "ShopItem::FreeStickers" }).exists? %>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800">
+                  Ordered
+                </span>
+              <% elsif current_verification_status != :verified %>
+                <div class="space-y-2">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
+                    Will unlock once you verify your identity....
+                  </span>
+                </div>
+              <% else %>
+                <%= link_to "Order Stickers", shop_path, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
               <% end %>
             </div>
           </div>
