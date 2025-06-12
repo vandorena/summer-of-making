@@ -510,7 +510,7 @@ class ProjectsController < ApplicationController
   def check_tutorial_completion
     return if current_user&.tutorial_progress&.completed?
 
-    redirect_to campfire_path, alert: "Please complete the tutorial to access this feature."
+    redirect_to campfire_path, alert: "Please complete the tutorial to access this page."
   end
 
   def require_hackatime
