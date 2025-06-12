@@ -218,7 +218,7 @@ class LandingController < ApplicationController
 
   def send_slack_invite(email)
   payload = {
-    token:  ENV["SLACK_XOXC"],
+    token: Rails.application.credentials.explorpheus.slack_xoxc,
     email: email,
     invites: [
     {
@@ -237,8 +237,8 @@ class LandingController < ApplicationController
 
   request = Net::HTTP::Post.new(uri)
   request["Content-Type"] = "application/json"
-  request["Cookie"] = "d=#{ENV['SLACK_XOXD']}"
-  request["Authorization"] = "Bearer #{ENV["SLACK_XOXC"]}"
+  request["Cookie"] = "d=#{Rails.application.credentials.explorpheus.slack_xoxd}"
+  request["Authorization"] = "Bearer #{Rails.application.credentials.explorpheus.slack_xoxc}"
   request.body = JSON.generate(payload)
 
   # Send the request
