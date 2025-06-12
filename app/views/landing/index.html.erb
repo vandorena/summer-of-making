@@ -155,7 +155,7 @@
     <%= render "shared/container", classes: 'mx-auto max-w-7xl w-full relative' do %>
       <div class="p-5 relative">
         <div class="parchment-texture"></div>
-        
+
         <h2 class="head-big text-5xl md:text-6xl font-bold text-center mb-4 text-[#4A2D24] relative font-['DynaPuff',sans-serif]">
           Amazing Prizes
         </h2>
@@ -163,7 +163,7 @@
           Redeem these prizes with your shells! We cover shipping costs, so you can focus on making!<br>
           <span class="text-[#E06540]">All prizes are available while supplies last.</span>
         </p>
-        
+
         <div class="relative mx-15 md:mx-15 sm:mx-10 z-20" data-controller="carousel" data-carousel-row-value="1" style="transform: rotate(-3deg);">
           <div class="carousel-track flex gap-4 md:gap-4 sm:gap-2" data-carousel-target="container">
             <% @prizes.each_with_index do |prize, index| %>
@@ -210,7 +210,7 @@
 </div>
 
 <div class="py-20 px-4 sm:px-8 relative">
-  <div class="absolute inset-0" style="background: 
+  <div class="absolute inset-0" style="background:
     linear-gradient(to bottom,
       rgba(0,0,0,0) 0%,
       #d1c1a0 100%
