@@ -97,7 +97,7 @@ html {
   }
 }
 
-@keyframes pulse {
+@keyframes numberPulse {
   0% {
     transform: scale(1);
   }
@@ -109,7 +109,7 @@ html {
   }
 }
 
-@keyframes float {
+@keyframes socialFloat {
   0%,
   100% {
     transform: translateY(0px) scale(1);
@@ -788,11 +788,12 @@ html {
 }
 
 .spn {
-  animation: countUp 0.8s ease-out forwards, pulse 2s ease-in-out infinite 1s;
+  animation: countUp 0.8s ease-out forwards,
+    numberPulse 2s ease-in-out infinite 1s;
 }
 
 .spb {
-  animation: float 6s ease-in-out infinite;
+  animation: socialFloat 6s ease-in-out infinite;
 }
 
 .spc {
