@@ -1,8 +1,9 @@
 # frozen_string_literal: true
-
 require "open-uri"
 
 class LandingController < ApplicationController
+  skip_before_action :authenticate_user!, only: %i[index sign_up]
+
   def index
     if user_signed_in?
       if current_user.tutorial_progress.completed_at.nil?
