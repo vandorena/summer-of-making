@@ -340,7 +340,7 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 justify-center-safe mx-auto max-w-6xl px-2">
       <div class="transition-all duration-300 hover:-translate-y-1">
-        <%= render "shared/container", classes: 'faq-con h-full' do %>
+        <%= render "shared/card", classes: 'faq-con h-full' do %>
           <div class="p-3 md:p-5 relative">
             <h3 class="font-['DynaPuff'] font-bold text-lg md:text-xl text-[#8B4513] mb-2 md:mb-3 z-10">Who is eligible?</h3>
             <p class="font-['Fredoka'] font-normal text-base md:text-lg text-[#3a2f25] z-10">You need to be a high schooler (or younger).</p>
@@ -349,7 +349,7 @@
       </div>
 
       <div class="transition-all duration-300 hover:-translate-y-1">
-        <%= render "shared/container", classes: 'faq-con h-full' do %>
+        <%= render "shared/card", classes: 'faq-con h-full' do %>
           <div class="p-3 md:p-5 relative">
             <h3 class="font-['DynaPuff'] font-bold text-lg md:text-xl text-[#8B4513] mb-2 md:mb-3 z-10">How much does it cost?</h3>
             <p class="font-['Fredoka'] font-normal text-base md:text-lg text-[#3a2f25] z-10">100% free - all the prizes are donated to us or paid for by us!</p>
@@ -358,7 +358,7 @@
       </div>
 
       <div class="transition-all duration-300 hover:-translate-y-1">
-        <%= render "shared/container", classes: 'faq-con h-full' do %>
+        <%= render "shared/card", classes: 'faq-con h-full' do %>
           <div class="p-3 md:p-5 relative">
             <h3 class="font-['DynaPuff'] font-bold text-lg md:text-xl text-[#8B4513] mb-2 md:mb-3 z-10">What types of projects count?</h3>
             <p class="font-['Fredoka'] font-normal text-base md:text-lg text-[#3a2f25] z-10">Anything that you've programmed and is open-source!</p>
@@ -367,7 +367,7 @@
       </div>
 
       <div class="transition-all duration-300 hover:-translate-y-1">
-        <%= render "shared/container", classes: 'faq-con h-full' do %>
+        <%= render "shared/card", classes: 'faq-con h-full' do %>
           <div class="p-3 md:p-5 relative">
             <h3 class="font-['DynaPuff'] font-bold text-lg md:text-xl text-[#8B4513] mb-2 md:mb-3 z-10">How many projects can I build?</h3>
             <p class="font-['Fredoka'] font-normal text-base md:text-lg text-[#3a2f25] z-10">All the projects! The land's the limit! (But seriously, you could build as many as you want.)</p>
@@ -376,7 +376,7 @@
       </div>
 
       <div class="transition-all duration-300 hover:-translate-y-1">
-        <%= render "shared/container", classes: 'faq-con h-full' do %>
+        <%= render "shared/card", classes: 'faq-con h-full' do %>
           <div class="p-3 md:p-5 relative">
             <h3 class="font-['DynaPuff'] font-bold text-lg md:text-xl text-[#8B4513] mb-2 md:mb-3 z-10">I need help!</h3>
             <p class="font-['Fredoka'] font-normal text-base md:text-lg text-[#3a2f25] z-10">Read the big FAQ. Still stuck? Reach out in #summer-help channel of the Hack Club Slack and we'll help you out!</p>
@@ -385,7 +385,7 @@
       </div>
 
       <div class="transition-all duration-300 hover:-translate-y-1 md:col-span-2 lg:col-span-1">
-        <%= render "shared/container", classes: 'faq-con h-full' do %>
+        <%= render "shared/card", classes: 'faq-con h-full' do %>
           <div class="p-3 md:p-5 relative">
             <h3 class="font-['DynaPuff'] font-bold text-lg md:text-xl text-[#8B4513] mb-2 md:mb-3 z-10">Is this legit?</h3>
             <p class="font-['Fredoka'] font-normal text-base md:text-lg text-[#3a2f25] z-10">
@@ -401,12 +401,8 @@
 <div class="py-12 md:py-20 px-2 md:px-4 sm:px-8">
   <div class="max-w-6xl mx-auto text-center">
     <h3 class="head-big text-3xl md:text-4xl font-bold mb-6 md:mb-8 text-[#3a2f25] font-['DynaPuff',sans-serif]">
-      Build stuff. Get stuff. Repeat.
+      Build stuff. <br class="block md:hidden">Get stuff. <br class="block md:hidden">Repeat.
     </h3>
-    <p class="font-['Fredoka',sans-serif] font-normal text-lg md:text-xl mb-6 md:mb-8 opacity-80 text-[#8B4513] px-4">
-      Sound good?<br>
-      Sign up with your email to get started!
-    </p>
     <div class="flex items-center justify-center max-w-3xl mx-auto px-2">
       <%= render "signup" %>
     </div>
