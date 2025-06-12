@@ -11,14 +11,9 @@ class ShopOrdersController < ApplicationController
   def new
     @order = ShopOrder.new
 
-    # Special handling for free stickers - collect address first if user doesn't have IDV addresses
-    if @item.is_a?(ShopItem::FreeStickers) && !current_user.has_idv_addresses?
-      return_url = order_shop_item_url(@item)
-      sneaky_params = { address_return_to: return_url }
-
-      redirect_url = IdentityVaultService.build_address_creation_url(sneaky_params)
-
-      redirect_to redirect_url, allow_other_host: true
+    # Special handling for free stickers - require IDV linking through OAuth
+    if @item.is_a?(ShopItem::FreeStickers) && current_user.identity_vault_id.blank?
+      redirect_to current_user.identity_vault_oauth_link(identity_vault_callback_url), allow_other_host: true
       return
     end
 

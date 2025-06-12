@@ -44,6 +44,7 @@ class ShopOrder < ApplicationRecord
   validate :check_black_market_access
   validate :check_user_balance
   after_create :create_negative_payout
+  after_initialize :set_initial_state_for_free_stickers
 
   def full_name
     "#{user.first_name} #{user.last_name}'s order for #{quantity} #{shop_item.name.pluralize(quantity)}"
@@ -95,10 +96,24 @@ class ShopOrder < ApplicationRecord
 
     event :user_was_verified do
       transitions from: :in_verification_limbo, to: :awaiting_periodical_fulfillment
+      before do
+        self.awaiting_periodical_fulfillment_at = Time.current
+      end
     end
   end
 
   private
+
+  def set_initial_state_for_free_stickers
+    return unless new_record? && shop_item.is_a?(ShopItem::FreeStickers)
+
+    if user&.ysws_verified?
+      self.aasm_state = "awaiting_periodical_fulfillment"
+      self.awaiting_periodical_fulfillment_at = Time.current
+    else
+      self.aasm_state = "in_verification_limbo"
+    end
+  end
 
   def check_one_per_person_ever_limit
     return unless shop_item&.one_per_person_ever?

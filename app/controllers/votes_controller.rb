@@ -3,6 +3,7 @@
 class VotesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_projects, only: %i[new create]
+  before_action :check_tutorial_completion
 
   def new
     @vote = Vote.new
@@ -44,6 +45,12 @@ class VotesController < ApplicationController
 
   private
 
+
+  def check_tutorial_completion
+    return if current_user&.tutorial_progress&.completed?
+
+    redirect_to campfire_path, alert: "Please complete the tutorial to access this page."
+  end
 
   def set_projects
     voted_winner_ids = current_user.votes.pluck(:winner_id)
