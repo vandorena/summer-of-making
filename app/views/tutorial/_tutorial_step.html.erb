@@ -1,7 +1,11 @@
 <%= stylesheet_link_tag "tutorial", "data-turbo-track": "reload" unless current_user.tutorial_progress.completed? %>
 
 <% if !current_user.tutorial_progress.step_completed?(tutorial_key) && current_page?(tutorial_path) %>
-  <div class="tutorial-overlay" aria-live="polite" role="dialog" aria-labelledby="tutorial-title">
+  <div class="tutorial-overlay"
+       aria-live="polite"
+       role="dialog"
+       aria-labelledby="tutorial-title"
+       style="display: none;">
     <div class="tutorial-step-container">
       <div class="tutorial-content-card">
         <div class="tutorial-header">

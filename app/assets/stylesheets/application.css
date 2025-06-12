@@ -109,3 +109,16 @@ main {
         transition: none !important;
     }
 }
+
+/* Angry question mark. Chris calls it angry.¯\_(ツ)_/¯ */
+.tutorial-help-btn {
+    background: linear-gradient(135deg, #8b6f47 0%, #a0845c 50%, #8b6f47 100%);
+    border: 2px solid #6b5439;
+    box-shadow: 0 2px 4px rgba(107, 84, 57, 0.3);
+}
+
+.tutorial-help-btn:hover {
+    background: linear-gradient(135deg, #9d7b52 0%, #b8936a 50%, #9d7b52 100%);
+    box-shadow: 0 4px 8px rgba(107, 84, 57, 0.4);
+    border-color: #7a6148;
+}
