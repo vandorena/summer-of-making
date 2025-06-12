@@ -1,8 +1,9 @@
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <div class="mb-8">
-    <h1 class="text-3xl font-bold text-gray-900 mb-2">Signpost Dashboard</h1>
-    <p class="text-black">Ahhhhh Signpost is a thing. Sign + Post</p>
-  </div>
+<div class="px-4 md:px-8">
+    <%= render "shared/page_title",
+        title: "Campfire",
+        subtitle: "Huddle around! Get your news here."
+    %>
+
 
   <% unless @user&.tutorial_progress&.completed? %>
     <!-- Tutorial Progress Section -->
