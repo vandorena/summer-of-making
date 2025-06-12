@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
   include Pagy::Backend
   include PublicActivity::StoreController
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
-  allow_browser versions: :modern
+  # allow_browser versions: :modern
   before_action do
     Rails.logger.info ">>> Session[:user_id] = #{session[:user_id]}"
     Rails.logger.info ">>> Current user ID: #{current_user&.id}"
