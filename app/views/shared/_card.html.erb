@@ -1,0 +1,80 @@
+<%# 
+  A flexible card component with common features:
+  
+  Parameters:
+    - title: Optional card title
+    - subtitle: Optional card subtitle
+    - image: Optional image URL
+    - footer: Optional footer content
+    - padding: Padding size (sm, md, lg) - defaults to md
+    - hover: Enable hover effect (true/false) - defaults to false
+    - shadow: Shadow size (sm, md, lg) - defaults to md
+    - classes: Additional classes to apply to the card
+%>
+
+<% 
+  padding = local_assigns.fetch(:padding, 'md')
+  hover = local_assigns.fetch(:hover, false)
+  shadow = local_assigns.fetch(:shadow, 'md')
+  classes = local_assigns.fetch(:classes, '')
+  
+  padding_classes = {
+    'sm' => 'p-3',
+    'md' => 'p-4',
+    'lg' => 'p-6'
+  }[padding]
+  
+  shadow_classes = {
+    'sm' => 'shadow',
+    'md' => 'shadow-md',
+    'lg' => 'shadow-lg'
+  }[shadow]
+  
+  hover_classes = hover ? 'transition-transform duration-200 hover:-translate-y-1' : ''
+  
+  # Generate a unique ID for this card instance
+  card_id = "card-#{SecureRandom.hex(4)}"
+%>
+
+<div id="<%= card_id %>" class="rounded-lg border-2 border-[#7C4A3380] <%= padding_classes %> <%= shadow_classes %> <%= hover_classes %> <%= classes %>">
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const card = document.getElementById('<%= card_id %>');
+      if (card) {
+        // Generate random center point between 30% and 70% of the card's dimensions
+        const centerX = Math.random() * 40 + 30;
+        const centerY = Math.random() * 40 + 30;
+        
+        card.style.background = `radial-gradient(circle at ${centerX}% ${centerY}%, #F6DBBA, #E6D4BE)`;
+      }
+    });
+  </script>
+
+  <% if local_assigns[:image].present? %>
+    <div class="relative w-full h-48 mb-4">
+      <%= image_tag image, class: "w-full h-full object-cover rounded-t-lg" %>
+    </div>
+  <% end %>
+
+  <% if local_assigns[:title].present? || local_assigns[:subtitle].present? %>
+    <div class="mb-4">
+      <% if local_assigns[:title].present? %>
+        <h3 class="text-xl font-semibold text-gray-900"><%= title %></h3>
+      <% end %>
+      
+      <% if local_assigns[:subtitle].present? %>
+        <p class="mt-1 text-sm text-gray-600"><%= subtitle %></p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="text-gray-700">
+    <%= yield %>
+  </div>
+
+  <% if local_assigns[:footer].present? %>
+    <div class="mt-4 pt-4 border-t border-gray-200">
+      <%= footer %>
+    </div>
+  <% end %>
+</div>
