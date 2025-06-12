@@ -8,7 +8,7 @@ class ProjectsController < ApplicationController
   before_action :check_if_shipped, only: %i[edit update]
   before_action :authorize_user, only: [ :destroy ]
   before_action :require_hackatime, only: [ :create ]
-  before_action :check_tutorial_completion
+  before_action :check_identity_verification
 
   def index
     if params[:action] == "my_projects"
@@ -505,10 +505,10 @@ class ProjectsController < ApplicationController
 
   private
 
-  def check_tutorial_completion
-    return if current_user&.tutorial_progress&.completed?
+  def check_identity_verification
+    return if current_user&.identity_vault_id.present? && current_user.verification_status != :ineligible
 
-    redirect_to campfire_path, alert: "Please complete the tutorial to access this page."
+    redirect_to campfire_path, alert: "Please verify your identity to access this page."
   end
 
   def require_hackatime
