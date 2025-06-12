@@ -10,12 +10,12 @@
 <% end %>
 <b>Shop item:</b>
 <div style="border: 1px solid; margin-top: 1rem; margin-bottom: 1rem; padding: 0.5em">
-  <%= render @shop_order.shop_item %>
+  <%= render partial: "admin/shop_items/shop_item", locals: { shop_item: @shop_order.shop_item } %>
 </div>
 <b>Quantity: </b> <%= @shop_order.quantity %> <br>
 <b>User:</b>
 <div style="border: 1px solid; margin-top: 1rem; margin-bottom: 1rem; padding: 0.5em">
-  <%= render @shop_order.user %>
+  <%= render partial: "admin/users/user", locals: { user: @shop_order.user } %>
 </div>
 <b>Address:</b> <br>
 <% addy = @shop_order.frozen_address || {} %>
