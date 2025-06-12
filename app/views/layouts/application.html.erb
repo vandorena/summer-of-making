@@ -22,6 +22,7 @@
     <%= stylesheet_link_tag "pixelart" %>
     <%= stylesheet_link_tag "som" %>
     <%= stylesheet_link_tag "tooltips" %>
+    <%= stylesheet_link_tag "tutorial", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
     <%= Sentry.get_trace_propagation_meta.html_safe %>
     <script defer data-domain="summer.hackclub.com" src="https://plausible.io/js/script.hash.outbound-links.js"></script>
@@ -33,9 +34,10 @@
     <%# end %>
 
     <% if user_signed_in? %>
-      <%= render "tutorial/tutorial" %>
+      <div data-controller="tutorial">
+        <%= render "tutorial/tutorial" %>
 
-      <div data-controller="sidebar" data-sidebar-collapsed-value="false">
+        <div data-controller="sidebar" data-sidebar-collapsed-value="false">
         <% if mobile_device? %>
           <%= render "shared/mobile_nav" %>
           <main class="pb-20 pt-12 px-4">
@@ -68,6 +70,15 @@
 
         </div>
         <% end %>
+
+        <!-- Tutorial angry button thingie-->
+        <button id="tutorial-help-btn"
+                data-tutorial-target="helpButton"
+                data-action="click->tutorial#toggle"
+                class="tutorial-help-btn fixed bottom-6 right-6 z-50 w-12 h-12 text-white rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
+                title="Show tutorial for this page">
+          <span class="text-xl font-bold">?</span>
+        </button>
       </div>
     <% else %>
       <div id="flash-container">
@@ -80,18 +91,7 @@
       <%= render "shared/timer_indicator" %>
     <% end %>
 
-    <!-- Tutorial angry button thingie-->
-    <% if user_signed_in? %>
-      <div data-controller="tutorial">
-        <button id="tutorial-help-btn"
-                data-tutorial-target="helpButton"
-                data-action="click->tutorial#toggle"
-                class="tutorial-help-btn fixed bottom-6 right-6 z-50 w-12 h-12 text-white rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
-                title="Show tutorial for this page">
-          <span class="text-xl font-bold">?</span>
-        </button>
-      </div>
-    <% end %>
+
 
     <div id="modals"></div>
 
