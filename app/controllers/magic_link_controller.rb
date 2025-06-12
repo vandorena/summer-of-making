@@ -29,7 +29,7 @@ class MagicLinkController < ApplicationController
 
     link = MagicLink.find_or_create_by(user:).secret_url request.host
 
-    render json: { success: true, link: }
+    render json: { success: true, link:, ip: signup.ip, user_agent: signup.user_agent }
   end
 
   private
