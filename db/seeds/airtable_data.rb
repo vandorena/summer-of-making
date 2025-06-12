@@ -15,10 +15,10 @@ end
 
 begin
   # Airtable API configuration
-  app_id = 'appTeNFYcUiYfGcR6'
-  table_id = 'tblGChU9vC3QvswAV'
+  app_id = 'appNF8MGrk5KKcYZx'
+  table_id = 'tblAbzAZb4pdWI1tC'
 
-  uri = URI("https://api.airtable.com/v0/#{app_id}/#{table_id}")
+  uri = URI("https://api.airtable.com/v0/#{app_id}/#{table_id}?filterByFormula={enabled}")
   http = Net::HTTP.new(uri.host, uri.port)
   http.use_ssl = true
 
@@ -43,23 +43,26 @@ begin
         next
       end
 
-      item_type = if fields['agh_skus'].present?
-                    'ShopItem::WarehouseItem'
-      elsif fields['hcb_grant_merchants'].present? || fields['hcb_grant_amount_cents'].present?
+      item_type = if fields["identifier"] == "item_free_stickers_41"
+                    'ShopItem::FreeStickers'
+                  elsif fields['hcb_grant_merchants'].present? || fields['hcb_grant_amount_cents'].present?
                     'ShopItem::HCBGrant'
-      elsif fields['hq_mail_item_description'].present?
+                  elsif fields['fulfillment_type'] = "hq_mail"
                     'ShopItem::HQMailItem'
-      elsif [ 'third_party_physical', 'special_fulfillment' ].include?(fields['fulfillment_type'])
+                  elsif ['third_party_physical', 'special_fulfillment'].include?(fields['fulfillment_type'])
                     'ShopItem::SpecialFulfillmentItem'
-      else
+                  elsif fields['agh_skus'].present?
+                    'ShopItem::WarehouseItem'
+                  else
                     puts "  ❌ ERROR: Cannot determine type for #{name_field} - no identifying fields found"
                     next
-      end
+                  end
 
       existing_item = ShopItem.find_by(name: name_field)
       if existing_item
-        puts "  🗑️  Deleting existing: #{existing_item.name}"
-        existing_item.destroy
+        next
+        # puts "  🗑️  Deleting existing: #{existing_item.name}"
+        # existing_item.destroy
       end
 
       shop_item = ShopItem.create(name: name_field) do |item|
