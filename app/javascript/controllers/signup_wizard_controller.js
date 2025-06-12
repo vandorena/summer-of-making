@@ -131,10 +131,14 @@ export default class extends Controller {
     if (closeBtn) {
       closeBtn.disabled = !enabled;
       if (!enabled) {
+        closeBtn.classList.remove("cursor-pointer");
+        closeBtn.classList.add("cursor-not-allowed");
         closeBtn.classList.remove("hover:text-vintage-red");
         closeBtn.classList.add("text-gray-600");
         closeBtn.classList.remove("text-vintage-red");
       } else {
+        closeBtn.classList.remove("cursor-not-allowed");
+        closeBtn.classList.add("cursor-pointer");
         closeBtn.classList.remove("text-gray-600");
         closeBtn.classList.add("text-vintage-red");
         closeBtn.classList.add("hover:text-vintage-red");
