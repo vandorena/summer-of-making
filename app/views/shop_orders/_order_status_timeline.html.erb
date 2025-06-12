@@ -6,7 +6,7 @@
   <div class="space-y-4">
     <% if order.shop_item.is_a?(ShopItem::FreeStickers) %>
       <!-- Free Stickers Flow -->
-      
+
       <!-- Verification Step -->
       <div class="flex items-center space-x-4">
         <div class="w-4 h-4 <%= order.in_verification_limbo? ? 'bg-purple-500' : 'bg-green-500' %> rounded-full flex-shrink-0"></div>
@@ -38,7 +38,7 @@
       </div>
     <% else %>
       <!-- Regular Order Flow -->
-      
+
       <!-- Pending Acceptance -->
       <div class="flex items-center space-x-4">
         <div class="w-4 h-4 <%= order.pending? ? 'bg-yellow-500' : 'bg-green-500' %> rounded-full flex-shrink-0"></div>
