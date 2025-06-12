@@ -47,7 +47,7 @@
 
     <script>
       document.addEventListener('DOMContentLoaded', function() {
-        const select = document.querySelector('select[name="<%= field_name %>"]');
+        const select = document.querySelector('select[name="<%= field_name.to_json %>"]');
         const previews = document.querySelectorAll('.address-preview');
 
         if (select) {
