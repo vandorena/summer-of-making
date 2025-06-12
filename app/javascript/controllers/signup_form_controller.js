@@ -9,7 +9,7 @@ export default class extends Controller {
     });
   }
 
-  startWizard() {
+  async startWizard() {
     const x = this.emailInputTarget.value.trim();
 
     this.hideError();
@@ -26,27 +26,76 @@ export default class extends Controller {
       return;
     }
 
-    const y = document.getElementById("signup-wizard");
-    if (y) {
-      const z = this.application.getControllerForElementAndIdentifier(
-        y,
-        "signup-wizard"
-      );
-      if (z) {
-        z.emailValue = x;
+    const button = document.querySelector(
+      '[data-action="click->signup-form#startWizard"]'
+    );
+    const originalText = button ? button.textContent : "";
 
-        // Just remove the hidden class, the animation will be handled by the initialize method
-        y.classList.remove("hidden");
-        document.body.classList.add("overflow-hidden");
-
-        // Initialize the wizard after showing it
-        z.initialize();
-      } else {
-        // If the controller isn't available, just show the modal
-        y.classList.remove("hidden");
-        document.body.classList.add("overflow-hidden");
-      }
+    if (button) {
+      button.textContent = "Sending your invite...";
+      button.disabled = true;
+      button.classList.add("opacity-75");
     }
+
+    try {
+      await this.sendEmail(x);
+
+      if (button) {
+        button.textContent = originalText;
+        button.disabled = false;
+        button.classList.remove("opacity-75");
+      }
+
+      const y = document.getElementById("signup-wizard");
+      if (y) {
+        const z = this.application.getControllerForElementAndIdentifier(
+          y,
+          "signup-wizard"
+        );
+        if (z) {
+          z.emailValue = x;
+          z.emailSent = true;
+
+          y.classList.remove("hidden");
+          document.body.classList.add("overflow-hidden");
+
+          z.initialize();
+        } else {
+          y.classList.remove("hidden");
+          document.body.classList.add("overflow-hidden");
+        }
+      }
+    } catch (error) {
+      if (button) {
+        button.textContent = originalText;
+        button.disabled = false;
+        button.classList.remove("opacity-75");
+      }
+      this.error("Failed to send email. Please try again.");
+    }
+  }
+
+  async sendEmail(email) {
+    let csrfToken = "";
+    const metaTag = document.querySelector('meta[name="csrf-token"]');
+    if (metaTag) {
+      csrfToken = metaTag.content;
+    }
+
+    const response = await fetch("/sign-up", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": csrfToken,
+      },
+      body: JSON.stringify({ email: email }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to send email");
+    }
+
+    return await response.json();
   }
 
   isValidEmail(a) {

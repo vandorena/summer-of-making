@@ -12,7 +12,7 @@
       <div class="flex justify-between items-center">
         <div>
           <h2 class="text-2xl font-bold text-forest">Welcome to Summer of Making!</h2>
-          <p class="text-saddle-taupe mt-1">Watch this quick intro before joining our community!</p>
+          <p class="text-saddle-taupe mt-1">Your invitation is on its way! Let's show you how it works:</p>
         </div>
         <button type="button" class="text-gray-600 hover:text-vintage-red cursor-pointer transition-colors duration-200"
                 data-action="click->signup-wizard#close">
@@ -27,7 +27,7 @@
       <div data-signup-wizard-target="videoContainer" class="text-center space-y-6">
         <div class="space-y-2">
           <p class="text-saddle-taupe max-w-2xl mx-auto">
-            Let's quickly show you the ropes and get you ready to start making!
+            We've sent you a Slack invitation! While it's on its way, let's quickly show you the ropes and get you ready to start making!
           </p>
         </div>
 
@@ -45,14 +45,7 @@
                            action: "ended->signup-wizard#videoEnded"
                          } %>
           </div>
-          <p class="text-sm text-gray-600 mt-3 italic">After the video ends, you can continue with the next steps.</p>
-          <button type="button"
-                class="px-8 py-4 mt-2 bg-vintage-red hover:bg-vintage-red/90 text-white rounded-lg transition-colors duration-200 btn-pixel opacity-50 disabled:cursor-not-allowed"
-                data-signup-wizard-target="sendInviteButton"
-                data-action="click->signup-wizard#sendInviteEmail"
-                disabled>
-          Send Slack Invite
-        </button>
+          <p class="text-sm text-gray-600 mt-3 italic">After the video ends, we'll remind you to check your email!</p>
         </div>
       </div>
     </div>
