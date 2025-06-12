@@ -160,7 +160,9 @@ class User < ApplicationRecord
     return unless response.success?
 
     result = JSON.parse(response.body)
-    return unless result.dig("data", "status") == "ok"
+    projects = result.dig("data", "projects")
+
+    return if projects.empty?
 
     unless has_hackatime?
       update!(has_hackatime: true)
