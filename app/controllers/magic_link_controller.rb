@@ -1,6 +1,7 @@
 class MagicLinkController < ApplicationController
   skip_before_action :verify_authenticity_token
   before_action :authenticate_magic_token_service_agent
+  skip_before_action :authenticate_user!, only: %i[get_secret_magic_url]
 
   def get_secret_magic_url
     slack_id = params.require(:slack_id)

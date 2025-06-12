@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class SessionsController < ApplicationController
+  skip_before_action :authenticate_user!, only: %i[new create failure magic_link]
+
   def new
     state = SecureRandom.hex(24)
     session[:state] = state

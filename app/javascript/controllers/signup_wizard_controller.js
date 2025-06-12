@@ -1,16 +1,12 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = [
-    "videoContainer",
-    "introVideo",
-    "sendInviteButton",
-    "modal",
-    "container",
-  ];
+  static targets = ["videoContainer", "introVideo", "modal", "container"];
   static values = {
     email: String,
   };
+
+  emailSent = false;
 
   connect() {
     this.handleKeydown = this.handleKeydown.bind(this);
@@ -54,7 +50,6 @@ export default class extends Controller {
       this.introVideoTarget.play().catch((error) => {
         console.warn("Video playback was prevented:", error);
 
-        // autoplay failed, manual add button
         if (!document.getElementById("manual-play-button")) {
           const playButton = document.createElement("button");
           playButton.id = "manual-play-button";
@@ -92,78 +87,83 @@ export default class extends Controller {
   }
 
   videoEnded() {
-    if (this.hasSendInviteButtonTarget) {
-      this.sendInviteButtonTarget.disabled = false;
-      this.sendInviteButtonTarget.classList.remove("opacity-50");
-
-      this.sendInviteButtonTarget.classList.add("animate-pulse");
-
-      const buttonText = document.createElement("span");
-      buttonText.innerHTML =
-        "Send Slack Invite <span class='ml-2 text-yellow-100'>→</span>";
-      this.sendInviteButtonTarget.innerHTML = "";
-      this.sendInviteButtonTarget.appendChild(buttonText);
-
-      this.sendInviteButtonTarget.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
+    if (this.emailSent) {
+      this.showEmailSentMessage();
     }
   }
 
-  async sendInviteEmail() {
-    const button = this.sendInviteButtonTarget;
-    const originalText = button.innerHTML;
+  showEmailSentMessage() {
+    const messageHtml = `
+      <div class="flex flex-col items-center justify-center h-full text-center space-y-8 max-w-3xl mx-auto">
+        <div class="text-6xl mb-4 animate-bounce">📧</div>
+        <h2 class="text-4xl font-bold text-forest mb-6">Check your inbox!</h2>
+        <p class="text-xl text-saddle-taupe">We've sent an invitation to <strong>${this.emailValue}</strong></p>
+        <p class="text-lg text-saddle-taupe max-w-2xl">Look for an email from Slack and follow the instructions to join our community and start your Summer of Making journey!</p>
+        <button class="marble-button mt-8 px-8 py-4 text-lg" data-action="click->signup-wizard#close">
+          Got it!
+        </button>
+      </div>
+    `;
 
-    button.innerHTML = "Sending...";
-    button.disabled = true;
-    button.classList.add("opacity-75");
-    button.classList.remove("animate-pulse");
+    this.showCustomMessage(messageHtml);
+  }
 
-    try {
-      // Get CSRF token with proper error handling
-      let csrfToken = "";
-      const metaTag = document.querySelector('meta[name="csrf-token"]');
-      if (metaTag) {
-        csrfToken = metaTag.content;
-      } else {
-        console.warn("CSRF token meta tag not found. Request may fail.");
-      }
-
-      const response = await fetch("/sign-up", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRF-Token": csrfToken,
-        },
-        body: JSON.stringify({ email: this.emailValue }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        this.showSuccessScreen(data);
-      } else {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to send signup email");
-      }
-    } catch (error) {
-      console.error("Error sending signup email:", error);
-
-      // Show a more user-friendly error message
-      let errorMessage = "There was a problem sending your signup email.";
-      if (error.message && error.message !== "Failed to send signup email") {
-        errorMessage += ` Details: ${error.message}`;
-      }
-
-      alert(errorMessage);
-
-      button.innerHTML = "Try Again";
-      button.disabled = false;
-      button.classList.remove("opacity-75");
+  showCustomMessage(messageHtml) {
+    if (this.hasVideoContainerTarget) {
+      this.videoContainerTarget.style.transition = "opacity 250ms ease-out";
+      this.videoContainerTarget.style.opacity = "0";
 
       setTimeout(() => {
-        button.innerHTML = originalText;
-      }, 2000);
+        this.videoContainerTarget.classList.add("hidden");
+
+        const messageElement = document.createElement("div");
+        messageElement.innerHTML = messageHtml;
+        messageElement.classList.add(
+          "flex-1",
+          "flex",
+          "items-center",
+          "justify-center"
+        );
+        messageElement.style.opacity = "0";
+
+        const contentContainer = this.element.querySelector(".flex-1.p-8");
+        if (contentContainer) {
+          contentContainer.innerHTML = "";
+          contentContainer.appendChild(messageElement);
+
+          messageElement.offsetHeight;
+
+          setTimeout(() => {
+            messageElement.style.transition = "opacity 250ms ease-in";
+            messageElement.style.opacity = "1";
+          }, 10);
+        }
+
+        const footer = this.element.querySelector(".border-t");
+        if (footer) {
+          footer.classList.add("hidden");
+        }
+      }, 250);
+    } else {
+      const messageElement = document.createElement("div");
+      messageElement.innerHTML = messageHtml;
+      messageElement.classList.add(
+        "flex-1",
+        "flex",
+        "items-center",
+        "justify-center"
+      );
+
+      const contentContainer = this.element.querySelector(".flex-1.p-8");
+      if (contentContainer) {
+        contentContainer.innerHTML = "";
+        contentContainer.appendChild(messageElement);
+      }
+
+      const footer = this.element.querySelector(".border-t");
+      if (footer) {
+        footer.classList.add("hidden");
+      }
     }
   }
 
@@ -264,15 +264,9 @@ export default class extends Controller {
       if (playButton) {
         playButton.remove();
       }
-
-      // Reset the send invite button
-      if (this.hasSendInviteButtonTarget) {
-        this.sendInviteButtonTarget.disabled = true;
-        this.sendInviteButtonTarget.classList.add("opacity-50");
-        this.sendInviteButtonTarget.classList.remove("animate-pulse");
-        this.sendInviteButtonTarget.textContent = "Send Slack Invite";
-      }
     }
+
+    this.emailSent = false;
 
     // Apply closing animations
     if (this.hasModalTarget && this.hasContainerTarget) {

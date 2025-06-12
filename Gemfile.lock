@@ -221,6 +221,9 @@ GEM
     groupdate (6.7.0)
       activesupport (>= 7.1)
     hashie (5.0.0)
+    honeybadger (5.28.0)
+      logger
+      ostruct
     htmlcompressor (0.4.0)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
@@ -578,6 +581,7 @@ DEPENDENCIES
   erb_lint
   ferrum_pdf (~> 0.3.0)
   groupdate (~> 6.6)
+  honeybadger (~> 5.28)
   htmlcompressor (~> 0.4.0)
   image_processing (~> 1.14)
   importmap-rails
