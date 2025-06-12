@@ -39,7 +39,7 @@
       </li>
 
       <li class="flex justify-start">
-        <% if current_user.tutorial_progress.completed? %>
+        <% if current_user.identity_vault_id.present? && current_user.verification_status != :ineligible %>
           <%= render partial: "shared/link", locals: {
             target: explore_path,
             text: "Explore",
@@ -69,7 +69,7 @@
       </li>
 
       <li class="flex justify-start">
-        <% if current_user.tutorial_progress.completed? %>
+        <% if current_user.identity_vault_id.present? && current_user.verification_status != :ineligible %>
           <%= render partial: "shared/link", locals: {
             target: my_projects_path,
             text: "Projects",
@@ -98,7 +98,7 @@
       </li>
 
       <li class="flex justify-start">
-        <% if current_user.tutorial_progress.completed? %>
+        <% if current_user.identity_vault_id.present? && current_user.verification_status != :ineligible %>
           <%= render partial: "shared/link", locals: {
             target: new_vote_path,
             text: "Vote",
