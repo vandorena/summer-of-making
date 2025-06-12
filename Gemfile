@@ -77,6 +77,9 @@ group :development do
   gem "rails_live_reload"
 
   gem "rack-mini-profiler", "~> 4.0", require: false
+
+  # For catching N+1 queries and unused eager loading [https://github.com/flyerhzm/bullet]
+  gem "bullet"
 end
 
 group :test do
