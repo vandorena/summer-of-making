@@ -5,6 +5,8 @@ class ApplicationController < ActionController::Base
   include PublicActivity::StoreController
   include Pundit::Authorization
 
+  before_action :try_rack_mini_profiler_enable
+
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   # allow_browser versions: :modern
   before_action do
@@ -39,6 +41,12 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  def try_rack_mini_profiler_enable
+    if current_user && current_user.is_admin?
+      Rack::MiniProfiler.authorize_request
+    end
+  end
 
   def fetch_hackatime_data_if_needed
     return if !user_signed_in? || current_user.has_hackatime?
