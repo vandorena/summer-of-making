@@ -28,6 +28,8 @@ class TutorialProgress < ApplicationRecord
 
   after_initialize :setup_default_progress, if: :new_record?
 
+  attr_accessor :just_completed
+
   def complete_step!(step_name)
     return unless TUTORIAL_STEPS.include?(step_name.to_s)
 
@@ -50,6 +52,10 @@ class TutorialProgress < ApplicationRecord
 
   def completed?
     completed_at.present?
+  end
+
+  def should_show_completion_modal?
+    completed? && !user.has_clicked_completed_tutorial_modal?
   end
 
   def reset_step!(step_name)
@@ -102,7 +108,9 @@ class TutorialProgress < ApplicationRecord
 
   def check_overall_completion!
     return unless TUTORIAL_STEPS.all? { |step| step_completed?(step) }
+    return if completed_at.present?
 
     self.completed_at = Time.current
+    self.just_completed = true
   end
 end
