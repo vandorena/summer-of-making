@@ -52,7 +52,12 @@
             <%= image_tag 'happytriangle.png', class: 'w-32 h-32 sm:w-48 sm:h-48 2xl:w-64 2xl:h-64 transform scale-x-[-1] mb-4 sm:mb-6' %>
           </div>
 
-          <% if !current_user.has_hackatime_projects? %>
+          <% if !current_user.has_hackatime? %>
+            <p class="mb-6 sm:mb-8 text-black text-large sm:text-xl 2xl:text-2xl text-center">
+              You haven't configured Hackatime yet.
+              Please see instructions for how to do so in the <%= link_to "Campfire", campfire_path %>.
+            </p>
+          <% elsif current_user.hackatime_projects.empty? %>
             <p class="mb-6 sm:mb-8 text-black text-large sm:text-xl 2xl:text-2xl text-center">
               You've configured Hackatime, but you haven't
               <%= link_to "installed the extension in your editor yet.",
@@ -63,14 +68,9 @@
               .<br />
               Do that, write some code, come back here and refresh the page!
             </p>
-          <% elsif !current_user.has_hackatime? %>
-            <p class="mb-6 sm:mb-8 text-black text-large sm:text-xl 2xl:text-2xl text-center">
-              You haven't configured Hackatime yet.
-              Please see instructions for how to do so in the <%= link_to "Campfire", campfire_path %>.
-            </p>
           <% end %>
 
-          <button disabled="<%= current_user.has_hackatime_projects? ? "true" : "false" %>" data-action="click->modal#open" data-modal-type="create-project" class="px-4 md:px-6 py-1 md:py-2 bg-forest hover:bg-forest-dark text-white text-base md:text-lg 2xl:text-xl btn-pixel cursor-pointer">
+          <button disabled="<%= current_user.hackatime_projects.empty? ? "true" : "false" %>" data-action="click->modal#open" data-modal-type="create-project" class="px-4 md:px-6 py-1 md:py-2 bg-forest hover:bg-forest-dark text-white text-base md:text-lg 2xl:text-xl btn-pixel cursor-pointer">
             Create Your Project
           </button>
         </div>
