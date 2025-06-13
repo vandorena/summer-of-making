@@ -133,7 +133,35 @@
     </div>
   <% end %>
 
-  <% if current_user.tutorial_progress.completed? %>
+  <% if current_user.tutorial_progress.completed? && !current_user.tutorial_video_seen? %>
+    <!-- Video Tutorial Section -->
+    <div class="mb-8">
+      <div class="bg-white rounded-lg border-2 border-blue-200 p-6">
+          <!-- Video Placeholder -->
+          <div class="bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 p-12 mb-6">
+            <div class="text-center">
+              <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-12 h-12 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M8 5v10l8-5-8-5z"/>
+                </svg>
+              </div>
+              <h3 class="text-xl font-semibold text-gray-700 mb-2">SoM Tutorial Video</h3>
+              <p class="text-gray-500">ask-a-pixi for video!!</p>
+            </div>
+          </div>
+
+          <div class="flex justify-center space-x-4">
+            <%= link_to "Next", 
+                        campfire_path(mark_video_seen: true), 
+                        method: :patch,
+                        class: "px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 font-medium shadow-lg" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <% if current_user.tutorial_progress.completed? && current_user.tutorial_video_seen? %>
     <!-- Account Status Section -->
     <% if current_verification_status == :not_linked || current_verification_status == :needs_resubmission || current_verification_status == :pending || current_verification_status == :ineligible || !@account_status[:hackatime_projects] %>
     <div class="mb-8">
@@ -245,5 +273,31 @@
       </div>
     </div>
     <% end %>
+  <% end %>
+
+  <!--Tutorial Video -->
+  <% if current_user.tutorial_progress.completed? %>
+    <div class="mb-8">
+      <div class="bg-white rounded-lg border p-4">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold text-gray-900">Tutorial Video</h2>
+        </div>
+        
+        <div id="tutorial-video-content">
+          <!-- Video Placeholder -->
+          <div class="bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 p-8 mb-4">
+            <div class="text-center">
+              <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M8 5v10l8-5-8-5z"/>
+                </svg>
+              </div>
+              <h3 class="text-lg font-semibold text-gray-700 mb-2">SoM Tutorial Video</h3>
+              <p class="text-gray-500">Ask-a-pixi for video!!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   <% end %>
 </div>
