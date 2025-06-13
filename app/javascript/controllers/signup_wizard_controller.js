@@ -9,33 +9,19 @@ export default class extends Controller {
     document.addEventListener("keydown", this.handleKeydown);
     this.enableClose(false);
     this.videoLooped = false;
-    this.uem();
     this.play();
     this.fuckery();
   }
 
   fuckery() {
     if (this.hasIntroVideoTarget) {
-      this.handleVideoLoop = this.handleVideoLoop.bind(this);
-      this.introVideoTarget.addEventListener("ended", this.handleVideoLoop);
+      this.handleVideoEnded = this.handleVideoEnded.bind(this);
+      this.introVideoTarget.addEventListener("ended", this.handleVideoEnded);
     }
   }
 
-  handleVideoLoop() {
-    if (!this.videoLooped) {
-      this.videoLooped = true;
-      this.enableClose(true);
-    }
-  }
-
-  uem() {
-    const msg = this.element.querySelector(".signup-wizard-message");
-    if (msg) {
-      const email = this.emailValue || "your email";
-      msg.innerHTML = `Check your email <span class='font-bold'>${email}</span> for your invite!`;
-      msg.classList.remove("text-saddle-taupe");
-      msg.classList.add("text-green-700", "font-semibold");
-    }
+  handleVideoEnded() {
+    this.enableClose(true);
   }
 
   play() {
@@ -69,24 +55,6 @@ export default class extends Controller {
     }
   }
 
-  handleVideoEnded() {
-    this.videoLoopCount = (this.videoLoopCount || 0) + 1;
-    if (this.videoLoopCount === 1) {
-      this.enableClose(true);
-      const genericMsg = this.element.querySelector(
-        "#signup-wizard-generic-message"
-      );
-      if (genericMsg) {
-        const email = this.emailValue || "your email";
-        genericMsg.textContent = `Check for an email from Slack!`;
-        genericMsg.classList.remove("text-saddle-taupe");
-        genericMsg.classList.add("text-green-700", "font-semibold");
-      }
-    }
-    this.introVideoTarget.currentTime = 0;
-    this.introVideoTarget.play();
-  }
-
   enableClose(enabled) {
     const closeBtn = this.element.querySelector(
       '[data-action="click->signup-wizard#close"]'
@@ -113,8 +81,8 @@ export default class extends Controller {
 
   disconnect() {
     document.removeEventListener("keydown", this.handleKeydown);
-    if (this.hasIntroVideoTarget && this.handleVideoLoop) {
-      this.introVideoTarget.removeEventListener("ended", this.handleVideoLoop);
+    if (this.hasIntroVideoTarget && this.handleVideoEnded) {
+      this.introVideoTarget.removeEventListener("ended", this.handleVideoEnded);
     }
   }
 
@@ -159,7 +127,6 @@ export default class extends Controller {
   }
 
   show() {
-    this.uem();
     this.element.classList.remove("hidden");
     document.body.classList.add("overflow-hidden");
     setTimeout(() => {
