@@ -28,15 +28,11 @@ class TutorialProgress < ApplicationRecord
 
   after_initialize :setup_default_progress, if: :new_record?
 
-  attr_accessor :just_completed
-
   def complete_step!(step_name)
     return unless TUTORIAL_STEPS.include?(step_name.to_s)
 
     step_progress[step_name.to_s] ||= {}
     step_progress[step_name.to_s]["completed_at"] = Time.current
-
-    check_overall_completion!
 
     save!
   end
@@ -104,13 +100,5 @@ class TutorialProgress < ApplicationRecord
 
   def setup_default_soft_steps
     self.soft_tutorial_steps = SOFT_TUTORIAL_STEPS.index_with { {} }
-  end
-
-  def check_overall_completion!
-    return unless TUTORIAL_STEPS.all? { |step| step_completed?(step) }
-    return if completed_at.present?
-
-    self.completed_at = Time.current
-    self.just_completed = true
   end
 end
