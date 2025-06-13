@@ -115,7 +115,7 @@ export default class extends Controller {
       );
       if (genericMsg) {
         const email = this.emailValue || "your email";
-        genericMsg.textContent = `Check your email (${email}) for the invite!`;
+        genericMsg.textContent = `Check for an email from Slack!`;
         genericMsg.classList.remove("text-saddle-taupe");
         genericMsg.classList.add("text-green-700", "font-semibold");
       }
