@@ -1,7 +1,14 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["introVideo", "modal", "container"];
+  static targets = [
+    "introVideo",
+    "modal",
+    "container",
+    "emailInput",
+    "msg",
+    "videoContainer",
+  ];
   static values = { email: String };
 
   connect() {
@@ -9,8 +16,107 @@ export default class extends Controller {
     document.addEventListener("keydown", this.handleKeydown);
     this.enableClose(false);
     this.videoLooped = false;
+    if (this.hasEmailInputTarget) {
+      this.emailInputTarget.addEventListener("input", () => {
+        this.hideError();
+      });
+    }
     this.play();
     this.fuckery();
+  }
+
+  startSignup() {
+    const x = this.hasEmailInputTarget
+      ? this.emailInputTarget.value.trim()
+      : "";
+    this.hideError();
+    if (!x) {
+      this.error("pls enter your email");
+      if (this.hasEmailInputTarget) this.emailInputTarget.focus();
+      return;
+    }
+    if (!this.isValidEmail(x)) {
+      this.error("pls enter a valid email address");
+      if (this.hasEmailInputTarget) this.emailInputTarget.focus();
+      return;
+    }
+    const button = this.element.querySelector(".marble-button");
+    const originalText = button ? button.textContent : "";
+    if (button) {
+      button.textContent = "Sending your invite...";
+      button.disabled = true;
+      button.classList.add("opacity-75");
+    }
+    this.sendEmail(x)
+      .then(() => {
+        if (button) {
+          button.textContent = originalText;
+          button.disabled = false;
+          button.classList.remove("opacity-75");
+        }
+        const modal = document.getElementById("signup-wizard");
+        if (modal) {
+          const modalController =
+            this.application.getControllerForElementAndIdentifier(
+              modal,
+              "signup-wizard"
+            );
+          if (modalController && modalController !== this) {
+            modalController.emailValue = x;
+            modalController.show();
+          } else {
+            // fallback: just show the modal
+            modal.classList.remove("hidden");
+            document.body.classList.add("overflow-hidden");
+          }
+        }
+      })
+      .catch(() => {
+        if (button) {
+          button.textContent = originalText;
+          button.disabled = false;
+          button.classList.remove("opacity-75");
+        }
+        this.error("Failed to send email. Please try again.");
+      });
+  }
+
+  async sendEmail(email) {
+    let csrfToken = "";
+    const metaTag = document.querySelector('meta[name="csrf-token"]');
+    if (metaTag) {
+      csrfToken = metaTag.content;
+    }
+    const response = await fetch("/sign-up", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": csrfToken,
+      },
+      body: JSON.stringify({ email: email }),
+    });
+    if (!response.ok) {
+      throw new Error("Failed to send email");
+    }
+    return await response.json();
+  }
+
+  isValidEmail(a) {
+    const b = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return b.test(a);
+  }
+
+  error(message) {
+    if (this.hasMsgTarget) {
+      this.msgTarget.textContent = message;
+      this.msgTarget.classList.remove("hidden");
+    }
+  }
+
+  hideError() {
+    if (this.hasMsgTarget) {
+      this.msgTarget.classList.add("hidden");
+    }
   }
 
   fuckery() {
@@ -127,16 +233,17 @@ export default class extends Controller {
   }
 
   show() {
-    this.element.classList.remove("hidden");
-    document.body.classList.add("overflow-hidden");
-    setTimeout(() => {
-      if (this.hasIntroVideoTarget) {
-        this.introVideoTarget.loop = true;
-        this.introVideoTarget.play().catch(() => {
-          // fallback handled in play
-          this.play();
-        });
-      }
-    }, 50);
+    if (this.hasModalTarget) {
+      this.modalTarget.classList.remove("hidden");
+      document.body.classList.add("overflow-hidden");
+      setTimeout(() => {
+        if (this.hasIntroVideoTarget) {
+          this.introVideoTarget.loop = true;
+          this.introVideoTarget.play().catch(() => {
+            this.play();
+          });
+        }
+      }, 50);
+    }
   }
 }
