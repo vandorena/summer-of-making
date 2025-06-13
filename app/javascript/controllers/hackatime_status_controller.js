@@ -17,7 +17,7 @@ export default class extends Controller {
   startPolling() {
     this.pollInterval = setInterval(() => {
       this.updateStatus()
-    }, 5000)
+    }, 1000)
 
     this.observer = new MutationObserver(() => {
       if (this.hasStatusTarget && this.statusTarget.textContent.includes('Setup done')) {
