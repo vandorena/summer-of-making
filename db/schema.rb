@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_13_183512) do
+
+ActiveRecord::Schema[8.0].define(version: 2025_06_13_191720) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -499,6 +500,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_13_183512) do
     t.boolean "has_black_market"
     t.boolean "has_hackatime_account"
     t.boolean "has_clicked_completed_tutorial_modal", default: false, null: false
+    t.boolean "has_hackatime_projects", default: false, null: false
   end
 
   create_table "votes", force: :cascade do |t|

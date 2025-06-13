@@ -15,6 +15,7 @@
 #  has_commented                        :boolean          default(FALSE)
 #  has_hackatime                        :boolean          default(FALSE)
 #  has_hackatime_account                :boolean
+#  has_hackatime_projects               :boolean          default(FALSE), not null
 #  identity_vault_access_token          :string
 #  internal_notes                       :text
 #  is_admin                             :boolean          default(FALSE), not null
@@ -172,6 +173,12 @@ class User < ApplicationRecord
 
     unless has_hackatime?
       update!(has_hackatime: true)
+    end
+
+    Rails.logger.info("Hackatime projects:= #{result.dig("data", "total_seconds")}")
+
+    if result.dig("data", "total_seconds") > 10
+      update!(has_hackatime_projects: true)
     end
 
     stats = hackatime_stat || build_hackatime_stat
