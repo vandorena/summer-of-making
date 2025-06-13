@@ -168,9 +168,7 @@ class User < ApplicationRecord
 
     return if projects.empty?
 
-    unless has_hackatime?
-      update!(has_hackatime: true)
-    end
+    update!(has_hackatime: true) unless has_hackatime?
 
     Rails.logger.info("Hackatime projects:= #{result.dig("data", "total_seconds")}")
 
