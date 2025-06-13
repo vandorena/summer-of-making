@@ -516,6 +516,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_13_223517) do
     t.boolean "has_black_market"
     t.boolean "has_hackatime_account"
     t.boolean "has_clicked_completed_tutorial_modal", default: false, null: false
+<<<<<<< HEAD
+=======
+    t.boolean "has_hackatime_projects", default: false, null: false
+>>>>>>> a1deed53d4c48875ffdae4deb2ea41601f3abc6e
     t.boolean "tutorial_video_seen", default: false, null: false
   end
 
