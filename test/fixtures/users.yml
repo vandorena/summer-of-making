@@ -13,6 +13,7 @@
 #  has_black_market             :boolean
 #  has_commented                :boolean          default(FALSE)
 #  has_hackatime                :boolean          default(FALSE)
+#  has_hackatime_account        :boolean
 #  identity_vault_access_token  :string
 #  internal_notes               :text
 #  is_admin                     :boolean          default(FALSE), not null

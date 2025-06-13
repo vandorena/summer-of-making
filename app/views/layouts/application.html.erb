@@ -84,9 +84,9 @@
         <button id="tutorial-help-btn"
                 data-tutorial-target="helpButton"
                 data-action="click->tutorial#toggle"
-                class="tutorial-help-btn fixed bottom-6 right-6 z-50 w-12 h-12 text-white rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 <%= 'animate-spin duration-1' if should_shake %>"
+                class="tutorial-help-btn fixed bottom-6 right-6 z-50 w-16 h-16 text-white rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 <%= 'animate-bouncee scale-140 hover:scale-160' if should_shake %>"
                 title="Show tutorial for this page">
-          <span class="text-xl font-bold">?</span>
+          <span class="text-2xl font-bold <%= "scale-120" if should_shake %>">?</span>
         </button>
       </div>
     <% else %>

@@ -204,6 +204,7 @@ Rails.application.routes.draw do
   post "check_link", to: "projects#check_link"
   get "check_github_readme", to: "projects#check_github_readme"
   get "campfire", to: "campfire#index"
+  get "campfire/hackatime_status", to: "campfire#hackatime_status"
 
   # Global timer session check - must be before projects resource
   get "timer_sessions/active", to: "timer_sessions#global_active"

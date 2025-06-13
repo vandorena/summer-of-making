@@ -40,7 +40,12 @@ class ShopOrdersController < ApplicationController
     end
 
     if @order.save
-      redirect_to shop_order_path(@order), notice: "Order placed successfully! We'll review and process your order soon."
+      if @item.is_a? ShopItem::FreeStickers
+        flash[:success] = "We'll send your stickers out when your verification is approved!"
+        redirect_to campfire_path
+      else
+        redirect_to shop_order_path(@order), notice: "Order placed successfully!"
+      end
     else
       render :new, status: :unprocessable_entity
     end
