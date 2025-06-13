@@ -13,6 +13,9 @@
           <h3 class="text-center text-2xl font-bold">
             Check your email for a message from Slack!
           </h3>
+          <p class="text-center text-lg">
+            Don't see it? Check your spam folder!
+          </p>
           <p class="text-saddle-taupe text-left max-w-2xl mx-auto">
             <span class="font-extrabold">1. Join Slack</span><span class="font-medium italic"> ← YOU ARE HERE</span><br>
             <span class="font-medium">2. Set up your account</span><br>
@@ -24,6 +27,7 @@
           <div class="aspect-video bg-gray-800 rounded-lg flex items-center justify-center text-white relative">
             <%= video_tag "count.mp4",
                          controls: false,
+                         muted: true,
                          preload: "auto",
                          playsinline: true,
                          loop: true,
@@ -34,7 +38,6 @@
           </div>
         </div>
       </div>
-    </div>
     </div>
   </div>
 </div>
