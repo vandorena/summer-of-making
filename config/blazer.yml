@@ -10,7 +10,7 @@ data_sources:
       # status: {0: "Active", 1: "Archived"}
 
     linked_columns:
-       user_id: "/avo/resources/users/{value}"
+       user_id: "/admin/users/{value}"
 
     smart_columns:
        user_id: "SELECT id, CONCAT(first_name, ' ', last_name) FROM users WHERE id IN {value}"
