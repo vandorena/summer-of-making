@@ -82,7 +82,7 @@
           vote: new_vote_path,
           shop: shop_path
         } %>
-        <% current_soft_step = soft_step_paths.find { |k, v| 
+        <% current_soft_step = soft_step_paths.find { |k, v|
           if k == :explore
             request.path == '/explore' || current_page?(v)
           else
