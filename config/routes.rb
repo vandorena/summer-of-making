@@ -286,7 +286,7 @@ Rails.application.routes.draw do
 
   namespace :admin do
     mount Blazer::Engine, at: "blazer"
-    mount_avo
+    # mount_avo
     get "/", to: "static_pages#index", as: :root
     resources :users, only: [ :index, :show ] do
       member do
