@@ -6,6 +6,10 @@ class CampfireController < ApplicationController
   def index
     @user = current_user
 
+    if params[:tutorial_completed] == "true" && @user.tutorial_progress.completed?
+      @user.update!(has_clicked_completed_tutorial_modal: true)
+    end
+
     if params[:reset].present? && @user&.tutorial_progress
       @user.tutorial_progress.reset_step!(params[:reset])
 
@@ -22,34 +26,40 @@ class CampfireController < ApplicationController
   def show
   end
 
+  def hackatime_status
+    render json: {
+      hackatime_linked: current_user.has_hackatime_account?,
+      hackatime_setup: current_user.has_hackatime?
+    }
+  end
+
   private
 
   def check_and_mark_tutorial_completion
     return if current_user.tutorial_progress.completed?
 
-    if @account_status[:hackatime_linked] && !current_user.tutorial_progress.step_completed?("hackatime")
+    if @account_status[:hackatime_setup] && !current_user.tutorial_progress.step_completed?("hackatime_connected")
       current_user.tutorial_progress.complete_step!("hackatime_connected")
     end
 
-    if current_user.identity_vault_id.present? && current_user.verification_status != :ineligible && !current_user.tutorial_progress.step_completed?("identity")
+    if current_user.identity_vault_id.present? && current_user.verification_status != :ineligible && !current_user.tutorial_progress.step_completed?("identity_verified")
       current_user.tutorial_progress.complete_step!("identity_verified")
     end
 
-    if current_user.shop_orders.joins(:shop_item).where(shop_items: { type: "ShopItem::FreeStickers" }).exists? && !current_user.tutorial_progress.step_completed?("stickers")
+    if current_user.shop_orders.joins(:shop_item).where(shop_items: { type: "ShopItem::FreeStickers" }).exists? && !current_user.tutorial_progress.step_completed?("free_stickers_ordered")
       current_user.tutorial_progress.complete_step!("free_stickers_ordered")
     end
 
-    # Check if all steps are completed and mark tutorial as completed
-    if current_user.tutorial_progress.step_completed?("hackatime") &&
-       current_user.tutorial_progress.step_completed?("identity") &&
-       current_user.tutorial_progress.step_completed?("stickers")
-      current_user.tutorial_progress.mark_completed!
+    if @account_status[:hackatime_setup] && current_user.tutorial_progress.step_completed?("hackatime_connected") && current_user.tutorial_progress.step_completed?("identity_verified") && current_user.tutorial_progress.step_completed?("free_stickers_ordered")
+      current_user.tutorial_progress.completed_at = Time.current
+      current_user.tutorial_progress.save!
     end
   end
 
   def build_account_status
     @account_status = {
-      hackatime_linked: current_user.has_hackatime?
+      hackatime_linked: current_user.has_hackatime_account?,
+      hackatime_setup: current_user.has_hackatime?
     }
   end
 

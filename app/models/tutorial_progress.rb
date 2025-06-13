@@ -34,8 +34,6 @@ class TutorialProgress < ApplicationRecord
     step_progress[step_name.to_s] ||= {}
     step_progress[step_name.to_s]["completed_at"] = Time.current
 
-    check_overall_completion!
-
     save!
   end
 
@@ -50,6 +48,10 @@ class TutorialProgress < ApplicationRecord
 
   def completed?
     completed_at.present?
+  end
+
+  def should_show_completion_modal?
+    completed? && !user.has_clicked_completed_tutorial_modal?
   end
 
   def reset_step!(step_name)
@@ -98,11 +100,5 @@ class TutorialProgress < ApplicationRecord
 
   def setup_default_soft_steps
     self.soft_tutorial_steps = SOFT_TUTORIAL_STEPS.index_with { {} }
-  end
-
-  def check_overall_completion!
-    return unless TUTORIAL_STEPS.all? { |step| step_completed?(step) }
-
-    self.completed_at = Time.current
   end
 end

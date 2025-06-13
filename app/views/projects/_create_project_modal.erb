@@ -1,10 +1,11 @@
-<div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] w-full max-w-2xl mx-2 md:mx-auto relative">
+<div id="create-project-modal" data-controller="modal" class="hidden fixed inset-0 z-50 overflow-auto bg-black/30 flex items-center justify-center p-2 md:p-4">
+  <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] w-full max-w-2xl mx-2 md:mx-auto relative" data-modal-target="container">
     <div class="p-3 md:p-6 border-b border-saddle-taupe border-opacity-30">
       <div class="flex justify-between items-center">
         <h3 class="text-lg md:text-2xl">Create New Project</h3>
-        <%= link_to projects_path, class: "text-gray-600 hover:text-vintage-red cursor-pointer" do %>
+        <button type="button" class="text-gray-600 hover:text-vintage-red cursor-pointer" data-action="click->modal#close">
           <%= inline_svg_tag "close.svg", class: "h-6 w-6 2xl:h-8 2xl:w-8" %>
-        <% end %>
+        </button>
       </div>
     </div>
 
@@ -59,7 +60,7 @@
                 <span class="tooltiptext">Choose the category that best describes your project.</span>
               </div>
             </div>
-            <%= f.hidden_field :category, data: { category_selector_target: "hiddenField" } %>
+            <%= f.hidden_field :category, data: { category_selector_target: "hiddenField", project_form_target: "category" } %>
               <div class="flex justify-between tab-container">
                 <%=
                   render "shared/link",
@@ -205,11 +206,12 @@
         </div>
 
         <div class="flex flex-row justify-end space-x-2 md:space-x-3 mt-3 md:mt-4">
-          <%= link_to projects_path, class: "px-3 md:px-4 py-1 md:py-2 bg-vintage-red text-white hover:scale-[1.05] btn-pixel text-sm md:text-base" do %>
+          <button type="button" data-action="modal#close" class="px-3 md:px-4 py-1 md:py-2 bg-vintage-red text-white hover:scale-[1.05] btn-pixel text-sm md:text-base">
             Cancel
-          <% end %>
+          </button>
           <%= f.submit "Create Project", class: "px-3 md:px-4 py-1 md:py-2 bg-forest text-white hover:scale-[1.05] btn-pixel text-sm md:text-base" %>
         </div>
       <% end %>
     </div>
   </div>
+</div>

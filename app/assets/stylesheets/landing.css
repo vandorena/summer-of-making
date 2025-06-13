@@ -9,7 +9,7 @@ html {
 }
 
 body::before {
-  content: '';
+  content: "";
   position: fixed;
   top: 0;
   left: 0;
@@ -170,6 +170,10 @@ body::before {
 
 .animate-wave {
   animation: wave 4s ease-in-out infinite;
+}
+
+.animate-wave-offset {
+  animation: wave 4s ease-in-out 2s infinite;
 }
 
 .animate-wave-up {
