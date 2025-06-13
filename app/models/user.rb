@@ -127,18 +127,17 @@ class User < ApplicationRecord
   end
 
   def hackatime_projects
-    return [] unless has_hackatime?
-
     projects = hackatime_stat&.data&.dig("data", "projects") || []
 
-    projects.map do |project|
-      {
-        key: project["name"],
+    projects
+      .map { |project| {
+        key: project["name"], # Deprecated
         name: project["name"],
         total_seconds: project["total_seconds"],
         formatted_time: project["text"]
-      }
-    end.sort_by { |p| p[:name] }
+      }}
+      .reject { |p| ["<<LAST_PROJECT>>", "Other"].include?(p[:name]) }
+      .sort_by { |p| p[:name] }
   end
 
   def format_seconds(seconds)
