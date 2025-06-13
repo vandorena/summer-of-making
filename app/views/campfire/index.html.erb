@@ -135,11 +135,39 @@
 
   <% if current_user.tutorial_progress.completed? %>
     <!-- Account Status Section -->
-    <% if current_verification_status == :not_linked || current_verification_status == :needs_resubmission || current_verification_status == :pending || current_verification_status == :ineligible %>
+    <% if current_verification_status == :not_linked || current_verification_status == :needs_resubmission || current_verification_status == :pending || current_verification_status == :ineligible || !@account_status[:hackatime_projects] %>
     <div class="mb-8">
       <h2 class="text-xl  text-gray-900 mb-4">Account Status</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
+        <!-- Hackatime Status Card -->
+        <% if !@account_status[:hackatime_projects] %>
+        <div class="bg-white rounded-lg border p-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class=" text-gray-900">Hackatime</h3>
+            </div>
+            <% if @account_status[:hackatime_setup] %>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs bg-yellow-100 text-yellow-800">
+                Waiting for project data....
+              </span>
+            <% elsif @account_status[:hackatime_linked] %>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs bg-yellow-100 text-yellow-800">
+                Waiting for test data...
+              </span>
+            <% else %>
+              <div class="flex flex-col items-end space-y-2">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs bg-red-100 text-red-800">
+                  Not Connected
+                </span>
+                <%= link_to "Connect", hackatime_auth_redirect_path, class: "inline-flex items-center px-3 py-1 border border-transparent text-xs rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500", target: "_blank" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+        <% end %>
+
+        <% if current_verification_status != :verified %>
         <div class="bg-white rounded-lg border p-4">
           <div class="flex items-center justify-between">
             <div>
@@ -170,13 +198,10 @@
                   Ineligible
                 </span>
               </div>
-            <% else %>
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs  bg-green-100 text-green-800">
-                Verified
-              </span>
             <% end %>
           </div>
         </div>
+        <% end %>
       </div>
     </div>
     <% end %>
