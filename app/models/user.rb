@@ -163,7 +163,7 @@ class User < ApplicationRecord
     result = JSON.parse(response.body)
     projects = result.dig("data", "projects")
 
-    if has_hackatime_account?
+    if !has_hackatime_account?
       update!(has_hackatime_account: result.dig("data", "status") == "ok")
     end
 
