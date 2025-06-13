@@ -12,17 +12,12 @@ export default class extends Controller {
   static values = { email: String };
 
   connect() {
-    this.handleKeydown = this.handleKeydown.bind(this);
-    document.addEventListener("keydown", this.handleKeydown);
-    this.enableClose(false);
-    this.videoLooped = false;
     if (this.hasEmailInputTarget) {
       this.emailInputTarget.addEventListener("input", () => {
         this.hideError();
       });
     }
     this.play();
-    this.fuckery();
   }
 
   startSignup() {
@@ -119,17 +114,6 @@ export default class extends Controller {
     }
   }
 
-  fuckery() {
-    if (this.hasIntroVideoTarget) {
-      this.handleVideoEnded = this.handleVideoEnded.bind(this);
-      this.introVideoTarget.addEventListener("ended", this.handleVideoEnded);
-    }
-  }
-
-  handleVideoEnded() {
-    this.enableClose(true);
-  }
-
   play() {
     if (
       this.hasIntroVideoTarget &&
@@ -158,77 +142,6 @@ export default class extends Controller {
           videoContainer.appendChild(playButton);
         }
       });
-    }
-  }
-
-  enableClose(enabled) {
-    const closeBtn = this.element.querySelector(
-      '[data-action="click->signup-wizard#close"]'
-    );
-    if (closeBtn) {
-      closeBtn.disabled = !enabled;
-      if (!enabled) {
-        closeBtn.classList.add("text-gray-600", "cursor-not-allowed");
-        closeBtn.classList.remove(
-          "text-vintage-red",
-          "hover:text-vintage-red",
-          "cursor-pointer"
-        );
-      } else {
-        closeBtn.classList.remove("text-gray-600", "cursor-not-allowed");
-        closeBtn.classList.add(
-          "text-vintage-red",
-          "hover:text-vintage-red",
-          "cursor-pointer"
-        );
-      }
-    }
-  }
-
-  disconnect() {
-    document.removeEventListener("keydown", this.handleKeydown);
-    if (this.hasIntroVideoTarget && this.handleVideoEnded) {
-      this.introVideoTarget.removeEventListener("ended", this.handleVideoEnded);
-    }
-  }
-
-  handleKeydown(event) {
-    if (event.key === "Escape" && !this.element.classList.contains("hidden")) {
-      this.close();
-      event.stopPropagation();
-    }
-  }
-
-  close() {
-    if (!this.videoLooped) return; // Prevent close until video has looped once
-    if (this.hasIntroVideoTarget) {
-      this.introVideoTarget.pause();
-      this.introVideoTarget.currentTime = 0;
-      const playButton = document.getElementById("manual-play-button");
-      if (playButton) playButton.remove();
-    }
-    if (this.hasModalTarget && this.hasContainerTarget) {
-      this.modalTarget.style.transition = "opacity 250ms ease-in";
-      this.containerTarget.style.transition = "all 250ms ease-in";
-      this.modalTarget.style.opacity = "0";
-      this.containerTarget.style.transform = "scale(0.9)";
-      this.containerTarget.style.opacity = "0";
-      setTimeout(() => {
-        this.modalTarget.classList.add("hidden");
-        this.modalTarget.style.transition = "";
-        this.containerTarget.style.transition = "";
-        this.containerTarget.style.transform = "";
-        document.body.classList.remove("overflow-hidden");
-      }, 250);
-    } else {
-      this.element.classList.add("hidden");
-      document.body.classList.remove("overflow-hidden");
-    }
-  }
-
-  closeOnOutsideClick(event) {
-    if (event.target === this.element) {
-      this.close();
     }
   }
 
