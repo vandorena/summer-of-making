@@ -26,12 +26,10 @@
 
       <div class="space-y-4">
         <!-- Step 1: Hackatime -->
-        <div class="bg-white rounded-lg border p-6"
+                <div class="bg-white rounded-lg border p-6"
              data-step="hackatime"
              data-controller="hackatime-status"
-             data-hackatime-status-should-poll-value="<%= @account_status[:hackatime_linked] && !@account_status[:hackatime_setup] %>"
-             data-hackatime-status-check-fill-icon-value="<%= j(inline_svg "icons/check_fill.svg", class: "w-5 h-5 text-green-600") %>"
-             data-hackatime-status-todo-fill-icon-value="<%= j(inline_svg "icons/to_do_fill.svg", class: "w-5 h-5 text-yellow-600") %>">
+             data-hackatime-status-tutorial-active-value="<%= !current_user.tutorial_progress.completed? %>">
           <div class="flex items-start space-x-4">
             <div class="flex-shrink-0">
               <% if @account_status[:hackatime_setup] %>
