@@ -10,6 +10,11 @@ class CampfireController < ApplicationController
       @user.update!(has_clicked_completed_tutorial_modal: true)
     end
 
+    if params[:mark_video_seen] == "true" && @user.tutorial_progress.completed?
+      @user.update!(tutorial_video_seen: true)
+      redirect_to campfire_path and return
+    end
+
     if params[:reset].present? && @user&.tutorial_progress
       @user.tutorial_progress.reset_step!(params[:reset])
 
