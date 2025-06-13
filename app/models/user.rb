@@ -137,7 +137,7 @@ class User < ApplicationRecord
         total_seconds: project["total_seconds"],
         formatted_time: project["text"]
       }}
-      .reject { |p| ["<<LAST_PROJECT>>", "Other"].include?(p[:name]) }
+      .reject { |p| [ "<<LAST_PROJECT>>", "Other" ].include?(p[:name]) }
       .sort_by { |p| p[:name] }
   end
 
