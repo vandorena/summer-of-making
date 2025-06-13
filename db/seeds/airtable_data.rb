@@ -60,16 +60,16 @@ begin
 
       existing_item = ShopItem.find_by(name: name_field)
       if existing_item
-        next
-        # puts "  🗑️  Deleting existing: #{existing_item.name}"
-        # existing_item.destroy
+        # next
+        puts "  🗑️  Deleting existing: #{existing_item.name}"
+        existing_item.destroy
       end
 
       shop_item = ShopItem.create(name: name_field) do |item|
         item.type = item_type
         item.description = fields['subtitle'] # airtable subtitle -> db description
         item.internal_description = fields['description'] # airtable description -> internal_description
-        item.ticket_cost = fields['doubloons_estimated']&.to_f || 0
+        item.ticket_cost = fields['tickets_us']&.to_f || 0
         item.usd_cost = fields['unit_cost']&.to_f || fields['fair_market_value']&.to_f || 0
         item.hacker_score = fields['hacker_score']&.to_i || 0
         item.requires_black_market = false
