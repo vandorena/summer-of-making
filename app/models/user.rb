@@ -15,6 +15,7 @@
 #  has_commented                        :boolean          default(FALSE)
 #  has_hackatime                        :boolean          default(FALSE)
 #  has_hackatime_account                :boolean
+#  has_hackatime_projects               :boolean          default(FALSE), not null
 #  identity_vault_access_token          :string
 #  internal_notes                       :text
 #  is_admin                             :boolean          default(FALSE), not null
