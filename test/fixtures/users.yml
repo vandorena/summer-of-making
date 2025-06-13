@@ -21,6 +21,7 @@
 #  is_admin                             :boolean          default(FALSE), not null
 #  last_name                            :string
 #  timezone                             :string
+#  tutorial_video_seen                  :boolean          default(FALSE), not null
 #  ysws_verified                        :boolean          default(FALSE)
 #  created_at                           :datetime         not null
 #  updated_at                           :datetime         not null
