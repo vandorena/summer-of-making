@@ -49,7 +49,8 @@ class CampfireController < ApplicationController
 
   def build_account_status
     @account_status = {
-      hackatime_linked: current_user.has_hackatime?
+      hackatime_linked: current_user.has_hackatime_account?,
+      hackatime_setup: current_user.has_hackatime?
     }
   end
 

@@ -13,6 +13,7 @@
 #  has_black_market             :boolean
 #  has_commented                :boolean          default(FALSE)
 #  has_hackatime                :boolean          default(FALSE)
+#  has_hackatime_account        :boolean
 #  identity_vault_access_token  :string
 #  internal_notes               :text
 #  is_admin                     :boolean          default(FALSE), not null
@@ -161,6 +162,10 @@ class User < ApplicationRecord
 
     result = JSON.parse(response.body)
     projects = result.dig("data", "projects")
+
+    if has_hackatime_account?
+      update!(has_hackatime_account: result.dig("data", "status") == "ok")
+    end
 
     return if projects.empty?
 
