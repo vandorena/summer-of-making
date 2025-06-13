@@ -42,28 +42,37 @@
         <% end %>
 
         <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] transform hover:scale-[1.02] transition-transform duration-300 flex flex-col h-full items-center justify-center p-6">
-            <button data-action="click->modal#open" data-modal-type="create-project" class="px-4 md:px-6 py-1 md:py-2 bg-forest hover:bg-forest-dark text-white text-base md:text-lg 2xl:text-xl btn-pixel cursor-pointer">
+          <button data-action="click->modal#open" data-modal-type="create-project" class="px-4 md:px-6 py-1 md:py-2 bg-forest hover:bg-forest-dark text-white text-base md:text-lg 2xl:text-xl btn-pixel cursor-pointer">
             Create Project
-            </button>
+          </button>
         </div>
     <% else %>
         <div class="col-span-full flex flex-col items-center justify-center bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] p-6 md:p-8 mt-2 md:mt-0">
-        <div class="flex justify-center items-center">
+          <div class="flex justify-center items-center">
             <%= image_tag 'happytriangle.png', class: 'w-32 h-32 sm:w-48 sm:h-48 2xl:w-64 2xl:h-64 transform scale-x-[-1] mb-4 sm:mb-6' %>
-        </div>
-        <% if !current_user&.has_hackatime_projects? %>
-            <p class="mb-6 sm:mb-8 text-black text-large sm:text-xl 2xl:text-2xl text-center">You have zero minutes logged on hackatime. Make sure you've set up a <%= link_to "hackatime editor extension", "https://hackatime.hackclub.com/docs", target: "_blank", class: "text-forest hover:text-forest-dark underline" %>, and then try writing some code!</p>
-            <button class="px-4 md:px-6 py-1 md:py-2 bg-gray-400 text-white text-base md:text-lg 2xl:text-xl btn-pixel cursor-not-allowed opacity-50" disabled>
+          </div>
+
+          <% if !current_user.has_hackatime_projects? %>
+            <p class="mb-6 sm:mb-8 text-black text-large sm:text-xl 2xl:text-2xl text-center">
+              You've configured Hackatime, but you haven't
+              <%= link_to "installed the extension in your editor yet.",
+                  "https://hackatime.hackclub.com/docs",
+                  target: "_blank",
+                  class: "text-forest hover:text-forest-dark underline"
+              %>
+              .<br />
+              Do that, write some code, come back here and refresh the page!
+            </p>
+          <% elsif !current_user.has_hackatime? %>
+            <p class="mb-6 sm:mb-8 text-black text-large sm:text-xl 2xl:text-2xl text-center">
+              You haven't configured Hackatime yet.
+              Please see instructions for how to do so in the <%= link_to "Campfire", campfire_path %>.
+            </p>
+          <% end %>
+
+          <button disabled="<%= current_user.has_hackatime_projects? ? "true" : "false" %>" data-action="click->modal#open" data-modal-type="create-project" class="px-4 md:px-6 py-1 md:py-2 bg-forest hover:bg-forest-dark text-white text-base md:text-lg 2xl:text-xl btn-pixel cursor-pointer">
             Create Your Project
-            </button>
-        <% elsif current_user&.has_hackatime_projects? %>
-            <p class="mb-6 sm:mb-8 text-black text-large sm:text-xl 2xl:text-2xl text-center">You don't have a project yet. Create one to start your journey!</p>
-            <button data-action="click->modal#open" data-modal-type="create-project" class="px-4 md:px-6 py-1 md:py-2 bg-forest hover:bg-forest-dark text-white text-base md:text-lg 2xl:text-xl btn-pixel cursor-pointer">
-            Create Your Project
-            </button>
-        <% else %>
-            <p class="mb-6 sm:mb-8 text-black text-large sm:text-xl 2xl:text-2xl text-center">Link your HackaTime account to start creating projects!</p>
-        <% end %>
+          </button>
         </div>
     <% end %>
     </div>
