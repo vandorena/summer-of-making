@@ -8,12 +8,12 @@ class LandingController < ApplicationController
   def index
     begin
       stories = Airtable::HighSeasBook::StorySubmission.all.select do |story|
-        story.try(:fields).try(:[], "Show in Summer of Making") == true
+        story.airtable_fields.try(:[], "Show in Summer of Making") == true
       end
-      stories = stories.sample(3)
+      stories = stories.sample(5)
       @high_seas_reviews = stories.map do |story|
-        fields = story.try(:fields) || {}
-        text = fields["What's one way High Seas had a positive impact on your life?"] || fields["Story"] || fields["Review"] || ""
+        fields = story.airtable_fields || {}
+        text = fields["What's one way High Seas had a positive impact on your life?"] || ""
         image = nil
         if fields["Photos (Optional)"]&.is_a?(Array) && fields["Photos (Optional)"].any?
           image = fields["Photos (Optional)"].first["url"]
@@ -21,7 +21,7 @@ class LandingController < ApplicationController
         { text: text, image: image }
       end
     rescue => e
-      Rails.logger.error("FACKING THING BROKE: #{e.message}")
+      Rails.logger.warn("the facking thing brokie #{e}")
       @high_seas_reviews = [
         { text: "I joined Hack Club back in July, but to be honest, I didn’t totally get how it all worked at first. Then around November, I saw that High Seas had started and decided to sign up. I checked out the YSWS projects (can’t really remember what was up at the time), but one that caught my eye was Browser Buddy. I ended up spending over 12 hours on it, even though I still couldn’t figure out how the MV3 API works 😅.", image: "https://v5.airtableusercontent.com/v3/u/42/42/1749837600000/6ioLYZabCvaEQhtrzuEa0g/qtpC2rYSKi0HBPcR9EhILYbkUnCe4YWvNzS57cdln00cwXhPra9zmSG_4JsivEpgWPPwqFzJAZJ2XetcnS9CJt87LoGOi4s8onvEWGcuH3-RHSCrpZMZdP8vwaCiho5i2X7rIULedXIJEjgAf9juJA/--u6P5kh4mQX7Kb_Nw7WAZ6jwhOFHZZPROO1nvFIL1A" },
         { text: "High Seas really helped me get consistent with coding—now I’m basically coding every day. And getting a new mouse in the mail was such an exciting bonus!", image: "https://v5.airtableusercontent.com/v3/u/42/42/1749837600000/B60VyBKYiXCI4RFMomciMw/Ev05FpSunc3QvfuuY-VjUO49RVVFuLTl7dEr2QWg3zYndHe8Ug82_4Hz-dioEr6gWC0RGfJEkmTKOalTuYl3bxRf5Z9y_lMrL-lZRicMH6EdAoDspLdrUaL1WVbdW2j0JKkCHgJAurwYE4jAXcbXmg/3xscQ5gkMcGdFcWl6cBg1E7AH0yNxZQvKSw8EUHW78Y" }
