@@ -69,6 +69,24 @@ export default class extends Controller {
     }
   }
 
+  handleVideoEnded() {
+    this.videoLoopCount = (this.videoLoopCount || 0) + 1;
+    if (this.videoLoopCount === 1) {
+      this.enableClose(true);
+      const genericMsg = this.element.querySelector(
+        "#signup-wizard-generic-message"
+      );
+      if (genericMsg) {
+        const email = this.emailValue || "your email";
+        genericMsg.textContent = `Check for an email from Slack!`;
+        genericMsg.classList.remove("text-saddle-taupe");
+        genericMsg.classList.add("text-green-700", "font-semibold");
+      }
+    }
+    this.introVideoTarget.currentTime = 0;
+    this.introVideoTarget.play();
+  }
+
   enableClose(enabled) {
     const closeBtn = this.element.querySelector(
       '[data-action="click->signup-wizard#close"]'
