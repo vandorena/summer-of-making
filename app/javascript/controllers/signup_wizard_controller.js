@@ -54,7 +54,7 @@ export default class extends Controller {
           data.invites[0] &&
           data.invites[0].error === "already_in_team"
         ) {
-          window.location.href = window.location + "/auth/slack";
+          window.location.href = window.location.origin + "/auth/slack";
           return;
         }
         const modal = document.getElementById("signup-wizard");
