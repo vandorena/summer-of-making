@@ -151,6 +151,7 @@
     </div>
   </div>
 
+  <%# prize section %>
   <div class="max-w-9xl mx-auto mt-12 md:mt-25 px-2 md:px-0 rotate-0 md:-rotate-2">
     <%= render "shared/container", classes: 'mx-auto max-w-7xl w-full relative' do %>
       <div class="p-3 md:p-5 relative">
@@ -160,11 +161,11 @@
           Amazing Prizes
         </h2>
         <p class="font-['Fredoka',sans-serif] font-normal text-center text-lg md:text-xl mb-8 md:mb-16 text-[#8B4513] opacity-90 px-2">
-          Earn <span class="italic">shells<img src="/shell.png" class="inline-block mx-1 mb-1 w-5 h-5" alt="shell"></span> by building projects, then redeem them for awesome prizes like Raspberry Pis, 3D printers, and more! We cover your shipping costs, so you can focus on making stuff without worrying about expenses.
+          These are some of the things we’re giving away this summer (and about how long it takes to earn them)!
         </p>
 
         <div class="relative mx-2 md:mx-15 sm:mx-10 z-20 rotate-0 md:-rotate-3" data-controller="carousel" data-carousel-row-value="1">
-          <div class="carousel-track flex gap-2 md:gap-4 sm:gap-2" data-carousel-target="container">
+          <div class="carousel-track flex gap-2 md:gap-4 sm:gap-2 " data-carousel-target="container">
             <% @prizes.each_with_index do |prize, index| %>
               <div class="carousel-slide flex-none w-40 md:w-44 sm:w-36" style="transform: <%= prize[:random_transform] %>; animation-delay: <%= (index * 0.5) %>s;">
                 <div class="parchment-prize-card p-3 md:p-3 sm:p-2 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:scale-105" style="animation-delay: <%= (index * 0.3) %>s;">
@@ -233,7 +234,7 @@
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 lg:gap-8 max-w-6xl mx-auto px-2">
       <div class="transform hover:scale-105 transition-all duration-300 animate-float spc" style="animation-delay: 0.2s;">
         <%= render "shared/card" do %>
-          <div class="p-3 md:p-4 lg:p-6 text-center relative">
+          <div class="p-1 md:p-2 lg:p-3 text-center relative">
             <div class="text-2xl md:text-3xl lg:text-4xl mb-1 md:mb-2">💾</div>
             <div class="text-xl md:text-2xl lg:text-3xl font-bold text-[#E06540] font-['DynaPuff',sans-serif] mb-1 spn" data-social-proof-target="counter">343</div>
             <div class="text-xs md:text-sm lg:text-base font-['Fredoka',sans-serif] text-[#4A2D24] font-semibold">SD Cards</div>
@@ -244,7 +245,7 @@
       <!-- Stat Card 2 -->
       <div class="transform hover:scale-105 transition-all duration-300 animate-float spc" style="animation-delay: 0.4s;">
         <%= render "shared/card" do %>
-          <div class="p-3 md:p-4 lg:p-6 text-center relative">
+          <div class="p-1 md:p-2 lg:p-3 text-center relative">
             <div class="text-2xl md:text-3xl lg:text-4xl mb-1 md:mb-2">🤖</div>
             <div class="text-xl md:text-2xl lg:text-3xl font-bold text-[#E06540] font-['DynaPuff',sans-serif] mb-1 spn" data-social-proof-target="counter">$2,910</div>
             <div class="text-xs md:text-sm lg:text-base font-['Fredoka',sans-serif] text-[#4A2D24] font-semibold">OpenAI Credits</div>
@@ -255,7 +256,7 @@
       <!-- Stat Card 3 -->
       <div class="transform hover:scale-105 transition-all duration-300 animate-float spc" style="animation-delay: 0.6s;">
         <%= render "shared/card" do %>
-          <div class="p-3 md:p-4 lg:p-6 text-center relative">
+          <div class="p-1 md:p-2 lg:p-3 text-center relative">
             <div class="text-2xl md:text-3xl lg:text-4xl mb-1 md:mb-2">☁️</div>
             <div class="text-xl md:text-2xl lg:text-3xl font-bold text-[#E06540] font-['DynaPuff',sans-serif] mb-1 spn" data-social-proof-target="counter">$2,170</div>
             <div class="text-xs md:text-sm lg:text-base font-['Fredoka',sans-serif] text-[#4A2D24] font-semibold">Cloudflare Credits</div>
@@ -266,7 +267,7 @@
       <!-- Stat Card 4 -->
       <div class="transform hover:scale-105 transition-all duration-300 animate-float spc" style="animation-delay: 0.8s;">
         <%= render "shared/card" do %>
-          <div class="p-3 md:p-4 lg:p-6 text-center relative">
+          <div class="p-1 md:p-2 lg:p-3 text-center relative">
             <div class="text-2xl md:text-3xl lg:text-4xl mb-1 md:mb-2">🌐</div>
             <div class="text-xl md:text-2xl lg:text-3xl font-bold text-[#E06540] font-['DynaPuff',sans-serif] mb-1 spn" data-social-proof-target="counter">367</div>
             <div class="text-xs md:text-sm lg:text-base font-['Fredoka',sans-serif] text-[#4A2D24] font-semibold">Domain Names</div>
@@ -277,7 +278,7 @@
       <!-- Stat Card 5 -->
       <div class="transform hover:scale-105 transition-all duration-300 animate-float spc" style="animation-delay: 1.0s;">
         <%= render "shared/card" do %>
-          <div class="p-3 md:p-4 lg:p-6 text-center relative">
+          <div class="p-1 md:p-2 lg:p-3 text-center relative">
             <div class="text-2xl md:text-3xl lg:text-4xl mb-1 md:mb-2">💰</div>
             <div class="text-xl md:text-2xl lg:text-3xl font-bold text-[#E06540] font-['DynaPuff',sans-serif] mb-1 spn" data-social-proof-target="counter">$9,260</div>
             <div class="text-xs md:text-sm lg:text-base font-['Fredoka',sans-serif] text-[#4A2D24] font-semibold">Hardware Grants</div>
@@ -288,7 +289,7 @@
       <!-- Stat Card 6 -->
       <div class="transform hover:scale-105 transition-all duration-300 animate-float spc" style="animation-delay: 1.2s;">
         <%= render "shared/card" do %>
-          <div class="p-3 md:p-4 lg:p-6 text-center relative">
+          <div class="p-1 md:p-2 lg:p-3 text-center relative">
             <div class="text-2xl md:text-3xl lg:text-4xl mb-1 md:mb-2">🥧</div>
             <div class="text-xl md:text-2xl lg:text-3xl font-bold text-[#E06540] font-['DynaPuff',sans-serif] mb-1 spn" data-social-proof-target="counter">846</div>
             <div class="text-xs md:text-sm lg:text-base font-['Fredoka',sans-serif] text-[#4A2D24] font-semibold">Raspberry Pis</div>
@@ -299,7 +300,7 @@
       <!-- Stat Card 7 -->
       <div class="transform hover:scale-105 transition-all duration-300 animate-float spc" style="animation-delay: 1.4s;">
         <%= render "shared/card" do %>
-          <div class="p-3 md:p-4 lg:p-6 text-center relative">
+          <div class="p-1 md:p-2 lg:p-3 text-center relative">
             <div class="text-2xl md:text-3xl lg:text-4xl mb-1 md:mb-2">🔧</div>
             <div class="text-xl md:text-2xl lg:text-3xl font-bold text-[#E06540] font-['DynaPuff',sans-serif] mb-1 spn" data-social-proof-target="counter">223</div>
             <div class="text-xs md:text-sm lg:text-base font-['Fredoka',sans-serif] text-[#4A2D24] font-semibold">Pinecils</div>
@@ -307,10 +308,9 @@
         <% end %>
       </div>
 
-      <!-- Stat Card 8 -->
       <div class="transform hover:scale-105 transition-all duration-300 animate-float spc" style="animation-delay: 1.6s;">
         <%= render "shared/card" do %>
-          <div class="p-3 md:p-4 lg:p-6 text-center relative">
+          <div class="p-1 md:p-2 lg:p-3 text-center relative">
             <div class="text-2xl md:text-3xl lg:text-4xl mb-1 md:mb-2">🦈</div>
             <div class="text-xl md:text-2xl lg:text-3xl font-bold text-[#E06540] font-['DynaPuff',sans-serif] mb-1 spn" data-social-proof-target="counter">194</div>
             <div class="text-xs md:text-sm lg:text-base font-['Fredoka',sans-serif] text-[#4A2D24] font-semibold">Blahajs</div>
@@ -320,14 +320,42 @@
     </div>
 
     <div class="mt-6 max-w-4xl mx-auto">
-        <div class="p-6 md:p-8 text-center relative">
-          <p class="font-['Fredoka',sans-serif] font-semibold text-lg md:text-xl text-[#4A2D24] relative z-10 mb-2">
-            <strong class="text-[#E06540]">Over 2,500 packages shipped</strong> to makers in <strong class="text-[#E06540]">119 countries</strong> worldwide!
-          </p>
-          <p class="font-['Fredoka',sans-serif] font-normal text-base md:text-lg text-[#4A2D24] relative z-10">
-            <span class="text-[#E06540] font-semibold">This summer, we're going even <span class="italic font-bold">bigger!</span></span>
-          </p>
+      <div class="p-6 md:p-8 text-center relative">
+        <p class="font-['Fredoka',sans-serif] font-semibold text-lg md:text-xl text-[#4A2D24] relative z-10 mb-2">
+          <strong class="text-[#E06540]">Over 2,500 packages shipped</strong> to makers in <strong class="text-[#E06540]">119 countries</strong> worldwide!
+        </p>
+        <p class="font-['Fredoka',sans-serif] font-normal text-base md:text-lg text-[#4A2D24] relative z-10">
+          <span class="text-[#E06540] font-semibold">This summer, we're going even <span class="italic font-bold">bigger!</span></span>
+        </p>
+      </div>
+    </div>
+
+    <% reviews = @high_seas_reviews %>
+    <div class="py-12 md:py-20 px-2 md:px-4 sm:px-8 overflow-hidden">
+      <div class="max-w-6xl mx-auto">
+        <h2 class="head-big text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-8 md:mb-12 text-[#3a2f25] font-['DynaPuff',sans-serif]">
+          What High Seas Participants Say
+        </h2>
+        <div class="relative mx-2 md:mx-15 sm:mx-10 z-20 rotate-0 md:-rotate-3 overflow-x-visible">
+          <div class="carousel-track flex gap-6 md:gap-10 sm:gap-6" data-carousel-target="container" style="margin-left:-8rem;margin-right:-8rem;animation: scroll-left 10s linear infinite;">
+            <% reviews.each_with_index do |review, index| %>
+              <% text = review["text"] || review[:text] %>
+              <% image = review["image"] || review[:image] %>
+              <div class="carousel-slide flex-none w-full max-w-2xl md:max-w-3xl lg:max-w-4xl">
+                <div class="parchment-prize-card p-0 md:p-0 sm:p-0 text-center transition-all duration-300 hover:scale-105 h-56 md:h-64 flex flex-row items-stretch justify-between min-h-[14rem] max-h-[16rem] w-full overflow-hidden">
+                  <div class="parchment-texture absolute inset-0 z-0"></div>
+                  <div class="flex-1 flex flex-col justify-center items-start px-6 py-6 md:px-10 md:py-8 z-10 text-left">
+                    <p class="font-['Fredoka',sans-serif] font-normal text-base md:text-lg text-[#3a2f25] mb-2"> <%= text %> </p>
+                  </div>
+                  <div class="flex items-center justify-center w-40 md:w-56 lg:w-64 h-full p-2 md:p-4">
+                    <img src="<%= image %>" alt="Review image" class="object-cover rounded-xl shadow-lg w-full h-full max-h-48 md:max-h-56 lg:max-h-64">
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
         </div>
+      </div>
     </div>
   </div>
 </div>
@@ -341,7 +369,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 justify-center-safe mx-auto max-w-6xl px-2">
       <div class="transition-all duration-300 hover:-translate-y-1">
         <%= render "shared/card", classes: 'faq-con h-full' do %>
-          <div class="p-3 md:p-5 relative">
+          <div class="p-1 md:p-3 relative">
             <h3 class="font-['DynaPuff'] font-bold text-lg md:text-xl text-[#8B4513] mb-2 md:mb-3 z-10">Who is eligible?</h3>
             <p class="font-['Fredoka'] font-normal text-base md:text-lg text-[#3a2f25] z-10">You need to be a high schooler (or younger).</p>
           </div>
@@ -350,7 +378,7 @@
 
       <div class="transition-all duration-300 hover:-translate-y-1">
         <%= render "shared/card", classes: 'faq-con h-full' do %>
-          <div class="p-3 md:p-5 relative">
+          <div class="p-1 md:p-3 relative">
             <h3 class="font-['DynaPuff'] font-bold text-lg md:text-xl text-[#8B4513] mb-2 md:mb-3 z-10">How much does it cost?</h3>
             <p class="font-['Fredoka'] font-normal text-base md:text-lg text-[#3a2f25] z-10">100% free - all the prizes are donated to us or paid for by us!</p>
           </div>
@@ -359,7 +387,7 @@
 
       <div class="transition-all duration-300 hover:-translate-y-1">
         <%= render "shared/card", classes: 'faq-con h-full' do %>
-          <div class="p-3 md:p-5 relative">
+          <div class="p-1 md:p-3 relative">
             <h3 class="font-['DynaPuff'] font-bold text-lg md:text-xl text-[#8B4513] mb-2 md:mb-3 z-10">What types of projects count?</h3>
             <p class="font-['Fredoka'] font-normal text-base md:text-lg text-[#3a2f25] z-10">Anything that you've programmed and is open-source!</p>
           </div>
@@ -368,7 +396,7 @@
 
       <div class="transition-all duration-300 hover:-translate-y-1">
         <%= render "shared/card", classes: 'faq-con h-full' do %>
-          <div class="p-3 md:p-5 relative">
+          <div class="p-1 md:p-3 relative">
             <h3 class="font-['DynaPuff'] font-bold text-lg md:text-xl text-[#8B4513] mb-2 md:mb-3 z-10">How many projects can I build?</h3>
             <p class="font-['Fredoka'] font-normal text-base md:text-lg text-[#3a2f25] z-10">All the projects! The land's the limit! (But seriously, you could build as many as you want.)</p>
           </div>
@@ -377,20 +405,20 @@
 
       <div class="transition-all duration-300 hover:-translate-y-1">
         <%= render "shared/card", classes: 'faq-con h-full' do %>
-          <div class="p-3 md:p-5 relative">
-            <h3 class="font-['DynaPuff'] font-bold text-lg md:text-xl text-[#8B4513] mb-2 md:mb-3 z-10">I need help!</h3>
-            <p class="font-['Fredoka'] font-normal text-base md:text-lg text-[#3a2f25] z-10">Read the big FAQ. Still stuck? Reach out in #summer-help channel of the Hack Club Slack and we'll help you out!</p>
-          </div>
-        <% end %>
-      </div>
-
-      <div class="transition-all duration-300 hover:-translate-y-1 md:col-span-2 lg:col-span-1">
-        <%= render "shared/card", classes: 'faq-con h-full' do %>
-          <div class="p-3 md:p-5 relative">
+          <div class="p-1 md:p-3 relative">
             <h3 class="font-['DynaPuff'] font-bold text-lg md:text-xl text-[#8B4513] mb-2 md:mb-3 z-10">Is this legit?</h3>
             <p class="font-['Fredoka'] font-normal text-base md:text-lg text-[#3a2f25] z-10">
               Yup! Last winter, we ran <a href="https://highseas.hackclub.com/" target="_blank" class="text-[#8B4513] underline hover:text-[#a8956b] transition-colors font-semibold">High Seas</a>, which gave out over 12,000 prizes with 3,865 projects being shipped, and we have the <a href="https://hcb.hackclub.com/highseas" target="_blank" class="text-[#8B4513] underline hover:text-[#a8956b] transition-colors font-semibold">receipts</a> to prove it.
             </p>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="transition-all duration-300 hover:-translate-y-1">
+        <%= render "shared/card", classes: 'faq-con h-full' do %>
+          <div class="p-1 md:p-3 relative">
+            <h3 class="font-['DynaPuff'] font-bold text-lg md:text-xl text-[#8B4513] mb-2 md:mb-3 z-10">I need help!</h3>
+            <p class="font-['Fredoka'] font-normal text-base md:text-lg text-[#3a2f25] z-10">Still stuck? Reach out in #summer-help channel of the Hack Club Slack and we'll help you out!</p>
           </div>
         <% end %>
       </div>
@@ -429,6 +457,16 @@
   </div>
 
   <div class="flex-grow min-h-[5vh] md:min-h-[10vh] lg:min-h-[10vh]"></div>
+  <footer class="w-full py-8 text-center text-[#f6dbba] font-['Fredoka',sans-serif] text-base md:text-lg opacity-100  z-10">
+    <div class="mb-1">
+      Summer of Making is built with <span class="text-red-500">♥︎</span> from Hack Clubbers around the world.
+    </div>
+    <div>
+      <a href="https://hackclub.com/" target="_blank" class="text-[#f6dbba] font-semibold underline hover:text-[#a8956b] transition-colors">Hack Club</a> ・
+      <a href="https://hackclub.com/clubs/" target="_blank" class="text-[#f6dbba] font-semibold underline hover:text-[#a8956b] transition-colors">Clubs</a> ・
+      <a href="https://hackathons.hackclub.com/" target="_blank" class="text-[#f6dbba] font-semibold underline hover:text-[#a8956b] transition-colors">Hackathons</a>
+    </div>
+  </footer>
 
   <div class="absolute inset-0 pointer-events-none" aria-hidden="true"></div>
 </div>
