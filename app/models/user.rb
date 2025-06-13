@@ -9,7 +9,6 @@
 #  display_name                         :string
 #  email                                :string
 #  first_name                           :string
-#  hackatime_confirmation_shown         :boolean          default(FALSE)
 #  has_black_market                     :boolean
 #  has_clicked_completed_tutorial_modal :boolean          default(FALSE), not null
 #  has_commented                        :boolean          default(FALSE)

@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_13_214740) do
+
+ActiveRecord::Schema[8.0].define(version: 2025_06_13_214348) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -490,7 +491,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_13_214740) do
     t.string "avatar"
     t.boolean "has_commented", default: false
     t.boolean "has_hackatime", default: false
-    t.boolean "hackatime_confirmation_shown", default: false
     t.boolean "is_admin", default: false, null: false
     t.string "identity_vault_id"
     t.string "identity_vault_access_token"
