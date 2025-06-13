@@ -36,6 +36,9 @@
     <% if user_signed_in? %>
       <div data-controller="tutorial">
         <%= render "tutorial/tutorial" %>
+        <% if current_user.tutorial_progress.should_show_completion_modal? %>
+          <%= render "tutorial/completion_modal" %>
+        <% end %>
 
         <div data-controller="sidebar" data-sidebar-collapsed-value="false">
         <% if mobile_device? %>
