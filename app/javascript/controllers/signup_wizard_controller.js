@@ -157,4 +157,19 @@ export default class extends Controller {
       this.close();
     }
   }
+
+  show() {
+    this.uem();
+    this.element.classList.remove("hidden");
+    document.body.classList.add("overflow-hidden");
+    setTimeout(() => {
+      if (this.hasIntroVideoTarget) {
+        this.introVideoTarget.loop = true;
+        this.introVideoTarget.play().catch(() => {
+          // fallback handled in play
+          this.play();
+        });
+      }
+    }, 50);
+  }
 }

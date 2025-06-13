@@ -55,11 +55,7 @@ export default class extends Controller {
         if (z) {
           z.emailValue = x;
           z.emailSent = true;
-
-          y.classList.remove("hidden");
-          document.body.classList.add("overflow-hidden");
-
-          z.initialize();
+          z.show();
         } else {
           y.classList.remove("hidden");
           document.body.classList.add("overflow-hidden");

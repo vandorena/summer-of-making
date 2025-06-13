@@ -21,15 +21,12 @@
       <div data-signup-wizard-target="videoContainer" class="text-center space-y-2">
         <div class="space-y-2 flex flex-col items-center">
           <h3 class="text-center text-2xl font-bold">
-            Invitation sent! You're on your way…
+            Check your email for a message from Slack!
           </h3>
           <p class="text-saddle-taupe text-left max-w-2xl mx-auto">
             <span class="font-extrabold">1. Join Slack</span><span class="font-medium italic"> ← YOU ARE HERE</span><br>
             <span class="font-medium">2. Set up your account</span><br>
             <span class="font-medium">3. Start building</span>
-          </p>
-          <p id="signup-wizard-generic-message" class="text-gray-900 text-left max-w-2xl mx-auto">
-            Here's what's next:
           </p>
         </div>
 
@@ -37,8 +34,6 @@
           <div class="aspect-video bg-gray-800 rounded-lg flex items-center justify-center text-white relative">
             <%= video_tag "count.mp4",
                          controls: true,
-                         autoplay: false,
-                         muted: false,
                          preload: "auto",
                          playsinline: true,
                          loop: true,
@@ -50,7 +45,6 @@
         </div>
       </div>
     </div>
-
     </div>
   </div>
 </div>
