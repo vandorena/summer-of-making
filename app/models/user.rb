@@ -172,10 +172,6 @@ class User < ApplicationRecord
 
     Rails.logger.info("Hackatime projects:= #{result.dig("data", "total_seconds")}")
 
-    if result.dig("data", "total_seconds") > 10
-      update!(has_hackatime_projects: true)
-    end
-
     stats = hackatime_stat || build_hackatime_stat
     stats.update(data: result, last_updated_at: Time.current)
   end
