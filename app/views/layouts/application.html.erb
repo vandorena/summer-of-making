@@ -82,7 +82,13 @@
           vote: new_vote_path,
           shop: shop_path
         } %>
-        <% current_soft_step = soft_step_paths.find { |k, v| current_page?(v) }&.first %>
+        <% current_soft_step = soft_step_paths.find { |k, v| 
+          if k == :explore
+            request.path == '/explore' || current_page?(v)
+          else
+            current_page?(v)
+          end
+        }&.first %>
         <% should_shake = current_soft_step && !current_user.tutorial_progress.soft_step_completed?(current_soft_step) %>
         <% if should_shake %>
           <div class="fixed bottom-16 right-18 z-50" data-tutorial-target="helpButton" data-action="click->tutorial#toggle">
