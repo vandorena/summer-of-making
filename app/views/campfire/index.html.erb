@@ -26,19 +26,24 @@
 
       <div class="space-y-4">
         <!-- Step 1: Hackatime -->
-        <div class="bg-white rounded-lg border p-6" data-step="hackatime">
+        <div class="bg-white rounded-lg border p-6"
+             data-step="hackatime"
+             data-controller="hackatime-status"
+             data-hackatime-status-should-poll-value="<%= @account_status[:hackatime_linked] && !@account_status[:hackatime_setup] %>"
+             data-hackatime-status-check-fill-icon-value="<%= j(inline_svg "icons/check_fill.svg", class: "w-5 h-5 text-green-600") %>"
+             data-hackatime-status-todo-fill-icon-value="<%= j(inline_svg "icons/to_do_fill.svg", class: "w-5 h-5 text-yellow-600") %>">
           <div class="flex items-start space-x-4">
             <div class="flex-shrink-0">
               <% if @account_status[:hackatime_setup] %>
-                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center" data-hackatime-status-target="icon">
                   <%= inline_svg "icons/check_fill.svg", class: "w-5 h-5 text-green-600" %>
                 </div>
               <% elsif @account_status[:hackatime_linked] %>
-                <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center" data-hackatime-status-target="icon">
                   <%= inline_svg "icons/to_do_fill.svg", class: "w-5 h-5 text-yellow-600" %>
                 </div>
               <% else %>
-                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center" data-hackatime-status-target="icon">
                   <%= inline_svg "icons/to_do_fill.svg", class: "w-5 h-5 text-blue-600" %>
                 </div>
               <% end %>
@@ -47,11 +52,11 @@
               <h3 class="text-lg font-semibold text-gray-900 mb-2">Connect your Hackatime account</h3>
               <p class="text-gray-600 mb-4">Hackatime tracks how much you code, and we use that time to give you shells as a reward for all your hard work!</p>
               <% if @account_status[:hackatime_setup] %>
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800" data-hackatime-status-target="status">
                   Connected & Setup done!
                 </span>
               <% elsif @account_status[:hackatime_linked] %>
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-800">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-800" data-hackatime-status-target="status">
                   Waiting for data...
                 </span>
               <% else %>
@@ -247,50 +252,3 @@
     </div>
   <% end %>
 </div>
-
-<% if !current_user.tutorial_progress.completed? %>
-<script>
-function updateHackatimeStatus() {
-  fetch('/campfire/hackatime_status')
-    .then(response => response.json())
-    .then(data => {
-      const stepDiv = document.querySelector('[data-step="hackatime"]');
-      if (!stepDiv) return;
-
-      const iconDiv = stepDiv.querySelector('.flex-shrink-0 > div');
-      const statusSpan = stepDiv.querySelector('span');
-
-      if (data.hackatime_setup) {
-          // green
-          iconDiv.className = 'w-8 h-8 bg-green-100 rounded-full flex items-center justify-center';
-          iconDiv.innerHTML = <%= inline_svg("icons/check_fill.svg", class: "w-5 h-5 text-green-600").to_json %>;
-          statusSpan.className = 'inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800';
-          statusSpan.textContent = 'Connected & Setup done!';
-        } else if (data.hackatime_linked) {
-          // yellow
-          iconDiv.className = 'w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center';
-          iconDiv.innerHTML = <%= inline_svg("icons/to_do_fill.svg", class: "w-5 h-5 text-yellow-600").to_json %>;
-          statusSpan.className = 'inline-flex items-center px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-800';
-          statusSpan.textContent = 'Waiting for data...';
-        }
-    })
-    .catch(error => console.log('Status check failed:', error));
-}
-
-if (<%= (@account_status[:hackatime_linked] && !@account_status[:hackatime_setup]).to_json %>) {
-  const interval = setInterval(() => {
-    updateHackatimeStatus();
-  }, 5000);
-
-  const observer = new MutationObserver(() => {
-    const statusSpan = document.querySelector('[data-step="hackatime"] span');
-    if (statusSpan && statusSpan.textContent.includes('Setup done')) {
-      clearInterval(interval);
-      observer.disconnect();
-    }
-  });
-
-  observer.observe(document.body, { childList: true, subtree: true });
-}
-</script>
-<% end %>
