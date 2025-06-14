@@ -12,6 +12,9 @@ export default class extends Controller {
   dupertrooper() {
     const all = Array.from(this.containerTarget.children);
     const row = this.rowValue || 1;
+    Array.from(
+      this.containerTarget.querySelectorAll("[data-carousel-clone]")
+    ).forEach((el) => el.remove());
 
     const filtered = all.filter((s, i) => {
       if (row === 1) {
@@ -30,6 +33,7 @@ export default class extends Controller {
     const count = filtered.length;
     for (let i = 0; i < count; i++) {
       const clone = filtered[i].cloneNode(true);
+      clone.setAttribute("data-carousel-clone", "true");
       this.containerTarget.appendChild(clone);
     }
   }
@@ -43,9 +47,16 @@ export default class extends Controller {
 
     // Wait for next frame to allow transition to be set
     requestAnimationFrame(() => {
-      const firstSetWidth = track.scrollWidth / 2;
+      const children = Array.from(track.children);
+      const count = children.length / 2; // since we doubled
+      let stopIndex = count - 2;
+      if (stopIndex < 1) stopIndex = 1;
+      let stopOffset = 0;
+      for (let i = 0; i < stopIndex; i++) {
+        stopOffset += children[i].offsetWidth;
+      }
       track.style.transition = "transform 30s linear";
-      track.style.transform = `translateX(-${firstSetWidth}px)`;
+      track.style.transform = `translateX(-${stopOffset}px)`;
 
       // Listen for transition end to reset
       track.addEventListener(
@@ -57,7 +68,7 @@ export default class extends Controller {
           void track.offsetWidth;
           // Restart animation
           track.style.transition = "transform 30s linear";
-          track.style.transform = `translateX(-${firstSetWidth}px)`;
+          track.style.transform = `translateX(-${stopOffset}px)`;
         },
         { once: true }
       );
