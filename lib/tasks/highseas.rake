@@ -7,7 +7,7 @@ namespace :highseas do
       # First, sync with Airtable to get fresh data and URLs
       sync_count = Airtable::HighSeasBook::StorySubmission.sync_with_airtable
       puts "Synced #{sync_count} records with Airtable"
-      
+
       # Now fetch all submissions with fresh data
       submissions = Airtable::HighSeasBook::StorySubmission.all
 
@@ -20,10 +20,10 @@ namespace :highseas do
 
       submissions.each do |submission|
         puts "\nProcessing review: #{submission.id}"
-        
+
         # Debug line to see available fields
         puts "Available fields: #{submission.airtable_fields.keys.join(', ')}"
-        
+
         photos = submission.airtable_fields["Photos (Optional)"]
         if photos.blank?
           puts "- No photos found, skipping..."
