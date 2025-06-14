@@ -1,3 +1,5 @@
+require "open-uri"
+
 class DownloadAirtableImageJob < ApplicationJob
   queue_as :default
 
@@ -12,11 +14,14 @@ class DownloadAirtableImageJob < ApplicationJob
     # do it in a normal way
     begin
       image_uri = URI.parse(url)
-      downloaded_image = image_uri.open
+      downloaded_image = image_uri.open(
+        "User-Agent" => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+      )
       File.binwrite(filepath, downloaded_image.read)
       return "/temp/hsr/#{filename}"
     rescue => e
       Rails.logger.error("fucky wucky while yoinking #{url} #{e.message}")
+      Rails.logger.error(e.backtrace.first(5).join("\n"))
     end
 
     nil
