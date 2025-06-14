@@ -9,15 +9,13 @@ class DownloadAirtableImageJob < ApplicationJob
     filepath = Rails.root.join("public", "temp", "hsr", filename)
     FileUtils.mkdir_p(File.dirname(filepath))
 
-    # this should download the image, keyword should
+    # do it in a normal way
     begin
-      response = Faraday.get(url)
-
-      if response.success?
-        File.binwrite(filepath, response.body)
-        return "/temp/hsr/#{filename}"
-      end
-    rescue StandardError => e
+      image_uri = URI.parse(url)
+      downloaded_image = image_uri.open
+      File.binwrite(filepath, downloaded_image.read)
+      return "/temp/hsr/#{filename}"
+    rescue => e
       Rails.logger.error("fucky wucky while yoinking #{url} #{e.message}")
     end
 
