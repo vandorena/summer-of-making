@@ -366,7 +366,7 @@
           What High Seas Participants Say
         </h2>
         <div class="relative z-20 rotate-0 md:-rotate-3 w-screen ml-[calc(50%-50vw)]" data-controller="carousel">
-          <div class="carousel-track flex gap-6 md:gap-10 sm:gap-6 " data-carousel-target="container" style="animation: scroll-left 40s linear infinite;">
+          <div class="carousel-track flex gap-6 md:gap-10 sm:gap-6 " data-carousel-target="container">
             <% reviews.each_with_index do |review, index| %>
               <% text = review["text"] || review[:text] %>
               <% image = review["image"] || review[:image] %>
