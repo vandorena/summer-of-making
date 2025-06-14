@@ -3,7 +3,7 @@
 class ProjectsController < ApplicationController
   include ActionView::RecordIdentifier
   before_action :authenticate_user!, except: %i[index show]
-  skip_before_action :verify_authenticity_token, only: [:check_link]
+  skip_before_action :verify_authenticity_token, only: [ :check_link ]
   before_action :set_project,
                 only: %i[show edit update follow unfollow ship stake_stonks unstake_stonks destroy]
   before_action :check_if_shipped, only: %i[edit update]
@@ -238,7 +238,7 @@ class ProjectsController < ApplicationController
 
   # Some AI generated code to check if a link is a valid repo or readme link
   def check_link
-    url = params[:url]&.strip&.gsub(/\A"|"\z/, '')
+    url = params[:url]&.strip&.gsub(/\A"|"\z/, "")
     link_type = params[:link_type]
 
     require "net/http"
