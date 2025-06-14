@@ -295,7 +295,7 @@ class User < ApplicationRecord
   end
 
   def notify_xyz_on_verified
-    # if  ysws_verified
+      # if  ysws_verified
       begin
         uri = URI.parse("https://explorpheus.hackclub.com/verified")
         http = Net::HTTP.new(uri.host, uri.port)
