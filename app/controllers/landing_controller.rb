@@ -15,9 +15,12 @@ class LandingController < ApplicationController
         fields = story.airtable_fields || {}
         text = fields["What's one way High Seas had a positive impact on your life?"] || ""
         image = nil
+
         if fields["Photos (Optional)"]&.is_a?(Array) && fields["Photos (Optional)"].any?
-          image = fields["Photos (Optional)"].first["url"]
+          airtable_url = fields["Photos (Optional)"].first["url"]
+          image = story.store_image_locally(airtable_url)
         end
+
         { text: text, image: image }
       end
     rescue => e
