@@ -43,17 +43,17 @@
 
       <div class="relative z-15 flex items-center min-h-screen">
         <div class="w-full mt-12 mb-12 max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-6 items-center">
-          <div class="flex flex-col text-left space-y-3 animate-float mt-12 lg:mt-0 lg:pr-6 items-center" style="font-family: 'Pacifico', sans-serif;">
-            <%= image_tag "logo_text.svg", class: "mb-2" %>
+          <div class="flex flex-col text-left gap-4 animate-float mt-12 lg:mt-0 lg:pr-6 items-center" style="font-family: 'Pacifico', sans-serif;">
+            <%= image_tag "logo_text.svg", class: "mb-2 w-96 sm:w-120" %>
 
-            <div class="flex flex-col space-y-3 items-stretch lg:items-start">
-              <h2 class="head-med text-2xl md:text-3xl mx-auto md:mx-0 text-[#3a2f25] font-medium font-['DynaPuff',sans-serif] -mt-2">
+            <div class="flex flex-col gap-4 items-stretch lg:items-start">
+              <h2 class="text-2xl sm:text-3xl mx-auto md:mx-0 text-[#3a2f25] font-medium font-['DynaPuff',sans-serif] -mt-2">
                 Build stuff. Get stuff. <span class="font-bold text-[#E06540]">Repeat.</span>
               </h2>
               <div class="flex flex-col self-stretch sm:flex-row gap-3 pt-1">
                   <%= render "signup" %>
               </div>
-              <p class="font-['Fredoka',sans-serif] font-normal text-lg md:text-xl self-center text-[#3a2f25]">
+              <p class="font-['Fredoka',sans-serif] font-normal text-lg sm:text-xl self-center text-[#3a2f25]">
                   For teenagers 18 and under. Ends August 31
               </p>
             </div>
@@ -71,7 +71,7 @@
 
 <div class="py-12 md:py-20 px-2 md:px-4 sm:px-8 overflow-hidden" data-controller="video-modal">
   <div class="max-w-6xl mx-auto">
-    <div class="flex flex-col md:flex-row items-center gap-4 md:gap-10 mb-8 md:mb-20">
+    <div class="flex flex-col md:flex-row items-center gap-4 md:gap-10 mb-24 md:mb-36">
       <div class="md:w-1/2 w-full mb-4 md:mb-0 px-2 md:px-0 rotate-0 md:-rotate-2">
         <%= render "shared/container" do %>
           <div class="p-3 md:p-5 relative">
@@ -119,16 +119,16 @@
         <div class="relative flex flex-col md:flex-row gap-4 md:gap-8 mx-auto justify-center items-center md:items-stretch">
           <%= render "shared/card", classes: 'h-full max-w-96 sm:max-w-lg md:max-w-80 lg:max-w-96 animate-wave' do %>
             <div class="p-4 md:p-5 relative text-center">
-              <h3 class="head-med text-xl md:text-2xl font-bold mb-3 md:mb-4 text-[#3a2f25] font-['DynaPuff',sans-serif]">Build Stuff</h3>
+              <h3 class="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-[#3a2f25] font-['DynaPuff',sans-serif]">Build Stuff</h3>
               <p class="font-['Fredoka',sans-serif] font-normal text-base md:text-lg text-[#3a2f25]">
-                Create and ship open-source coding projects, websites, games, apps, tools, to showcase your skills and earn precious <span class="italic">shells<img src="/shell.png" class="inline-block mx-1 mb-1 w-5 h-5" alt="shell"></span>
+                Build websites, games, apps, or any other personal open-source coding projects to showcase your skills and earn precious <span class="italic">shells<img src="/shell.png" class="inline-block mx-1 mb-1 w-5 h-5" alt="shell"></span>
               </p>
             </div>
           <% end %>
 
           <%= render "shared/card", classes: 'h-full max-w-96 sm:max-w-lg md:max-w-80 lg:max-w-96 animate-wave-offset' do %>
             <div class="p-4 md:p-5 relative text-center">
-              <h3 class="head-med text-xl md:text-2xl font-bold mb-3 md:mb-4 text-[#3a2f25] font-['DynaPuff',sans-serif]">Get Stuff</h3>
+              <h3 class="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-[#3a2f25] font-['DynaPuff',sans-serif]">Get Stuff</h3>
               <p class="font-['Fredoka',sans-serif] font-normal text-base md:text-lg text-[#3a2f25]">
                 Redeem your <span class="">shells<img src="/shell.png" class="inline-block mx-1 mb-1 w-5 h-5" alt="shell"></span> for awesome prizes like Raspberry Pis, Server hosting credits, 3D printers, and more to fuel your next creation.
               </p>
@@ -178,16 +178,16 @@
   </div>
 
   <%# prize section %>
-  <div class="max-w-9xl mx-auto mt-12 md:mt-25 px-2 md:px-0 rotate-0 md:-rotate-2">
+  <div class="max-w-9xl mx-auto mb-12 md:mt-25 px-2 md:px-0 rotate-0 md:-rotate-2">
     <%= render "shared/container", classes: 'mx-auto max-w-7xl w-full relative' do %>
       <div class="p-3 md:p-5 relative">
         <div class="parchment-texture"></div>
 
-        <h2 class="head-big text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-3 md:mb-4 text-[#4A2D24] relative font-['DynaPuff',sans-serif]">
+        <h2 class="text-4xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-3 md:mb-4 text-[#4A2D24] relative font-['DynaPuff',sans-serif]">
           Amazing Prizes
         </h2>
-        <p class="font-['Fredoka',sans-serif] font-normal text-center text-lg md:text-xl mb-8 md:mb-16 text-[#8B4513] opacity-90 px-2">
-          These are some of the things we're giving away this summer (and about how long it takes to earn them)!
+        <p class="font-['Fredoka',sans-serif] font-normal text-center text-md sm:text-lg md:text-xl lg:text-2xl mx-3 mb-6 md:mb-12 text-[#8B4513] opacity-90 px-2">
+          Work hard on meaningful personal projects <br class="block sm:block lg:hidden">and you will be rewarded—we promise!
         </p>
 
         <div class="relative mx-2 md:mx-15 sm:mx-10 z-20 rotate-0 md:-rotate-3" data-controller="carousel" data-carousel-row-value="1">
@@ -250,11 +250,14 @@
   </div>
 
   <div class="max-w-7xl mx-auto text-center relative z-10 px-2 md:px-4">
-    <h2 class="head-big text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-6 md:mb-8 text-[#3a2f25] font-['DynaPuff',sans-serif]">
-      Last Time Was Epic!
+    <%# <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-6 md:mb-8 text-[#3a2f25] font-['DynaPuff',sans-serif]">
+      Last Time Was F#@!ing <span class="italic text-[#E06540]">Biblical.</span>
+    </h2> %>
+    <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-6 md:mb-8 text-[#3a2f25] font-['DynaPuff',sans-serif]">
+      Last Time Was <span class="italic text-[#E06540]">Monumental.</span>
     </h2>
     <p class="font-['Fredoka',sans-serif] font-normal text-lg md:text-xl mb-8 md:mb-16 text-[#4A2D24] opacity-90 max-w-3xl mx-auto px-4">
-      In our previous event, High Seas we shipped incredible prizes to makers around the world. Here's what we gave away:
+      Last winter we shipped over <span class="font-semibold text-[#E06540]">$330,000</span> worth of incredible prizes to makers around the world for an event called <span class="font-semibold text-[#E06540]">High Seas</span>. Here's just some of what we gave away:
     </p>
 
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 lg:gap-8 max-w-6xl mx-auto px-2">
@@ -367,15 +370,15 @@
             <% reviews.each_with_index do |review, index| %>
               <% text = review["text"] || review[:text] %>
               <% image = review["image"] || review[:image] %>
-              <div class="carousel-slide flex-none w-full max-w-md md:max-w-lg lg:max-w-xl">
-                <div class="parchment-prize-card p-0 md:p-0 sm:p-0 text-center transition-all duration-300 hover:scale-105 h-56 md:h-64 flex flex-row items-stretch justify-between min-h-[14rem] max-h-[16rem] w-full overflow-hidden">
+              <div class="carousel-slide flex-none w-full max-w-2xl md:max-w-3xl lg:max-w-2xl">
+                <div class="parchment-prize-card p-0 md:p-0 sm:p-0 text-center transition-all duration-300 hover:scale-105 h-64 md:h-72 flex flex-row items-stretch justify-between min-h-[16rem] max-h-[28rem] w-full overflow-hidden">
                   <div class="parchment-texture absolute inset-0 z-0"></div>
-                  <div class="flex-1 flex flex-col justify-center items-start px-6 py-6 md:px-10 md:py-8 z-10 text-left">
-                    <p class="font-['Fredoka',sans-serif] text-sm md:text-base text-[#3a2f25] mb-2"><%= text %></p>
+                  <div class="flex-1 flex flex-col justify-center items-start px-4 py-4 md:px-6 md:py-6 z-10 text-left">
+                    <p class="font-['Fredoka',sans-serif] text-sm md:text-base text-[#3a2f25] leading-relaxed mb-2"><%= text %></p>
                   </div>
                   <% if image.present? %>
-                    <div class="flex-shrink-0 flex items-center justify-center w-32 md:w-40 lg:w-48 h-full p-2 md:p-3">
-                      <%= image_tag get_review_image_path(image), alt: "High Seas participant photo", class: "object-contain rounded-lg max-h-40 md:max-h-48 max-w-full" %>
+                    <div class="flex-shrink-0 flex items-center justify-center w-40 md:w-48 lg:w-56 h-full p-2 md:p-3">
+                      <%= image_tag get_review_image_path(image), alt: "High Seas participant photo", class: "object-contain rounded-lg max-h-48 md:max-h-56 max-w-full" %>
                     </div>
                   <% end %>
                 </div>
@@ -417,7 +420,7 @@
         <%= render "shared/card", classes: 'faq-con h-full' do %>
           <div class="p-1 md:p-3 relative">
             <h3 class="font-['DynaPuff'] font-bold text-lg md:text-xl text-[#8B4513] mb-2 md:mb-3 z-10">What types of projects count?</h3>
-            <p class="font-['Fredoka'] font-normal text-base md:text-lg text-[#3a2f25] z-10">Anything that you've programmed and is open-source!</p>
+            <p class="font-['Fredoka'] font-normal text-base md:text-lg text-[#3a2f25] z-10">Anything open-source that you code over the summer!</p>
           </div>
         <% end %>
       </div>
@@ -426,7 +429,7 @@
         <%= render "shared/card", classes: 'faq-con h-full' do %>
           <div class="p-1 md:p-3 relative">
             <h3 class="font-['DynaPuff'] font-bold text-lg md:text-xl text-[#8B4513] mb-2 md:mb-3 z-10">How many projects can I build?</h3>
-            <p class="font-['Fredoka'] font-normal text-base md:text-lg text-[#3a2f25] z-10">All the projects! The land's the limit! (But seriously, you could build as many as you want.)</p>
+            <p class="font-['Fredoka'] font-normal text-base md:text-lg text-[#3a2f25] z-10">All the projects! The sky's the limit! Build as many as you want.</p>
           </div>
         <% end %>
       </div>
@@ -436,7 +439,7 @@
           <div class="p-1 md:p-3 relative">
             <h3 class="font-['DynaPuff'] font-bold text-lg md:text-xl text-[#8B4513] mb-2 md:mb-3 z-10">Is this legit?</h3>
             <p class="font-['Fredoka'] font-normal text-base md:text-lg text-[#3a2f25] z-10">
-              Yup! Last winter, we ran <a href="https://highseas.hackclub.com/" target="_blank" class="text-[#8B4513] underline hover:text-[#a8956b] transition-colors font-semibold">High Seas</a>, which gave out over 12,000 prizes with 3,865 projects being shipped, and we have the <a href="https://hcb.hackclub.com/highseas" target="_blank" class="text-[#8B4513] underline hover:text-[#a8956b] transition-colors font-semibold">receipts</a> to prove it.
+              Yup! Last winter, we ran <a href="https://highseas.hackclub.com/" target="_blank" class="text-[#8B4513] underline hover:text-[#a8956b] transition-colors font-semibold">High Seas</a>, which gave out over 12,000 prizes with 3,865 projects shipped, and we have the <a href="https://hcb.hackclub.com/highseas" target="_blank" class="text-[#8B4513] underline hover:text-[#a8956b] transition-colors font-semibold">receipts</a> to prove it.
             </p>
           </div>
         <% end %>
@@ -446,7 +449,7 @@
         <%= render "shared/card", classes: 'faq-con h-full' do %>
           <div class="p-1 md:p-3 relative">
             <h3 class="font-['DynaPuff'] font-bold text-lg md:text-xl text-[#8B4513] mb-2 md:mb-3 z-10">I need help!</h3>
-            <p class="font-['Fredoka'] font-normal text-base md:text-lg text-[#3a2f25] z-10">Still stuck? Reach out in #summer-help channel of the Hack Club Slack and we'll help you out!</p>
+            <p class="font-['Fredoka'] font-normal text-base md:text-lg text-[#3a2f25] z-10">Stuck on something or have a question? Contact support in the <span class="font-semibold text-[#E06540]">#summer-of-making-help</span> channel in the Hack Club Slack.</p>
           </div>
         <% end %>
       </div>
