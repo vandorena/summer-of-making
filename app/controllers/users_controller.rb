@@ -38,7 +38,12 @@ class UsersController < ApplicationController
   end
 
   def identity_vault_callback
-    current_user.link_identity_vault_callback(identity_vault_callback_url, params[:code])
+    begin
+      current_user.link_identity_vault_callback(identity_vault_callback_url, params[:code])
+    rescue StandardError => e
+      uuid = Honeybadger.notify(e)
+      redirect_to shop_path, alert: "Couldn't link identity: #{e.message} (ask support about error ID #{uuid}?)"
+    end
     redirect_to order_shop_item_path(ShopItem::FreeStickers.first), notice: "Successfully linked your identity!"
   end
 

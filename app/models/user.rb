@@ -229,10 +229,16 @@ class User < ApplicationRecord
     access_token = code_response[:access_token]
 
     idv_data = fetch_idv(access_token)
+    identity_vault_id = idv_data.dig(:identity, :id)
+
+    # Ensure no other user has this identity_vault_id linked already
+    if User.where.not(id:).exists?(identity_vault_id:)
+      raise StandardError, "Another user already has this identity linked."
+    end
 
     update!(
       identity_vault_access_token: access_token,
-      identity_vault_id: idv_data.dig(:identity, :id),
+      identity_vault_id:,
       ysws_verified: idv_data.dig(:identity,
                                   :verification_status) == "verified" && idv_data.dig(:identity, :ysws_eligible)
     )
