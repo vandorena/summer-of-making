@@ -47,6 +47,14 @@ gem "thruster", require: false
 # Monitoring performance
 gem "skylight"
 
+# For call-stack profiling flamegraphs
+gem "stackprof"
+# Rack Mini Profiler [https://github.com/MiniProfiler/rack-mini-profiler]
+gem "rack-mini-profiler", require: false
+# For memory profiling via RMP
+gem "memory_profiler"
+gem "flamegraph"
+
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 
@@ -78,8 +86,6 @@ group :development do
 
   # Auto-reload pages after a code change
   gem "rails_live_reload"
-
-  gem "rack-mini-profiler", "~> 4.0", require: false
 
   # For catching N+1 queries and unused eager loading [https://github.com/flyerhzm/bullet]
   gem "bullet"
