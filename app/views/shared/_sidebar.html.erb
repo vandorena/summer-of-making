@@ -10,146 +10,147 @@
 <div
   class="flex flex-col transition-all duration-300 text-[#4A2D24] h-full w-[220px] justify-between"
   data-sidebar-target="sidebar">
-  <% if false %>
-  <div class="flex justify-between items-center">
-    <div class="cursor-pointer">
-      <%= link_to payouts_path, class: "flex items-center gap-2 ml-4" do %>
-        <img src="/shell.png" alt="shell" width=32>
-        <p class="text-[#fad85c] text-xl data-[sidebar-collapsed=true]:hidden" data-sidebar-collapsed="false"><%= current_user.balance %></p>
-      <% end %>
+  
+  <div class="flex flex-col">
+    <div class="flex justify-end px-2 py-1.5 h-[40px]">
+      <button 
+        class="p-1 hover:bg-[#4A2D24]/10 rounded-lg transition-all"
+        data-sidebar-target="pinButton"
+        data-action="click->sidebar#togglePin">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rotate-45 transition-transform" data-sidebar-target="pinIcon" viewBox="0 0 24 24"><path fill="currentColor" d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h2.6v-6H19v-2z"/></svg>
+      </button>
     </div>
-  </div>
-  <% end %>
 
-  <nav class="flex items-center text-justify text-3xl 2xl:text-4xl">
-    <ul class="space-y-1 w-full transition-transform duration-150" data-sidebar-target="links">
-      <li class="flex justify-start">
-        <%= render partial: "shared/link", locals: {
-          target: campfire_path,
-          text: "Campfire",
-          icon: "campfire",
-          large: true,
-          highlight: current_page?(campfire_path),
-          text_attr: {
-            data: { sidebar_target: "collapseFade" },
-            class: "text-3xl"
-          },
-          underline_attr: { data: { sidebar_target: "underline" } }
-        } %>
-      </li>
-
-      <li class="flex justify-start">
-        <% if current_user.identity_vault_id.present? && current_user.verification_status != :ineligible %>
-          <%= render partial: "shared/link", locals: {
-            target: explore_path,
-            text: "Explore",
-            icon: "compass",
-            large: true,
-            highlight: current_page?(explore_path),
-            text_attr: {
-              data: { sidebar_target: "collapseFade" },
-              class: "text-3xl"
-            },
-            underline_attr: { data: { sidebar_target: "underline" } }
-          } %>
-        <% else %>
-          <%= render partial: "shared/link", locals: {
-            target: explore_path,
-            text: "Explore",
-            icon: "lock",
-            large: true,
-            highlight: current_page?(explore_path),
-            text_attr: {
-              data: { sidebar_target: "collapseFade" },
-              class: "text-3xl"
-            },
-            class: "opacity-50 cursor-not-allowed"
-          } %>
-        <% end %>
-      </li>
-
-      <li class="flex justify-start">
-        <% if current_user.identity_vault_id.present? && current_user.verification_status != :ineligible %>
-          <%= render partial: "shared/link", locals: {
-            target: my_projects_path,
-            text: "Projects",
-            icon: "user",
-            large: true,
-            highlight: current_page?(my_projects_path),
-            text_attr: {
-              data: { sidebar_target: "collapseFade" },
-              class: "text-3xl"
-            },
-            underline_attr: { data: { sidebar_target: "underline" } }
-          } %>
-        <% else %>
-          <%= render partial: "shared/link", locals: {
-            text: "Projects",
-            icon: "lock",
-            large: true,
-            as_button: { disabled: true },
-            text_attr: {
-              data: { sidebar_target: "collapseFade" },
-              class: "text-3xl"
-            },
-            class: "opacity-50 cursor-not-allowed"
-          } %>
-        <% end %>
-      </li>
-
-      <li class="flex justify-start">
-        <% if current_user.identity_vault_id.present? && current_user.verification_status != :ineligible %>
-          <%= render partial: "shared/link", locals: {
-            target: new_vote_path,
-            text: "Vote",
-            icon: "vote",
-            large: true,
-            highlight: current_page?(new_vote_path),
-            text_attr: {
-              data: { sidebar_target: "collapseFade" },
-              class: "text-3xl"
-            },
-            underline_attr: { data: { sidebar_target: "underline" } }
-          } %>
-        <% else %>
-          <%= render partial: "shared/link", locals: {
-            text: "Vote",
-            icon: "lock",
-            large: true,
-            as_button: { disabled: true },
-            text_attr: {
-              data: { sidebar_target: "collapseFade" },
-              class: "text-3xl"
-            },
-            class: "opacity-50 cursor-not-allowed"
-          } %>
-        <% end %>
-      </li>
-
-      <li class="flex justify-start">
-        <%= render partial: "shared/link", locals: {
-          target: shop_path,
-          text: "Shop",
-          icon: "shop",
-          large: true,
-          highlight: current_page?(shop_path),
-          text_attr: {
-            data: { sidebar_target: "collapseFade" },
-            class: "text-3xl"
-          },
-          underline_attr: { data: { sidebar_target: "underline" } }
-        } %>
-      </li>
-
-      <% admin_tool do %>
+    <nav class="flex items-center text-justify text-3xl 2xl:text-4xl">
+      <ul class="space-y-1 w-full transition-transform duration-150" data-sidebar-target="links">
         <li class="flex justify-start">
-          <%= link_to admin_root_path, class: "px-4 py-2 block" do %>
-            <span class="ml-2 data-[sidebar-collapsed=true]:hidden" data-sidebar-collapsed="false">Admin</span>
+          <%= render partial: "shared/link", locals: {
+            target: campfire_path,
+            text: "Campfire",
+            icon: "campfire",
+            large: true,
+            highlight: current_page?(campfire_path),
+            text_attr: {
+              data: { sidebar_target: "collapseFade" },
+              class: "text-3xl"
+            },
+            underline_attr: { data: { sidebar_target: "underline" } }
+          } %>
+        </li>
+
+        <li class="flex justify-start">
+          <% if current_user.identity_vault_id.present? && current_user.verification_status != :ineligible %>
+            <%= render partial: "shared/link", locals: {
+              target: explore_path,
+              text: "Explore",
+              icon: "compass",
+              large: true,
+              highlight: current_page?(explore_path),
+              text_attr: {
+                data: { sidebar_target: "collapseFade" },
+                class: "text-3xl"
+              },
+              underline_attr: { data: { sidebar_target: "underline" } }
+            } %>
+          <% else %>
+            <%= render partial: "shared/link", locals: {
+              target: explore_path,
+              text: "Explore",
+              icon: "lock",
+              large: true,
+              highlight: current_page?(explore_path),
+              text_attr: {
+                data: { sidebar_target: "collapseFade" },
+                class: "text-3xl"
+              },
+              class: "opacity-50 cursor-not-allowed"
+            } %>
           <% end %>
         </li>
-      <% end %>
-    </ul>
-  </nav>
+
+        <li class="flex justify-start">
+          <% if current_user.identity_vault_id.present? && current_user.verification_status != :ineligible %>
+            <%= render partial: "shared/link", locals: {
+              target: my_projects_path,
+              text: "Projects",
+              icon: "user",
+              large: true,
+              highlight: current_page?(my_projects_path),
+              text_attr: {
+                data: { sidebar_target: "collapseFade" },
+                class: "text-3xl"
+              },
+              underline_attr: { data: { sidebar_target: "underline" } }
+            } %>
+          <% else %>
+            <%= render partial: "shared/link", locals: {
+              text: "Projects",
+              icon: "lock",
+              large: true,
+              as_button: { disabled: true },
+              text_attr: {
+                data: { sidebar_target: "collapseFade" },
+                class: "text-3xl"
+              },
+              class: "opacity-50 cursor-not-allowed"
+            } %>
+          <% end %>
+        </li>
+
+        <li class="flex justify-start">
+          <% if current_user.identity_vault_id.present? && current_user.verification_status != :ineligible %>
+            <%= render partial: "shared/link", locals: {
+              target: new_vote_path,
+              text: "Vote",
+              icon: "vote",
+              large: true,
+              highlight: current_page?(new_vote_path),
+              text_attr: {
+                data: { sidebar_target: "collapseFade" },
+                class: "text-3xl"
+              },
+              underline_attr: { data: { sidebar_target: "underline" } }
+            } %>
+          <% else %>
+            <%= render partial: "shared/link", locals: {
+              text: "Vote",
+              icon: "lock",
+              large: true,
+              as_button: { disabled: true },
+              text_attr: {
+                data: { sidebar_target: "collapseFade" },
+                class: "text-3xl"
+              },
+              class: "opacity-50 cursor-not-allowed"
+            } %>
+          <% end %>
+        </li>
+
+        <li class="flex justify-start">
+          <%= render partial: "shared/link", locals: {
+            target: shop_path,
+            text: "Shop",
+            icon: "shop",
+            large: true,
+            highlight: current_page?(shop_path),
+            text_attr: {
+              data: { sidebar_target: "collapseFade" },
+              class: "text-3xl"
+            },
+            underline_attr: { data: { sidebar_target: "underline" } }
+          } %>
+        </li>
+
+        <% admin_tool do %>
+          <li class="flex justify-start">
+            <%= link_to admin_root_path, class: "px-4 py-2 block" do %>
+              <span class="ml-2 data-[sidebar-collapsed=true]:hidden" data-sidebar-collapsed="false">Admin</span>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </nav>
+  </div>
 
   <div class="flex flex-col gap-4">
     <div class="relative flex flex-col items-start">
