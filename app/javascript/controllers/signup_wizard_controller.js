@@ -43,11 +43,19 @@ export default class extends Controller {
       button.classList.add("opacity-75");
     }
     this.sendEmail(x)
-      .then(() => {
+      .then((data) => {
         if (button) {
           button.textContent = originalText;
           button.disabled = false;
           button.classList.remove("opacity-75");
+        }
+        if (
+          data.invites &&
+          data.invites[0] &&
+          data.invites[0].error === "already_in_team"
+        ) {
+          window.location.href = window.location.origin + "/auth/slack";
+          return;
         }
         const modal = document.getElementById("signup-wizard");
         if (modal) {
@@ -157,6 +165,16 @@ export default class extends Controller {
           });
         }
       }, 50);
+    }
+  }
+
+  hide() {
+    if (this.hasModalTarget) {
+      this.modalTarget.classList.add("hidden");
+      document.body.classList.remove("overflow-hidden");
+      if (this.hasIntroVideoTarget) {
+        this.introVideoTarget.pause();
+      }
     }
   }
 }

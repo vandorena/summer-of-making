@@ -9,7 +9,6 @@
 #  display_name                         :string
 #  email                                :string
 #  first_name                           :string
-#  hackatime_confirmation_shown         :boolean          default(FALSE)
 #  has_black_market                     :boolean
 #  has_clicked_completed_tutorial_modal :boolean          default(FALSE), not null
 #  has_commented                        :boolean          default(FALSE)
@@ -20,6 +19,7 @@
 #  is_admin                             :boolean          default(FALSE), not null
 #  last_name                            :string
 #  timezone                             :string
+#  tutorial_video_seen                  :boolean          default(FALSE), not null
 #  ysws_verified                        :boolean          default(FALSE)
 #  created_at                           :datetime         not null
 #  updated_at                           :datetime         not null
@@ -128,18 +128,17 @@ class User < ApplicationRecord
   end
 
   def hackatime_projects
-    return [] unless has_hackatime?
-
     projects = hackatime_stat&.data&.dig("data", "projects") || []
 
-    projects.map do |project|
-      {
-        key: project["name"],
+    projects
+      .map { |project| {
+        key: project["name"], # Deprecated
         name: project["name"],
         total_seconds: project["total_seconds"],
         formatted_time: project["text"]
-      }
-    end.sort_by { |p| p[:name] }
+      }}
+      .reject { |p| [ "<<LAST_PROJECT>>", "Other" ].include?(p[:name]) }
+      .sort_by { |p| p[:name] }
   end
 
   def format_seconds(seconds)
@@ -170,9 +169,9 @@ class User < ApplicationRecord
 
     return if projects.empty?
 
-    unless has_hackatime?
-      update!(has_hackatime: true)
-    end
+    update!(has_hackatime: true) unless has_hackatime?
+
+    Rails.logger.info("Hackatime projects:= #{result.dig("data", "total_seconds")}")
 
     stats = hackatime_stat || build_hackatime_stat
     stats.update(data: result, last_updated_at: Time.current)
@@ -275,6 +274,7 @@ class User < ApplicationRecord
       :needs_resubmission
     when "verified"
       if idv_data[:ysws_eligible]
+        notify_xyz_on_verified()
         :verified
       else
         :ineligible
@@ -292,5 +292,29 @@ class User < ApplicationRecord
 
   def create_tutorial_progress
     TutorialProgress.create!(user: self)
+  end
+
+  def notify_xyz_on_verified
+      # if  ysws_verified
+      begin
+        uri = URI.parse("https://explorpheus.hackclub.com/verified")
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = true
+
+        request = Net::HTTP::Post.new(uri)
+        request["Content-Type"] = "application/json"
+        request.body = JSON.generate({
+          token: Rails.application.credentials.explorpheus.token,
+          slack_id: slack_id,
+          email: email,
+        })
+
+  # Send the request
+        response = http.request(request)
+        response
+      rescue => e
+        Rails.logger.error("Failed to notify xyz.hackclub.com: #{e.message}")
+      end
+    # end
   end
 end

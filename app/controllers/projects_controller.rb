@@ -117,7 +117,6 @@ class ProjectsController < ApplicationController
 
   def my_projects
     @projects = current_user.projects.order(created_at: :desc)
-    @show_create_project = true
 
     current_user.refresh_hackatime_data if current_user.has_hackatime?
   end

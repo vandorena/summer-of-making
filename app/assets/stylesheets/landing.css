@@ -173,7 +173,7 @@ body::before {
 }
 
 .animate-wave-offset {
-  animation: wave 4s ease-in-out 2s infinite;
+  animation: wave 4s ease-in-out 1.3s infinite;
 }
 
 .animate-wave-up {
