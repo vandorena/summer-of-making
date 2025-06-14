@@ -9,6 +9,7 @@ const COLLAPSE_DELAY = 250;
 const FADE_DURATION = "200";
 
 const SS_SIDEBAR_EXPANDED_KEY = "som.sidebarExpanded";
+const SS_SIDEBAR_PINNED_KEY = "som.sidebarPinned";
 
 export default class extends Controller {
   static targets = [
@@ -17,26 +18,33 @@ export default class extends Controller {
     "collapseHide",
     "collapseFade",
     "underline",
-    "links"
-  ]
+    "links",
+    "pinButton",
+    "pinIcon",
+  ];
 
   connect() {
-    this.expanded = true
-    this.transitioning = false
-    this.mouseEntered = false
-    this.animationTimers = []
-    this.prevKnownSize = this.hasSidebarTarget ? this.sidebarTarget.clientWidth + "px" : "100px";
+    this.expanded = true;
+    this.transitioning = false;
+    this.mouseEntered = false;
+    this.animationTimers = [];
+    this.prevKnownSize = this.hasSidebarTarget
+      ? this.sidebarTarget.clientWidth + "px"
+      : "100px";
+    this.pinned = sessionStorage.getItem(SS_SIDEBAR_PINNED_KEY) === "true";
 
-    this.collapseFadeTargets.forEach(element => {
-      element.classList.add("transition-opacity", `duration-${FADE_DURATION}`)
-    })
+    this.collapseFadeTargets.forEach((element) => {
+      element.classList.add("transition-opacity", `duration-${FADE_DURATION}`);
+    });
 
-    if (sessionStorage.getItem(SS_SIDEBAR_EXPANDED_KEY) === "false") {
+    if (this.pinned) {
+      this.expand();
+      this.pinIconTarget.classList.remove("rotate-45");
+    } else if (sessionStorage.getItem(SS_SIDEBAR_EXPANDED_KEY) === "false") {
       // In this session, the sidebar *wasn't* previously expanded. This probably
       // means that the user navigated somewhere without the use of the sidebar.
       this.collapse(true);
-    }
-    else {
+    } else {
       // In this session, there either wasn't any interaction with the sidebar before (null)
       // or the sidebar was expanded.
       //
@@ -57,16 +65,16 @@ export default class extends Controller {
   /**
    * Queues an animation task to run after the specified amount of milliseconds. Animation
    * timers may be interrupted if another animation is played.
-   * @param {number} delay 
-   * @param {TimerHandler} handler 
+   * @param {number} delay
+   * @param {TimerHandler} handler
    */
   registerAnimationTimer(delay, handler) {
     const timerId = setTimeout(() => {
-      this.animationTimers = this.animationTimers.filter(x => x != timerId)
-      handler()
-    }, delay)
+      this.animationTimers = this.animationTimers.filter((x) => x != timerId);
+      handler();
+    }, delay);
 
-    this.animationTimers.push(timerId)
+    this.animationTimers.push(timerId);
   }
 
   interruptAnimationTimers() {
@@ -76,51 +84,59 @@ export default class extends Controller {
 
     this.animationTimers = [];
   }
-  
-  disconnect() {
+
+  disconnect() {}
+
+  togglePin(event) {
+    event.preventDefault();
+    this.pinned = !this.pinned;
+    sessionStorage.setItem(SS_SIDEBAR_PINNED_KEY, this.pinned.toString());
+
+    if (this.pinned) {
+      this.expand();
+      this.pinIconTarget.classList.remove("rotate-45");
+    } else {
+      this.pinIconTarget.classList.add("rotate-45");
+      if (!this.mouseEntered) {
+        this.collapse();
+      }
+    }
   }
 
   /**
-   * @param {MouseEvent} event 
+   * @param {MouseEvent} event
    */
   handleMouseEnter(event) {
-    if (this.transitioning) {
-      console.log("'handleMouseEnter' invoked while playing the sidebar transition animation. Ignoring.");
+    if (this.transitioning || this.pinned) {
       return;
     }
 
     // As soon as the user touches the sidebar, expand it.
     if (!this.expanded) {
-      this.expand()
+      this.expand();
     }
 
-    this.mouseEntered = true
+    this.mouseEntered = true;
   }
 
   /**
-   * @param {MouseEvent} event 
+   * @param {MouseEvent} event
    */
   handleMouseExit(event) {
-    this.mouseEntered = false
+    this.mouseEntered = false;
 
-    if (this.transitioning) {
-      this.registerAnimationTimer(100, () => {
-        if (!this.mouseEntered) {
-          this.handleMouseExit(event);
-        }
-      });
-
+    if (this.transitioning || this.pinned) {
       return;
     }
 
     setTimeout(() => {
       // If after .5s the user hasn't moved the mouse back inside the sidebar, hide it.
-      if (!this.mouseEntered) {
-        this.collapse()
+      if (!this.mouseEntered && !this.pinned) {
+        this.collapse();
       }
-    }, COLLAPSE_DELAY)
+    }, COLLAPSE_DELAY);
   }
-  
+
   toggle(event) {
     if (event) {
       event.stopPropagation();
@@ -134,13 +150,12 @@ export default class extends Controller {
   }
 
   collapse(immediate = false) {
-    if (!this.expanded)
-      return;
+    if (!this.expanded) return;
 
     this.interruptAnimationTimers();
 
     // Each element that needs to be hidden when the sidebar is collapsed should
-    // be marked with the "collapseHide" target. 
+    // be marked with the "collapseHide" target.
     //
     // We want a nice width scaling animation, but CSS can realistically only do that
     // when the property actually *changes*... if `width` is 100% and something changes
@@ -151,63 +166,57 @@ export default class extends Controller {
     // and then, one animation frame later, we set the width to a known, expected value.
     if (!immediate) {
       this.transitioning = true;
-      this.sidebarTarget.style.width = this.prevKnownSize = `${this.sidebarTarget.clientWidth}px`;
-      
+      this.sidebarTarget.style.width =
+        this.prevKnownSize = `${this.sidebarTarget.clientWidth}px`;
+
       setTimeout(() => {
         this.sidebarTarget.style.width = "48px";
         this.transitioning = false;
       }, 16);
-    }
-    else {
+    } else {
       // We don't want a transition, so just set it out-right.
       this.sidebarTarget.classList.add("disable-transitions");
       this.sidebarTarget.style.width = "48px";
 
-      setTimeout(() => this.sidebarTarget.classList.remove("disable-transitions"), 1);
+      setTimeout(
+        () => this.sidebarTarget.classList.remove("disable-transitions"),
+        1
+      );
     }
 
-    this.sidebarTarget.classList.add("collapsed")
-    this.collapseHideTargets.forEach(element => {
-      element.classList.add("hidden")
-    })
+    this.sidebarTarget.classList.add("collapsed");
+    this.collapseHideTargets.forEach((element) => {
+      element.classList.add("hidden");
+    });
 
-    this.collapseFadeTargets.forEach(element => {
-      element.classList.add("opacity-0")
-    })
+    this.collapseFadeTargets.forEach((element) => {
+      element.classList.add("opacity-0");
+    });
 
-    // We can't hide these targets, since that would cause a nasty layout shift.
-    // However, if we *don't* hide the targets, that would mean that someone of them
-    // would "stick out" of the sidebar, even if they're invisible and not contributing
-    // to the box model. This would mean that we'd detect a hover event even if the user
-    // isn't actually hovering over the sidebar.
-    //
-    // We change the width of these elements to 0px, so that they still contribute to the
-    // vertical layout, but don't "stick out". This will probably need to be changed if
-    // we define any collapseFade targets that meaningfully contribute to the horizontal
-    // box model.
+    this.pinButtonTarget.classList.add("opacity-0");
+
     this.registerAnimationTimer(250, () => {
-      this.collapseFadeTargets.forEach(element => {
-        element.classList.add("w-[0px]")
-      })
-    })
+      this.collapseFadeTargets.forEach((element) => {
+        element.classList.add("w-[0px]");
+      });
+    });
 
-    this.underlineTargets.forEach(element => {
-      element.classList.remove("w-full")
-      element.classList.add("w-[36px]")
-      element.style.transform = "translateX(-10px)"
-    })
+    this.underlineTargets.forEach((element) => {
+      element.classList.remove("w-full");
+      element.classList.add("w-[36px]");
+      element.style.transform = "translateX(-10px)";
+    });
 
     if (this.hasLinksTarget) {
       this.linksTarget.style.transform = "translateX(5px)";
     }
-  
-    this.expanded = false
-    sessionStorage.setItem(SS_SIDEBAR_EXPANDED_KEY, "false")
+
+    this.expanded = false;
+    sessionStorage.setItem(SS_SIDEBAR_EXPANDED_KEY, "false");
   }
 
   expand() {
-    if (this.expanded)
-      return;
+    if (this.expanded) return;
 
     this.interruptAnimationTimers();
     this.transitioning = true;
@@ -216,31 +225,33 @@ export default class extends Controller {
     this.sidebarTarget.style.overflowX = "hidden";
 
     this.registerAnimationTimer(150, () => {
-      this.sidebarTarget.style.width = ""
-      this.sidebarTarget.style.overflowX = ""
-      this.transitioning = false
-    })
+      this.sidebarTarget.style.width = "";
+      this.sidebarTarget.style.overflowX = "";
+      this.transitioning = false;
+    });
 
-    this.sidebarTarget.classList.remove("collapsed", "w-[30px]")
-    this.collapseHideTargets.forEach(element => {
-      element.classList.remove("hidden")
-    })
+    this.sidebarTarget.classList.remove("collapsed", "w-[30px]");
+    this.collapseHideTargets.forEach((element) => {
+      element.classList.remove("hidden");
+    });
 
-    this.collapseFadeTargets.forEach(element => {
-      element.classList.remove("opacity-0", "w-[0px]")
-    })
+    this.collapseFadeTargets.forEach((element) => {
+      element.classList.remove("opacity-0", "w-[0px]");
+    });
 
-    this.underlineTargets.forEach(element => {
-      element.classList.add("w-full")
-      element.classList.remove("w-[36px]")
+    this.pinButtonTarget.classList.remove("opacity-0");
+
+    this.underlineTargets.forEach((element) => {
+      element.classList.add("w-full");
+      element.classList.remove("w-[36px]");
       element.style.transform = "";
-    })
+    });
 
     if (this.hasLinksTarget) {
       this.linksTarget.style.transform = "";
     }
 
-    this.expanded = true
-    sessionStorage.setItem(SS_SIDEBAR_EXPANDED_KEY, "true")
+    this.expanded = true;
+    sessionStorage.setItem(SS_SIDEBAR_EXPANDED_KEY, "true");
   }
-} 
+}
