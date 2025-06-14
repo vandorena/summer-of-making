@@ -251,7 +251,7 @@
 
   <div class="max-w-7xl mx-auto text-center relative z-10 px-2 md:px-4">
     <h2 class="head-big text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-6 md:mb-8 text-[#3a2f25] font-['DynaPuff',sans-serif]">
-      Last Time Was Epic! 🌊
+      Last Time Was Epic!
     </h2>
     <p class="font-['Fredoka',sans-serif] font-normal text-lg md:text-xl mb-8 md:mb-16 text-[#4A2D24] opacity-90 max-w-3xl mx-auto px-4">
       In our previous event, High Seas we shipped incredible prizes to makers around the world. Here's what we gave away:
@@ -375,7 +375,7 @@
                   </div>
                   <% if image.present? %>
                     <div class="flex-shrink-0 flex items-center justify-center w-32 md:w-40 lg:w-48 h-full p-2 md:p-3">
-                      <img src="<%= image %>" alt="High Seas participant photo" class="object-contain rounded-lg max-h-40 md:max-h-48 max-w-full">
+                      <%= image_tag get_review_image_path(image), alt: "High Seas participant photo", class: "object-contain rounded-lg max-h-40 md:max-h-48 max-w-full" %>
                     </div>
                   <% end %>
                 </div>
