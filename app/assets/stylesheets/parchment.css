@@ -22,13 +22,6 @@
   }
 }
 
-.parchment-prize-card:hover {
-  transform: translateY(-6px) scale(1.05);
-  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 0 15px rgba(168, 149, 107, 0.3);
-  animation: none;
-}
-
 .parchment-prize-card::before {
   content: "";
   position: absolute;
@@ -107,9 +100,6 @@
   transition: opacity 0.3s ease;
 }
 
-.parchment-prize-card:hover .seal {
-  opacity: 0.6;
-}
 @media (max-width: 768px) {
   .parchment-prize-card {
     padding: 0.75rem;
@@ -128,11 +118,6 @@
 
   .parchment-prize-time {
     font-size: 0.7rem;
-  }
-
-  .parchment-prize-card:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
   }
 }
 
@@ -160,10 +145,6 @@
 .parchment-faq-card {
   transform-style: preserve-3d;
   transition: all 0.3s ease;
-}
-
-.parchment-faq-card:hover {
-  transform: translateY(-6px);
 }
 
 .parchment-faq-card h3 {

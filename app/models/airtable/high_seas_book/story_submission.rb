@@ -21,4 +21,19 @@ class Airtable::HighSeasBook::StorySubmission < ApplicationRecord
     self.table_name = "tblGUy12HSqCXveg2"
     self.api_key = ENV["HIGHSEAS_AIRTABLE_KEY"]
   end
+
+  def self.sync_with_airtable
+    records = AirtableRecord.all
+    count = 0
+    records.each do |record|
+      next unless record.id.present?
+      submission = find_or_initialize_by(airtable_id: record.id)
+      submission.airtable_fields = record.fields
+      if submission.changed?
+        submission.save!
+        count += 1
+      end
+    end
+    count
+  end
 end
