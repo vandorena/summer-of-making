@@ -69,7 +69,7 @@
             </p>
           <% end %>
 
-          <button disabled="<%= current_user.hackatime_projects.empty? ? "true" : "false" %>" data-action="click->modal#open" data-modal-type="create-project" class="px-4 md:px-6 py-1 md:py-2 bg-forest hover:bg-forest-dark text-white text-base md:text-lg 2xl:text-xl btn-pixel cursor-pointer">
+          <button <%= "disabled" if current_user.hackatime_projects.empty? %> data-action="click->modal#open" data-modal-type="create-project" class="px-4 md:px-6 py-1 md:py-2 bg-forest hover:bg-forest-dark text-white text-base md:text-lg 2xl:text-xl btn-pixel cursor-pointer">
             Create Your Project
           </button>
         </div>
