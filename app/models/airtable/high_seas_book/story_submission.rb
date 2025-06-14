@@ -13,6 +13,7 @@ class Airtable::HighSeasBook::StorySubmission < ApplicationRecord
   # string: airtable_id
 
   include BackedByAirtable
+  include AirtableImageStorage
   backed_by_filter "{Show in Summer of Making}"
 
   class AirtableRecord < Norairrecord::Table
