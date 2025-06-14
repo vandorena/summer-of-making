@@ -3,7 +3,7 @@
 <%= stylesheet_link_tag "faq_container", "data-turbo-track": "reload" %>
 
 <div class="relative w-full mb-[15vh]">
-  <svg width="100%" height="1000vw" class="absolute bottom-[-11vw] overflow-visible" style="transform: scaleX(1);" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2209 10100" preserveAspectRatio="none">
+  <svg width="100%" height="1000vw" class="absolute bottom-[-12vw] overflow-visible" style="transform: scaleX(1);" fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2209 10100" preserveAspectRatio="none">
     <g filter="url(#filter0_d_1067_246)">
     <svg width="2225" height="10066" viewBox="0 0 2225 10066" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M0 4H2217V10019L2010 10030L1767.5 10018.3L1567.5 10026L1367.5 10024L1119.5 10030L580 10016L294 10026L0 10022V4Z" fill="url(#paint0_radial_1067_246)" />
@@ -42,18 +42,13 @@
       </div>
 
       <div class="relative z-15 flex items-center min-h-screen">
-        <div class="w-full mb-16 max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-6 items-center">
+        <div class="w-full mt-12 mb-12 max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-6 items-center">
           <div class="flex flex-col text-left space-y-3 animate-float mt-12 lg:mt-0 lg:pr-6 items-center" style="font-family: 'Pacifico', sans-serif;">
             <%= image_tag "mos.png", class: "mb-1" %>
 
             <div class="flex flex-col space-y-3 items-stretch lg:items-start">
               <h2 class="head-med text-2xl md:text-3xl mx-auto md:mx-0 text-[#3a2f25] font-medium font-['DynaPuff',sans-serif] -mt-2">
                 Build stuff. Get stuff. <span class="font-bold text-[#E06540]">Repeat.</span>
-                <%# <span class="">Build stuff.</span>
-                <br class="hidden lg:block">
-                <span class="ml-0 lg:ml-16">Get stuff.</span>
-                <br class="hidden lg:block">
-                <span class="font-bold ml-0 lg:ml-32">Repeat.</span> %>
               </h2>
               <div class="flex flex-col self-stretch sm:flex-row gap-3 pt-1">
                   <%= render "signup" %>
@@ -459,10 +454,10 @@
   </div>
 </div>
 
-<div class="py-12 md:py-20 px-2 md:px-4 sm:px-8">
+<div class="pt-12 md:pt-20 pb-24 md:pb-48 px-2 md:px-4 sm:px-8">
   <div class="max-w-6xl mx-auto text-center">
-    <h3 class="head-big text-3xl md:text-4xl font-bold mb-6 md:mb-8 text-[#3a2f25] font-['DynaPuff',sans-serif]">
-      Build stuff. <br class="block md:hidden">Get stuff. <br class="block md:hidden">Repeat.
+    <h3 class="text-4xl md:text-4xl lg:text-5xl font-bold mb-6 md:mb-8 text-[#3a2f25] font-['DynaPuff',sans-serif] flex flex-col md:flex-row gap-2 md:gap-3 lg:gap-4 justify-center">
+      <span class="mr-36 md:mr-0">Build stuff.</span><span class="ml-36 md:ml-0">Get stuff.</span><span class="text-[#E06540] text-5xl md:text-4xl lg:text-5xl">Repeat.</span>
     </h3>
     <div class="flex items-center justify-center max-w-md mx-auto px-2">
       <%= render "signup" %>
@@ -493,7 +488,7 @@
   <div class="flex-grow min-h-[5vh] md:min-h-[10vh] lg:min-h-[10vh]"></div>
   <footer class="w-full py-8 text-center text-[#f6dbba] font-['Fredoka',sans-serif] text-base md:text-lg opacity-100  z-10">
     <div class="mb-1">
-      Summer of Making is built with <span class="text-red-500">♥︎</span> from Hack Clubbers around the world.
+      Summer of Making is built with <span class="text-red-500">♥︎</span> by Hack Clubbers around the world.
     </div>
     <div>
       <a href="https://hackclub.com/" target="_blank" class="text-[#f6dbba] font-semibold underline hover:text-[#a8956b] transition-colors">Hack Club</a> ・
