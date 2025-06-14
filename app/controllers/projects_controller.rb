@@ -237,7 +237,7 @@ class ProjectsController < ApplicationController
 
   # Some AI generated code to check if a link is a valid repo or readme link
   def check_link
-    url = params[:url]
+    url = params[:url]&.strip&.gsub(/\A"|"\z/, '')
     link_type = params[:link_type]
 
     require "net/http"

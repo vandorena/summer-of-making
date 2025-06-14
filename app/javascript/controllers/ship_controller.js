@@ -205,8 +205,6 @@ export default class extends Controller {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
-            .content,
         },
         body: JSON.stringify({
           url: url,
@@ -215,6 +213,7 @@ export default class extends Controller {
       })
         .then((response) => response.json())
         .then((data) => {
+          console.log({ data });
           if (data.valid) {
             const checkIcon = document
               .getElementById("valid-check-icon")
