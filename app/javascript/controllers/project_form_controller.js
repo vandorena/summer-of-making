@@ -17,6 +17,8 @@ export default class extends Controller {
     "hackatimeProjects",
     "hackatimeSelect",
     "selectedProjects",
+    "usedAiCheckboxReal",
+    "usedAiCheckboxFake",
   ];
 
   connect() {
@@ -171,6 +173,24 @@ export default class extends Controller {
     `;
 
     this.selectedProjectsTarget.appendChild(projectElement);
+  }
+
+  toggleUsedAiCheck() {
+    const checked = this.usedAiCheckboxRealTarget.checked;
+    const checkboxContainer = this.usedAiCheckboxFakeTarget.parentElement;
+    
+    console.log("Checkbox checked:", checked);
+    console.log("Checkbox value:", this.usedAiCheckboxRealTarget.value);
+
+    if (checked) {
+      this.usedAiCheckboxFakeTarget.classList.remove("hidden");
+      checkboxContainer.classList.add("bg-forest", "border-forest");
+      checkboxContainer.classList.remove("bg-bread");
+    } else {
+      this.usedAiCheckboxFakeTarget.classList.add("hidden");
+      checkboxContainer.classList.remove("bg-forest", "border-forest");
+      checkboxContainer.classList.add("bg-bread");
+    }
   }
 
   removeSelectedProject(event) {
