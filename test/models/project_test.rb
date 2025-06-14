@@ -15,6 +15,7 @@
 #  readme_link            :string
 #  repo_link              :string
 #  title                  :string
+#  used_ai                :boolean
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  user_id                :bigint           not null
