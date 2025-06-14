@@ -18,6 +18,10 @@ module Journey
 
     Rails.application.config.assets.paths << Rails.root.join("app", "assets", "videos")
 
+    # Run jobs dashboard behind admin controller
+    MissionControl::Jobs.base_controller_class = "Admin::ApplicationController"
+    config.mission_control.jobs.http_basic_auth_enabled = false
+
     # html minify
     config.middleware.use HtmlCompressor::Rack
 
