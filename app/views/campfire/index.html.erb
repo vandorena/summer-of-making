@@ -36,19 +36,23 @@
               <% end %>
             </div>
             <div class="flex-1">
-              <h3 class="text-lg font-semibold text-gray-900 mb-2">Connect your Hackatime account</h3>
-              <p class="text-gray-600 mb-4">Hackatime tracks how much you code, and we use that time to give you shells as a reward for all your hard work!</p>
+              <h3 class="text-lg font-semibold text-gray-900 mb-2">Install Hackatime</h3>
+              <p class="text-gray-600 mb-4">
+                Hackatime is an open-source tool which automatically tracks your coding time. <br class="hidden lg:block">1 hour = 1 shell<image src="/inlineshell.png" class="w-5 h-5 inline-block"></image>, with up to 30x bonuses based on community votes!
+                <br><br>
+                Make sure <span class="text-[#E65A42]">all your code editors</span> are connected to Hackatime. You can’t get shells without it!
+              </p>
               <% if @account_status[:hackatime_projects] %>
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800" data-hackatime-status-target="status">
-                  Linked and projects tracked!
+                  Hackatime is installed
                 </span>
               <% elsif @account_status[:hackatime_setup] %>
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-800" data-hackatime-status-target="status">
-                  Linked, now waiting for real data...
+                  Waiting for data from your code editor...
                 </span>
               <% elsif @account_status[:hackatime_linked] %>
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-800" data-hackatime-status-target="status">
-                  Waiting for test data...
+                  Waiting for connection from Hackatime...
                 </span>
               <% else %>
                 <%= link_to "Connect Hackatime", hackatime_auth_redirect_path, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500", target: "_blank" %>

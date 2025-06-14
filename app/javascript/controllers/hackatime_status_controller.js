@@ -108,7 +108,7 @@ export default class extends Controller {
             <h3 class="text-lg font-semibold text-gray-900 mb-2">Connect your Hackatime account</h3>
             <p class="text-gray-600 mb-4">${hackatimeCopy}</p>
             <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-800" data-hackatime-status-target="status">
-              Waiting for test data...
+              Waiting for connection from Hackatime...
             </span>
           `
         }
