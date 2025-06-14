@@ -5,9 +5,9 @@
 
   <% if !current_user.tutorial_progress.completed? %>
     <!-- Set up your account! Section -->
-    <div class="mb-8">
+    <div class="mb-4">
       <h2 class="text-2xl text-gray-900 mb-4">Set up your account!</h2>
-      <p class="text-gray-600 mb-4 text-xl font-semibold">Complete these steps to start earning shells and get free stickers in the process! The platform is <span class="text-black font-bold">limited</span> while you set up your account.</p>
+      <p class="text-gray-600 mb-4 text-xl font-semibold">Complete these steps to start earning shells, get free stickers, and unlock access to the rest of the platform!</p>
 
       <div class="space-y-4">
         <!-- Step 1: Hackatime -->
@@ -72,8 +72,8 @@
               <% end %>
             </div>
             <div class="flex-1">
-              <h3 class="text-lg font-semibold text-gray-900 mb-2">Verify your identity</h3>
-              <p class="text-gray-600 mb-4">Hack Club is for people 18 and under, so we'll need to check that you're eligible before we can send you any of the cool stuff we've got</p>
+              <h3 class="text-lg font-semibold text-gray-900 mb-2">Verify Your Age</h3>
+              <p class="text-gray-600 mb-4">Hack Club is for people 18 and under, so we need verify your age before the rest of the platform unlocks!</p>
 
               <% case current_verification_status %>
               <% when :not_linked %>
@@ -117,8 +117,8 @@
               <% end %>
             </div>
             <div class="flex-1">
-              <h3 class="text-lg font-semibold text-gray-900 mb-2">Order your free stickers</h3>
-              <p class="text-gray-600 mb-4">Well, now you have linked your Hackatime account, and verified your identity soo maybe.... order your free stickers!!!</p>
+              <h3 class="text-lg font-semibold text-gray-900 mb-2">Order Free Stickers</h3>
+              <p class="text-gray-600 mb-4">Now for the best part… getting free stuff! Order some stickers to get oriented with the shop.</p>
               <% if current_user.shop_orders.joins(:shop_item).where(shop_items: { type: "ShopItem::FreeStickers" }).exists? %>
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800">
                   Ordered
@@ -296,27 +296,14 @@
     </div>
   <% end %>
 
-  <div class="mb-8">
-    <div class="bg-white rounded-lg border p-6">
+  <div class="mb-16">
+    <div class="">
       <div class="flex items-start space-x-4">
-        <div class="flex-shrink-0">
-          <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-indigo-600" viewBox="0 0 24 24">
-              <path fill="currentColor" d="M11.95 18q.525 0 .888-.363t.362-.887q0-.525-.362-.888t-.888-.362q-.525 0-.887.363t-.363.887q0 .525.363.888t.887.362m-.9-3.85h1.85q0-.825.188-1.3t1.062-1.3q.65-.65 1.025-1.238T15.55 8.9q0-1.4-1.025-2.15T12.1 6q-1.425 0-2.313.75T8.55 8.55l1.65.65q.125-.45.563-.975T12.1 7.7q.8 0 1.2.438t.4.962q0 .5-.3.938t-.75.812q-1.1.975-1.35 1.475t-.25 1.825M12 22q-2.075 0-3.9-.788t-3.175-2.137q-1.35-1.35-2.137-3.175T2 12q0-2.075.788-3.9t2.137-3.175q1.35-1.35 3.175-2.137T12 2q2.075 0 3.9.788t3.175 2.137q1.35 1.35 2.138 3.175T22 12q0 2.075-.788 3.9t-2.137 3.175q-1.35 1.35-3.175 2.138T12 22" />
-            </svg>
-          </div>
-        </div>
         <div class="flex-1">
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">Need Help?</h3>
-          <p class="text-gray-600 mb-4">Got questions or running into issues? The #summer-help channel is the perfect place to get support from the community!</p>
-          <a href="https://hackclub.slack.com/archives/C090JKDJYN8"
-             target="_blank"
-             class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" viewBox="0 0 24 24">
-              <path fill="currentColor" d="M6 14q-.825 0-1.413-.588T4 12q0-.825.588-1.413T6 10q.825 0 1.413.588T8 12q0 .825-.588 1.413T6 14m4-8q-.825 0-1.413-.588T8 4q0-.825.588-1.413T10 2q.825 0 1.413.588T12 4q0 .825-.588 1.413T10 6m4 8q-.825 0-1.413-.588T12 12q0-.825.588-1.413T14 10q.825 0 1.413.588T16 12q0 .825-.588 1.413T14 14m4-8q-.825 0-1.413-.588T16 4q0-.825.588-1.413T18 2q.825 0 1.413.588T20 4q0 .825-.588 1.413T18 6" />
-            </svg>
-            Join #summer-help
-          </a>
+          <p class="text-gray-600 mb-4">
+            Need some help? Got a question? Post it in the <a href="https://hackclub.slack.com/archives/C090JKDJYN8" target="_blank" class="text-blue-600 hover:text-blue-700">
+            #summer-of-making-help</a> channel!
+          </p>
         </div>
       </div>
     </div>
