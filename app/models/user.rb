@@ -14,7 +14,6 @@
 #  has_commented                        :boolean          default(FALSE)
 #  has_hackatime                        :boolean          default(FALSE)
 #  has_hackatime_account                :boolean
-#  has_hackatime_projects               :boolean          default(FALSE), not null
 #  identity_vault_access_token          :string
 #  internal_notes                       :text
 #  is_admin                             :boolean          default(FALSE), not null
@@ -129,18 +128,17 @@ class User < ApplicationRecord
   end
 
   def hackatime_projects
-    return [] unless has_hackatime?
-
     projects = hackatime_stat&.data&.dig("data", "projects") || []
 
-    projects.map do |project|
-      {
-        key: project["name"],
+    projects
+      .map { |project| {
+        key: project["name"], # Deprecated
         name: project["name"],
         total_seconds: project["total_seconds"],
         formatted_time: project["text"]
-      }
-    end.sort_by { |p| p[:name] }
+      }}
+      .reject { |p| [ "<<LAST_PROJECT>>", "Other" ].include?(p[:name]) }
+      .sort_by { |p| p[:name] }
   end
 
   def format_seconds(seconds)
@@ -171,15 +169,9 @@ class User < ApplicationRecord
 
     return if projects.empty?
 
-    unless has_hackatime?
-      update!(has_hackatime: true)
-    end
+    update!(has_hackatime: true) unless has_hackatime?
 
     Rails.logger.info("Hackatime projects:= #{result.dig("data", "total_seconds")}")
-
-    if result.dig("data", "total_seconds") > 10
-      update!(has_hackatime_projects: true)
-    end
 
     stats = hackatime_stat || build_hackatime_stat
     stats.update(data: result, last_updated_at: Time.current)

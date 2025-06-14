@@ -35,7 +35,7 @@ class CampfireController < ApplicationController
     render json: {
       hackatime_linked: current_user.has_hackatime_account?,
       hackatime_setup: current_user.has_hackatime?,
-      hackatime_projects: current_user.has_hackatime_projects?
+      hackatime_projects: current_user.hackatime_projects.any?
     }
   end
 
@@ -66,7 +66,7 @@ class CampfireController < ApplicationController
     @account_status = {
       hackatime_linked: current_user.has_hackatime_account?,
       hackatime_setup: current_user.has_hackatime?,
-      hackatime_projects: current_user.has_hackatime_projects?
+      hackatime_projects: current_user.hackatime_projects.any?
     }
   end
 
