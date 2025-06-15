@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_15_234908) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_15_235453) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -69,6 +69,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_15_234908) do
     t.datetime "time"
     t.index ["name", "time"], name: "index_ahoy_events_on_name_and_time"
     t.index ["properties"], name: "index_ahoy_events_on_properties", opclass: :jsonb_path_ops, using: :gin
+    t.index ["time"], name: "index_ahoy_events_on_time"
     t.index ["user_id"], name: "index_ahoy_events_on_user_id"
     t.index ["visit_id"], name: "index_ahoy_events_on_visit_id"
   end
@@ -99,6 +100,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_15_234908) do
     t.string "os_version"
     t.string "platform"
     t.datetime "started_at"
+    t.index ["started_at"], name: "index_ahoy_visits_on_started_at"
     t.index ["user_id"], name: "index_ahoy_visits_on_user_id"
     t.index ["visit_token"], name: "index_ahoy_visits_on_visit_token", unique: true
     t.index ["visitor_token", "started_at"], name: "index_ahoy_visits_on_visitor_token_and_started_at"

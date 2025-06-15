@@ -32,7 +32,9 @@ gem "solid_cable"
 gem "solid_cache"
 gem "solid_queue"
 
+# Serverside analytics
 gem "ahoy_matey"
+gem "ahoy_captain"
 
 # Dashboard for solidqueue
 gem "mission_control-jobs"
