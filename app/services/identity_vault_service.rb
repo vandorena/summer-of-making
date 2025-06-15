@@ -2,23 +2,38 @@
 
 class IdentityVaultService
   class << self
+    def env
+      Rails.env.production ? :prod : :staging
+    end
+
+    def host
+      @host ||= {
+        staging: "https://idv-staging.a.hackclub.dev/",
+        prod: "https://identity.hackclub.com/"
+      }[env]
+    end
+
+    def creds
+      Rails.application.credentials.dig(:identity_vault, env)
+    end
+
     def authorize_url(redirect_uri, sneaky_params = nil)
       params = {
-        client_id: Rails.application.credentials.dig(:identity_vault, :client_id),
+        client_id: creds[:client_id],
         redirect_uri:,
         response_type: "code",
         scope: "basic_info address",
         stash_data: encode_sneaky_params(sneaky_params)
       }.compact_blank
 
-      "#{Rails.application.credentials.dig(:identity_vault, :host)}oauth/authorize?#{params.to_query}"
+      "#{host}oauth/authorize?#{params.to_query}"
     end
 
     def exchange_token(redirect_uri, code)
       conn.post("/oauth/token") do |req|
         req.body = {
-          client_id: Rails.application.credentials.dig(:identity_vault, :client_id),
-          client_secret: Rails.application.credentials.dig(:identity_vault, :client_secret),
+          client_id: creds[:client_id],
+          client_secret: creds[:client_secret],
           redirect_uri:,
           code:,
           grant_type: "authorization_code"
@@ -43,8 +58,7 @@ class IdentityVaultService
         stash_data: encode_sneaky_params(sneaky_params)
       }.compact_blank
 
-      identity_vault_host = Rails.application.credentials.dig(:identity_vault, :host)
-      "#{identity_vault_host}addresses/program_create_address?#{params.to_query}"
+      "#{host}addresses/program_create_address?#{params.to_query}"
     end
 
 
@@ -53,9 +67,9 @@ class IdentityVaultService
 
     def conn
       @conn ||= Faraday.new(
-        url: Rails.application.credentials.dig(:identity_vault, :host),
+        url: host,
         headers: {
-          "Authorization" => "Bearer #{Rails.application.credentials.dig(:identity_vault, :global_program_key)}"
+          "Authorization" => "Bearer #{creds[:global_program_key]}"
         }
       ) do |f|
         f.request :json
