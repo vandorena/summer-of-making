@@ -1,4 +1,4 @@
-<%= form_with(model: [:admin, @shop_item], local: true) do |form| %>
+<%= form_with(model: [:admin, @shop_item.becomes(ShopItem)], local: true) do |form| %>
   <% if @shop_item.errors.any? %>
     <div class="alert alert-danger">
       <h4><%= pluralize(@shop_item.errors.count, "error") %> prohibited this shop item from being saved:</h4>
