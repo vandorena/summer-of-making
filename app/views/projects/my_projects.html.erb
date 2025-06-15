@@ -1,80 +1,80 @@
 <div class="px-4 md:px-8" data-controller="modal">
-    <%= render "shared/page_title",
-        title: "My Projects",
-        subtitle: "What'ya buildin'?" %>
+  <%= render "shared/page_title",
+    title: "My Projects",
+    subtitle: "What'ya buildin'?" %>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
     <% if @projects.any? %>
-        <% @projects.each do |project| %>
+      <% @projects.each do |project| %>
         <%= link_to project_path(project) do %>
-            <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] transform hover:scale-[1.02] transition-transform duration-300 flex flex-col h-full">
+          <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] transform hover:scale-[1.02] transition-transform duration-300 flex flex-col h-full">
             <% project_image = project.banner.attached? ? url_for(project.banner) : (project.devlogs.find { |u| u.attachment.present? }&.attachment || "https://hc-cdn.hel1.your-objectstorage.com/s/v3/42eb885e3ebc20bd5e94782b7b4bcb31bcc956d3_i.png") %>
             <div class="h-36 md:h-48 overflow-hidden relative">
-                <img src="<%= project_image %>" alt="<%= project.title %>" class="w-full h-full object-cover rounded-xl">
+              <img src="<%= project_image %>" alt="<%= project.title %>" class="w-full h-full object-cover rounded-xl">
             </div>
 
             <div class="p-4 md:p-6 flex flex-col flex-grow">
-                <div class="flex items-center justify-between mb-2 md:mb-3">
+              <div class="flex items-center justify-between mb-2 md:mb-3">
                 <h2 class="text-xl md:text-2xl 2xl:text-3xl line-clamp-1"><%= project.title %></h2>
                 <% if user_signed_in? && current_user != project.user %>
-                    <div>
+                  <div>
                     <%= render "projects/follow_button", project: project %>
-                    </div>
+                  </div>
                 <% end %>
-                </div>
-                <p class="mb-4 md:mb-6 line-clamp-3 text-sm md:text-base 2xl:text-lg text-gray-600 break-words overflow-wrap-anywhere"><%= project.description %></p>
+              </div>
+              <p class="mb-4 md:mb-6 line-clamp-3 text-sm md:text-base 2xl:text-lg text-gray-600 break-words overflow-wrap-anywhere"><%= project.description %></p>
 
-                <%
-                    timer_total_time = project.timer_sessions.where(status: :stopped).sum(:net_time)
-
-                    hackatime_total_time = project.hackatime_total_time
-
-                    total_time_seconds = timer_total_time + hackatime_total_time
-                %>
-                <p class="text-gray-400">
-                    <%= format_seconds(total_time_seconds) %>
-                    <br>
-                    <%= project.devlogs.count %> devlogs
-                </p>
+              <%
+                timer_total_time = project.timer_sessions.where(status: :stopped).sum(:net_time)
+                hackatime_total_time = project.hackatime_total_time
+                total_time_seconds = timer_total_time + hackatime_total_time
+              %>
+              <p class="text-gray-400">
+                <%= format_seconds(total_time_seconds) %>
+                <br>
+                <%= project.devlogs.count %> devlogs
+              </p>
             </div>
-            </div>
-        <% end %>
-        <% end %>
-
-        <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] transform hover:scale-[1.02] transition-transform duration-300 flex flex-col h-full items-center justify-center p-6">
-          <button data-action="click->modal#open" data-modal-type="create-project" class="px-4 md:px-6 py-1 md:py-2 bg-forest hover:bg-forest-dark text-white text-base md:text-lg 2xl:text-xl btn-pixel cursor-pointer">
-            Create Project
-          </button>
-        </div>
-    <% else %>
-        <%= render "shared/card", classes: "col-span-full flex flex-col items-center", padding: "lg" do %>
-          <div class="flex justify-center items-center">
-            <%= image_tag 'orpheustimer.png', class: 'w-32 h-32 sm:w-48 sm:h-48 2xl:w-64 2xl:h-64 transform scale-x-[-1] mb-4 sm:mb-6' %>
           </div>
+        <% end %>
+      <% end %>
 
-          <% if !current_user.has_hackatime? %>
-            <p class="mb-6 sm:mb-8 text-black text-large sm:text-xl 2xl:text-2xl text-center">
-              You haven't configured Hackatime yet.
-              Please see instructions for how to do so in the <%= link_to "Campfire", campfire_path %>.
-            </p>
-          <% elsif current_user.hackatime_projects.empty? %>
-            <p class="mb-6 sm:mb-8 text-black text-large sm:text-xl 2xl:text-2xl text-center">
-              You've configured Hackatime, but you haven't
-              <%= link_to "installed the extension in your editor yet.",
-                  "https://hackatime.hackclub.com/docs",
-                  target: "_blank",
-                  class: "text-forest hover:text-forest-dark underline" %>
-              .<br>
-              Do that, write some code, come back here and refresh the page!
-            </p>
-          <% end %>
+      <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] transform hover:scale-[1.02] transition-transform duration-300 flex flex-col h-full items-center justify-center p-6">
+        <button data-action="click->modal#open" data-modal-type="create-project" class="px-4 md:px-6 py-1 md:py-2 marble-button cursor-pointer">
+          Create Project
+        </button>
+      </div>
+    <% else %>
+      <%= render "shared/card", classes: "col-span-full flex flex-col items-center", padding: "lg" do %>
+        <div class="flex justify-center items-center">
+          <%= image_tag 'orpheustimer.png', class: 'w-32 h-32 sm:w-48 sm:h-48 2xl:w-64 2xl:h-64 transform scale-x-[-1] mb-4 sm:mb-6' %>
+        </div>
 
-          <button <%= "disabled" if current_user.hackatime_projects.empty? %> data-action="click->modal#open" data-modal-type="create-project" class="px-4 md:px-6 py-1 md:py-2 bg-forest hover:bg-forest-dark text-white text-base md:text-lg 2xl:text-xl btn-pixel cursor-pointer">
+        <% if !current_user.has_hackatime? %>
+          <p class="mb-6 sm:mb-8 text-black text-large sm:text-xl 2xl:text-2xl text-center">
+            You haven't configured Hackatime yet.
+            Please see instructions for how to do so in the <%= link_to "Campfire", campfire_path %>.
+          </p>
+        <% elsif current_user.hackatime_projects.empty? %>
+          <p class="mb-6 sm:mb-8 text-black text-large sm:text-xl 2xl:text-2xl text-center">
+            You've configured Hackatime, but you haven't
+            <%= link_to "installed the extension in your editor yet.",
+                "https://hackatime.hackclub.com/docs",
+                target: "_blank",
+                class: "text-forest hover:text-forest-dark underline" %>
+            .<br>
+            Do that, write some code, come back here and refresh the page!
+          </p>
+        <% end %>
+
+        <div class="flex justify-center w-full">
+          <button <%= "disabled" if current_user.hackatime_projects.empty? %> data-action="click->modal#open" data-modal-type="create-project" class="px-4 md:px-6 py-1 md:py-2 marble-button cursor-pointer mx-auto">
             Create Your Project
           </button>
-        <% end %>
+        </div>
+      <% end %>
     <% end %>
-    </div>
+  </div>
 </div>
 
 <%= render "create_project_modal" %>

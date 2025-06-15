@@ -14,8 +14,7 @@
           <button
             id="annoying-nudge-button"
             class="marble-button text-sm px-3 py-1 mt-3 cursor-pointer"
-            onclick="setTimeout(() => { alert(window.nc > 0 ? 'You\'ve already nudged someone. They\'re probably asleep. Be nice.' : 'You poked a staff member. We\'ll get right to it!'); window.nc = (window.nc || 0) + 1 }, Math.floor(Math.random() * (1500 - 250 + 1)) + 250);"
-          >
+            onclick="setTimeout(() => { alert(window.nc > 0 ? 'You\'ve already nudged someone. They\'re probably asleep. Be nice.' : 'You poked a staff member. We\'ll get right to it!'); window.nc = (window.nc || 0) + 1 }, Math.floor(Math.random() * (1500 - 250 + 1)) + 250);">
             Nudge a staff member to get around to it quicker.
           </button>
         </div>
