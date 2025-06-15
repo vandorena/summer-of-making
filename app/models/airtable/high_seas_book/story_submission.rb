@@ -25,4 +25,8 @@ class Airtable::HighSeasBook::StorySubmission < ApplicationRecord
   def testimonial
     airtable_fields["What's one way High Seas had a positive impact on your life?"]
   end
+
+  def webtestimonial
+    airtable_fields["WebTestimony"]
+  end
 end
