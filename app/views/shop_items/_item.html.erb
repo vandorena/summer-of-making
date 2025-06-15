@@ -1,7 +1,8 @@
 <% ineligible = current_verification_status == :ineligible %>
 <% disabled = ineligible || (!current_user.ysws_verified? && !item.is_a?(ShopItem::FreeStickers)) || !item.can_afford?(current_user) %>
 
-<div class="bg-soft-bone card-pixel bg-surface0 shadow p-6 rounded-lg h-full flex flex-col text-center w-full <%= "col-span-full" if item.is_free? %>">
+<%= render "shared/card", classes: "#{"col-span-full" if item.is_free?}" do %>
+<!-- <div class="bg-soft-bone card-pixel bg-surface0 shadow p-6 rounded-lg h-full flex flex-col text-center w-full <%= "col-span-full" if item.is_free? %>"> -->
   <div class="flex-grow flex flex-col justify-between min-h-0">
     <div class="flex-grow">
       <% admin_tool do %>
@@ -79,7 +80,7 @@
       <% end %>
     </div>
   </div>
-</div>
+<% end %>
 
 <!-- <script>
 document.addEventListener('DOMContentLoaded', () => {
