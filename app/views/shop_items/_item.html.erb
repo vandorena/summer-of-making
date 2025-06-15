@@ -5,41 +5,12 @@
 <!-- <div class="bg-soft-bone card-pixel bg-surface0 shadow p-6 rounded-lg h-full flex flex-col text-center w-full <%= "col-span-full" if item.is_free? %>"> -->
   <div class="flex-grow flex flex-col justify-between min-h-0">
     <div class="flex-grow">
-      <% admin_tool do %>
-        <p class="text-xs mb-2">Reload after hitting update bc i'm lazy</p>
-        <%= form_with(model: item, url: shop_item_path(item), scope: :shop_item, class: "flex flex-col items-start mb-4") do |f| %>
-            <%= f.select :type, [["Typeless (ILLEGAL)", nil], *@shop_item_types], selected: item.type %>
-            <%= f.submit %>
-        <% end %>
-      <% end %>
 
-      <%= text_field_editable(item, :name) %>
+      <h3 class="text-xl font-bold mb-2"><%= item.name %></h3>
 
       <div class="mb-4">
-        <%= text_field_editable(item, :description) %>
+        <p class="text-gray-700"><%= item.description %></p>
       </div>
-
-      <% admin_tool do %>
-          <div class="mb-2">
-            <%= text_field_editable(item, :internal_description) %>
-          </div>
-          <div class="mb-2">
-            <%= number_field_editable(item, :ticket_cost, display_prefix: "🐚") %>
-          </div>
-          <p class="text-sm font-medium mt-4 mb-2">Actual IRL FR HC cost</p>
-          <div class="mb-4">
-            <%= number_field_editable(item, :usd_cost, display_prefix: "$") %>
-          </div>
-          <div class="mb-2">
-            <%= number_field_editable(item, :max_qty, display_prefix: "Max qty: ") %>
-          </div>
-          <div class="mb-2">
-            <%= checkbox_field_editable(item, :one_per_person_ever, display_name: "One per person ever") %>
-          </div>
-          <div class="mb-2">
-            <%= checkbox_field_editable(item, :requires_black_market, display_name: "Black market only") %>
-          </div>
-      <% end %>
 
       <% if item.image.attached? %>
         <div class="mb-4 flex justify-center">
@@ -80,6 +51,9 @@
       <% end %>
     </div>
   </div>
+  <% admin_tool do %>
+    <%= link_to "administrate it?", admin_shop_item_path(item), class: "underline", target: "_blank" %>
+  <% end %>
 <% end %>
 
 <!-- <script>

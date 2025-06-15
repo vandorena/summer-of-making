@@ -23,7 +23,7 @@ module ApplicationHelper
     return unless current_user&.is_admin?
 
     concat content_tag(element,
-                       class: "p-2 border-2 border-dashed border-orange-500 bg-orange-500/10 w-fit h-fit #{class_name}", **, &)
+                       class: "#{"p-2" unless element == "span"} border-2 border-dashed border-orange-500 bg-orange-500/10 w-fit h-fit #{class_name}", **, &)
   end
 
   def indefinite_articlerize(params_word)
@@ -58,6 +58,12 @@ module ApplicationHelper
       true
     else
       raise ArgumentError, "Unknown tab variant: #{tab}"
+    end
+  end
+
+  def admin_user_visit(user)
+    admin_tool("", "span") do
+      link_to "🔨", admin_user_path(user)
     end
   end
 end

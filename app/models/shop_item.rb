@@ -34,6 +34,8 @@ class ShopItem < ApplicationRecord
   scope :not_black_market, -> { where(requires_black_market: [ false, nil ]) }
   scope :shown_in_carousel, -> { where(show_in_carousel: true) }
 
+  validates_presence_of :ticket_cost, :name, :description
+
   def manually_fulfilled?
     true
   end
@@ -47,6 +49,7 @@ class ShopItem < ApplicationRecord
   end
 
   def average_hours_estimated
+    return 0 unless ticket_cost.present?
     ticket_cost / (Rails.configuration.game_constants.tickets_per_dollar * Rails.configuration.game_constants.dollars_per_mean_hour)
   end
 end

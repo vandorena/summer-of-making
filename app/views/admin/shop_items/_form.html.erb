@@ -1,4 +1,4 @@
-<%= form_with(model: [:admin, @shop_item], local: true) do |form| %>
+<%= form_with(model: [:admin, @shop_item.becomes(ShopItem)], local: true) do |form| %>
   <% if @shop_item.errors.any? %>
     <div class="alert alert-danger">
       <h4><%= pluralize(@shop_item.errors.count, "error") %> prohibited this shop item from being saved:</h4>
@@ -49,13 +49,29 @@
         <div class="col-md-6">
           <div class="mb-3">
             <%= form.label :ticket_cost, class: "form-label" %>
-            <%= form.number_field :ticket_cost, step: 0.01, class: "form-control" %>
+            <%= form.number_field :ticket_cost, step: 0.01, class: "form-control", id: "shop_item_ticket_cost" %>
           </div>
         </div>
         <div class="col-md-6">
           <div class="mb-3">
             <%= form.label :usd_cost, class: "form-label" %>
-            <%= form.number_field :usd_cost, step: 0.01, class: "form-control" %>
+            <%= form.number_field :usd_cost, step: 0.01, class: "form-control", id: "shop_item_usd_cost" %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Calculation Results -->
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label class="form-label">Estimated Tickets</label>
+            <input type="text" id="estimated_tickets" readonly>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label class="form-label">Average Hours Estimated</label>
+            <input type="text" id="average_hours_estimated" readonly>
           </div>
         </div>
       </div>
@@ -63,8 +79,8 @@
       <div class="row">
         <div class="col-md-6">
           <div class="mb-3">
-            <%= form.label :hacker_score, class: "form-label" %>
-            <%= form.number_field :hacker_score, class: "form-control" %>
+            <%= form.label :hacker_score, "Hacker Score (%)", class: "form-label" %>
+            <%= form.number_field :hacker_score, min: 0, max: 100, value: (@shop_item.hacker_score || 50), class: "form-control", id: "shop_item_hacker_score" %>
           </div>
         </div>
         <div class="col-md-6">
@@ -124,3 +140,58 @@
     <%= link_to 'Cancel', admin_shop_items_path, class: "btn btn-secondary" %>
   </div>
 <% end %>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Game constants from Rails configuration
+        const gameConstants = {
+            doubloons_per_dollar: <%= Rails.configuration.game_constants.tickets_per_dollar.to_json %>,
+            dollars_per_mean_hour: <%= Rails.configuration.game_constants.dollars_per_mean_hour.to_json %>
+        };
+
+        // Get form elements
+        const usdCostField = document.getElementById('shop_item_usd_cost');
+        const ticketCostField = document.getElementById('shop_item_ticket_cost');
+        const hackerScoreField = document.getElementById('shop_item_hacker_score');
+        const estimatedTicketsDisplay = document.getElementById('estimated_tickets');
+        const averageHoursDisplay = document.getElementById('average_hours_estimated');
+
+        function calculateEstimatedTickets() {
+            const usdCost = parseFloat(usdCostField.value) || 0;
+            const hackerScore = parseFloat(hackerScoreField.value) || 50;
+
+            // Formula: contest__doubloons_per_dollar * unit_cost * (0.5 + (1 - hacker_score_percent))
+            // Always use usd_cost as the base for ticket estimation
+            // Convert hacker_score from 0-100 to 0-1 range
+            const hackerScorePercent = hackerScore / 100;
+            const estimatedTickets = gameConstants.doubloons_per_dollar * usdCost * (0.5 + (1 - hackerScorePercent));
+
+            return estimatedTickets;
+        }
+
+        function calculateAverageHours() {
+            const ticketCost = parseFloat(ticketCostField.value) || 0;
+
+            // Formula: ticket_cost / (contest__doubloons_per_dollar * contest__dollars_per_mean_hour)
+            const averageHours = ticketCost / (gameConstants.doubloons_per_dollar * gameConstants.dollars_per_mean_hour);
+
+            return averageHours;
+        }
+
+        function updateCalculations() {
+            const estimatedTickets = calculateEstimatedTickets();
+            const averageHours = calculateAverageHours();
+
+            estimatedTicketsDisplay.value = estimatedTickets.toFixed(2);
+            averageHoursDisplay.value = averageHours.toFixed(2);
+        }
+
+        // Add event listeners for live updates
+        if (usdCostField) usdCostField.addEventListener('input', updateCalculations);
+        if (ticketCostField) ticketCostField.addEventListener('input', updateCalculations);
+        if (hackerScoreField) hackerScoreField.addEventListener('input', updateCalculations);
+
+        // Initial calculation on page load
+        updateCalculations();
+    });
+</script>

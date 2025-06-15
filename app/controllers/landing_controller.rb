@@ -18,11 +18,11 @@ class LandingController < ApplicationController
       end
     end
 
-    @prizes = ShopItem.shown_in_carousel.map do |item|
+    @prizes = ShopItem.shown_in_carousel.order(ticket_cost: :asc).map do |item|
       hours = item.average_hours_estimated.to_i
       {
         name: item.name,
-        time: "#{hours} #{"hour".pluralize(hours)}",
+        time: "~#{hours} #{"hour".pluralize(hours)}",
         image: item.image.present? ? url_for(item.image) : "https://crouton.net/crouton.png"
       }
     end

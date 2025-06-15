@@ -11,15 +11,15 @@
   <h1 class="text-4xl sm:text-5xl mb-0">Shop</h1>
 
   <% admin_tool("mb-4") do %>
-    <p>Max item cost is enforced at the postgres level to be $9,999.99 (decimal precision 6, scale 2)</p>
-
-    <%= link_to "New shop item", new_shop_item_path, class: "text-soft-bone px-4 py-2 block hover:bg-saddle-taupe hover-btn-pixel bg-saddle-taupe btn-pixel" %>
-
-    <p><%= @shop_items.count %> items</p>
+    <p><%= @shop_items.count %> items - <%= link_to "edit them?", admin_shop_items_path, class: "underline" %></p>
   <% end %>
 
   <div class="justify-center flex">
     <%= render "verification_callout" unless current_verification_status == :verified %>
+  </div>
+
+  <div class="justify-center flex">
+    <i>(these are US prices for now, int'l prices coming soon!)</i>
   </div>
 
   <div class="my-6 text-center flex justify-center flex-col">

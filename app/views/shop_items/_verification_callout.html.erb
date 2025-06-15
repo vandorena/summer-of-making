@@ -6,7 +6,7 @@
       <% when :needs_resubmission %>
         <p class=" text-base text-[#3a2f25]">
           You need to resubmit your ID.
-          <%= link_to "Do that here.", Rails.application.credentials.dig(:identity_vault, :host), class: "underline text-[#a8956b] hover:text-[#8B4513] font-semibold" %>
+          <%= link_to "Do that here.", IdentityVaultService.host, class: "underline text-[#a8956b] hover:text-[#8B4513] font-semibold" %>
         </p>
       <% when :pending %>
         <p class=" text-base text-[#3a2f25]">Your document is under review. Patience is a virtue, grasshopper.</p>

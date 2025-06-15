@@ -7,7 +7,7 @@ class ShopItemsController < ApplicationController
   def index
     scope = ShopItem
     scope = scope.not_black_market unless current_user.has_black_market?
-    @shop_items = scope.order(ticket_cost: :asc)
+    @shop_items = scope.order(ticket_cost: :asc).includes(:image_attachment)
 
     @shop_item_types = available_shop_item_types
   end
