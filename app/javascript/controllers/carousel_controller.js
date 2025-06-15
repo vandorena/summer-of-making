@@ -33,12 +33,13 @@ export default class extends Controller {
       this.containerTarget.appendChild(s);
     });
 
-    // Double the items for seamless looping
     const count = filtered.length;
-    for (let i = 0; i < count; i++) {
-      const clone = filtered[i].cloneNode(true);
-      clone.setAttribute("data-carousel-clone", "true");
-      this.containerTarget.appendChild(clone);
+    for (let j = 0; j < 2; j++) {
+      for (let i = 0; i < count; i++) {
+        const clone = filtered[i].cloneNode(true);
+        clone.setAttribute("data-carousel-clone", "true");
+        this.containerTarget.appendChild(clone);
+      }
     }
   }
 
