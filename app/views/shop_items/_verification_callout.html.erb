@@ -1,16 +1,27 @@
 <% unless %i[not_linked, eligible].include?(current_verification_status) %>
-<div class="bg-soft-bone card-pixel p-2 sm:p-4 w-fit my-8">
-    <h3 class="text-2xl">ID verification status</h3>
-
+  <%= render "shared/card", title: "ID verification status", classes: "max-w-xl mx-auto my-8 text-[#3a2f25]", padding: "md", shadow: "lg" do %>
     <% case current_verification_status %>
-        <% when :not_linked %>
-            <p>You haven't linked your ID. Order free stickers to fix that!</p>
-        <% when :needs_resubmission %>
-            <p>You need to resubmit your ID. <%= link_to "Do that here.", Rails.application.credentials.dig(:identity_vault, :host), class: "underline" %></p>
-        <% when :pending %>
-          Your document is under review. Patience is a virtue, grasshopper. <button id="annoying-nudge-button" class="text-soft-bone text-sm px-3 py-0.5 block hover:bg-saddle-taupe hover-btn-pixel bg-saddle-taupe btn-pixel mt-3" onclick="setTimeout(() => { alert(window.nudgeCount > 0 ? 'You\'ve already nudged someone. They\'re probably asleep. Be nice.' : 'You poked a staff member. We\'ll get right to it!'); window.nudgeCount = (window.nudgeCount || 0) + 1 }, Math.floor(Math.random() * (1500 - 250 + 1)) + 250);">Nudge a staff member to get around to it quicker.</button>
-        <% when :ineligible %>
-            <strong>You're ineligible for this program.</strong> This is either because you're over 18, or you submitted fake documents. Please do not try again. We are a nonprofit for teenagers!
+      <% when :not_linked %>
+        <p class=" text-base text-[#3a2f25]">You haven't linked your ID. Order free stickers to fix that!</p>
+      <% when :needs_resubmission %>
+        <p class=" text-base text-[#3a2f25]">
+          You need to resubmit your ID.
+          <%= link_to "Do that here.", Rails.application.credentials.dig(:identity_vault, :host), class: "underline text-[#a8956b] hover:text-[#8B4513] font-semibold" %>
+        </p>
+      <% when :pending %>
+        <p class=" text-base text-[#3a2f25]">Your document is under review. Patience is a virtue, grasshopper.</p>
+        <div class="flex justify-center">
+          <button
+            id="annoying-nudge-button"
+            class="marble-button text-sm px-3 py-1 mt-3 cursor-pointer"
+            onclick="setTimeout(() => { alert(window.nc > 0 ? 'You\'ve already nudged someone. They\'re probably asleep. Be nice.' : 'You poked a staff member. We\'ll get right to it!'); window.nc = (window.nc || 0) + 1 }, Math.floor(Math.random() * (1500 - 250 + 1)) + 250);"
+          >
+            Nudge a staff member to get around to it quicker.
+          </button>
+        </div>
+      <% when :ineligible %>
+        <strong class="text-[#E06540]">You're ineligible for this program!</strong>
+        <span class=" text-base text-[#3a2f25]">This is either because you're over 18, or you submitted fake documents. Please do not try again. We are a nonprofit for teenagers!</span>
     <% end %>
-</div>
+  <% end %>
 <% end %>
