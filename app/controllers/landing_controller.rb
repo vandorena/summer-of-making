@@ -22,7 +22,7 @@ class LandingController < ApplicationController
       hours = item.average_hours_estimated.to_i
       {
         name: item.name,
-        time: "#{hours} #{"hour".pluralize(hours)}",
+        time: "~#{hours} #{"hour".pluralize(hours)}",
         image: item.image.present? ? url_for(item.image) : "https://crouton.net/crouton.png"
       }
     end
