@@ -14,14 +14,20 @@ class LandingController < ApplicationController
       @high_seas_reviews = stories.map do |story|
         fields = story.airtable_fields || {}
         text = fields["What's one way High Seas had a positive impact on your life?"] || ""
-        image = nil
+        image_url = nil
 
         if fields["Photos (Optional)"]&.is_a?(Array) && fields["Photos (Optional)"].any?
-          airtable_url = fields["Photos (Optional)"].first["url"]
-          image = story.store_image_locally(airtable_url)
+          if story.photos.attached?
+            image_url = url_for(story.photos.first)
+          else
+            airtable_photo_url = fields["Photos (Optional)"].first["url"]
+            Rails.logger.debug "#{story.id} has photos (#{airtable_photo_url}), but NO active storage photo"
+          end
+        else
+          Rails.logger.debug "#{story.id} no photos"
         end
 
-        { text: text, image: image }
+        { text: text, image: image_url }
       end
     rescue => e
       Rails.logger.warn("the facking thing brokie #{e}")
