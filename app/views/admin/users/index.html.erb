@@ -1,5 +1,9 @@
 <h1>users</h1>
-
+<ul>
+  <li>
+    #<%= current_user.id %>: <%= link_to "the girl(?) reading this", admin_user_path(current_user) %> <3
+  </li>
+</ul>
 <ul>
   <% @users.each do |user| %>
     <li>
