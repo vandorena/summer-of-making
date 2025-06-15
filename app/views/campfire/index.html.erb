@@ -35,31 +35,32 @@
                 </div>
               <% end %>
             </div>
-            <div class="flex-1">
-              <h3 class="text-lg font-semibold text-gray-900 mb-2">Connect your Hackatime account</h3>
-              <p class="text-gray-600 mb-4">Hackatime tracks how much you code, and we use that time to give you shells as a reward for all your hard work!</p>
-              <% if @account_status[:hackatime_projects] %>
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800" data-hackatime-status-target="status">
-                  Linked and projects tracked!
-                </span>
-              <% elsif @account_status[:hackatime_setup] %>
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-800" data-hackatime-status-target="status">
-                  Linked, now waiting for real data...
-                </span>
-              <% elsif @account_status[:hackatime_linked] %>
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-800" data-hackatime-status-target="status">
-                  Waiting for test data...
-                </span>
-              <% else %>
-                <%= link_to "Connect Hackatime", hackatime_auth_redirect_path, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500", target: "_blank" %>
-              <% end %>
-            </div>
+            <h3 class="text-lg font-semibold text-gray-900">Connect your Hackatime account</h3>
+          </div>
+
+          <div class="flex-1 md:ml-12">
+            <p class="text-gray-600 mb-4">Hackatime tracks how much you code, and we use that time to give you shells as a reward for all your hard work!</p>
+            <% if @account_status[:hackatime_projects] %>
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800" data-hackatime-status-target="status">
+                Linked and projects tracked!
+              </span>
+            <% elsif @account_status[:hackatime_setup] %>
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-800" data-hackatime-status-target="status">
+                Linked, now waiting for real data...
+              </span>
+            <% elsif @account_status[:hackatime_linked] %>
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-800" data-hackatime-status-target="status">
+                Waiting for test data...
+              </span>
+            <% else %>
+              <%= link_to "Connect Hackatime", hackatime_auth_redirect_path, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500", target: "_blank" %>
+            <% end %>
           </div>
         </div>
 
         <!-- Step 2: Identity Verification -->
         <div class="bg-white rounded-lg border p-6">
-          <div class="flex items-start space-x-4">
+          <div class="flex items-start gap-4 mb-2">
             <div class="flex-shrink-0">
               <% if current_verification_status == :verified %>
                 <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
@@ -71,40 +72,41 @@
                 </div>
               <% end %>
             </div>
-            <div class="flex-1">
-              <h3 class="text-lg font-semibold text-gray-900 mb-2">Verify your identity</h3>
-              <p class="text-gray-600 mb-4">Hack Club is for people 18 and under, so we'll need to check that you're eligible before we can send you any of the cool stuff we've got</p>
+            <h3 class="text-lg font-semibold text-gray-900">Verify your identity</h3>
+          </div>
 
-              <% case current_verification_status %>
-              <% when :not_linked %>
-                <%= link_to "Start Verification", link_identity_vault_path, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500", target: "_blank" %>
-              <% when :needs_resubmission %>
-                <div class="space-y-2">
-                  <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-800">
-                    Needs Submission
-                  </span>
-                  <%= link_to "Submit Documents", "https://idv-staging.a.hackclub.dev/", class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ml-2", target: "_blank" %>
-                </div>
-              <% when :pending %>
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
-                  Pending Review
+          <div class="flex-1 md:ml-12">
+            <p class="text-gray-600 mb-4">Hack Club is for people 18 and under, so we'll need to check that you're eligible before we can send you any of the cool stuff we've got</p>
+
+            <% case current_verification_status %>
+            <% when :not_linked %>
+              <%= link_to "Start Verification", link_identity_vault_path, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500", target: "_blank" %>
+            <% when :needs_resubmission %>
+              <div class="space-y-2">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-800">
+                  Needs Submission
                 </span>
-              <% when :ineligible %>
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-red-100 text-red-800">
-                  Ineligible
-                </span>
-              <% else %>
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800">
-                  Verified
-                </span>
-              <% end %>
-            </div>
+                <%= link_to "Submit Documents", "https://idv-staging.a.hackclub.dev/", class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ml-2", target: "_blank" %>
+              </div>
+            <% when :pending %>
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
+                Pending Review
+              </span>
+            <% when :ineligible %>
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-red-100 text-red-800">
+                Ineligible
+              </span>
+            <% else %>
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800">
+                Verified
+              </span>
+            <% end %>
           </div>
         </div>
 
         <!-- Step 3: Order free stickers -->
         <div class="bg-white rounded-lg border p-6">
-          <div class="flex items-start space-x-4">
+          <div class="flex items-start gap-4 mb-2">
             <div class="flex-shrink-0">
               <% if current_user.shop_orders.joins(:shop_item).where(shop_items: { type: "ShopItem::FreeStickers" }).exists? %>
                 <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
@@ -116,17 +118,18 @@
                 </div>
               <% end %>
             </div>
-            <div class="flex-1">
-              <h3 class="text-lg font-semibold text-gray-900 mb-2">Order your free stickers</h3>
-              <p class="text-gray-600 mb-4">Well, now you have linked your Hackatime account, and verified your identity soo maybe.... order your free stickers!!!</p>
-              <% if current_user.shop_orders.joins(:shop_item).where(shop_items: { type: "ShopItem::FreeStickers" }).exists? %>
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800">
-                  Ordered
-                </span>
-              <% else %>
-                <%= link_to "Order Stickers", shop_path, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
-              <% end %>
-            </div>
+            <h3 class="text-lg font-semibold text-gray-900">Order your free stickers</h3>
+          </div>
+
+          <div class="flex-1 md:ml-12">
+            <p class="text-gray-600 mb-4">Well, now you have linked your Hackatime account, and verified your identity soo maybe.... order your free stickers!!!</p>
+            <% if current_user.shop_orders.joins(:shop_item).where(shop_items: { type: "ShopItem::FreeStickers" }).exists? %>
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800">
+                Ordered
+              </span>
+            <% else %>
+              <%= link_to "Order Stickers", shop_path, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+            <% end %>
           </div>
         </div>
       </div>
@@ -306,18 +309,19 @@
             </svg>
           </div>
         </div>
-        <div class="flex-1">
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">Need Help?</h3>
-          <p class="text-gray-600 mb-4">Got questions or running into issues? The #summer-help channel is the perfect place to get support from the community!</p>
-          <a href="https://hackclub.slack.com/archives/C090JKDJYN8"
-             target="_blank"
-             class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" viewBox="0 0 24 24">
-              <path fill="currentColor" d="M6 14q-.825 0-1.413-.588T4 12q0-.825.588-1.413T6 10q.825 0 1.413.588T8 12q0 .825-.588 1.413T6 14m4-8q-.825 0-1.413-.588T8 4q0-.825.588-1.413T10 2q.825 0 1.413.588T12 4q0 .825-.588 1.413T10 6m4 8q-.825 0-1.413-.588T12 12q0-.825.588-1.413T14 10q.825 0 1.413.588T16 12q0 .825-.588 1.413T14 14m4-8q-.825 0-1.413-.588T16 4q0-.825.588-1.413T18 2q.825 0 1.413.588T20 4q0 .825-.588 1.413T18 6" />
-            </svg>
-            Join #summer-help
-          </a>
-        </div>
+        <h3 class="text-lg font-semibold text-gray-900">Need Help?</h3>
+      </div>
+
+      <div class="flex-1 md:ml-12">
+        <p class="text-gray-600 mb-4">Got questions or running into issues? The #summer-help channel is the perfect place to get support from the community!</p>
+        <a href="https://hackclub.slack.com/archives/C090JKDJYN8"
+           target="_blank"
+           class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M6 14q-.825 0-1.413-.588T4 12q0-.825.588-1.413T6 10q.825 0 1.413.588T8 12q0 .825-.588 1.413T6 14m4-8q-.825 0-1.413-.588T8 4q0-.825.588-1.413T10 2q.825 0 1.413.588T12 4q0 .825-.588 1.413T10 6m4 8q-.825 0-1.413-.588T12 12q0-.825.588-1.413T14 10q.825 0 1.413.588T16 12q0 .825-.588 1.413T14 14m4-8q-.825 0-1.413-.588T16 4q0-.825.588-1.413T18 2q.825 0 1.413.588T20 4q0 .825-.588 1.413T18 6" />
+          </svg>
+          Join #summer-help
+        </a>
       </div>
     </div>
   </div>
