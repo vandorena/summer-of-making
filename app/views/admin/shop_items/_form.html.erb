@@ -79,8 +79,8 @@
       <div class="row">
         <div class="col-md-6">
           <div class="mb-3">
-            <%= form.label :hacker_score, class: "form-label" %>
-            <%= form.number_field :hacker_score, class: "form-control", id: "shop_item_hacker_score" %>
+            <%= form.label :hacker_score, "Hacker Score (%)", class: "form-label" %>
+            <%= form.number_field :hacker_score, min: 0, max: 100, value: (@shop_item.hacker_score || 50), class: "form-control", id: "shop_item_hacker_score" %>
           </div>
         </div>
         <div class="col-md-6">
@@ -158,11 +158,13 @@
 
         function calculateEstimatedTickets() {
             const usdCost = parseFloat(usdCostField.value) || 0;
-            const hackerScore = parseFloat(hackerScoreField.value) || 0;
+            const hackerScore = parseFloat(hackerScoreField.value) || 50;
 
-            // Formula: contest__doubloons_per_dollar * unit_cost * (0.5 + (1 - hacker_score))
+            // Formula: contest__doubloons_per_dollar * unit_cost * (0.5 + (1 - hacker_score_percent))
             // Always use usd_cost as the base for ticket estimation
-            const estimatedTickets = gameConstants.doubloons_per_dollar * usdCost * (0.5 + (1 - hackerScore));
+            // Convert hacker_score from 0-100 to 0-1 range
+            const hackerScorePercent = hackerScore / 100;
+            const estimatedTickets = gameConstants.doubloons_per_dollar * usdCost * (0.5 + (1 - hackerScorePercent));
 
             return estimatedTickets;
         }
