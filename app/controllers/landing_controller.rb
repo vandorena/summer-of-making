@@ -23,7 +23,8 @@ class LandingController < ApplicationController
       {
         name: item.name,
         time: "~#{hours} #{"hour".pluralize(hours)}",
-        image: item.image.present? ? url_for(item.image) : "https://crouton.net/crouton.png"
+        image: item.image.present? ? url_for(item.image) : "https://crouton.net/crouton.png",
+        ticket_cost: item.ticket_cost
       }
     end
     # @prizes = [
@@ -185,7 +186,7 @@ class LandingController < ApplicationController
       )
     end
 
-    @prizes = @prizes.sort_by { |p| p[:numeric_hours] }
+    @prizes = @prizes.sort_by { |p| [ p[:ticket_cost] || 0, p[:numeric_hours] ] }
   end
 
   def sign_up
