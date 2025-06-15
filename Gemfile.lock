@@ -606,8 +606,8 @@ DEPENDENCIES
   jbuilder
   kamal
   lz_string (~> 0.3.0)
-  mission_control-jobs
   memory_profiler
+  mission_control-jobs
   norairrecord
   pagy
   pg (~> 1.1)
