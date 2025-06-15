@@ -61,9 +61,8 @@ export default class extends Controller {
           `
           
           // replace w/ status span
-          const contentDiv = this.iconTarget.parentElement.nextElementSibling
+          const contentDiv = this.iconTarget.parentElement.nextElementSibling.nextElementSibling
           contentDiv.innerHTML = `
-            <h3 class="text-lg font-semibold text-gray-900 mb-2">Install Hackatime</h3>
             <p class="text-gray-600 mb-4">${hackatimeCopy}</p>
             <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800" data-hackatime-status-target="status">
               Hackatime is installed!
