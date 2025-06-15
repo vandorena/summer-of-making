@@ -47,7 +47,7 @@
           </button>
         </div>
     <% else %>
-        <div class="col-span-full flex flex-col items-center justify-center bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] p-6 md:p-8 mt-2 md:mt-0">
+        <%= render "shared/card", classes: "col-span-full flex flex-col items-center", padding: "lg" do %>
           <div class="flex justify-center items-center">
             <%= image_tag 'orpheustimer.png', class: 'w-32 h-32 sm:w-48 sm:h-48 2xl:w-64 2xl:h-64 transform scale-x-[-1] mb-4 sm:mb-6' %>
           </div>
@@ -72,7 +72,7 @@
           <button <%= "disabled" if current_user.hackatime_projects.empty? %> data-action="click->modal#open" data-modal-type="create-project" class="px-4 md:px-6 py-1 md:py-2 bg-forest hover:bg-forest-dark text-white text-base md:text-lg 2xl:text-xl btn-pixel cursor-pointer">
             Create Your Project
           </button>
-        </div>
+        <% end %>
     <% end %>
     </div>
 </div>
