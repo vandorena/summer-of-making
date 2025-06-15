@@ -114,45 +114,44 @@ begin
 
     puts "Airtable import completed!"
 
+    begin
+      sync_count = Airtable::HighSeasBook::StorySubmission.sync_with_airtable
+      puts "found #{sync_count} records"
+
+      processed_submissions = 0
+      attached_photos_count = 0
+      Airtable::HighSeasBook::StorySubmission.all.each do |submission|
+        next unless submission.airtable_fields["Show in Summer of Making"] == true
+        processed_submissions += 1
+        photos_field = submission.airtable_fields["Photos (Optional)"]
+        next if photos_field.blank?
+        if submission.photos.attached?
+          submission.photos.each(&:purge)
+          puts "destroy dupes #{submission.id}."
+        end
+        photos_field.each do |photo_data|
+          url = photo_data["url"]
+          if url.present?
+            begin
+              submission.attach_photo_from_url(url)
+              attached_photos_count += 1
+            rescue => e
+            puts "getting #{url} for submission ID #{submission.id}: #{e.message}"
+            end
+          end
+        end
+      end
+      puts "  Processed #{processed_submissions} StorySubmissions for photo attachment."
+      puts "  Attempted to attach #{attached_photos_count} photos in total."
+    rescue StandardError => e
+    puts "error #{e.message}"
+    puts "#{e.backtrace.first(5).join("\\n  ")}"
+    end
+
   else
     puts "❌ Failed to fetch Airtable data: #{response.code} #{response.message}"
   end
 
 rescue => e
   puts "❌ Error importing Airtable data: #{e.message}"
-end
-
-if ENV['HIGHSEAS_AIRTABLE_KEY'].present?
-  begin
-    sync_count = Airtable::HighSeasBook::StorySubmission.sync_with_airtable
-    puts "found #{sync_count} records"
-
-    processed_submissions = 0
-    attached_photos_count = 0
-    Airtable::HighSeasBook::StorySubmission.all.each do |submission|
-      processed_submissions += 1
-      photos_field = submission.airtable_fields["Photos (Optional)"]
-      next if photos_field.blank?
-
-      photos_field.each do |photo_data|
-        url = photo_data["url"]
-        if url.present?
-          begin
-
-            # I SWEAR
-            puts "process #{submission.id} from URL: #{url}"
-            submission.attach_photo_from_url(url)
-            attached_photos_count += 1
-          rescue StandardError => e
-            puts "getting #{url} for submission ID #{submission.id}: #{e.message}"
-          end
-        end
-      end
-    end
-  rescue StandardError => e
-    puts "error #{e.message}"
-    puts "#{e.backtrace.first(5).join("\\n  ")}"
-  end
-else
-  puts "where is your env cuh"
 end
