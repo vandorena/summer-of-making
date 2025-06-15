@@ -41,7 +41,7 @@
           <%= render partial: "shared/link", locals: {
             target: explore_path,
             text: "Explore",
-            icon: tab_locked?(:compass) ? "lock" : "compass",
+            icon: tab_unlocked?(:explore) ? "compass" : "lock",
             large: true,
             highlight: current_page?(explore_path),
             text_attr: {
@@ -49,7 +49,7 @@
               class: "text-3xl"
             },
             underline_attr: { data: { sidebar_target: "underline" } },
-            class: tab_locked?(:compass) ? "opacity-50 cursor-not-allowed"
+            class: tab_unlocked?(:explore) ? "" : "opacity-50 cursor-not-allowed"
           } %>
         </li>
 
@@ -57,7 +57,7 @@
           <%= render partial: "shared/link", locals: {
             target: my_projects_path,
             text: "Projects",
-            icon: tab_locked?(:my_projects) ? "lock" : "user",
+            icon: tab_unlocked?(:my_projects) ? "user" : "lock",
             large: true,
             highlight: current_page?(my_projects_path),
             text_attr: {
@@ -65,7 +65,7 @@
               class: "text-3xl"
             },
             underline_attr: { data: { sidebar_target: "underline" } },
-            class: tab_locked?(:my_projects) ? "opacity-50 cursor-not-allowed"
+            class: tab_unlocked?(:my_projects) ? "" : "opacity-50 cursor-not-allowed"
           } %>
         </li>
 
@@ -73,7 +73,7 @@
           <%= render partial: "shared/link", locals: {
             target: new_vote_path,
             text: "Vote",
-            icon: tab_locked?(:vote) ? "lock" : "vote",
+            icon: tab_unlocked?(:vote) ? "vote" : "lock",
             large: true,
             highlight: current_page?(new_vote_path),
             text_attr: {
@@ -81,7 +81,7 @@
               class: "text-3xl"
             },
             underline_attr: { data: { sidebar_target: "underline" } },
-            class: tab_locked?(:vote) ? "opacity-50 cursor-not-allowed"
+            class: tab_unlocked?(:vote) ? "" : "opacity-50 cursor-not-allowed"
           } %>
         </li>
 
