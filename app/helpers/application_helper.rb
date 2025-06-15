@@ -35,11 +35,10 @@ module ApplicationHelper
   end
 
   def render_shells(amount)
-    (number_to_currency(amount) || "$?.??")
-      .sub(
-        "$",
-        shell_icon
-      ).html_safe
+    rounded_amount = amount.to_i
+    (number_to_currency(rounded_amount, precision: 0) || "$?.??")
+      .sub("$", shell_icon)
+      .html_safe
   end
 
   def tab_unlocked?(tab)
