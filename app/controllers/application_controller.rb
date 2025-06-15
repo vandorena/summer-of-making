@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
   include PublicActivity::StoreController
   include Pundit::Authorization
 
-  before_action :try_rack_mini_profiler_enable
+  # before_action :try_rack_mini_profiler_enable
 
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   # allow_browser versions: :modern
