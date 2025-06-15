@@ -1,4 +1,4 @@
-<div class="px-4 md:px-8">
+<div class="md:px-8">
     <%= render "shared/page_title",
         title: "Campfire",
         subtitle: "Huddle around! Get your news here." %>
@@ -15,7 +15,7 @@
              data-step="hackatime"
              data-controller="hackatime-status"
              data-hackatime-status-tutorial-active-value="<%= !current_user.tutorial_progress.completed? %>">
-          <div class="flex items-start space-x-4">
+          <div class="flex items-start gap-4 mb-2">
             <div class="flex-shrink-0">
               <% if @account_status[:hackatime_projects] %>
                 <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center" data-hackatime-status-target="icon">
