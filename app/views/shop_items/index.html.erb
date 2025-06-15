@@ -22,11 +22,9 @@
     <%= render "verification_callout" unless current_verification_status == :verified %>
   </div>
 
-  <div class="mb-6 text-center flex justify-center flex-col">
+  <div class="my-6 text-center flex justify-center flex-col">
     <div class="flex flex-col sm:grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-      <% @shop_items.sort_by(&:ticket_cost).each do |item| %>
-        <%= render "item", item: %>
-      <% end %>
+      <%= render partial: "item", collection: @shop_items.sort_by(&:ticket_cost), as: :item %>
     </div>
   </div>
 </div>
