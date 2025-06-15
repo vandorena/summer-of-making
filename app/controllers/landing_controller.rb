@@ -6,9 +6,8 @@ class LandingController < ApplicationController
   skip_before_action :authenticate_user!, only: %i[index sign_up]
 
   def index
-
     @high_seas_reviews = Rails.cache.fetch("high_seas_reviews", expires_in: 1.hour) do
-      Airtable::HighSeasBook::StorySubmission.has_attached_photo.includes([:photo_attachment])
+      Airtable::HighSeasBook::StorySubmission.has_attached_photo.includes([ :photo_attachment ])
     end.sample(5)
 
     if user_signed_in?
