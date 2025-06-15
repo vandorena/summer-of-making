@@ -145,8 +145,8 @@
     document.addEventListener('DOMContentLoaded', function () {
         // Game constants from Rails configuration
         const gameConstants = {
-            doubloons_per_dollar: <%= Rails.configuration.game_constants.tickets_per_dollar %>,
-            dollars_per_mean_hour: <%= Rails.configuration.game_constants.dollars_per_mean_hour %>
+            doubloons_per_dollar: <%= Rails.configuration.game_constants.tickets_per_dollar.to_json %>,
+            dollars_per_mean_hour: <%= Rails.configuration.game_constants.dollars_per_mean_hour.to_json %>
         };
 
         // Get form elements
