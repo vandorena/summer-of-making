@@ -34,5 +34,8 @@ module Journey
     # config.eager_load_paths << Rails.root.join("app/models/shop_item")
     # config.autoload_paths << Rails.root.join("app/models/shop_item")
     config.after_initialize { eager_load! }
+
+    # bring in game constants from yaml
+    config.game_constants = config_for(:game_constants)
   end
 end
