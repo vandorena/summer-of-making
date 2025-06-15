@@ -305,6 +305,7 @@ Rails.application.routes.draw do
         post :create_payout
       end
     end
+    resources :shop_items
     resources :shop_orders do
       collection do
         get :pending

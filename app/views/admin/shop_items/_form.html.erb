@@ -1,0 +1,126 @@
+<%= form_with(model: [:admin, @shop_item], local: true) do |form| %>
+  <% if @shop_item.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= pluralize(@shop_item.errors.count, "error") %> prohibited this shop item from being saved:</h4>
+      <ul>
+        <% @shop_item.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="mb-3">
+        <%= form.label :type, class: "form-label" %>
+        <%= form.select :type, @shop_item_types, { include_blank: "Select a type" }, { class: "form-select" } %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :name, class: "form-label" %>
+        <%= form.text_field :name, class: "form-control" %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :description, class: "form-label" %>
+        <%= form.text_area :description, rows: 3, class: "form-control" %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :internal_description, "Internal Description (admin only)", class: "form-label" %>
+        <%= form.text_area :internal_description, rows: 2, class: "form-control" %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :image, class: "form-label" %>
+        <%= form.file_field :image, class: "form-control" %>
+        <% if @shop_item.image.attached? %>
+          <div class="mt-2">
+            <small>Current image:</small><br>
+            <%= image_tag @shop_item.image.variant(:thumb), width: 100 %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label :ticket_cost, class: "form-label" %>
+            <%= form.number_field :ticket_cost, step: 0.01, class: "form-control" %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label :usd_cost, class: "form-label" %>
+            <%= form.number_field :usd_cost, step: 0.01, class: "form-control" %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label :hacker_score, class: "form-label" %>
+            <%= form.number_field :hacker_score, class: "form-control" %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label :max_qty, "Max Quantity", class: "form-label" %>
+            <%= form.number_field :max_qty, class: "form-control" %>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <div class="form-check">
+          <%= form.check_box :requires_black_market, class: "form-check-input" %>
+          <%= form.label :requires_black_market, "Requires Black Market", class: "form-check-label" %>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <div class="form-check">
+          <%= form.check_box :show_in_carousel, class: "form-check-input" %>
+          <%= form.label :show_in_carousel, "Show in Carousel", class: "form-check-label" %>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <div class="form-check">
+          <%= form.check_box :one_per_person_ever, class: "form-check-input" %>
+          <%= form.label :one_per_person_ever, "One Per Person Ever", class: "form-check-label" %>
+        </div>
+      </div>
+
+      <h5>HCB Locks</h5>
+      <div class="mb-3">
+        <%= form.label :hcb_merchant_lock, "HCB Merchant Lock", class: "form-label" %>
+        <%= form.text_field :hcb_merchant_lock, class: "form-control" %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :hcb_category_lock, "HCB Category Lock", class: "form-label" %>
+        <%= form.text_field :hcb_category_lock, class: "form-control" %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :hcb_keyword_lock, "HCB Keyword Lock", class: "form-label" %>
+        <%= form.text_field :hcb_keyword_lock, class: "form-control" %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :agh_contents, "AGH Contents (JSON)", class: "form-label" %>
+        <%= form.text_area :agh_contents, rows: 4, class: "form-control", placeholder: "Enter valid JSON" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to 'Cancel', admin_shop_items_path, class: "btn btn-secondary" %>
+  </div>
+<% end %>
