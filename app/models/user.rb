@@ -105,7 +105,7 @@ class User < ApplicationRecord
       display_name: user_info.user.profile.display_name.presence || user_info.user.profile.real_name,
       email: user_info.user.profile.email,
       timezone: user_info.user.tz,
-      avatar: user_info.user.profile.image_original.presence || user_info.user.profile.image_512
+      avatar: user_info.user.profile.image_192 || user_info.user.profile.image_512
     )
   end
 
