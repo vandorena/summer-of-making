@@ -19,9 +19,10 @@ class LandingController < ApplicationController
     end
 
     @prizes = ShopItem.shown_in_carousel.map do |item|
+      hours = item.average_hours_estimated.to_i
       {
         name: item.name,
-        time: "69 hours",
+        time: "#{hours} #{"hour".pluralize(hours)}",
         image: url_for(item.image)
       }
     end

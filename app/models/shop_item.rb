@@ -25,14 +25,15 @@
 #
 class ShopItem < ApplicationRecord
   has_one_attached :image do |attachable|
-    attachable.variant :thumb, resize_to_limit: [ 256, 256 ]
+    attachable.variant :thumb, resize_to_limit: [256, 256]
   end
 
   has_many :shop_orders
 
   scope :black_market, -> { where(requires_black_market: true) }
-  scope :not_black_market, -> { where(requires_black_market: [ false, nil ]) }
+  scope :not_black_market, -> { where(requires_black_market: [false, nil]) }
   scope :shown_in_carousel, -> { where(show_in_carousel: true) }
+
   def manually_fulfilled?
     true
   end
@@ -43,5 +44,9 @@ class ShopItem < ApplicationRecord
 
   def is_free?
     self.ticket_cost.zero?
+  end
+
+  def average_hours_estimated
+    ticket_cost / (Rails.configuration.game_constants.tickets_per_dollar * Rails.configuration.game_constants.dollars_per_mean_hour)
   end
 end
