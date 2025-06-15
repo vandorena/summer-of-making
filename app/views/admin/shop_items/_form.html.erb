@@ -1,4 +1,4 @@
-<%= form_with(model: [:admin, @shop_item.becomes(ShopItem)], local: true) do |form| %>
+<%= form_with(model: @shop_item, url: (@shop_item.persisted? ? admin_shop_item_path(@shop_item) : admin_shop_items_path), method: (@shop_item.persisted? ? :patch : :post), local: true) do |form| %>
   <% if @shop_item.errors.any? %>
     <div class="alert alert-danger">
       <h4><%= pluralize(@shop_item.errors.count, "error") %> prohibited this shop item from being saved:</h4>
@@ -35,7 +35,7 @@
       <div class="mb-3">
         <%= form.label :image, class: "form-label" %>
         <%= form.file_field :image, class: "form-control" %>
-        <% if @shop_item.image.attached? %>
+        <% if @shop_item.persisted? && @shop_item.image.attached? %>
           <div class="mt-2">
             <small>Current image:</small><br>
             <%= image_tag @shop_item.image.variant(:thumb), width: 100 %>
