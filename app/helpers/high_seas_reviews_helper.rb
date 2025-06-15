@@ -1,12 +1,9 @@
 module HighSeasReviewsHelper
-  def get_review_image_path(image_path)
-    return nil if image_path.blank?
-    if image_path.start_with?("/temp/hsr/")
-      image_path
-    elsif image_path.start_with?("http")
-      "clubhuman.png"
+  def get_review_image_path(submission)
+    if submission.photos.attached?
+      url_for(submission.photos.first)
     else
-      image_path
+      asset_path("clubhuman.png")
     end
   end
 end
