@@ -1,7 +1,7 @@
 <h1>User #<%= @user.id %></h1>
 <%= render @user %> <br>
-<b>IDV ID:</b> <%= @user.identity_vault_id || "None" %> <br/>
-<b>Slack ID:</b> <%= (link_to @user.slack_id, "https://hackclub.slack.com/team/#{@user.slack_id}") || "None?!" %> <br/>
+<b>IDV ID:</b> <%= @user.identity_vault_id || "None" %> <br>
+<b>Slack ID:</b> <%= (link_to @user.slack_id, "https://hackclub.slack.com/team/#{@user.slack_id}") || "None?!" %> <br>
 <b>Email:</b> <%= (link_to @user.email, "mailto:#{@user.email}") || "None" %>
 
 <br><br>
