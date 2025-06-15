@@ -34,6 +34,8 @@ class ShopItem < ApplicationRecord
   scope :not_black_market, -> { where(requires_black_market: [ false, nil ]) }
   scope :shown_in_carousel, -> { where(show_in_carousel: true) }
 
+  validates_presence_of :ticket_cost, :name, :description
+
   def manually_fulfilled?
     true
   end
