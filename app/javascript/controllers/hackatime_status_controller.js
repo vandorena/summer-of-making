@@ -45,6 +45,11 @@ export default class extends Controller {
       .then(response => response.json())
       .then(data => {
         if (data.hackatime_projects) {
+          const hackatimeCopy = 
+          `Hackatime is an open-source tool which automatically tracks your coding time. <br class="hidden lg:block">1 hour = 1 shell<img src="/inlineshell.png" class="w-5 h-5 inline-block" />, with up to 30x bonuses based on community votes!
+          <br><br>
+          Make sure <span class="text-[#E65A42]">all your code editors</span> are connected to Hackatime. You can’t get shells without it!`
+
           // green
           this.iconTarget.className = 'w-8 h-8 bg-green-100 rounded-full flex items-center justify-center'
           this.iconTarget.innerHTML = `
@@ -58,10 +63,10 @@ export default class extends Controller {
           // replace w/ status span
           const contentDiv = this.iconTarget.parentElement.nextElementSibling
           contentDiv.innerHTML = `
-            <h3 class="text-lg font-semibold text-gray-900 mb-2">Connect your Hackatime account</h3>
-            <p class="text-gray-600 mb-4">Hackatime tracks how much you code, and we use that time to give you shells as a reward for all your hard work!</p>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Install Hackatime</h3>
+            <p class="text-gray-600 mb-4">${hackatimeCopy}</p>
             <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800" data-hackatime-status-target="status">
-              Linked and projects tracked!
+              Hackatime is installed!
             </span>
           `
         } else if (data.hackatime_setup) {
@@ -80,9 +85,9 @@ export default class extends Controller {
           const contentDiv = this.iconTarget.parentElement.nextElementSibling
           contentDiv.innerHTML = `
             <h3 class="text-lg font-semibold text-gray-900 mb-2">Connect your Hackatime account</h3>
-            <p class="text-gray-600 mb-4">Hackatime tracks how much you code, and we use that time to give you shells as a reward for all your hard work!</p>
+            <p class="text-gray-600 mb-4">${hackatimeCopy}</p>
             <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-800" data-hackatime-status-target="status">
-              Linked, now waiting for real data...
+              Waiting for data from your code editor...
             </span>
           `
         } else if (data.hackatime_linked) {
@@ -101,9 +106,9 @@ export default class extends Controller {
           const contentDiv = this.iconTarget.parentElement.nextElementSibling
           contentDiv.innerHTML = `
             <h3 class="text-lg font-semibold text-gray-900 mb-2">Connect your Hackatime account</h3>
-            <p class="text-gray-600 mb-4">Hackatime tracks how much you code, and we use that time to give you shells as a reward for all your hard work!</p>
+            <p class="text-gray-600 mb-4">${hackatimeCopy}</p>
             <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-800" data-hackatime-status-target="status">
-              Waiting for test data...
+              Waiting for connection from Hackatime...
             </span>
           `
         }
