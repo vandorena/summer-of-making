@@ -158,13 +158,11 @@
 
         function calculateEstimatedTickets() {
             const usdCost = parseFloat(usdCostField.value) || 0;
-            const ticketCost = parseFloat(ticketCostField.value) || 0;
             const hackerScore = parseFloat(hackerScoreField.value) || 0;
 
-            // Formula: contest__doubloons_per_dollar * IF(fair_market_value, fair_market_value, unit_cost) * (0.5 + (1 - hacker_score))
-            // Using usd_cost as unit_cost and ticket_cost as fair_market_value equivalent
-            const costToUse = ticketCost > 0 ? ticketCost : usdCost;
-            const estimatedTickets = gameConstants.doubloons_per_dollar * costToUse * (0.5 + (1 - hackerScore));
+            // Formula: contest__doubloons_per_dollar * unit_cost * (0.5 + (1 - hacker_score))
+            // Always use usd_cost as the base for ticket estimation
+            const estimatedTickets = gameConstants.doubloons_per_dollar * usdCost * (0.5 + (1 - hackerScore));
 
             return estimatedTickets;
         }
@@ -188,7 +186,6 @@
 
         // Add event listeners for live updates
         if (usdCostField) usdCostField.addEventListener('input', updateCalculations);
-        if (ticketCostField) ticketCostField.addEventListener('input', updateCalculations);
         if (hackerScoreField) hackerScoreField.addEventListener('input', updateCalculations);
 
         // Initial calculation on page load
