@@ -32,6 +32,8 @@ gem "solid_cable"
 gem "solid_cache"
 gem "solid_queue"
 
+gem "ahoy_matey"
+
 # Dashboard for solidqueue
 gem "mission_control-jobs"
 
