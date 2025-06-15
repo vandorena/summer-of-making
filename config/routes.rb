@@ -296,6 +296,7 @@ Rails.application.routes.draw do
   namespace :admin, constraint: AdminConstraint do
     mount MissionControl::Jobs::Engine, at: "jobs"
     mount Blazer::Engine, at: "blazer"
+    mount Flipper::UI.app(Flipper), at: "flipper", as: :flipper
     # mount_avo
     get "/", to: "static_pages#index", as: :root
     resources :users, only: [ :index, :show ] do

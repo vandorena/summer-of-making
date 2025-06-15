@@ -143,3 +143,7 @@ gem "pundit", "~> 2.5"
 gem "htmlcompressor", "~> 0.4.0"
 
 gem "awesome_print", "~> 1.9"
+
+# fer feacher flaggin'
+gem "flipper", "~> 1.3"
+gem "flipper-ui", "~> 1.3"
