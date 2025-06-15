@@ -47,6 +47,7 @@ class ShopItem < ApplicationRecord
   end
 
   def average_hours_estimated
+    return 0 unless ticket_cost.present?
     ticket_cost / (Rails.configuration.game_constants.tickets_per_dollar * Rails.configuration.game_constants.dollars_per_mean_hour)
   end
 end
