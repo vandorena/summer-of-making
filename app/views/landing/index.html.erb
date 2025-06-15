@@ -195,7 +195,7 @@
                   <div class="parchment-texture"></div>
                   <div class="parchment-prize-image aspect-square w-full h-full flex items-center justify-center mb-2 rounded-xl">
                     <% if prize[:image] && prize[:image] != "" %>
-                      <img src="<%= prize[:image] %>" alt="<%= prize[:name] %>" class="w-full h-full object-scale-down aspect-square rounded-xl">
+                      <img src="<%= prize[:image] %>" alt="<%= prize[:name] %>" class="w-full h-full object-scale-down aspect-square rounded-xl" loading="lazy">
                     <% else %>
                       <%= image_tag "clubhuman.png", alt: "Prize", class: "w-full h-full object-cover rounded-xl" %>
                     <% end %>
@@ -215,7 +215,7 @@
                 <div class="parchment-prize-card p-3 md:p-3 sm:p-2 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:scale-105" style="animation-delay: <%= (index * 0.4) %>s;">
                   <div class="parchment-prize-image w-full h-full flex items-center justify-center mb-2 rounded-xl aspect-square">
                     <% if prize[:image] && prize[:image] != "" %>
-                      <img src="<%= prize[:image] %>" alt="<%= prize[:name] %>" class="w-full h-full object-scale-down aspect-square rounded-xl">
+                      <img src="<%= prize[:image] %>" alt="<%= prize[:name] %>" class="w-full h-full object-scale-down aspect-square rounded-xl" loading="lazy">
                     <% else %>
                       <%= image_tag "clubhuman.png", alt: "Prize", class: "w-full h-full object-cover rounded-xl" %>
                     <% end %>
@@ -368,7 +368,7 @@
               <div class="carousel-slide flex-none w-full max-w-2xl md:max-w-3xl">
                 <div class="parchment-prize-card p-0 md:p-0 sm:p-0 text-center transition-all duration-300 hover:scale-105 min-h-[16rem] w-full overflow-visible flex flex-row items-stretch justify-start max-h-[28rem] h-[22rem] relative rounded-lg shadow-lg bg-[#F3ECD8] border-4 border-[#E4DCC6]">
                   <div class="relative flex-shrink-0 flex-grow-0 flex items-center justify-center z-10 rounded-lg overflow-hidden h-full pr-0">
-                    <%= image_tag review.photo, alt: "photo", class: "max-h-full max-w-full w-auto h-auto object-contain rounded-lg" %>
+                    <%= image_tag review.photo, alt: "photo", class: "max-h-full max-w-full w-auto h-auto object-contain rounded-lg", loading: "lazy" %>
                   </div>
                   <div class="flex-1 min-w-0 flex flex-col justify-center items-start px-4 py-4 md:px-6 md:py-6 z-10 text-left min-h-0 h-full">
                     <p class="font-['Fredoka',sans-serif] text-sm md:text-base text-[#3a2f25] leading-relaxed mb-2 break-words overflow-y-auto max-h-full">
