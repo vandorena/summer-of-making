@@ -22,6 +22,16 @@ class Airtable::HighSeasBook::StorySubmission < ApplicationRecord
     self.api_key = ENV["HIGHSEAS_AIRTABLE_KEY"]
   end
 
+  has_many_attached :photos
+
+  def attach_photo_from_url(url)
+    return if url.blank?
+    require "open-uri"
+    file = URI.open(url)
+    filename = File.basename(URI.parse(url).path)
+    self.photos.attach(io: file, filename: filename)
+  end
+
   def self.sync_with_airtable
     records = AirtableRecord.all
     count = 0

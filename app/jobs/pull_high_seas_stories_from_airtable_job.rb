@@ -9,7 +9,7 @@ class PullHighSeasStoriesFromAirtableJob < ApplicationJob
       next if pic.blank?
       pic.each do |photo|
         url = photo["url"]
-        submission.store_image_locally(url)
+        submission.attach_photo_from_url(url)
       end
     end
   end
