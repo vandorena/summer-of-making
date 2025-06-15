@@ -168,10 +168,10 @@
         }
 
         function calculateAverageHours() {
-            const estimatedTickets = calculateEstimatedTickets();
+            const ticketCost = parseFloat(ticketCostField.value) || 0;
 
-            // Formula: doubloons_estimated / (contest__doubloons_per_dollar * contest__dollars_per_mean_hour)
-            const averageHours = estimatedTickets / (gameConstants.doubloons_per_dollar * gameConstants.dollars_per_mean_hour);
+            // Formula: ticket_cost / (contest__doubloons_per_dollar * contest__dollars_per_mean_hour)
+            const averageHours = ticketCost / (gameConstants.doubloons_per_dollar * gameConstants.dollars_per_mean_hour);
 
             return averageHours;
         }
@@ -186,6 +186,7 @@
 
         // Add event listeners for live updates
         if (usdCostField) usdCostField.addEventListener('input', updateCalculations);
+        if (ticketCostField) ticketCostField.addEventListener('input', updateCalculations);
         if (hackerScoreField) hackerScoreField.addEventListener('input', updateCalculations);
 
         // Initial calculation on page load
