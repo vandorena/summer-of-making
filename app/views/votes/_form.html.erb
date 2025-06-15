@@ -1,50 +1,50 @@
 <%= form_with(model: [project, vote],
-             url: votes_path,
-             class: "space-y-3 sm:space-y-4",
-             id: "vote_form_#{project.id}",
-             data: {
-               controller: "form",
-               action: "submit->form#preventDoubleSubmission",
-               voting_steps_target: "form",
-               project_id: project.id,
-               "data-analytics-form": ""
-             },
-             onclick: "event.stopPropagation()") do |f| %>
-    <%= f.hidden_field :winner_id, value: project.id %>
+  url: votes_path,
+  class: "space-y-3 sm:space-y-4",
+  id: "vote_form_#{project.id}",
+  data: {
+    controller: "form",
+    action: "submit->form#preventDoubleSubmission",
+    voting_steps_target: "form",
+    project_id: project.id,
+    "data-analytics-form": ""
+  },
+  onclick: "event.stopPropagation()") do |f| %>
+  <%= f.hidden_field :winner_id, value: project.id %>
 
-    <%= f.hidden_field :winner_demo_opened, value: false, data: { voting_steps_target: "winnerDemoOpenedInput" } %>
-    <%= f.hidden_field :winner_readme_opened, value: false, data: { voting_steps_target: "winnerReadmeOpenedInput" } %>
-    <%= f.hidden_field :winner_repo_opened, value: false, data: { voting_steps_target: "winnerRepoOpenedInput" } %>
-    <%= f.hidden_field :loser_demo_opened, value: false, data: { voting_steps_target: "loserDemoOpenedInput" } %>
-    <%= f.hidden_field :loser_readme_opened, value: false, data: { voting_steps_target: "loserReadmeOpenedInput" } %>
-    <%= f.hidden_field :loser_repo_opened, value: false, data: { voting_steps_target: "loserRepoOpenedInput" } %>
+  <%= f.hidden_field :winner_demo_opened, value: false, data: { voting_steps_target: "winnerDemoOpenedInput" } %>
+  <%= f.hidden_field :winner_readme_opened, value: false, data: { voting_steps_target: "winnerReadmeOpenedInput" } %>
+  <%= f.hidden_field :winner_repo_opened, value: false, data: { voting_steps_target: "winnerRepoOpenedInput" } %>
+  <%= f.hidden_field :loser_demo_opened, value: false, data: { voting_steps_target: "loserDemoOpenedInput" } %>
+  <%= f.hidden_field :loser_readme_opened, value: false, data: { voting_steps_target: "loserReadmeOpenedInput" } %>
+  <%= f.hidden_field :loser_repo_opened, value: false, data: { voting_steps_target: "loserRepoOpenedInput" } %>
 
-    <%= f.hidden_field :time_spent_voting_ms, data: { voting_steps_target: "timeSpentVotingInput" } %>
-    <%= f.hidden_field :music_played, value: false, data: { voting_steps_target: "musicPlayedInput" } %>
+  <%= f.hidden_field :time_spent_voting_ms, data: { voting_steps_target: "timeSpentVotingInput" } %>
+  <%= f.hidden_field :music_played, value: false, data: { voting_steps_target: "musicPlayedInput" } %>
 
-    <% token = session[:vote_tokens].keys.find { |k| session[:vote_tokens][k]["project_id"] == project.id } %>
-    <%= hidden_field_tag :vote_token, token %>
+  <% token = session[:vote_tokens].keys.find { |k| session[:vote_tokens][k]["project_id"] == project.id } %>
+  <%= hidden_field_tag :vote_token, token %>
 
-    <div class="space-y-1 sm:space-y-2" onclick="event.stopPropagation()">
-        <%= f.label :explanation, "Why this project?", class: "block text-base sm:text-lg font-medium" %>
-        <%= f.text_area :explanation,
-            class: "w-full p-2 sm:p-3 border-2 border-black focus:outline-none focus:border-forest bg-warm text-sm sm:text-base #{'border-vintage-red' if vote.errors[:explanation].any?}",
-            rows: 3,
-            required: true,
-            placeholder: "I like this project because...",
-            onclick: "event.stopPropagation()" %>
+  <div class="space-y-1 sm:space-y-2" onclick="event.stopPropagation()">
+    <%= f.label :explanation, "Why this project?", class: "block text-base sm:text-lg font-medium" %>
+    <%= f.text_area :explanation,
+      class: "w-full p-2 sm:p-3 border-2 border-black focus:outline-none focus:border-forest bg-warm text-sm sm:text-base #{'border-vintage-red' if vote.errors[:explanation].any?}",
+      rows: 3,
+      required: true,
+      placeholder: "I like this project because...",
+      onclick: "event.stopPropagation()" %>
 
-        <% if vote.errors[:explanation].any? %>
-            <div class="text-vintage-red text-xs sm:text-sm mt-1">
-                <%= vote.errors[:explanation].join(", ") %>
-            </div>
-        <% end %>
-    </div>
+    <% if vote.errors[:explanation].any? %>
+      <div class="text-vintage-red text-xs sm:text-sm mt-1">
+        <%= vote.errors[:explanation].join(", ") %>
+      </div>
+    <% end %>
+  </div>
 
-    <div class="flex justify-end" onclick="event.stopPropagation()">
-        <%= f.submit "Vote",
-            class: "w-full sm:w-auto px-4 sm:px-6 py-2 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 text-base sm:text-lg 2xl:text-xl btn-pixel cursor-pointer",
-            data: { form_target: "submitButton" },
-            onclick: "event.stopPropagation()" %>
-    </div>
+  <div class="flex justify-end" onclick="event.stopPropagation()">
+    <%= f.submit "Vote",
+      class: "w-full sm:w-auto px-4 sm:px-6 py-2 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 text-base sm:text-lg 2xl:text-xl btn-pixel cursor-pointer",
+      data: { form_target: "submitButton" },
+      onclick: "event.stopPropagation()" %>
+  </div>
 <% end %>

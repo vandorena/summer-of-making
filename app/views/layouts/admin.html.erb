@@ -1,24 +1,24 @@
 <html>
-<head>
-  <%= yield :head %>
-  <%= stylesheet_link_tag "admin.css" %>
-  <link rel="icon" href="/favicon.png" type="image/png">
-  <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
-</head>
-<body>
-<% flash.each do |type, message| %>
-  <% color = case type.to_sym
-             when :success
-               "green"
-             when :notice
-               "red"
-             else
-               ""
-             end %>
-  <div style="border: 1px solid <%= color %>;  padding: 1rem; color: <%= color %>">
-    <%= message %>
-  </div>
-<% end %>
-<%= yield %>
-</body>
+  <head>
+    <%= yield :head %>
+    <%= stylesheet_link_tag "admin.css" %>
+    <link rel="icon" href="/favicon.png" type="image/png">
+    <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <% flash.each do |type, message| %>
+      <% color = case type.to_sym
+        when :success
+          "green"
+        when :notice
+          "red"
+        else
+          ""
+        end %>
+      <div style="border: 1px solid <%= color %>;  padding: 1rem; color: <%= color %>">
+        <%= message %>
+      </div>
+    <% end %>
+    <%= yield %>
+  </body>
 </html>
