@@ -74,6 +74,7 @@ begin
         item.hacker_score = fields['hacker_score']&.to_i || 0
         item.requires_black_market = false
         item.one_per_person_ever = %w[ShopItem::SpecialFulfillmentItem ShopItem::FreeStickers].include?(item_type) ? true : false
+        item.show_in_carousel = fields['show_in_carousel']
 
         if fields['image_url'].present?
           begin
