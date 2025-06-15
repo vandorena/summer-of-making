@@ -16,6 +16,7 @@
 #  name                  :string
 #  one_per_person_ever   :boolean          default(FALSE)
 #  requires_black_market :boolean
+#  show_in_carousel      :boolean
 #  ticket_cost           :decimal(6, 2)
 #  type                  :string
 #  usd_cost              :decimal(6, 2)
@@ -29,7 +30,7 @@ class ShopItem < ApplicationRecord
 
   scope :black_market, -> { where(requires_black_market: true) }
   scope :not_black_market, -> { where(requires_black_market: [ false, nil ]) }
-
+  scope :shown_in_carousel, -> { where(show_in_carousel: true) }
   def manually_fulfilled?
     true
   end
