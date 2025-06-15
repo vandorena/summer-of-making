@@ -3,7 +3,7 @@
 class IdentityVaultService
   class << self
     def env
-      Rails.env.production ? :prod : :staging
+      Rails.env.production? ? :prod : :staging
     end
 
     def host
