@@ -13,7 +13,6 @@ class Airtable::HighSeasBook::StorySubmission < ApplicationRecord
   # string: airtable_id
 
   include BackedByAirtable
-  include AirtableImageStorage
   backed_by_filter "{Show in Summer of Making}"
 
   class AirtableRecord < Norairrecord::Table
@@ -22,8 +21,32 @@ class Airtable::HighSeasBook::StorySubmission < ApplicationRecord
     self.api_key = ENV["HIGHSEAS_AIRTABLE_KEY"]
   end
 
+  has_many_attached :photos
+
+  def attach_photo_from_url(url)
+    return if url.blank?
+    require "open-uri"
+    filename = File.basename(URI.parse(url).path)
+    unless self.persisted?
+      Rails.logger.error "StorySubmission #{self.id || 'no clue'} not persisted. Cannot attach #{filename}"
+      self.save!
+    end
+    if self.photos.attached? && self.photos.any? { |att| att.filename.to_s == filename }
+      Rails.logger.info "#{filename} already attached to StorySubmission #{self.id}, skipping."
+      return
+    end
+    begin
+      file = URI.open(url)
+      self.photos.attach(io: file, filename: filename)
+      self.save!
+      Rails.logger.info "attach photo #{filename} to StorySubmission #{self.id}."
+    rescue => e
+      Rails.logger.error "fucked up '#{url}' to StorySubmission #{self.id} #{e.message}"
+    end
+  end
+
   def self.sync_with_airtable
-    records = AirtableRecord.all
+    records = AirtableRecord.all.select { |record| record.fields["Show in Summer of Making"] == true }
     count = 0
     records.each do |record|
       next unless record.id.present?
