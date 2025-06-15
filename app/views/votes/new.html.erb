@@ -16,13 +16,13 @@
     <% end %>
   <% else %>
     <div data-controller="voting-steps"
-         data-action="music:played@window->voting-steps#handleMusicPlayed"
-         class="space-y-6 sm:space-y-8">
+      data-action="music:played@window->voting-steps#handleMusicPlayed"
+      class="space-y-6 sm:space-y-8">
       <!-- Step 1: Journeys -->
       <div data-voting-steps-target="step1" class="space-y-6 sm:space-y-8">
         <h2 class="text-xl sm:text-2xl mb-6 sm:mb-8 text-center text-gray-600"> A good ship is technical, creative, and presented well so that
-            others can understand and experience it. By that definition, which
-            of these two projects is better?</h2>
+          others can understand and experience it. By that definition, which
+          of these two projects is better?</h2>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
           <% @projects.each do |project| %>
@@ -43,28 +43,28 @@
                   <div class="grid grid-cols-1 sm:flex sm:flex-wrap gap-3 sm:gap-4">
                     <% if project.demo_link.present? %>
                       <a href="<%= project.demo_link %>" target="_blank"
-                         class="px-4 sm:px-6 py-2.5 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
-                         onclick="event.stopPropagation()"
-                         data-analytics-link="demo"
-                         data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
+                        class="px-4 sm:px-6 py-2.5 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
+                        onclick="event.stopPropagation()"
+                        data-analytics-link="demo"
+                        data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
                         Demo
                       </a>
                     <% end %>
                     <% if project.repo_link.present? %>
                       <a href="<%= project.repo_link %>" target="_blank"
-                         class="px-4 sm:px-6 py-2.5 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
-                         onclick="event.stopPropagation()"
-                         data-analytics-link="repo"
-                         data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
+                        class="px-4 sm:px-6 py-2.5 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
+                        onclick="event.stopPropagation()"
+                        data-analytics-link="repo"
+                        data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
                         Repository
                       </a>
                     <% end %>
                     <% if project.readme_link.present? %>
                       <a href="<%= project.readme_link %>" target="_blank"
-                         class="px-4 sm:px-6 py-2.5 bg-saddle-taupe hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
-                         onclick="event.stopPropagation()"
-                         data-analytics-link="readme"
-                         data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
+                        class="px-4 sm:px-6 py-2.5 bg-saddle-taupe hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
+                        onclick="event.stopPropagation()"
+                        data-analytics-link="readme"
+                        data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
                         Readme
                       </a>
                     <% end %>
@@ -90,24 +90,24 @@
                           <% clean_url = attachment_url.gsub(/\?pub_secret=.*$/, '') %>
                           <% if clean_url.match?(/\.(jpg|jpeg|png|gif)$/i) %>
                             <img src="<%= attachment_url %>"
-                                 alt="Update attachment"
-                                 class="w-full max-h-48 sm:max-h-64 object-contain cursor-pointer hover:opacity-90 transition-opacity"
-                                 data-action="click->image-viewer#open">
+                              alt="Update attachment"
+                              class="w-full max-h-48 sm:max-h-64 object-contain cursor-pointer hover:opacity-90 transition-opacity"
+                              data-action="click->image-viewer#open">
                           <% elsif clean_url.match?(/\.(mp4|webm|mov)$/i) %>
                             <div class="h-48 sm:h-64 flex items-center justify-center bg-black">
                               <video src="<%= attachment_url %>"
-                                     class="w-full h-full object-contain"
-                                     playsinline
-                                     controls>
+                                class="w-full h-full object-contain"
+                                playsinline
+                                controls>
                                 Your browser does not support the video tag.
                               </video>
                             </div>
                           <% elsif clean_url.match?(/\.(mp3|wavmak)$/i) %>
                             <div class="w-full h-48 sm:h-64 flex items-center justify-center">
                               <audio src="<%= attachment_url %>"
-                                     class="w-[50%]"
-                                     controls
-                                     controlsList="nodownload">
+                                class="w-[50%]"
+                                controls
+                                controlsList="nodownload">
                                 Your browser does not support the audio tag.
                               </audio>
                             </div>
@@ -139,15 +139,15 @@
       <!-- Step 2: Voting -->
       <div data-voting-steps-target="step2" class="hidden">
         <h2 class="text-xl sm:text-2xl mb-6 sm:mb-8 text-center text-gray-600"> A good ship is technical, creative, and presented well so that
-            others can understand and experience it. By that definition, which
-            of these two projects is better?</h2>
+          others can understand and experience it. By that definition, which
+          of these two projects is better?</h2>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
           <% @projects.each do |project| %>
             <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] p-6 sm:p-12 cursor-pointer transition-all duration-300"
-                 data-voting-steps-target="project"
-                 data-project-id="<%= project.id %>"
-                 data-action="click->voting-steps#selectProject">
+              data-voting-steps-target="project"
+              data-project-id="<%= project.id %>"
+              data-action="click->voting-steps#selectProject">
               <div class="space-y-6 sm:space-y-8">
                 <div class="flex items-start gap-3 sm:gap-4">
                   <div class="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 overflow-hidden rounded-lg">
@@ -164,28 +164,28 @@
                   <div class="grid grid-cols-1 sm:flex sm:flex-wrap gap-3 sm:gap-4">
                     <% if project.demo_link.present? %>
                       <a href="<%= project.demo_link %>" target="_blank"
-                         class="px-4 sm:px-6 py-2.5 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
-                         onclick="event.stopPropagation()"
-                         data-analytics-link="demo"
-                         data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
+                        class="px-4 sm:px-6 py-2.5 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
+                        onclick="event.stopPropagation()"
+                        data-analytics-link="demo"
+                        data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
                         Demo
                       </a>
                     <% end %>
                     <% if project.repo_link.present? %>
                       <a href="<%= project.repo_link %>" target="_blank"
-                         class="px-4 sm:px-6 py-2.5 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
-                         onclick="event.stopPropagation()"
-                         data-analytics-link="repo"
-                         data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
+                        class="px-4 sm:px-6 py-2.5 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
+                        onclick="event.stopPropagation()"
+                        data-analytics-link="repo"
+                        data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
                         Repository
                       </a>
                     <% end %>
                     <% if project.readme_link.present? %>
                       <a href="<%= project.readme_link %>" target="_blank"
-                         class="px-4 sm:px-6 py-2.5 bg-saddle-taupe hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
-                         onclick="event.stopPropagation()"
-                         data-analytics-link="readme"
-                         data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
+                        class="px-4 sm:px-6 py-2.5 bg-saddle-taupe hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
+                        onclick="event.stopPropagation()"
+                        data-analytics-link="readme"
+                        data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
                         Readme
                       </a>
                     <% end %>
