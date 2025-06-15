@@ -44,7 +44,7 @@
 <% base_class   = "relative inline-block group py-2 cursor-pointer #{'text-2xl' if large}" %>
 <% final_class  = [base_class, local_assigns[:class]].compact.join(" ") %>
 
-<% icon_class = "w-#{icon_size} #{'mr-4' if large} h-#{icon_size.to_i * 2}".strip %>
+<% icon_class = "w-#{icon_size} #{'mr-4' if large} h-#{icon_size}".strip %>
 <% underline_class = "
   absolute transition-all duration-150 bottom-1 w-full pr-3 box-content
   bg-[#C7A077] rounded-full z-0 group-hover:opacity-100
