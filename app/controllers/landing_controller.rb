@@ -23,7 +23,7 @@ class LandingController < ApplicationController
       {
         name: item.name,
         time: "#{hours} #{"hour".pluralize(hours)}",
-        image: url_for(item.image)
+        image: item.image.present? ? url_for(item.image) : "https://crouton.net/crouton.png"
       }
     end
     # @prizes = [
