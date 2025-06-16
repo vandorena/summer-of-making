@@ -11,4 +11,12 @@
 #  updated_at :datetime         not null
 #
 class EmailSignup < ApplicationRecord
+
+  after_commit :sync_to_airtable, on: %i[create]
+
+  private
+
+  def sync_to_airtable
+    SyncEmailSignupToAirtableJob.perform_later(id)
+  end
 end
