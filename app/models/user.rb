@@ -294,7 +294,7 @@ class User < ApplicationRecord
   def identity_vault_linked?
     identity_vault_access_token.present?
   end
-  
+
   private
 
   def sync_to_airtable
