@@ -113,7 +113,7 @@ class CampfireController < ApplicationController
       {
         id: "shop",
         title: "Visit the Shop",
-        description: "This is where you can buy stuff with your shells. You'll earn shells by working on your projects and shipping them! PS: Take a look at the shop items – they're all made by hackers for hackers. (go ahead, get greedy!)",
+        description: "This is where you can buy stuff with your shells. We'll be releasing new items throughout the summer, so check back often!",
         path: "/shop",
         order: 5,
         completed: tutorial_completed?("shop")
