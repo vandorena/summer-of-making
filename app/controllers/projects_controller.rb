@@ -509,6 +509,11 @@ class ProjectsController < ApplicationController
 
   private
 
+  def ysws_type_options
+    [ [ "Select a YSWS program...", "" ] ] + Project.ysws_types.map { |key, value| [ value, value ] }
+  end
+  helper_method :ysws_type_options
+
   def check_identity_verification
     return if current_user&.identity_vault_id.present? && current_user.verification_status != :ineligible
 
