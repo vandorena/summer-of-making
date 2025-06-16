@@ -280,7 +280,8 @@ class User < ApplicationRecord
       :needs_resubmission
     when "verified"
       if idv_data[:ysws_eligible]
-        notify_xyz_on_verified()
+        notify_xyz_on_verified
+        update(ysws_verified: true) unless ysws_verified?
         :verified
       else
         :ineligible
