@@ -41,6 +41,7 @@ class ShopOrdersController < ApplicationController
 
     if @order.save
       if @item.is_a? ShopItem::FreeStickers
+        ahoy.track "tutorial_step_free_stickers_ordered", user_id: current_user.id, order_id: @order.id
         flash[:success] = "We'll send your stickers out when your verification is approved!"
         redirect_to campfire_path
       else

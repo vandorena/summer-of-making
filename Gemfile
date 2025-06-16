@@ -34,7 +34,7 @@ gem "solid_queue"
 
 # Serverside analytics
 gem "ahoy_matey"
-gem "ahoy_captain"
+gem "ahoy_captain", git: "https://github.com/johnmcdowall/ahoy_captain.git", branch: "fix_importmaps"
 
 # Dashboard for solidqueue
 gem "mission_control-jobs"

@@ -16,6 +16,8 @@ class LandingController < ApplicationController
       else
         redirect_to explore_path
       end
+    else
+      ahoy.track "tutorial_step_landing_first_visit" unless ahoy.visitor_token.present?
     end
 
     @prizes = ShopItem.shown_in_carousel.order(ticket_cost: :asc).map do |item|
@@ -205,6 +207,8 @@ class LandingController < ApplicationController
     end
 
     EmailSignup.create!(email:, ip: request.remote_ip, user_agent: request.headers["User-Agent"])
+
+    ahoy.track "tutorial_step_email_signup", email: email
 
     slack_invite_response = send_slack_invite(email)
 

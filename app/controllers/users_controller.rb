@@ -29,6 +29,7 @@ class UsersController < ApplicationController
     current_user.reload
 
     if current_user.has_hackatime
+      ahoy.track "tutorial_step_hackatime_first_log", user_id: current_user.id
       redirect_back_or_to root_path,
                           notice: "Successfully connected to Hackatime! Your coding stats are now being tracked."
     else
@@ -40,6 +41,7 @@ class UsersController < ApplicationController
   def identity_vault_callback
     begin
       current_user.link_identity_vault_callback(identity_vault_callback_url, params[:code])
+      ahoy.track "tutorial_step_identity_vault_linked", user_id: current_user.id
     rescue StandardError => e
       uuid = Honeybadger.notify(e)
       return redirect_to shop_path, alert: "Couldn't link identity: #{e.message} (ask support about error ID #{uuid}?)"
@@ -50,11 +52,16 @@ class UsersController < ApplicationController
   def link_identity_vault
     return redirect_to root_path unless current_verification_status == :not_linked
 
+    ahoy.track "tutorial_step_identity_vault_redirect", user_id: current_user.id
+
     redirect_to current_user.identity_vault_oauth_link(identity_vault_callback_url), allow_other_host: true
   end
 
   def hackatime_auth_redirect
     redirect_to root_path, notice: "huh?" if current_user.has_hackatime?
+
+    ahoy.track "tutorial_step_hackatime_redirect", user_id: current_user.id
+
     res = Faraday.new do |f|
       f.request :url_encoded
       f.response :json, parser_options: { symbolize_names: true }
