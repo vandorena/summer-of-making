@@ -16,7 +16,7 @@
 
       <div class="tutorial-actions">
         <% if defined?(show_shaking_question) && show_shaking_question %>
-          <%= form_with url: complete_soft_tutorial_step_path, method: :post, local: true do |f| %>
+          <%= form_with url: complete_soft_tutorial_step_path, method: :post, local: true, data: { turbo: false } do |f| %>
             <%= hidden_field_tag :step_name, tutorial_key %>
             <button type="submit" class="tutorial-continue-btn">Got it!</button>
           <% end %>
