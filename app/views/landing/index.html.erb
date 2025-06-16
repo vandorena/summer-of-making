@@ -347,37 +347,6 @@
         </p>
       </div>
     </div>
-
-    <%# if @high_seas_reviews.any? %>
-    <% if false %>
-    <div class="py-12 md:py-20">
-      <div class="max-w-6xl mx-auto">
-        <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-8 md:mb-12 text-[#3a2f25] font-['DynaPuff',sans-serif]">
-          What Past Participants Say
-        </h2>
-        <div class="relative z-20 rotate-0 md:-rotate-3 w-screen ml-[calc(50%-50vw)]" data-controller="carousel">
-          <div class="carousel-track flex gap-6 md:gap-10 sm:gap-6 " data-carousel-target="container">
-            <% @high_seas_reviews.each do |review| %>
-              <div class="carousel-slide flex-none w-full max-w-2xl md:max-w-2xl">
-                <div class="parchment-prize-card p-0 md:p-0 sm:p-0 text-center transition-all duration-300 hover:scale-105 min-h-[16rem] w-full overflow-visible flex flex-row items-stretch justify-start">
-                  <div class="parchment-texture absolute inset-0 z-0"></div>
-                  <div class="relative flex-shrink-0 flex items-center justify-center z-10 rounded-lg overflow-hidden shadow-md bg-white"
-                       style="max-width: 50%; max-height: 28rem;">
-                    <%= image_tag review.photo, alt: "photo", class: "w-auto h-auto max-h-[12rem] max-w-full object-contain rounded-lg" %>
-                  </div>
-                  <div class="flex-1 flex flex-col justify-center items-start px-4 py-4 md:px-6 md:py-6 z-10 text-left min-h-[12rem] font-normal">
-                    <p class="font-['Fredoka',sans-serif] text-sm md:text-base text-[#3a2f25] leading-relaxed mb-2 break-words">
-                      <%= review.testimonial %>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            <% end %>
-          </div>
-        </div>
-      </div>
-    </div>
-    <% end %>
   </div>
 </div>
 
