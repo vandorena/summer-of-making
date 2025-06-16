@@ -4,7 +4,7 @@
         subtitle: "Huddle around! Get your news here." %>
 
   <!-- Hackatime Dashboard Section -->
-  <% if @account_status[:hackatime_setup] && @hackatime_dashboard.present? && current_user.tutorial_progress.completed? %>
+  <% if @account_status[:hackatime_setup] %>
     <div class="mb-8">
       <h2 class="text-xl text-gray-900 mb-4">Hackatime Dashboard</h2>
       <%= render "shared/card", data: { controller: "hackatime-dashboard" } do %>
