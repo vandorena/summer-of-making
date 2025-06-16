@@ -33,10 +33,10 @@ class Devlog < ApplicationRecord
   attr_accessor :timer_session_id
 
   validates :text, presence: true
+  validates :attachment, presence: true
 
   # Attachment is a #cdn link
-  validates :attachment, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "must be a valid URL" },
-                         allow_blank: true
+  validates :attachment, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "must be a valid URL" }
 
   # Validates if only MD changes are made
   validate :only_formatting_changes, on: :update

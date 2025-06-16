@@ -18,6 +18,17 @@ export default class extends Controller {
     }
   }
 
+  validateAndPreventDoubleSubmission(event) {
+    const attachmentField = this.element.querySelector('input[name="devlog[attachment]"]')
+    if (attachmentField && (!attachmentField.value || attachmentField.value.trim() === '')) {
+      event.preventDefault()
+      alert('Please attach an attachment before posting your devlog.')
+      return
+    }
+    
+    this.preventDoubleSubmission(event)
+  }
+
   preventDoubleSubmission(event) {
     if (this.submitting) {
       event.preventDefault()
