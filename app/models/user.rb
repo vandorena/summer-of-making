@@ -291,6 +291,10 @@ class User < ApplicationRecord
     end
   end
 
+  def identity_vault_linked?
+    identity_vault_access_token.present?
+  end
+  
   private
 
   def sync_to_airtable
@@ -301,9 +305,6 @@ class User < ApplicationRecord
     TutorialProgress.create!(user: self)
   end
 
-  def identity_vault_linked?
-    identity_vault_access_token.present?
-  end
 
   def notify_xyz_on_verified
       # if  ysws_verified
