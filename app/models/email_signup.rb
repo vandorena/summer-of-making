@@ -11,7 +11,6 @@
 #  updated_at :datetime         not null
 #
 class EmailSignup < ApplicationRecord
-
   after_commit :sync_to_airtable, on: %i[create]
 
   private
