@@ -57,13 +57,13 @@
           </p>
         <% elsif current_user.hackatime_projects.empty? %>
           <p class="mb-6 sm:mb-8 text-black text-large sm:text-xl 2xl:text-2xl text-center">
-            You've configured Hackatime, but you haven't
-            <%= link_to "installed the extension in your editor yet.",
+            Drat! We don't see any time for you in Hackatime yet.<br><br>
+            Make sure you
+            <%= link_to "installed the extension in your editor",
                 "https://hackatime.hackclub.com/docs",
                 target: "_blank",
                 class: "text-forest hover:text-forest-dark underline" %>
-            .<br>
-            Do that, write some code, come back here and refresh the page!
+            , restart your editor, and code for a minute or two. Then refresh this page!
           </p>
         <% end %>
 
