@@ -46,7 +46,12 @@ export default class extends Controller {
       .then(data => {
         if (data.hackatime_projects) {
           const hackatimeCopy = 
-          `Hackatime is an open-source tool which automatically tracks your coding time. <br class="hidden lg:block">1 hour = 1 shell<img src="/inlineshell.png" class="w-5 h-5 inline-block" />, with up to 30x bonuses based on community votes!
+          `Hackatime is an open-source tool which automatically tracks your coding time. <br class="hidden lg:block">1 hour = 1 shell
+            <picture class="inline-block w-5 h-5 align-text-bottom">
+              <source srcset="/inlineshell.avif" type="image/avif">
+              <source srcset="/inlineshell.webp" type="image/webp">
+              <img src="/inlineshell.png" alt="shell" class="w-5 h-5 inline-block">
+            </picture>, with up to 30x bonuses based on community votes!
           <br><br>
           Make sure <span class="text-[#E65A42]">all your code editors</span> are connected to Hackatime. You can’t get shells without it!`
 
