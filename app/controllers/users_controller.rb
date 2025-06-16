@@ -59,9 +59,9 @@ class UsersController < ApplicationController
 
   def hackatime_auth_redirect
     redirect_to root_path, notice: "huh?" if current_user.has_hackatime?
-    
+
     ahoy.track "tutorial_step_hackatime_redirect", user_id: current_user.id
-    
+
     res = Faraday.new do |f|
       f.request :url_encoded
       f.response :json, parser_options: { symbolize_names: true }
