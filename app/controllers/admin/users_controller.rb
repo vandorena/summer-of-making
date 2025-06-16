@@ -4,7 +4,7 @@ module Admin
     before_action :set_user, except: [ :index ]
 
     def index
-      @pagy, @users = pagy(User.order(id: :desc), items: 50)
+      @pagy, @users = pagy(User.all.order(id: :desc), items: 50)
     end
 
     def show
