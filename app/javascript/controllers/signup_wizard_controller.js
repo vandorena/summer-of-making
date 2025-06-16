@@ -63,7 +63,7 @@ export default class extends Controller {
           const modalController =
             this.application.getControllerForElementAndIdentifier(
               modal,
-              "signup-wizard"
+              "signup-wizard",
             );
           if (modalController && modalController !== this) {
             modalController.emailValue = x;
