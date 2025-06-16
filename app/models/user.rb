@@ -134,7 +134,7 @@ class User < ApplicationRecord
   end
 
   def hackatime_projects
-    hackatime_stat&.projects
+    hackatime_stat&.projects || []
   end
 
   def format_seconds(seconds)
