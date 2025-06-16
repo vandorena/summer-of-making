@@ -18,7 +18,6 @@
 #  internal_notes                       :text
 #  is_admin                             :boolean          default(FALSE), not null
 #  last_name                            :string
-#  ref                                  :string
 #  timezone                             :string
 #  tutorial_video_seen                  :boolean          default(FALSE), not null
 #  ysws_verified                        :boolean          default(FALSE)
@@ -113,7 +112,10 @@ class User < ApplicationRecord
   end
 
   def self.check_hackatime(slack_id)
-    response = Faraday.get("https://hackatime.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects")
+    start_date = Time.use_zone("America/New_York") do
+      Time.parse("2025-06-16").beginning_of_day
+    end
+    response = Faraday.get("https://hackatime.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects&start_date=#{start_date}")
     result = JSON.parse(response.body)&.dig("data")
     return unless result["status"] == "ok"
 
@@ -160,7 +162,10 @@ class User < ApplicationRecord
   end
 
   def refresh_hackatime_data_now
-    response = Faraday.get("https://hackatime.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects")
+    start_date = Time.use_zone("America/New_York") do
+      Time.parse("2025-06-16").beginning_of_day
+    end
+    response = Faraday.get("https://hackatime.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects&start_date=#{start_date}")
     return unless response.success?
 
     result = JSON.parse(response.body)
