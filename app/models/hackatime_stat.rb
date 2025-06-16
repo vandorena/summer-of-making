@@ -52,7 +52,7 @@ class HackatimeStat < ApplicationRecord
     total_seconds = result["data"]["total_seconds"] || 0
     total_seconds
   end
-  
+
   def seconds_since_last_update
     return 0 unless last_updated_at
 

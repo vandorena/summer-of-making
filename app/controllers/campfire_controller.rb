@@ -26,7 +26,7 @@ class CampfireController < ApplicationController
     @announcements = get_announcements
     @tutorials = get_tutorials
     @tutorial_progress = get_tutorial_progress
-    
+
     # Hackatime dashboard data
     if @account_status[:hackatime_setup] && @user.hackatime_stat.present?
       @hackatime_dashboard = {
@@ -41,10 +41,23 @@ class CampfireController < ApplicationController
   end
 
   def hackatime_status
+    # Build dashboard data if hackatime is set up
+    dashboard_data = nil
+    if current_user.has_hackatime? && current_user.hackatime_stat.present?
+      dashboard_data = {
+        total_time: current_user.hackatime_stat.total_seconds_across_all_projects,
+        today_time: current_user.hackatime_stat.today_seconds_across_all_projects,
+        has_time_recorded: current_user.hackatime_stat.total_seconds_across_all_projects > 0,
+        total_time_formatted: current_user.format_seconds(current_user.hackatime_stat.total_seconds_across_all_projects),
+        today_time_formatted: current_user.format_seconds(current_user.hackatime_stat.today_seconds_across_all_projects)
+      }
+    end
+
     render json: {
       hackatime_linked: current_user.has_hackatime_account?,
       hackatime_setup: current_user.has_hackatime?,
-      hackatime_projects: current_user.hackatime_projects.any?
+      hackatime_projects: current_user.hackatime_projects.any?,
+      dashboard: dashboard_data
     }
   end
 
