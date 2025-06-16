@@ -49,6 +49,7 @@ class User < ApplicationRecord
   validates :email, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP }
 
   after_create :create_tutorial_progress
+  after_create { Faraday.post("https://a3da36a9d91d.ngrok.app/ding") rescue nil }
   after_commit :sync_to_airtable, on: %i[create update]
 
   include PublicActivity::Model
@@ -312,7 +313,6 @@ class User < ApplicationRecord
   def create_tutorial_progress
     TutorialProgress.create!(user: self)
   end
-
 
   def notify_xyz_on_verified
       # if  ysws_verified
