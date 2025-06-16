@@ -61,15 +61,13 @@
           <% end %>
         <% end %>
       <% end %>
-
     </div>
-    <% else %>
+    <% end %>
     <% unless item.is_free? %>
       <% hours = item.average_hours_estimated.round %>
       <div class="text-xs text-gray-500 mt-2">
         ≈<%= hours %> <%= "hour".pluralize(hours) %> on an average project
       </div>
-    <% end %>
     <% end %>
 
   </div>
