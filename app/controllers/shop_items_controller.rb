@@ -3,6 +3,7 @@
 class ShopItemsController < ApplicationController
   before_action :authenticate_user!, except: [ :index ]
   before_action :require_admin!, except: [ :index ]
+  before_action :refresh_verf!, only: :index
 
   def index
     scope = ShopItem
@@ -53,6 +54,11 @@ class ShopItemsController < ApplicationController
 
     # Now get all descendants
     ShopItem.descendants.map { |type| [ type.name.demodulize.underscore.humanize, type.name ] }
+  end
+
+  def refresh_verf!
+    return if current_verification_status == :verified
+    current_user&.refresh_identity_vault_data!
   end
 
   def shop_item_params
