@@ -301,6 +301,10 @@ class User < ApplicationRecord
     TutorialProgress.create!(user: self)
   end
 
+  def identity_vault_linked?
+    identity_vault_access_token.present?
+  end
+
   def notify_xyz_on_verified
       # if  ysws_verified
       begin
