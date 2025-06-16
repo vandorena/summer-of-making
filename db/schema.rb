@@ -273,6 +273,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_16_114006) do
     t.string "hackatime_project_keys", default: [], array: true
     t.boolean "is_deleted", default: false
     t.boolean "used_ai"
+    t.boolean "ysws_submission", default: false, null: false
+    t.string "ysws_type"
     t.index ["user_id"], name: "index_projects_on_user_id"
   end
 
