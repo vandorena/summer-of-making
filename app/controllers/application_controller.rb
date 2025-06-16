@@ -17,6 +17,7 @@ class ApplicationController < ActionController::Base
 
   before_action :authenticate_user!
   before_action :fetch_hackatime_data_if_needed
+  after_action :track_page_view
 
   helper_method :current_user, :user_signed_in?, :current_verification_status
 
@@ -54,5 +55,13 @@ class ApplicationController < ActionController::Base
     Rails.cache.fetch("hackatime_fetch_#{current_user.id}", expires_in: 5.seconds) do
       current_user.refresh_hackatime_data_now
     end
+  end
+
+  def track_page_view
+    ahoy.track "$view", {
+      controller: params[:controller],
+      action: params[:action],
+      user_id: current_user&.id
+    }
   end
 end
