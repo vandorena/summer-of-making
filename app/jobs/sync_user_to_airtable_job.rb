@@ -19,7 +19,8 @@ class SyncUserToAirtableJob < ApplicationJob
       "slack_id" => user.slack_id,
       "avatar_url" => user.avatar,
       "has_commented" => user.has_commented,
-      "is_admin" => user.is_admin
+      "is_admin" => user.is_admin,
+      "ref" => user.ref
     }
 
     existing_record = table.all(filter: "{slack_id} = '#{user.slack_id}'").first
