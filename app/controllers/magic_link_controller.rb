@@ -13,6 +13,9 @@ class MagicLinkController < ApplicationController
     begin
       user = User.create_from_slack slack_id
 
+      # I'm denormalising ref for analytical simplicity (we're not syncing email signups to loops etc rn).
+      user.update!(ref: signup.ref)
+
       Rails.logger.tagged("MagicLink") do
         Rails.logger.info({
           event: "created_user",
