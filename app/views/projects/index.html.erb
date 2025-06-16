@@ -1,5 +1,5 @@
 <div data-controller="modal tabs" data-tabs-current-tab-value="explore">
-  <div class="flex flex-col justify-between items-start mb-4 md:mb-6 px-4 md:px-8 pt-2 md:pt-8 pb-2">
+  <div class="flex flex-col justify-between items-start mb-4 md:mb-6 px-4 md:px-8 pt-2 md:pt-8 pb-2 max-w-7xl mx-auto">
     <div class="flex justify-between items-center w-full flex-wrap">
       <% if params[:action] == 'my_projects' %>
         <h1 class="text-4xl sm:text-5xl mb-0">Projects</h1>
@@ -57,7 +57,7 @@
 
   <div>
     <% if params[:action] == 'my_projects' %>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 px-4 md:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 px-4 md:px-8 max-w-6xl mx-auto">
         <% if @projects.any? %>
           <% @projects.each do |project| %>
             <%= render partial: "project_preview", locals: { project: project, show_author: false } %>
@@ -91,7 +91,7 @@
       </div>
     <% else %>
       <!-- Explore and Following tabs - show devlogs -->
-      <div class="px-4 md:px-8" data-tabs-target="content" id="devlogs-list-container" data-tab-content="explore">
+      <div class="px-4 md:px-8 max-w-6xl mx-auto" data-tabs-target="content" id="devlogs-list-container" data-tab-content="explore">
         <div class="space-y-4 sm:space-y-6" id="devlogs-list">
           <%= turbo_frame_tag "initial-devlogs",
                 src: explore_path(tab: 'explore', format: :turbo_stream),
@@ -106,7 +106,7 @@
       </div>
 
       <!-- Gallery tab - show projects -->
-      <div class="px-4 md:px-8 hidden" data-tabs-target="content" data-tab-content="gallery">
+      <div class="px-4 md:px-8 hidden max-w-7xl mx-auto" data-tabs-target="content" data-tab-content="gallery">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
           <% if @projects.any? %>
             <% @projects.each do |project| %>
