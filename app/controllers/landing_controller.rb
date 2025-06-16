@@ -192,7 +192,8 @@ class LandingController < ApplicationController
   end
 
   def sign_up
-    email = params.require(:email)
+    email = params.require(:email).downcase
+    ref = params[:ref]
 
     unless email.match?(URI::MailTo::EMAIL_REGEXP)
       return respond_to do |format|
