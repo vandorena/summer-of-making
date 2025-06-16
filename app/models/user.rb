@@ -294,6 +294,11 @@ class User < ApplicationRecord
     identity_vault_access_token.present?
   end
 
+  # DO NOT DO THIS
+  def nuke_idv_data!
+    update!(identity_vault_access_token: nil, identity_vault_id: nil)
+  end
+
   private
 
   def sync_to_airtable
