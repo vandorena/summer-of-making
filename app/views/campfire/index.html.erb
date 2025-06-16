@@ -354,7 +354,7 @@
     <div class="mb-8">
       <%= render "shared/card" do %>
         <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-semibold text-gray-900">Didja do these yet?</h2>
+          <h2 class="text-xl font-semibold text-gray-900">How to Build a Project</h2>
         </div>
 
         <div class="space-y-4">
@@ -363,7 +363,7 @@
               <input type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" <%= current_user.projects.any? ? 'checked' : '' %> disabled>
             </div>
             <div>
-              <p class="text-gray-700 font-medium">Create a project in the Projects tab</p>
+              <p class="text-gray-700 font-medium">Create a project in the <a href="/my_projects" class="text-blue-600 hover:text-blue-700">Projects</a> tab</p>
             </div>
           </div>
 
