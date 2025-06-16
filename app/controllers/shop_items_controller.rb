@@ -6,17 +6,32 @@ class ShopItemsController < ApplicationController
   before_action :refresh_verf!, only: :index
 
   def index
-    scope = ShopItem
-    scope = scope.not_black_market unless current_user&.has_black_market?
+    # Load all shop items from cache with properly preloaded attachments
+    all_shop_items = Rails.cache.fetch("all_shop_items_with_variants_v2", expires_in: 10.minutes) do
+      ShopItem.with_attached_image
+              .includes(image_attachment: { blob: { variant_records: :image_attachment } })
+              .order(ticket_cost: :asc)
+              .to_a
+    end
+
+    # Filter in memory
+    filtered_items = all_shop_items.dup
+
+    # Filter out black market items unless user has access
+    unless current_user&.has_black_market?
+      filtered_items.reject! { |item| item.requires_black_market? }
+    end
 
     # Filter out free stickers that have already been ordered by the current user
-    ordered_free_sticker_ids = current_user&.shop_orders
-                                 &.joins(:shop_item)
-                                 &.where(shop_items: { type: "ShopItem::FreeStickers" })
-                                 &.select(:shop_item_id) || []
-    scope = scope.where.not(id: ordered_free_sticker_ids)
+    if current_user
+      ordered_free_sticker_ids = current_user.shop_orders
+                                  .joins(:shop_item)
+                                  .where(shop_items: { type: "ShopItem::FreeStickers" })
+                                  .pluck(:shop_item_id)
+      filtered_items.reject! { |item| ordered_free_sticker_ids.include?(item.id) }
+    end
 
-    @shop_items = scope.order(ticket_cost: :asc).includes(:image_attachment)
+    @shop_items = filtered_items
   end
 
   def new
