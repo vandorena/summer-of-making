@@ -66,24 +66,25 @@ class Project < ApplicationRecord
             inclusion: { in: [ "Web App", "Mobile App", "Command Line Tool", "Video Game", "Something else" ],
                          message: "%<value>s is not a valid category" }
 
-  enum ysws_type: {
+  enum :ysws_type, {
     athena: "Athena",
-    highway: "Highway",
-    shipwrecked: "Shipwrecked",
-    neighborhood: "Neighborhood",
-    solder: "Solder",
-    thunder: "Thunder",
     boba_drops: "Boba Drops",
-    tonic: "Tonic",
     cider: "Cider",
-    waveband: "Waveband",
-    terminalcraft: "Terminalcraft",
+    grub: "Grub",
     hackaccino: "Hackaccino",
+    highway: "Highway",
+    neighborhood: "Neighborhood",
+    shipwrecked: "Shipwrecked",
+    solder: "Solder",
     sprig: "Sprig",
     swirl: "Swirl",
-    grub: "Grub",
+    terminalcraft: "Terminalcraft",
+    thunder: "Thunder",
+    tonic: "Tonic",
+    toppings: "Toppings",
     waffles: "Waffles",
-    toppings: "Toppings"
+    waveband: "Waveband",
+    other: "Other"
   }
 
   validates :ysws_type, presence: true, if: :ysws_submission?
