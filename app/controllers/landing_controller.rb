@@ -17,7 +17,7 @@ class LandingController < ApplicationController
         redirect_to explore_path
       end
     else
-      ahoy.track "tutorial_step_landing_first_visit" unless ahoy.visitor_token.present?
+      ahoy.track "tutorial_step_landing_first_visit"
     end
 
     @prizes = ShopItem.shown_in_carousel.order(ticket_cost: :asc).map do |item|

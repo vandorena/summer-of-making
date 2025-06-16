@@ -5,6 +5,7 @@
 #  id         :bigint           not null, primary key
 #  email      :text             not null
 #  ip         :inet
+#  ref        :string
 #  user_agent :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null

@@ -143,6 +143,62 @@ AhoyCaptain.configure do |config|
   #     end
   #   end
 
+  # Tutorial Goals
+  config.goal :landing_visit do
+    label "Landing Page Visit"
+    name "tutorial_step_landing_first_visit"
+  end
+
+  config.goal :email_signup do
+    label "Email Signup"
+    name "tutorial_step_email_signup"
+  end
+
+  config.goal :slack_signin do
+    label "Slack Sign In"
+    name "tutorial_step_slack_signin"
+  end
+
+  config.goal :magic_link_signin do
+    label "Magic Link Sign In"
+    name "tutorial_step_magic_link_signin"
+  end
+
+  config.goal :hackatime_first_log do
+    label "Hackatime First Log"
+    name "tutorial_step_hackatime_first_log"
+  end
+
+  config.goal :identity_vault_linked do
+    label "Identity Vault Linked"
+    name "tutorial_step_identity_vault_linked"
+  end
+
+  config.goal :identity_vault_redirect do
+    label "Identity Vault Redirect"
+    name "tutorial_step_identity_vault_redirect"
+  end
+
+  config.goal :hackatime_redirect do
+    label "Hackatime Redirect"
+    name "tutorial_step_hackatime_redirect"
+  end
+
+  config.goal :first_project_created do
+    label "First Project Created"
+    name "tutorial_step_first_project_created"
+  end
+
+  config.goal :first_project_shipped do
+    label "First Project Shipped"
+    name "tutorial_step_first_project_shipped"
+  end
+
+  config.goal :free_stickers_ordered do
+    label "Free Stickers Ordered"
+    name "tutorial_step_free_stickers_ordered"
+  end
+
   # ==> Funnels
   # Your mother definitely didn't tell you about conversation rate.
   # Except, you're here, so...
@@ -162,6 +218,33 @@ AhoyCaptain.configure do |config|
   #     goal :appointment_created
   #     goal :appointment_paid
   #   end
+
+  config.funnel :funnel_cake do
+    label "the ones that count"
+    goal :landing_visit
+    goal :email_signup
+    goal :slack_signin
+    goal :hackatime_first_log
+    goal :identity_vault_linked
+    goal :free_stickers_ordered
+    goal :first_project_created
+    goal :first_project_shipped
+  end
+
+  config.funnel :everything do
+    label "Every Single Tracked Event"
+    goal :landing_visit
+    goal :email_signup
+    goal :slack_signin
+    goal :magic_link_signin
+    goal :hackatime_redirect
+    goal :hackatime_first_log
+    goal :identity_vault_redirect
+    goal :identity_vault_linked
+    goal :free_stickers_ordered
+    goal :first_project_created
+    goal :first_project_shipped
+  end
   #
   # => Realtime interval
   # config.realtime_interval = 30.seconds
