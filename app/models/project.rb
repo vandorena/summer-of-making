@@ -16,6 +16,8 @@
 #  repo_link              :string
 #  title                  :string
 #  used_ai                :boolean
+#  ysws_submission        :boolean          default(FALSE), not null
+#  ysws_type              :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  user_id                :bigint           not null
@@ -63,6 +65,12 @@ class Project < ApplicationRecord
   validates :category,
             inclusion: { in: [ "Web App", "Mobile App", "Command Line Tool", "Video Game", "Something else" ],
                          message: "%<value>s is not a valid category" }
+
+  validates :ysws_type, presence: true, if: :ysws_submission?
+  validates :ysws_type,
+            inclusion: { in: [ "Athena", "Highway", "Shipwrecked", "Neighborhood", "Solder", "Thunder", "Boba Drops", "Tonic", "Cider" ],
+                         message: "%<value>s is not a valid YSWS type" },
+            allow_blank: true
 
   validate :cannot_change_category, on: :update
   validate :user_must_have_hackatime, on: :create

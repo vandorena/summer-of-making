@@ -19,6 +19,11 @@ export default class extends Controller {
     "selectedProjects",
     "usedAiCheckboxReal",
     "usedAiCheckboxFake",
+    "yswsSubmissionCheckboxReal",
+    "yswsSubmissionCheckboxFake",
+    "yswsTypeContainer",
+    "yswsType",
+    "yswsTypeError",
   ];
 
   connect() {
@@ -50,6 +55,13 @@ export default class extends Controller {
     if (!this.categoryTarget.value) {
       this.showError(this.categoryErrorTarget, "Please select a category");
       isValid = false;
+    }
+
+    if (this.hasYswsSubmissionCheckboxRealTarget && this.yswsSubmissionCheckboxRealTarget.checked) {
+      if (this.hasYswsTypeTarget && !this.yswsTypeTarget.value) {
+        this.showError(this.yswsTypeErrorTarget, "Please select a YSWS program");
+        isValid = false;
+      }
     }
 
     const urlFields = [
@@ -115,6 +127,11 @@ export default class extends Controller {
       this.demoErrorTarget,
       this.repoErrorTarget,
     ];
+
+    // Add YSWS type error if it exists
+    if (this.hasYswsTypeErrorTarget) {
+      errorTargets.push(this.yswsTypeErrorTarget);
+    }
 
     errorTargets.forEach((target) => {
       target.textContent = "";
@@ -190,6 +207,34 @@ export default class extends Controller {
       this.usedAiCheckboxFakeTarget.classList.add("hidden");
       checkboxContainer.classList.remove("bg-forest", "border-forest");
       checkboxContainer.classList.add("bg-bread");
+    }
+  }
+
+  toggleYswsSubmission() {
+    const checked = this.yswsSubmissionCheckboxRealTarget.checked;
+    const checkboxContainer = this.yswsSubmissionCheckboxFakeTarget.parentElement;
+    
+    if (checked) {
+      this.yswsSubmissionCheckboxFakeTarget.classList.remove("hidden");
+      checkboxContainer.classList.add("bg-forest", "border-forest");
+      checkboxContainer.classList.remove("bg-bread");
+      
+      // Show the YSWS type dropdown
+      if (this.hasYswsTypeContainerTarget) {
+        this.yswsTypeContainerTarget.classList.remove("hidden");
+      }
+    } else {
+      this.yswsSubmissionCheckboxFakeTarget.classList.add("hidden");
+      checkboxContainer.classList.remove("bg-forest", "border-forest");
+      checkboxContainer.classList.add("bg-bread");
+      
+      // Hide the YSWS type dropdown and clear selection
+      if (this.hasYswsTypeContainerTarget) {
+        this.yswsTypeContainerTarget.classList.add("hidden");
+        if (this.hasYswsTypeTarget) {
+          this.yswsTypeTarget.selectedIndex = 0;
+        }
+      }
     }
   }
 
