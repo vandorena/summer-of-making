@@ -5,7 +5,7 @@ class VotesController < ApplicationController
   before_action :set_projects, only: %i[new create]
   before_action :check_identity_verification
 
-  before_action -> { render :locked unless current_user.is_admin? } # For the first week
+  before_action -> { render :locked } # For the first week
 
   def new
     @vote = Vote.new
