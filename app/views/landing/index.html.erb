@@ -465,7 +465,11 @@
 
 <div class="relative min-h-[60vh] md:min-h-[80vh] flex flex-col bg-gradient-to-b from-[#E7CFB5] via-[#C7A077] to-[#E7CFB5] border-t-[0.8em] border-[#592F31] border-dashed" id="about-hack-club">
   <div class="absolute border-t-[0.1em] border-b-[0.1em] border-[#592F31] h-[0.8em] w-full top-[-0.8em]"></div>
-  <div class="absolute inset-0" style="background: url('/smiles.png') center/cover no-repeat; mask: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.8) 80%, rgba(0,0,0,1) 100%); -webkit-mask: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.8) 80%, rgba(0,0,0,1) 100%);"></div>
+  <picture>
+    <source srcset="/smiles.avif" type="image/avif">
+    <source srcset="/smiles.webp" type="image/webp">
+    <img src="/smiles.jpg" alt="Smiling Hack Clubbers" class="absolute inset-0 w-full h-full object-cover" style="mask: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.8) 80%, rgba(0,0,0,1) 100%); -webkit-mask: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.8) 80%, rgba(0,0,0,1) 100%);" />
+  </picture>
   <div class="max-w-6xl mx-auto text-center relative z-10 pt-12 md:pt-16 pb-6 md:pb-8 px-2 md:px-4 sm:px-8 lg:py-24">
     <h4 class="text-xl md:text-2xl font-bold mb-4 md:mb-6 lg:mb-8 text-[#3a2f25] font-['DynaPuff',sans-serif]">About Hack Club</h4>
     <%= render "shared/container", classes: 'p-3 md:p-4 mb-48' do %>
