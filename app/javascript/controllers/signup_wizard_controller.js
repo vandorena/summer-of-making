@@ -22,8 +22,9 @@ export default class extends Controller {
 
   startSignup() {
     const x = this.hasEmailInputTarget
-      ? this.emailInputTarget.value.trim()
+      ? this.emailInputTarget.value.trim().toLowerCase()
       : "";
+
     this.hideError();
     if (!x) {
       this.error("pls enter your email");
@@ -62,7 +63,7 @@ export default class extends Controller {
           const modalController =
             this.application.getControllerForElementAndIdentifier(
               modal,
-              "signup-wizard"
+              "signup-wizard",
             );
           if (modalController && modalController !== this) {
             modalController.emailValue = x;
@@ -90,13 +91,16 @@ export default class extends Controller {
     if (metaTag) {
       csrfToken = metaTag.content;
     }
+
+    const ref = new URL(location.href).searchParams.get("ref");
+
     const response = await fetch("/sign-up", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "X-CSRF-Token": csrfToken,
       },
-      body: JSON.stringify({ email: email }),
+      body: JSON.stringify({ email, ref }),
     });
     if (!response.ok) {
       throw new Error("Failed to send email");

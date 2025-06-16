@@ -18,6 +18,7 @@
 #  internal_notes                       :text
 #  is_admin                             :boolean          default(FALSE), not null
 #  last_name                            :string
+#  ref                                  :string
 #  timezone                             :string
 #  tutorial_video_seen                  :boolean          default(FALSE), not null
 #  ysws_verified                        :boolean          default(FALSE)
@@ -42,9 +43,12 @@ class User < ApplicationRecord
   has_one :magic_link, dependent: :destroy
   has_many :shop_orders
 
+  before_validation { self.email = email.to_s.downcase.strip }
+
   validates :slack_id, presence: true, uniqueness: true
   validates :email, :display_name, :timezone, :avatar, presence: true
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :email, presence: true, uniqueness: { case_sensitive: false }
 
   after_create :create_tutorial_progress
   after_commit :sync_to_airtable, on: %i[create update]

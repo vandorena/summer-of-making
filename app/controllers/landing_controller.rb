@@ -192,7 +192,8 @@ class LandingController < ApplicationController
   end
 
   def sign_up
-    email = params.require(:email)
+    email = params.require(:email).downcase
+    ref = params[:ref]
 
     unless email.match?(URI::MailTo::EMAIL_REGEXP)
       return respond_to do |format|
@@ -206,7 +207,7 @@ class LandingController < ApplicationController
       end
     end
 
-    EmailSignup.create!(email:, ip: request.remote_ip, user_agent: request.headers["User-Agent"])
+    EmailSignup.create!(email:, ref:, ip: request.remote_ip, user_agent: request.headers["User-Agent"])
 
     ahoy.track "tutorial_step_email_signup", email: email
 
