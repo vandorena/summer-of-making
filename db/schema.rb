@@ -223,22 +223,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_16_114006) do
     t.bigint "likeable_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.ind
-  create_table "hackatime_stats", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.jsonb "data", default: {}
-    t.datetime "last_updated_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_hackatime_stats_on_user_id"
-  end
-
-  create_table "likes", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.string "likeable_type", null: false
-    t.bigint "likeable_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.index ["likeable_type", "likeable_id"], name: "index_likes_on_likeable"
     t.index ["user_id", "likeable_type", "likeable_id"], name: "index_likes_on_user_id_and_likeable_type_and_likeable_id", unique: true
     t.index ["user_id"], name: "index_likes_on_user_id"
