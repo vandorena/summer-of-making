@@ -89,7 +89,6 @@ class Project < ApplicationRecord
 
   validates :ysws_type, presence: true, if: :ysws_submission?
 
-  validate :cannot_change_category, on: :update
   validate :user_must_have_hackatime, on: :create
 
   after_initialize :set_default_rating, if: :new_record?
@@ -192,12 +191,6 @@ class Project < ApplicationRecord
 
   def set_default_rating
     self.rating ||= 1100
-  end
-
-  def cannot_change_category
-    return unless category_changed? && persisted?
-
-    errors.add(:category, "cannot be changed after project creation")
   end
 
   def user_must_have_hackatime
