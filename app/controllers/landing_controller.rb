@@ -207,7 +207,7 @@ class LandingController < ApplicationController
       end
     end
 
-    EmailSignup.create!(email:, ip: request.remote_ip, user_agent: request.headers["User-Agent"])
+    EmailSignup.create!(email:, ref:, ip: request.remote_ip, user_agent: request.headers["User-Agent"])
 
     ahoy.track "tutorial_step_email_signup", email: email
 
