@@ -77,7 +77,7 @@ class UsersController < ApplicationController
                }
              }
            ).body
-    pp res
+    pp "HACKATIMEAUTHREDIRECTRESULT123", res
     redirect_to res[:magic_link] || root_path, allow_other_host: true
   end
 
