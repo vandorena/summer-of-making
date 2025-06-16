@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 require "open-uri"
-CHANNEL_LIST = [ "C015M4L9AHW", "C091CEEHJ9K", "C016DEDUL87", "C75M7C0SY", "C090JKDJYN8", "C090B3T9R9R", "C0M8PUPU6", "C05B6DBN802" ]
+CHANNEL_LIST = ["C015M4L9AHW", "C091CEEHJ9K", "C016DEDUL87", "C75M7C0SY", "C090JKDJYN8", "C090B3T9R9R", "C0M8PUPU6", "C05B6DBN802"]
+
 class LandingController < ApplicationController
   skip_before_action :authenticate_user!, only: %i[index sign_up]
 
@@ -18,36 +19,36 @@ class LandingController < ApplicationController
       end
     else
       ahoy.track "tutorial_step_landing_first_visit"
-    end
 
-    @prizes = Rails.cache.fetch("landing_shop_carousel", expires_in: 10.minutes) do
-      prizes = ShopItem.includes(image_attachment: { blob: :variant_records }).shown_in_carousel.order(ticket_cost: :asc).map do |item|
-        hours = item.average_hours_estimated.to_i
-        {
-          name: item.name,
-          time: "~#{hours} #{"hour".pluralize(hours)}",
-          image: item.image.present? ? url_for(item.image) : "https://crouton.net/crouton.png",
-          ticket_cost: item.ticket_cost
-        }
+      @prizes = Rails.cache.fetch("landing_shop_carousel", expires_in: 10.minutes) do
+        prizes = ShopItem.includes(image_attachment: { blob: :variant_records }).shown_in_carousel.order(ticket_cost: :asc).map do |item|
+          hours = item.average_hours_estimated.to_i
+          {
+            name: item.name,
+            time: "~#{hours} #{"hour".pluralize(hours)}",
+            image: item.image.present? ? url_for(item.image) : "https://crouton.net/crouton.png",
+            ticket_cost: item.ticket_cost
+          }
+        end
+
+        prizes.map! do |prize|
+          hours =
+            if prize[:time].to_s.include?(">500")
+              9999
+            elsif prize[:time].to_s =~ /([0-9]+)/
+              prize[:time].to_s.include?("~") ? $1.to_i : $1.to_i
+            else
+              0
+            end
+          prize.merge(
+            numeric_hours: hours,
+            display_time: hours >= 500 ? ">500 hours" : prize[:time],
+            random_transform: "rotate(#{rand(-3..3)}deg) scale(#{(rand(97..103).to_f / 100).round(2)}) translateY(#{rand(-8..8)}px)"
+          )
+        end
+
+        prizes.sort_by { |p| [p[:ticket_cost] || 0, p[:numeric_hours]] }
       end
-
-      prizes.map! do |prize|
-        hours =
-          if prize[:time].to_s.include?(">500")
-            9999
-          elsif prize[:time].to_s =~ /([0-9]+)/
-            prize[:time].to_s.include?("~") ? $1.to_i : $1.to_i
-          else
-            0
-          end
-        prize.merge(
-          numeric_hours: hours,
-          display_time: hours >= 500 ? ">500 hours" : prize[:time],
-          random_transform: "rotate(#{rand(-3..3)}deg) scale(#{(rand(97..103).to_f / 100).round(2)}) translateY(#{rand(-8..8)}px)"
-        )
-      end
-
-      prizes.sort_by { |p| [ p[:ticket_cost] || 0, p[:numeric_hours] ] }
     end
   end
 
@@ -95,33 +96,32 @@ class LandingController < ApplicationController
   private
 
   def send_slack_invite(email)
-  payload = {
-    token: Rails.application.credentials.explorpheus.slack_xoxc,
-    email: email,
-    invites: [
-    {
+    payload = {
+      token: Rails.application.credentials.explorpheus.slack_xoxc,
       email: email,
-      type: "restricted",
-      mode: "manual"
+      invites: [
+        {
+          email: email,
+          type: "restricted",
+          mode: "manual"
+        }
+      ],
+      restricted: true,
+      channels: CHANNEL_LIST
     }
-  ],
-    restricted: true,
-    channels: CHANNEL_LIST
-  }
-  uri = URI.parse("https://slack.com/api/users.admin.inviteBulk")
-  http = Net::HTTP.new(uri.host, uri.port)
-  http.use_ssl = true
+    uri = URI.parse("https://slack.com/api/users.admin.inviteBulk")
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
 
+    request = Net::HTTP::Post.new(uri)
+    request["Content-Type"] = "application/json"
+    request["Cookie"] = "d=#{Rails.application.credentials.explorpheus.slack_xoxd}"
+    request["Authorization"] = "Bearer #{Rails.application.credentials.explorpheus.slack_xoxc}"
+    request.body = JSON.generate(payload)
 
-  request = Net::HTTP::Post.new(uri)
-  request["Content-Type"] = "application/json"
-  request["Cookie"] = "d=#{Rails.application.credentials.explorpheus.slack_xoxd}"
-  request["Authorization"] = "Bearer #{Rails.application.credentials.explorpheus.slack_xoxc}"
-  request.body = JSON.generate(payload)
-
-  # Send the request
-  response = http.request(request)
-  response
+    # Send the request
+    response = http.request(request)
+    response
   end
 
   def fetch_continent(ip)
