@@ -109,18 +109,7 @@
                 </div>
               </div>
               <%= f.select :ysws_type,
-                  options_for_select([
-                    ['Select a YSWS program...', ''],
-                    ['Athena', 'Athena'],
-                    ['Highway', 'Highway'],
-                    ['Shipwrecked', 'Shipwrecked'],
-                    ['Neighborhood', 'Neighborhood'],
-                    ['Solder', 'Solder'],
-                    ['Thunder', 'Thunder'],
-                    ['Boba Drops', 'Boba Drops'],
-                    ['Tonic', 'Tonic'],
-                    ['Cider', 'Cider']
-                  ]),
+                  options_for_select(ysws_type_options),
                   {},
                   {
                     class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm md:text-base",
