@@ -550,11 +550,7 @@ class ProjectsController < ApplicationController
   end
 
   def project_params
-    permitted_params = params.expect(project: [ :title, :description, :used_ai, :readme_link, :demo_link, :repo_link,
-                                                :banner, :ysws_submission, :ysws_type, { hackatime_project_keys: [] } ])
-
-    permitted_params.merge!(params.expect(project: [ :category ])) if action_name == "create"
-
-    permitted_params
+    params.expect(project: [ :title, :description, :used_ai, :readme_link, :demo_link, :repo_link,
+                             :banner, :ysws_submission, :ysws_type, :category, { hackatime_project_keys: [] } ])
   end
 end
