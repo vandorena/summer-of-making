@@ -25,23 +25,25 @@
           <div class="flex flex-col text-left gap-4 animate-float mt-12 lg:mt-0 lg:pr-6 items-center" style="font-family: 'Pacifico', sans-serif;">
             <%= image_tag "logo_text.png", alt: "Logo Text", class: "mb-2 w-96 sm:w-120" %>
 
-            <div class="flex flex-col gap-4 items-stretch lg:items-start">
+            <div class="flex flex-col gap-6 items-stretch lg:items-start">
               <h2 class="text-2xl sm:text-3xl mx-auto md:mx-0 text-[#3a2f25] font-medium font-['DynaPuff',sans-serif] -mt-2">
                 Build stuff. Get stuff. <span class="font-bold text-[#E06540]">Repeat.</span>
               </h2>
-              <div class="flex flex-col self-stretch sm:flex-row gap-3 pt-1">
+              <div class="flex flex-col self-stretch sm:flex-row gap-3">
                   <%= render "signup" %>
               </div>
-              <p class="font-['Fredoka',sans-serif] font-normal text-lg sm:text-xl self-center text-[#3a2f25]">
-                  For teenagers 18 and under. Ends August 31, 2025.
-              </p>
-              <p class="font-['Fredoka',sans-serif] font-normal text-base sm:text-lg self-center text-[#5d5349] mt-2">
-                  Over 18? Earn all the same prizes by
-                  <a href="https://docs.google.com/document/d/1xiAoYrO6wY1knzZhI1TFYVqCo6q2R7A46he0w5tan90/edit?usp=sharing"
-                     class="font-medium text-[#E06540] hover:text-[#d14c26] underline decoration-2 underline-offset-2 transition-colors duration-200"
-                     target="_blank"
-                     rel="noopener noreferrer">getting teens to sign up.</a>
-              </p>
+              <div class="flex flex-col items-center mx-auto">
+                <p class="font-['Fredoka',sans-serif] font-normal mb-1 text-lg sm:text-xl self-center text-[#3a2f25]">
+                    For ages 18 and under. Ends August 31st 2025
+                </p>
+                <p class="font-['Fredoka',sans-serif] font-normal text-sm sm:text-md self-center text-[#3a2f25]">
+                    <span class="font-medium text-[#E06540]">Over 18?</span> Earn the same prizes by
+                    <a href="https://docs.google.com/document/d/1xiAoYrO6wY1knzZhI1TFYVqCo6q2R7A46he0w5tan90/edit?usp=sharing"
+                      class="font-medium text-[#E06540] hover:text-[#d14c26] underline decoration-2 underline-offset-2 transition-colors duration-200"
+                      target="_blank"
+                      rel="noopener noreferrer">getting teens to sign up</a>
+                </p>
+              </div>
             </div>
           </div>
 
