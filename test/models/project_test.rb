@@ -16,6 +16,8 @@
 #  repo_link              :string
 #  title                  :string
 #  used_ai                :boolean
+#  ysws_submission        :boolean          default(FALSE), not null
+#  ysws_type              :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  user_id                :bigint           not null
