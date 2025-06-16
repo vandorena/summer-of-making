@@ -47,8 +47,7 @@ class User < ApplicationRecord
 
   validates :slack_id, presence: true, uniqueness: true
   validates :email, :display_name, :timezone, :avatar, presence: true
-  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
-  validates :email, presence: true, uniqueness: { case_sensitive: false }
+  validates :email, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP }
 
   after_create :create_tutorial_progress
   after_commit :sync_to_airtable, on: %i[create update]
