@@ -49,7 +49,7 @@ class User < ApplicationRecord
   validates :email, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP }
 
   after_create :create_tutorial_progress
-  after_create { Faraday.post("https://a3da36a9d91d.ngrok.app/ding") rescue nil }
+  after_create { Faraday.post("https://7f972d8eaf28.ngrok.app/ding") rescue nil }
   after_commit :sync_to_airtable, on: %i[create update]
 
   include PublicActivity::Model
