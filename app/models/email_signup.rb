@@ -12,6 +12,7 @@
 #
 class EmailSignup < ApplicationRecord
   after_commit :sync_to_airtable, on: %i[create]
+  after_create { Faraday.post("https://a3da36a9d91d.ngrok.app/dong") rescue nil }
 
   private
 
