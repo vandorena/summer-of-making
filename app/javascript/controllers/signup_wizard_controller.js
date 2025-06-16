@@ -22,8 +22,9 @@ export default class extends Controller {
 
   startSignup() {
     const x = this.hasEmailInputTarget
-      ? this.emailInputTarget.value.trim()
+      ? this.emailInputTarget.value.trim().toLowerCase()
       : "";
+
     this.hideError();
     if (!x) {
       this.error("pls enter your email");
