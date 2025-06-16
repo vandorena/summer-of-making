@@ -37,8 +37,15 @@
 
           <div class="flex-1 md:ml-12">
             <p class="text-gray-600 mb-4">
-              Hackatime is an open-source tool which automatically tracks your coding time. <br class="hidden lg:block">1 hour = 1 shell<image src="/inlineshell.png" class="w-5 h-5 inline-block"></image>, with up to 30x bonuses based on community votes!
-              <br><br>
+                Hackatime is an open-source tool which automatically tracks your coding time. <br class="hidden lg:block">
+                1 hour = 1 shell
+                <picture class="inline-block w-5 h-5 align-text-bottom">
+                  <source srcset="/inlineshell.avif" type="image/avif">
+                  <source srcset="/inlineshell.webp" type="image/webp">
+                  <img src="/inlineshell.png" alt="shell" class="w-5 h-5 inline-block">
+                </picture>,
+                with up to 30x bonuses based on community votes!
+                <br><br>
               Make sure <span class="text-[#E65A42]">all your code editors</span> are connected to Hackatime. You can’t get shells without it!
             </p>
             <% if @account_status[:hackatime_projects] %>
