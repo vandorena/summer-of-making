@@ -91,6 +91,8 @@ class ProjectsController < ApplicationController
     end
 
     if @project.save
+      is_first_project = current_user.projects.count == 1
+      ahoy.track "tutorial_step_first_project_created", user_id: current_user.id, project_id: @project.id, is_first_project: is_first_project
       redirect_to project_path(@project), notice: "Project was successfully created."
     else
       flash.now[:alert] = "Could not create project. Please check the form for errors."
@@ -227,6 +229,8 @@ class ProjectsController < ApplicationController
     end
 
     if ShipEvent.create(project: @project)
+      is_first_ship = current_user.projects.joins(:ship_events).count == 1
+      ahoy.track "tutorial_step_first_project_shipped", user_id: current_user.id, project_id: @project.id, is_first_ship: is_first_ship
       redirect_to project_path(@project), notice: "Your project has been shipped!"
 
       message = "Congratulations on shipping your project! Now thy project shall fight for blood :ultrafastparrot:"
