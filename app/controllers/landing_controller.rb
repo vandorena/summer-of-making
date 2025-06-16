@@ -20,14 +20,16 @@ class LandingController < ApplicationController
       ahoy.track "tutorial_step_landing_first_visit"
     end
 
-    @prizes = ShopItem.shown_in_carousel.order(ticket_cost: :asc).map do |item|
-      hours = item.average_hours_estimated.to_i
-      {
-        name: item.name,
-        time: "~#{hours} #{"hour".pluralize(hours)}",
-        image: item.image.present? ? url_for(item.image) : "https://crouton.net/crouton.png",
-        ticket_cost: item.ticket_cost
-      }
+    @prizes = Rails.cache.fetch("landing_page_prizes", expires_in: 1.hour) do
+      ShopItem.shown_in_carousel.order(ticket_cost: :asc).map do |item|
+        hours = item.average_hours_estimated.to_i
+        {
+          name: item.name,
+          time: "~#{hours} #{"hour".pluralize(hours)}",
+          image: item.image.present? ? url_for(item.image) : "https://crouton.net/crouton.png",
+          ticket_cost: item.ticket_cost
+        }
+      end
     end
     # @prizes = [
     #   {
