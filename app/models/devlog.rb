@@ -29,14 +29,12 @@ class Devlog < ApplicationRecord
   has_many :comments, -> { order(created_at: :desc) }, dependent: :destroy
   has_many :timer_sessions, dependent: :nullify
   has_many :likes, as: :likeable, dependent: :destroy
+  has_one_attached :file
 
   attr_accessor :timer_session_id
 
   validates :text, presence: true
-  validates :attachment, presence: true
-
-  # Attachment is a #cdn link
-  validates :attachment, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "must be a valid URL" }
+  validate :file_must_be_attached
 
   # Validates if only MD changes are made
   validate :only_formatting_changes, on: :update
@@ -64,6 +62,10 @@ class Devlog < ApplicationRecord
   delegate :count, to: :likes, prefix: true
 
   private
+
+  def file_must_be_attached
+    errors.add(:file, "must be attached") unless file.attached?
+  end
 
   def validate_timer_session_required
     has_hackatime = project.hackatime_project_keys.present? &&

@@ -123,6 +123,9 @@
           <%= image_tag current_user.avatar, class: "h-12 w-12 rounded-full flex-shrink-0" %>
 
           <div class="flex flex-col w-full ml-3 overflow-ellipsis overflow-hidden" data-sidebar-target="collapseHide">
+            <% admin_tool do %>
+              <div><%= current_user.id %></div>
+            <% end %>
             <div class="h-4">Hello,</div>
             <div class="text-xl whitespace-nowrap overflow-ellipsis"><%= current_user.display_name %>!</div>
           </div>

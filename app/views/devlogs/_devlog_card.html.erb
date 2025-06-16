@@ -99,23 +99,21 @@
     </div>
 
     <!-- Attachments -->
-    <% if devlog.attachment.present? %>
+    <% if devlog.file.attached? %>
       <div class="mt-2 sm:mt-3">
-        <% attachment_url = devlog.attachment %>
-        <% clean_url = attachment_url.gsub(/\?pub_secret=.*$/, '') %>
-        <% if clean_url.match?(/\.(jpg|jpeg|png|gif|heic|heif|webp)$/i) %>
-          <img src="<%= attachment_url %>" alt="Update attachment" class="w-full object-contain cursor-pointer hover:opacity-90 transition-opacity rounded-lg" data-action="click->image-viewer#open">
-        <% elsif clean_url.match?(/\.(mp4|webm|mov)$/i) %>
+        <% if devlog.file.image? %>
+          <%= image_tag devlog.file, alt: "Update attachment", class: "w-full object-contain cursor-pointer hover:opacity-90 transition-opacity rounded-lg", data: { action: "click->image-viewer#open" } %>
+        <% elsif devlog.file.video? %>
           <div class="w-full flex items-center justify-center bg-black rounded-lg">
-            <video src="<%= attachment_url %>" class="w-full object-contain rounded-lg" playsinline controls>
+            <%= video_tag url_for(devlog.file), class: "w-full object-contain rounded-lg", playsinline: true, controls: true do %>
               Your browser does not support the video tag.
-            </video>
+            <% end %>
           </div>
-        <% elsif devlog.attachment.match?(/\.(mp3|wav|m4a|ogg|flac)$/i) %>
+        <% elsif devlog.file.audio? %>
           <div class="w-full flex items-center justify-center py-4">
-            <audio src="<%= devlog.attachment %>" class="w-full max-w-md" controls controlsList="nodownload">
+            <%= audio_tag url_for(devlog.file), class: "w-full max-w-md", controls: true, controlslist: "nodownload" do %>
               Your browser does not support the audio tag.
-            </audio>
+            <% end %>
           </div>
         <% end %>
       </div>
