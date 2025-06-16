@@ -1,0 +1,171 @@
+<h1><%= @shop_item.name %></h1>
+
+<div class="row">
+  <div class="col-md-4">
+    <% if @shop_item.image.attached? %>
+      <%= image_tag @shop_item.image, class: "img-fluid" %>
+    <% else %>
+      <div class="bg-light p-4 text-center">No image attached</div>
+    <% end %>
+  </div>
+  <div class="col-md-8">
+    <table class="table">
+      <tr>
+        <th>Type</th>
+        <td><%= @shop_item.type&.demodulize || "ShopItem" %></td>
+      </tr>
+      <tr>
+        <th>Description</th>
+        <td><%= @shop_item.description %></td>
+      </tr>
+      <tr>
+        <th>Internal Description</th>
+        <td><%= @shop_item.internal_description %></td>
+      </tr>
+      <tr>
+        <th>Ticket Cost</th>
+        <td><%= @shop_item.ticket_cost %></td>
+      </tr>
+      <tr>
+        <th>USD Cost</th>
+        <td><%= @shop_item.usd_cost %></td>
+      </tr>
+      <tr>
+        <th>Hacker Score</th>
+        <td><%= @shop_item.hacker_score %></td>
+      </tr>
+      <tr>
+        <th>Max Quantity</th>
+        <td><%= @shop_item.max_qty %></td>
+      </tr>
+      <tr>
+        <th>Requires Black Market</th>
+        <td>
+          <% if @shop_item.requires_black_market %>
+            <span class="badge bg-dark">Yes</span>
+          <% else %>
+            <span class="badge bg-light text-dark">No</span>
+          <% end %>
+        </td>
+      </tr>
+      <tr>
+        <th>Show in Carousel</th>
+        <td>
+          <% if @shop_item.show_in_carousel %>
+            <span class="badge bg-info">Yes</span>
+          <% else %>
+            <span class="badge bg-light text-dark">No</span>
+          <% end %>
+        </td>
+      </tr>
+      <tr>
+        <th>One Per Person Ever</th>
+        <td>
+          <% if @shop_item.one_per_person_ever %>
+            <span class="badge bg-warning">Yes</span>
+          <% else %>
+            <span class="badge bg-light text-dark">No</span>
+          <% end %>
+        </td>
+      </tr>
+      <tr>
+        <th>Limited Stock</th>
+        <td>
+          <% if @shop_item.limited? %>
+            <span class="badge bg-info">Yes</span>
+          <% else %>
+            <span class="badge bg-light text-dark">No</span>
+          <% end %>
+        </td>
+      </tr>
+      <% if @shop_item.limited? %>
+        <tr>
+          <th>Stock</th>
+          <td>
+            <% remaining = @shop_item.remaining_stock %>
+            <% total_stock = @shop_item.stock || 0 %>
+            <% ordered = total_stock - (remaining || 0) %>
+            <%= total_stock %> total
+            <span class="badge <%= remaining && remaining > 0 ? 'bg-success' : 'bg-danger' %>">
+              <%= remaining || 0 %> remaining
+            </span>
+            <small class="text-muted">(<%= ordered %> ordered)</small>
+          </td>
+        </tr>
+      <% end %>
+      <% if @shop_item.hcb_merchant_lock.present? %>
+        <tr>
+          <th>HCB Merchant Lock</th>
+          <td><%= @shop_item.hcb_merchant_lock %></td>
+        </tr>
+      <% end %>
+      <% if @shop_item.hcb_category_lock.present? %>
+        <tr>
+          <th>HCB Category Lock</th>
+          <td><%= @shop_item.hcb_category_lock %></td>
+        </tr>
+      <% end %>
+      <% if @shop_item.hcb_keyword_lock.present? %>
+        <tr>
+          <th>HCB Keyword Lock</th>
+          <td><%= @shop_item.hcb_keyword_lock %></td>
+        </tr>
+      <% end %>
+      <% if @shop_item.agh_contents.present? %>
+        <tr>
+          <th>AGH Contents</th>
+          <td><pre><%= JSON.pretty_generate(@shop_item.agh_contents) %></pre></td>
+        </tr>
+      <% end %>
+      <tr>
+        <th>Created</th>
+        <td><%= @shop_item.created_at.strftime("%B %d, %Y at %I:%M %p") %></td>
+      </tr>
+      <tr>
+        <th>Updated</th>
+        <td><%= @shop_item.updated_at.strftime("%B %d, %Y at %I:%M %p") %></td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<h3>Recent Orders</h3>
+<% if @shop_orders.any? %>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Quantity</th>
+        <th>Total Cost</th>
+        <th>Status</th>
+        <th>Ordered At</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @shop_orders.each do |order| %>
+        <tr>
+          <td>
+            <%= link_to "#{order.user.first_name} #{order.user.last_name}",
+                        admin_user_path(order.user) %>
+          </td>
+          <td><%= order.quantity %></td>
+          <td><%= order.total_cost %></td>
+          <td><%= order.status&.humanize %></td>
+          <td><%= order.created_at.strftime("%m/%d/%Y") %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>No orders yet for this item.</p>
+<% end %>
+
+<div class="mt-4">
+  <%= link_to "Edit", [:edit, :admin, @shop_item.becomes(ShopItem)], class: "btn btn-primary" %>
+  <%= link_to "Delete",
+              [:admin, @shop_item.becomes(ShopItem)],
+              method: :delete,
+              data: { confirm: "Are you sure?" },
+              class: "btn btn-danger" %>
+  <%= link_to "← back to shop items", admin_shop_items_path %>
+</div>

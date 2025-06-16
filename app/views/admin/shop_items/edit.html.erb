@@ -1,0 +1,6 @@
+<h1>Edit Shop Item</h1>
+
+<%= render 'form', shop_item: @shop_item %>
+
+<%= link_to "Show", [:admin, @shop_item.becomes(ShopItem)], class: "btn btn-outline-primary" %> |
+<%= link_to "← back to shop items", admin_shop_items_path %>

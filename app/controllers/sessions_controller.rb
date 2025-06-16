@@ -42,6 +42,8 @@ class SessionsController < ApplicationController
         }.to_json)
       end
 
+      ahoy.track "tutorial_step_slack_signin", user_id: user.id
+
       redirect_to root_path
     rescue StandardError => e
       Rails.logger.tagged("Authentication") do
@@ -118,6 +120,8 @@ class SessionsController < ApplicationController
         magic_link_id: magic_link.id
       }.to_json)
     end
+
+    ahoy.track "tutorial_step_magic_link_signin", user_id: magic_link.user.id
 
     redirect_to root_path
   end

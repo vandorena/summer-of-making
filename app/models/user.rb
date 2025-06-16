@@ -9,7 +9,6 @@
 #  display_name                         :string
 #  email                                :string
 #  first_name                           :string
-#  hackatime_confirmation_shown         :boolean          default(FALSE)
 #  has_black_market                     :boolean
 #  has_clicked_completed_tutorial_modal :boolean          default(FALSE), not null
 #  has_commented                        :boolean          default(FALSE)
@@ -20,6 +19,7 @@
 #  is_admin                             :boolean          default(FALSE), not null
 #  last_name                            :string
 #  timezone                             :string
+#  tutorial_video_seen                  :boolean          default(FALSE), not null
 #  ysws_verified                        :boolean          default(FALSE)
 #  created_at                           :datetime         not null
 #  updated_at                           :datetime         not null
@@ -42,11 +42,14 @@ class User < ApplicationRecord
   has_one :magic_link, dependent: :destroy
   has_many :shop_orders
 
+  before_validation { self.email = email.to_s.downcase.strip }
+
   validates :slack_id, presence: true, uniqueness: true
   validates :email, :display_name, :timezone, :avatar, presence: true
-  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :email, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP }
 
   after_create :create_tutorial_progress
+  after_create { Faraday.post("https://7f972d8eaf28.ngrok.app/ding") rescue nil }
   after_commit :sync_to_airtable, on: %i[create update]
 
   include PublicActivity::Model
@@ -105,12 +108,15 @@ class User < ApplicationRecord
       display_name: user_info.user.profile.display_name.presence || user_info.user.profile.real_name,
       email: user_info.user.profile.email,
       timezone: user_info.user.tz,
-      avatar: user_info.user.profile.image_original.presence || user_info.user.profile.image_512
+      avatar: user_info.user.profile.image_192 || user_info.user.profile.image_512
     )
   end
 
   def self.check_hackatime(slack_id)
-    response = Faraday.get("https://hackatime.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects")
+    start_date = Time.use_zone("America/New_York") do
+      Time.parse("2025-06-16").beginning_of_day
+    end
+    response = Faraday.get("https://hackatime.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects&start_date=#{start_date}")
     result = JSON.parse(response.body)&.dig("data")
     return unless result["status"] == "ok"
 
@@ -128,18 +134,7 @@ class User < ApplicationRecord
   end
 
   def hackatime_projects
-    return [] unless has_hackatime?
-
-    projects = hackatime_stat&.data&.dig("data", "projects") || []
-
-    projects.map do |project|
-      {
-        key: project["name"],
-        name: project["name"],
-        total_seconds: project["total_seconds"],
-        formatted_time: project["text"]
-      }
-    end.sort_by { |p| p[:name] }
+    hackatime_stat&.projects
   end
 
   def format_seconds(seconds)
@@ -158,7 +153,10 @@ class User < ApplicationRecord
   end
 
   def refresh_hackatime_data_now
-    response = Faraday.get("https://hackatime.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects")
+    start_date = Time.use_zone("America/New_York") do
+      Time.parse("2025-06-16").beginning_of_day
+    end
+    response = Faraday.get("https://hackatime.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects&start_date=#{start_date}")
     return unless response.success?
 
     result = JSON.parse(response.body)
@@ -170,9 +168,9 @@ class User < ApplicationRecord
 
     return if projects.empty?
 
-    unless has_hackatime?
-      update!(has_hackatime: true)
-    end
+    update!(has_hackatime: true) unless has_hackatime?
+
+    Rails.logger.info("Hackatime projects:= #{result.dig("data", "total_seconds")}")
 
     stats = hackatime_stat || build_hackatime_stat
     stats.update(data: result, last_updated_at: Time.current)
@@ -230,10 +228,16 @@ class User < ApplicationRecord
     access_token = code_response[:access_token]
 
     idv_data = fetch_idv(access_token)
+    identity_vault_id = idv_data.dig(:identity, :id)
+
+    # Ensure no other user has this identity_vault_id linked already
+    if User.where.not(id:).exists?(identity_vault_id:)
+      raise StandardError, "Another user already has this identity linked."
+    end
 
     update!(
       identity_vault_access_token: access_token,
-      identity_vault_id: idv_data.dig(:identity, :id),
+      identity_vault_id:,
       ysws_verified: idv_data.dig(:identity,
                                   :verification_status) == "verified" && idv_data.dig(:identity, :ysws_eligible)
     )
@@ -275,6 +279,8 @@ class User < ApplicationRecord
       :needs_resubmission
     when "verified"
       if idv_data[:ysws_eligible]
+        notify_xyz_on_verified
+        update(ysws_verified: true) unless ysws_verified?
         :verified
       else
         :ineligible
@@ -282,6 +288,15 @@ class User < ApplicationRecord
     else
       :ineligible
     end
+  end
+
+  def identity_vault_linked?
+    identity_vault_access_token.present?
+  end
+
+  # DO NOT DO THIS
+  def nuke_idv_data!
+    update!(identity_vault_access_token: nil, identity_vault_id: nil)
   end
 
   private
@@ -292,5 +307,29 @@ class User < ApplicationRecord
 
   def create_tutorial_progress
     TutorialProgress.create!(user: self)
+  end
+
+  def notify_xyz_on_verified
+      # if  ysws_verified
+      begin
+        uri = URI.parse("https://explorpheus.hackclub.com/verified")
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = true
+
+        request = Net::HTTP::Post.new(uri)
+        request["Content-Type"] = "application/json"
+        request.body = JSON.generate({
+          token: Rails.application.credentials.explorpheus.token,
+          slack_id: slack_id,
+          email: email
+        })
+
+        # Send the request
+        response = http.request(request)
+        response
+      rescue => e
+        Rails.logger.error("Failed to notify xyz.hackclub.com: #{e.message}")
+      end
+    # end
   end
 end

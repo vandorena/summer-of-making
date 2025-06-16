@@ -14,8 +14,8 @@
         <% if @item.image.attached? %>
           <div class="bg-white p-4 card-pixel">
             <%= image_tag @item.image.variant(:thumb),
-                class: "w-full h-64 object-contain mx-auto",
-                alt: @item.name %>
+                          class: "w-full h-64 object-contain mx-auto",
+                          alt: @item.name %>
           </div>
         <% else %>
           <div class="bg-white p-4 card-pixel h-64 flex items-center justify-center">
@@ -28,6 +28,9 @@
 
           <% if @item.description.present? %>
             <p class="text-lg text-saddle-taupe leading-relaxed"><%= @item.description %></p>
+          <% end %>
+          <% if @item.is_a?(ShopItem::FreeStickers) %>
+            <%= image_tag "free_stickers.png" %>
           <% end %>
 
           <% if current_user&.is_admin? && @item.internal_description.present? %>
@@ -73,10 +76,10 @@
             <%= f.label :quantity, class: "block text-lg font-semibold text-darker-taupe" %>
             <% max_quantity = @item.one_per_person_ever? ? 1 : (@item.max_qty || 10) %>
             <%= f.number_field :quantity,
-                value: 1,
-                min: 1,
-                max: max_quantity,
-                class: "w-full px-4 py-3 border-2 border-saddle-taupe/30 rounded-none bg-white text-lg text-center font-semibold focus:border-forest focus:outline-none transition-colors duration-200" %>
+                               value: 1,
+                               min: 1,
+                               max: max_quantity,
+                               class: "w-full px-4 py-3 border-2 border-saddle-taupe/30 rounded-none bg-white text-lg text-center font-semibold focus:border-forest focus:outline-none transition-colors duration-200" %>
             <p class="text-sm text-saddle-taupe">
               <% if @item.one_per_person_ever? %>
                 Limited to 1 per person, ever
@@ -89,10 +92,10 @@
           <!-- Address picker for all orders -->
           <div class="space-y-2">
             <%= render 'shared/address_picker',
-                user: current_user,
-                form: f,
-                field_name: 'shipping_address_id',
-                label_text: 'Shipping Address' %>
+                       user: current_user,
+                       form: f,
+                       field_name: 'shipping_address_id',
+                       label_text: 'Shipping Address' %>
           </div>
 
           <!-- Cost preview -->
@@ -139,25 +142,14 @@
               </div>
               <% if current_user.balance < @item.ticket_cost %>
                 <p class="text-vintage-red text-sm mt-2 font-semibold">
-                  ⚠️ Insufficient tickets! You need <%= number_with_delimiter(@item.ticket_cost - current_user.balance) %> more tickets.
+                  ⚠️ Insufficient tickets! You
+                  need <%= number_with_delimiter(@item.ticket_cost - current_user.balance) %> more tickets.
                 </p>
               <% end %>
             </div>
           <% end %>
 
           <!-- One per person warning -->
-          <% if @item.one_per_person_ever? %>
-            <div class="bg-vintage-red/10 p-4 card-pixel">
-              <div class="flex items-center space-x-3">
-                <span class="text-2xl">⚠️</span>
-                <div>
-                  <p class="font-bold text-vintage-red">Limited Item</p>
-                  <p class="text-sm text-vintage-red">This item can only be ordered once per person, ever.</p>
-                </div>
-              </div>
-            </div>
-          <% end %>
-
           <!-- Black market warning -->
           <% if @item.requires_black_market? %>
             <div class="bg-vintage-red/10 p-4 card-pixel">
@@ -165,7 +157,8 @@
                 <span class="text-2xl">🖤</span>
                 <div>
                   <p class="font-bold text-vintage-red">Black Market Item</p>
-                  <p class="text-sm text-vintage-red">This exclusive item is only available to verified black market members.</p>
+                  <p class="text-sm text-vintage-red">This exclusive item is only available to verified black market
+                    members.</p>
                 </div>
               </div>
             </div>
@@ -177,115 +170,107 @@
             has_existing_order = current_user.shop_orders.where(shop_item_id: @item.id).exists?
             already_ordered = is_one_per_person && has_existing_order
             button_disabled = already_ordered
-            button_text = already_ordered ? "Already Purchased" : "Complete Purchase"
+            button_text = already_ordered ? "Already Purchased" : "Get!"
             button_classes = if already_ordered
-              "w-full bg-gray-400 text-gray-600 font-bold py-4 px-6 btn-pixel text-lg cursor-not-allowed"
-            else
-              "w-full bg-forest hover:bg-forest/90 text-white font-bold py-4 px-6 btn-pixel text-lg transition-colors duration-200 cursor-pointer"
-            end
+                               "w-full bg-gray-400 text-gray-600 font-bold py-4 px-6 btn-pixel text-lg cursor-not-allowed"
+                             else
+                               "w-full bg-forest hover:bg-forest/90 text-white font-bold py-4 px-6 btn-pixel text-lg transition-colors duration-200 cursor-pointer"
+                             end
           %>
           <%= f.submit button_text,
-              id: "purchase-button",
-              disabled: button_disabled,
-              class: button_classes %>
+                       id: "purchase-button",
+                       disabled: button_disabled,
+                       class: button_classes %>
         <% end %>
-
-        <!-- Order info -->
-        <div class="mt-6 pt-6 border-t border-saddle-taupe/20">
-          <h3 class="font-semibold text-darker-taupe mb-3">Order Information</h3>
-          <ul class="text-sm text-saddle-taupe space-y-1">
-            <li>• Orders are reviewed and processed by our team</li>
-            <li>• You'll receive updates via email about your order status</li>
-            <li>• Shipping times vary by item and location</li>
-            <% if @item.manually_fulfilled? %>
-              <li>• This item is manually fulfilled - expect 3-7 business days</li>
-            <% end %>
-          </ul>
-        </div>
+        <% if @item.is_a?(ShopItem::FreeStickers) %>
+          <div class="text-sm text-saddle-taupe mt-4">
+            Once we verify you're a teenager, we'll send you an envelope of Hack Club stickers in the mail :-)
+          </div>
+        <% end %>
       </div>
     </div>
   </div>
 </div>
 
 <style>
-.btn-pixel {
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.1),
-              2px 2px 0 0 rgba(0,0,0,0.1);
-}
+    .btn-pixel {
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1),
+        2px 2px 0 0 rgba(0, 0, 0, 0.1);
+    }
 
-.btn-pixel:hover {
-  transform: translate(1px, 1px);
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.1),
-              1px 1px 0 0 rgba(0,0,0,0.1);
-}
+    .btn-pixel:hover {
+        transform: translate(1px, 1px);
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1),
+        1px 1px 0 0 rgba(0, 0, 0, 0.1);
+    }
 
-.card-pixel {
-  box-shadow: 0 0 0 2px rgba(0,0,0,0.1),
-              4px 4px 0 0 rgba(0,0,0,0.05);
-}
+    .card-pixel {
+        box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1),
+        4px 4px 0 0 rgba(0, 0, 0, 0.05);
+    }
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  const quantityInput = document.querySelector('input[name="quantity"]');
-  const quantityDisplay = document.getElementById('quantity-display');
-  const totalCostDisplay = document.getElementById('total-cost');
-  const totalCostContainer = document.getElementById('total-cost-container');
-  const insufficientFundsWarning = document.getElementById('insufficient-funds-warning');
-  const shortageAmount = document.getElementById('shortage-amount');
-  const submitButton = document.getElementById('purchase-button');
-  const orderSummary = totalCostContainer?.closest('.bg-forest\\/10');
+    document.addEventListener('DOMContentLoaded', function () {
+        const quantityInput = document.querySelector('input[name="quantity"]');
+        const quantityDisplay = document.getElementById('quantity-display');
+        const totalCostDisplay = document.getElementById('total-cost');
+        const totalCostContainer = document.getElementById('total-cost-container');
+        const insufficientFundsWarning = document.getElementById('insufficient-funds-warning');
+        const shortageAmount = document.getElementById('shortage-amount');
+        const submitButton = document.getElementById('purchase-button');
+        const orderSummary = totalCostContainer?.closest('.bg-forest\\/10');
 
-  const itemPrice = <%= (@item.ticket_cost || 0).to_json %>;
-  const userBalance = <%= (current_user.balance || 0).to_json %>;
+        const itemPrice = <%= (@item.ticket_cost || 0).to_json %>;
+        const userBalance = <%= (current_user.balance || 0).to_json %>;
 
-  if (quantityInput && quantityDisplay && totalCostDisplay && totalCostContainer) {
-    function updateCostPreview() {
-      const quantity = parseInt(quantityInput.value) || 1;
-      const totalCost = itemPrice * quantity;
-      const canAfford = userBalance >= totalCost;
+        if (quantityInput && quantityDisplay && totalCostDisplay && totalCostContainer) {
+            function updateCostPreview() {
+                const quantity = parseInt(quantityInput.value) || 1;
+                const totalCost = itemPrice * quantity;
+                const canAfford = userBalance >= totalCost;
 
-      quantityDisplay.textContent = quantity;
-      totalCostDisplay.textContent = totalCost.toLocaleString();
+                quantityDisplay.textContent = quantity;
+                totalCostDisplay.textContent = totalCost.toLocaleString();
 
-      // Update styling based on affordability
-      if (canAfford) {
-        // Can afford - green styling
-        totalCostContainer.className = 'text-xl font-bold text-forest flex items-center';
-        if (orderSummary) {
-          orderSummary.className = orderSummary.className.replace('bg-vintage-red/10', 'bg-forest/10');
-        }
-        if (insufficientFundsWarning) {
-          insufficientFundsWarning.classList.add('hidden');
-        }
-        if (submitButton) {
-          submitButton.disabled = false;
-          submitButton.value = 'Complete Purchase';
-          submitButton.className = 'w-full bg-forest hover:bg-forest/90 text-white font-bold py-4 px-6 btn-pixel text-lg transition-colors duration-200 cursor-pointer';
-        }
-      } else {
-        // Can't afford - red/grey styling
-        totalCostContainer.className = 'text-xl font-bold text-vintage-red flex items-center';
-        if (orderSummary) {
-          orderSummary.className = orderSummary.className.replace('bg-forest/10', 'bg-vintage-red/10');
-        }
-        if (insufficientFundsWarning && shortageAmount) {
-          insufficientFundsWarning.classList.remove('hidden');
-          shortageAmount.textContent = (totalCost - userBalance).toLocaleString();
-        }
-        if (submitButton) {
-          submitButton.disabled = true;
-          submitButton.value = 'Insufficient Tickets';
-          submitButton.className = 'w-full bg-saddle-taupe/30 text-saddle-taupe/60 font-bold py-4 px-6 btn-pixel text-lg cursor-not-allowed';
-        }
-      }
-    }
+                // Update styling based on affordability
+                if (canAfford) {
+                    // Can afford - green styling
+                    totalCostContainer.className = 'text-xl font-bold text-forest flex items-center';
+                    if (orderSummary) {
+                        orderSummary.className = orderSummary.className.replace('bg-vintage-red/10', 'bg-forest/10');
+                    }
+                    if (insufficientFundsWarning) {
+                        insufficientFundsWarning.classList.add('hidden');
+                    }
+                    if (submitButton) {
+                        submitButton.disabled = false;
+                        submitButton.value = 'Complete Purchase';
+                        submitButton.className = 'w-full bg-forest hover:bg-forest/90 text-white font-bold py-4 px-6 btn-pixel text-lg transition-colors duration-200 cursor-pointer';
+                    }
+                } else {
+                    // Can't afford - red/grey styling
+                    totalCostContainer.className = 'text-xl font-bold text-vintage-red flex items-center';
+                    if (orderSummary) {
+                        orderSummary.className = orderSummary.className.replace('bg-forest/10', 'bg-vintage-red/10');
+                    }
+                    if (insufficientFundsWarning && shortageAmount) {
+                        insufficientFundsWarning.classList.remove('hidden');
+                        shortageAmount.textContent = (totalCost - userBalance).toLocaleString();
+                    }
+                    if (submitButton) {
+                        submitButton.disabled = true;
+                        submitButton.value = 'Insufficient Tickets';
+                        submitButton.className = 'w-full bg-saddle-taupe/30 text-saddle-taupe/60 font-bold py-4 px-6 btn-pixel text-lg cursor-not-allowed';
+                    }
+                }
+            }
 
-    quantityInput.addEventListener('input', updateCostPreview);
-    quantityInput.addEventListener('change', updateCostPreview);
+            quantityInput.addEventListener('input', updateCostPreview);
+            quantityInput.addEventListener('change', updateCostPreview);
 
-    // Run initial update
-    updateCostPreview();
-  }
-});
+            // Run initial update
+            updateCostPreview();
+        }
+    });
 </script>

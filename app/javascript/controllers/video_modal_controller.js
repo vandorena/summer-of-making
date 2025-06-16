@@ -16,7 +16,7 @@ export default class extends Controller {
     this.modalTarget.classList.remove("hidden");
     if (this.hasIframeTarget) {
       this.iframeTarget.src =
-        "https://streamable.com/e/ay62z2?autoplay=1&loop=0";
+        "https://player.vimeo.com/video/1093563882?h=3f9f9c02e1&amp;title=0&amp;byline=0&amp;portrait=0&amp;badge=0&amp;autopause=0&amp;player_id=0";
     }
     this.modalTarget.style.opacity = "0";
     this.containerTarget.style.transform = "scale(0.9)";

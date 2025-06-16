@@ -18,6 +18,10 @@ module Journey
 
     Rails.application.config.assets.paths << Rails.root.join("app", "assets", "videos")
 
+    # Run jobs dashboard behind admin controller
+    MissionControl::Jobs.base_controller_class = "Admin::ApplicationController"
+    config.mission_control.jobs.http_basic_auth_enabled = false
+
     # html minify
     config.middleware.use HtmlCompressor::Rack
 
@@ -30,5 +34,8 @@ module Journey
     # config.eager_load_paths << Rails.root.join("app/models/shop_item")
     # config.autoload_paths << Rails.root.join("app/models/shop_item")
     config.after_initialize { eager_load! }
+
+    # bring in game constants from yaml
+    config.game_constants = config_for(:game_constants)
   end
 end

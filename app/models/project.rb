@@ -15,6 +15,9 @@
 #  readme_link            :string
 #  repo_link              :string
 #  title                  :string
+#  used_ai                :boolean
+#  ysws_submission        :boolean          default(FALSE), not null
+#  ysws_type              :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  user_id                :bigint           not null
@@ -60,10 +63,32 @@ class Project < ApplicationRecord
             allow_blank: true
 
   validates :category,
-            inclusion: { in: [ "Software", "Hardware", "Both Software & Hardware", "Something else" ],
+            inclusion: { in: [ "Web App", "Mobile App", "Command Line Tool", "Video Game", "Something else" ],
                          message: "%<value>s is not a valid category" }
 
-  validate :cannot_change_category, on: :update
+  enum :ysws_type, {
+    athena: "Athena",
+    boba_drops: "Boba Drops",
+    cider: "Cider",
+    grub: "Grub",
+    hackaccino: "Hackaccino",
+    highway: "Highway",
+    neighborhood: "Neighborhood",
+    shipwrecked: "Shipwrecked",
+    solder: "Solder",
+    sprig: "Sprig",
+    swirl: "Swirl",
+    terminalcraft: "Terminalcraft",
+    thunder: "Thunder",
+    tonic: "Tonic",
+    toppings: "Toppings",
+    waffles: "Waffles",
+    waveband: "Waveband",
+    other: "Other"
+  }
+
+  validates :ysws_type, presence: true, if: :ysws_submission?
+
   validate :user_must_have_hackatime, on: :create
 
   after_initialize :set_default_rating, if: :new_record?
@@ -166,12 +191,6 @@ class Project < ApplicationRecord
 
   def set_default_rating
     self.rating ||= 1100
-  end
-
-  def cannot_change_category
-    return unless category_changed? && persisted?
-
-    errors.add(:category, "cannot be changed after project creation")
   end
 
   def user_must_have_hackatime

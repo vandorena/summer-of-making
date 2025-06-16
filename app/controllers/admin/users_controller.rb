@@ -4,12 +4,12 @@ module Admin
     before_action :set_user, except: [ :index ]
 
     def index
-      @pagy, @users = pagy(User.all)
+      @pagy, @users = pagy(User.all.order(id: :desc), items: 50)
     end
 
     def show
-      @activities = @user.activities.order(created_at: :desc)
-      @payouts = @user.payouts.order(created_at: :desc)
+      @activities = @user.activities.order(created_at: :desc).includes(:owner)
+      @payouts = @user.payouts.order(created_at: :desc).includes(:payable)
     end
     def internal_notes
       @user.internal_notes = params[:internal_notes]
@@ -33,6 +33,12 @@ module Admin
       rescue ActiveRecord::RecordInvalid => e
         redirect_to admin_user_path, notice: e.message
       end
+    end
+
+    def nuke_idv_data
+      @user.nuke_idv_data!
+      flash[:success] = "what have you done"
+      redirect_to admin_user_path(@user)
     end
 
     private

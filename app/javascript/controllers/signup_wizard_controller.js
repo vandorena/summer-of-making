@@ -22,8 +22,9 @@ export default class extends Controller {
 
   startSignup() {
     const x = this.hasEmailInputTarget
-      ? this.emailInputTarget.value.trim()
+      ? this.emailInputTarget.value.trim().toLowerCase()
       : "";
+
     this.hideError();
     if (!x) {
       this.error("pls enter your email");
@@ -43,18 +44,26 @@ export default class extends Controller {
       button.classList.add("opacity-75");
     }
     this.sendEmail(x)
-      .then(() => {
+      .then((data) => {
         if (button) {
           button.textContent = originalText;
           button.disabled = false;
           button.classList.remove("opacity-75");
+        }
+        if (
+          data.invites &&
+          data.invites[0] &&
+          data.invites[0].error === "already_in_team"
+        ) {
+          window.location.href = window.location.origin + "/auth/slack";
+          return;
         }
         const modal = document.getElementById("signup-wizard");
         if (modal) {
           const modalController =
             this.application.getControllerForElementAndIdentifier(
               modal,
-              "signup-wizard"
+              "signup-wizard",
             );
           if (modalController && modalController !== this) {
             modalController.emailValue = x;
@@ -82,13 +91,16 @@ export default class extends Controller {
     if (metaTag) {
       csrfToken = metaTag.content;
     }
+
+    const ref = new URL(location.href).searchParams.get("ref");
+
     const response = await fetch("/sign-up", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "X-CSRF-Token": csrfToken,
       },
-      body: JSON.stringify({ email: email }),
+      body: JSON.stringify({ email, ref }),
     });
     if (!response.ok) {
       throw new Error("Failed to send email");
@@ -157,6 +169,16 @@ export default class extends Controller {
           });
         }
       }, 50);
+    }
+  }
+
+  hide() {
+    if (this.hasModalTarget) {
+      this.modalTarget.classList.add("hidden");
+      document.body.classList.remove("overflow-hidden");
+      if (this.hasIntroVideoTarget) {
+        this.introVideoTarget.pause();
+      }
     }
   }
 }

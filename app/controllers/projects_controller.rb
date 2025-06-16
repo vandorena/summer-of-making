@@ -3,6 +3,7 @@
 class ProjectsController < ApplicationController
   include ActionView::RecordIdentifier
   before_action :authenticate_user!, except: %i[index show]
+  skip_before_action :verify_authenticity_token, only: [ :check_link ]
   before_action :set_project,
                 only: %i[show edit update follow unfollow ship stake_stonks unstake_stonks destroy]
   before_action :check_if_shipped, only: %i[edit update]
@@ -90,6 +91,8 @@ class ProjectsController < ApplicationController
     end
 
     if @project.save
+      is_first_project = current_user.projects.count == 1
+      ahoy.track "tutorial_step_first_project_created", user_id: current_user.id, project_id: @project.id, is_first_project: is_first_project
       redirect_to project_path(@project), notice: "Project was successfully created."
     else
       flash.now[:alert] = "Could not create project. Please check the form for errors."
@@ -117,7 +120,6 @@ class ProjectsController < ApplicationController
 
   def my_projects
     @projects = current_user.projects.order(created_at: :desc)
-    @show_create_project = true
 
     current_user.refresh_hackatime_data if current_user.has_hackatime?
   end
@@ -227,6 +229,8 @@ class ProjectsController < ApplicationController
     end
 
     if ShipEvent.create(project: @project)
+      is_first_ship = current_user.projects.joins(:ship_events).count == 1
+      ahoy.track "tutorial_step_first_project_shipped", user_id: current_user.id, project_id: @project.id, is_first_ship: is_first_ship
       redirect_to project_path(@project), notice: "Your project has been shipped!"
 
       message = "Congratulations on shipping your project! Now thy project shall fight for blood :ultrafastparrot:"
@@ -238,7 +242,7 @@ class ProjectsController < ApplicationController
 
   # Some AI generated code to check if a link is a valid repo or readme link
   def check_link
-    url = params[:url]
+    url = params[:url]&.strip&.gsub(/\A"|"\z/, "")
     link_type = params[:link_type]
 
     require "net/http"
@@ -505,6 +509,11 @@ class ProjectsController < ApplicationController
 
   private
 
+  def ysws_type_options
+    [ [ "Select a YSWS program...", "" ] ] + Project.ysws_types.map { |key, value| [ value, value ] }
+  end
+  helper_method :ysws_type_options
+
   def check_identity_verification
     return if current_user&.identity_vault_id.present? && current_user.verification_status != :ineligible
 
@@ -541,11 +550,7 @@ class ProjectsController < ApplicationController
   end
 
   def project_params
-    permitted_params = params.expect(project: [ :title, :description, :readme_link, :demo_link, :repo_link,
-                                                :banner, { hackatime_project_keys: [] } ])
-
-    permitted_params.merge!(params.expect(project: [ :category ])) if action_name == "create"
-
-    permitted_params
+    params.expect(project: [ :title, :description, :used_ai, :readme_link, :demo_link, :repo_link,
+                             :banner, :ysws_submission, :ysws_type, :category, { hackatime_project_keys: [] } ])
   end
 end

@@ -38,13 +38,13 @@
 <% content_attr     = local_assigns.fetch(:content_attr, {}) %>
 <% text_attr        = local_assigns.fetch(:text_attr, {}) %>
 <% underline_attr   = local_assigns.fetch(:underline_attr, {}) %>
-<% icon_size        = local_assigns.fetch(:icon_size, large ? '6' : '4') %>
+<% icon_size        = local_assigns.fetch(:icon_size, large ? '8' : '6') %>
 <% http_method      = local_assigns.fetch(:method, :get) %>
 
 <% base_class   = "relative inline-block group py-2 cursor-pointer #{'text-2xl' if large}" %>
 <% final_class  = [base_class, local_assigns[:class]].compact.join(" ") %>
 
-<% icon_class = "w-#{icon_size} #{'mr-4' if large} h-min".strip %>
+<% icon_class = "w-#{icon_size} #{'mr-4' if large} h-#{icon_size}".strip %>
 <% underline_class = "
   absolute transition-all duration-150 bottom-1 w-full pr-3 box-content
   bg-[#C7A077] rounded-full z-0 group-hover:opacity-100

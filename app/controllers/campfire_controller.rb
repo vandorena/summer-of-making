@@ -10,6 +10,11 @@ class CampfireController < ApplicationController
       @user.update!(has_clicked_completed_tutorial_modal: true)
     end
 
+    if params[:mark_video_seen] == "true" && @user.tutorial_progress.completed?
+      @user.update!(tutorial_video_seen: true)
+      redirect_to campfire_path and return
+    end
+
     if params[:reset].present? && @user&.tutorial_progress
       @user.tutorial_progress.reset_step!(params[:reset])
 
@@ -21,15 +26,38 @@ class CampfireController < ApplicationController
     @announcements = get_announcements
     @tutorials = get_tutorials
     @tutorial_progress = get_tutorial_progress
+
+    # Hackatime dashboard data
+    if @account_status[:hackatime_setup] && @user.hackatime_stat.present?
+      @hackatime_dashboard = {
+        total_time: @user.hackatime_stat.total_seconds_across_all_projects,
+        today_time: @user.hackatime_stat.today_seconds_across_all_projects,
+        has_time_recorded: @user.hackatime_stat.total_seconds_across_all_projects > 0
+      }
+    end
   end
 
   def show
   end
 
   def hackatime_status
+    # Build dashboard data if hackatime is set up
+    dashboard_data = nil
+    if current_user.has_hackatime? && current_user.hackatime_stat.present?
+      dashboard_data = {
+        total_time: current_user.hackatime_stat.total_seconds_across_all_projects,
+        today_time: current_user.hackatime_stat.today_seconds_across_all_projects,
+        has_time_recorded: current_user.hackatime_stat.total_seconds_across_all_projects > 0,
+        total_time_formatted: current_user.format_seconds(current_user.hackatime_stat.total_seconds_across_all_projects),
+        today_time_formatted: current_user.format_seconds(current_user.hackatime_stat.today_seconds_across_all_projects)
+      }
+    end
+
     render json: {
       hackatime_linked: current_user.has_hackatime_account?,
-      hackatime_setup: current_user.has_hackatime?
+      hackatime_setup: current_user.has_hackatime?,
+      hackatime_projects: current_user.hackatime_projects.any?,
+      dashboard: dashboard_data
     }
   end
 
@@ -59,20 +87,13 @@ class CampfireController < ApplicationController
   def build_account_status
     @account_status = {
       hackatime_linked: current_user.has_hackatime_account?,
-      hackatime_setup: current_user.has_hackatime?
+      hackatime_setup: current_user.has_hackatime?,
+      hackatime_projects: current_user.hackatime_projects.any?
     }
   end
 
   def get_announcements
     announcements = []
-
-    announcements << {
-      id: 1,
-      title: "Welcome to Summer of Making!",
-      content: "Complete the tutorials yada yada yada. I just created this section, but might put it at top because I remember campfire in HS had smth similar. Anyways, we have a space to post announcements and stuff. I'm not sure if we'll use it, but it's here. Need to implement dismiss",
-      type: "info",
-      created_at: Time.now
-    }
 
     announcements
   end
@@ -114,7 +135,7 @@ class CampfireController < ApplicationController
       {
         id: "shop",
         title: "Visit the Shop",
-        description: "This is where you can buy stuff with your shells. You'll earn shells by working on your projects and shipping them! PS: Take a look at the shop items – they're all made by hackers for hackers. (go ahead, get greedy!)",
+        description: "This is where you can buy stuff with your shells. We'll be releasing new items throughout the summer, so check back often!",
         path: "/shop",
         order: 5,
         completed: tutorial_completed?("shop")

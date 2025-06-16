@@ -1,0 +1,9 @@
+<h3><%= shop_item.name %></h3>
+<b>Description: </b> <%= shop_item.description %> <br>
+<b>Internal description: </b> <%= shop_item.internal_description %> <br>
+<b>USD cost: </b> <%= number_to_currency(shop_item.usd_cost || 0) %> <br>
+<b>Ticket cost: </b> <%= shop_item.ticket_cost %> <br>
+<b>Type: </b> <%= shop_item.type %> <br>
+<% if shop_item.image.attached? %>
+  <%= image_tag shop_item.image.variant(:thumb), style: "max-width: 200px; height: auto;" %>
+<% end %>

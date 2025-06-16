@@ -34,14 +34,14 @@
         <% end %>
 
         <% @timeline.each do |item| %>
-            <div class="flex align-center justify-center">
+          <div class="flex align-center justify-center">
             <%= image_tag "timeline-stalk.svg", width: 56, class: "-mr-2 -mt-11" %>
 
             <div class="grow-1">
-            <% if item.is_a? Devlog %>
+              <% if item.is_a? Devlog %>
                 <%= render "devlogs/devlog", devlog: item %>
-            <% elsif item.is_a? ShipEvent %>
-              <div class="w-full border-5 border-[#E4DCC6] bg-[#F3ECD8] p-2 rounded-xl">
+              <% elsif item.is_a? ShipEvent %>
+                <div class="w-full border-5 border-[#E4DCC6] bg-[#F3ECD8] p-2 rounded-xl">
 
                   <% p = @ship_events.where("created_at < ?", item.created_at).order(:created_at) %>
                   <% position = p.count + 1 %>
@@ -55,9 +55,9 @@
                       <img src="<%= item.user.avatar %>" alt="<%= item.user.display_name %>" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3">
                     <% end %>
                     <div>
-                        <p class="text-gray-600 text-xs sm:text-sm 2xl:text-base"><%= time_ago_in_words item.created_at %> ago</p>
+                      <p class="text-gray-600 text-xs sm:text-sm 2xl:text-base"><%= time_ago_in_words item.created_at %> ago</p>
 
-                      <span class="font-medium text-base sm:text-lg 2xl:text-xl"><%= item.user.display_name %></span>
+                      <span class="font-medium text-base sm:text-lg 2xl:text-xl"><%= item.user.display_name %><% admin_user_visit(item.user) %></span>
 
                       <span class="text-gray-600 text-xs sm:text-sm 2xl:text-base">•</span>
 
@@ -81,10 +81,10 @@
 
                     </div>
                   </div>
-              </div>
-            <% end %>
+                </div>
+              <% end %>
             </div>
-            </div>
+          </div>
         <% end %>
 
         <!-- <%# if @devlogs.empty? && current_user != @project.user %>

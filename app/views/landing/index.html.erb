@@ -2,50 +2,69 @@
 <%= stylesheet_link_tag "parchment", "data-turbo-track": "reload" %>
 <%= stylesheet_link_tag "faq_container", "data-turbo-track": "reload" %>
 
-<div class="font-['Fredoka',sans-serif] leading-normal w-full relative overflow-hidden" data-controller="smooth-scroll">
-  <div class="absolute top-0 left-4 z-20">
-    <%= image_tag "flag-orpheus-top.png", alt: "Island", class: "w-40 animate-float" %>
-  </div>
+<div class="relative w-full mb-[10vh]">
+  <%= inline_svg "parchment.svg" %>
 
-  <div class="absolute top-4 right-4 z-20">
-    <a href="/auth/slack" class="marble-button py-2 px-4 text-base md:text-lg flex items-center justify-center gap-2 transition-all">
-      <span class="flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" viewBox="0 0 24 24"><path fill="currentColor" d="M13 21q-.425 0-.712-.288T12 20t.288-.712T13 19h6V5h-6q-.425 0-.712-.288T12 4t.288-.712T13 3h6q.825 0 1.413.588T21 5v14q0 .825-.587 1.413T19 21zm-1.825-8H4q-.425 0-.712-.288T3 12t.288-.712T4 11h7.175L9.3 9.125q-.275-.275-.275-.675t.275-.7t.7-.313t.725.288L14.3 11.3q.3.3.3.7t-.3.7l-3.575 3.575q-.3.3-.712.288T9.3 16.25q-.275-.3-.262-.712t.287-.688z" /></svg>
-        <span class="flex items-center h-6">Sign In!</span>
-      </span>
-    </a>
-  </div>
-
-  <div class="relative z-15 flex items-center min-h-screen">
-    <div class="w-full max-w-6xl mx-auto px-4 sm:px-8 grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 items-center">
-      <div class="text-left space-y-3 animate-float mt-12 lg:mt-0 lg:pr-6"
-      style="font-family: 'Pacifico', sans-serif;">
-        <%= image_tag "mos.png", class: "-ml-16 lg:-ml-30 mb-1" %>
-
-        <h2 class="head-med text-2xl md:text-3xl text-[#3a2f25] font-medium font-['DynaPuff',sans-serif] -mt-2">
-          <span class="">Build stuff.</span>
-          <br class="hidden md:block">
-          <span class="ml-0 md:ml-16">Get stuff.</span>
-          <br class="hidden md:block">
-          <span class="font-bold ml-0 md:ml-32">Repeat.</span>
-        </h2>
-        <div class="flex flex-col sm:flex-row gap-3 pt-1">
-            <%= render "signup" %>
-        </div>
-        <p class="font-['Fredoka',sans-serif] font-normal text-md md:text-lg text-[#3a2f25] max-w-3xl">
-            From <a href="#about-hack-club" class="text-[#8B4513] font-semibold">Hack Club</a> with love. For teenagers 18 and under
-        </p>
+  <div class="relative w-full min-h-screen">
+    <div class="font-['Fredoka',sans-serif] leading-normal w-full relative overflow-hidden" data-controller="smooth-scroll">
+      <div class="absolute top-0 left-4 z-20">
+        <%= image_tag "flag-orpheus-top.png", alt: "Island", class: "w-36" %>
       </div>
-      <div class="flex justify-center items-center -mt-6 lg:mt-0 px-4">
-        <img src="https://files.catbox.moe/2ehrvm.png" alt="Island" class="w-80 h-80 lg:w-96 lg:h-96 object-contain drop-shadow-2xl animate-wiggle">
+
+      <div class="absolute top-4 right-4 z-20">
+        <a href="/auth/slack" class="marble-button py-2 px-4 text-base md:text-lg flex items-center justify-center gap-2 transition-all">
+          <span class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" viewBox="0 0 24 24"><path fill="currentColor" d="M13 21q-.425 0-.712-.288T12 20t.288-.712T13 19h6V5h-6q-.425 0-.712-.288T12 4t.288-.712T13 3h6q.825 0 1.413.588T21 5v14q0 .825-.587 1.413T19 21zm-1.825-8H4q-.425 0-.712-.288T3 12t.288-.712T4 11h7.175L9.3 9.125q-.275-.275-.275-.675t.275-.7t.7-.313t.725.288L14.3 11.3q.3.3.3.7t-.3.7l-3.575 3.575q-.3.3-.712.288T9.3 16.25q-.275-.3-.262-.712t.287-.688z" /></svg>
+            <span class="flex items-center h-6">Sign In!</span>
+          </span>
+        </a>
+      </div>
+
+      <div class="relative z-15 flex items-center min-h-screen">
+        <div class="w-full mt-18 mb-18 max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-6 items-center">
+          <div class="flex flex-col text-left gap-4 animate-float mt-12 lg:mt-0 lg:pr-6 items-center" style="font-family: 'Pacifico', sans-serif;">
+            <%= image_tag "logo_text.png", alt: "Logo Text", class: "mb-2 w-96 sm:w-120" %>
+
+            <div class="flex flex-col gap-6 items-stretch lg:items-start">
+              <h2 class="text-2xl sm:text-3xl mx-auto md:mx-0 text-[#3a2f25] font-medium font-['DynaPuff',sans-serif] -mt-2">
+                Build stuff. Get stuff. <span class="font-bold text-[#E06540]">Repeat.</span>
+              </h2>
+              <div class="flex flex-col self-stretch sm:flex-row gap-3">
+                  <%= render "signup" %>
+              </div>
+              <div class="flex flex-col items-center mx-auto">
+                <p class="font-['Fredoka',sans-serif] font-normal mb-1 text-lg sm:text-xl self-center text-[#3a2f25]">
+                    For ages 18 and under. Ends August 31st 2025
+                </p>
+                <p class="font-['Fredoka',sans-serif] font-normal text-sm sm:text-md self-center text-[#3a2f25]">
+                    <span class="font-medium text-[#E06540]">Over 18?</span> Earn the same prizes by
+                    <a href="https://docs.google.com/document/d/1xiAoYrO6wY1knzZhI1TFYVqCo6q2R7A46he0w5tan90/edit?usp=sharing"
+                      class="font-medium text-[#E06540] hover:text-[#d14c26] underline decoration-2 underline-offset-2 transition-colors duration-200"
+                      target="_blank"
+                      rel="noopener noreferrer">getting teens to sign up</a>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="border-4 w-96 sm:w-120 lg:w-full mx-auto border-[#C7A077] bg-[#C7A077] overflow-clip rounded-xl">
+            <div class="relative" style="padding:56.25% 0 0 0;position:relative;">
+              <iframe class="box-border" src="https://player.vimeo.com/video/1093563882?h=3f9f9c02e1&muted=1&badge=0&loop=0&autopause=0&autoplay=1&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Summer of Making 2025"></iframe>
+            </div>
+
+            <script src="https://player.vimeo.com/api/player.js"></script>
+          </div>
+        </div>
       </div>
     </div>
   </div>
+
+  <div class="relative w-full h-[1em] border-[#592F31] border-b-2 border-t-2" style="background: repeating-linear-gradient(90deg, transparent, transparent 2em, #592F31 1em, #592F31 4em);"></div>
 </div>
 
 <div class="py-12 md:py-20 px-2 md:px-4 sm:px-8 overflow-hidden" data-controller="video-modal">
   <div class="max-w-6xl mx-auto">
-    <div class="flex flex-col md:flex-row items-center gap-4 md:gap-10 mb-8 md:mb-20">
+    <div class="hidden flex flex-col md:flex-row items-center gap-4 md:gap-10 mb-24 md:mb-36">
       <div class="md:w-1/2 w-full mb-4 md:mb-0 px-2 md:px-0 rotate-0 md:-rotate-2">
         <%= render "shared/container" do %>
           <div class="p-3 md:p-5 relative">
@@ -56,11 +75,7 @@
         <% end %>
       </div>
       <div class="card-box organic-card relative w-full md:w-1/2 max-w-3xl mx-auto rounded-2xl overflow-hidden shadow-2xl bg-white/95 aspect-[16/9] cursor-pointer hover:scale-[1.02] transition-transform duration-300" data-action="click->video-modal#open">
-        <img
-          id="thumb"
-          class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
-          src="https://files.catbox.moe/o8g880.png"
-          alt="Video Preview Thumbnail">
+        <%= image_tag "seas.png", id: "thumb", class: "absolute inset-0 w-full h-full object-cover transition-opacity duration-500", alt: "Video Thumbnail" %>
         <div class="absolute inset-0 flex items-center justify-center bg-black/20">
           <div class="bg-white/90 rounded-full p-2 shadow-lg hover:bg-white hover:scale-110 transition-all duration-300">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-[#E06540]" viewBox="0 0 24 24"><path fill="currentColor" d="M8 17.175V6.825q0-.425.3-.713t.7-.287q.125 0 .263.037t.262.113l8.15 5.175q.225.15.338.375t.112.475t-.112.475t-.338.375l-8.15 5.175q-.125.075-.262.113T9 18.175q-.4 0-.7-.288t-.3-.712" /></svg>
@@ -79,13 +94,13 @@
               i.style.opacity = '1';
             }, 250);
           };
-          a.src = 'https://files.catbox.moe/ys2h7s.webp';
+          //a.src = 'https://hc-cdn.hel1.your-objectstorage.com/s/v3/15d28328688dd94c763ef33a86d769120789f7db_ys2h7s.webp';
         })();
       </script>
     </div>
 
     <div id="how-it-works">
-      <h2 class="head-big text-5xl md:text-6xl font-bold text-center mb-12 text-[#3a2f25] font-['DynaPuff',sans-serif]">
+      <h2 class="text-5xl md:text-6xl font-bold text-center mb-12 text-[#3a2f25] font-['DynaPuff',sans-serif]">
         How this works
       </h2>
 
@@ -93,16 +108,16 @@
         <div class="relative flex flex-col md:flex-row gap-4 md:gap-8 mx-auto justify-center items-center md:items-stretch">
           <%= render "shared/card", classes: 'h-full max-w-96 sm:max-w-lg md:max-w-80 lg:max-w-96 animate-wave' do %>
             <div class="p-4 md:p-5 relative text-center">
-              <h3 class="head-med text-xl md:text-2xl font-bold mb-3 md:mb-4 text-[#3a2f25] font-['DynaPuff',sans-serif]">Build Stuff</h3>
+              <h3 class="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-[#3a2f25] font-['DynaPuff',sans-serif]">Build Stuff</h3>
               <p class="font-['Fredoka',sans-serif] font-normal text-base md:text-lg text-[#3a2f25]">
-                Create and ship open-source coding projects, websites, games, apps, tools, to showcase your skills and earn precious <span class="italic">shells<img src="/shell.png" class="inline-block mx-1 mb-1 w-5 h-5" alt="shell"></span>
+                Build websites, games, apps, or any other personal open-source coding projects to showcase your skills and earn precious <span class="italic">shells<img src="/shell.png" class="inline-block mx-1 mb-1 w-5 h-5" alt="shell"></span>
               </p>
             </div>
           <% end %>
 
           <%= render "shared/card", classes: 'h-full max-w-96 sm:max-w-lg md:max-w-80 lg:max-w-96 animate-wave-offset' do %>
             <div class="p-4 md:p-5 relative text-center">
-              <h3 class="head-med text-xl md:text-2xl font-bold mb-3 md:mb-4 text-[#3a2f25] font-['DynaPuff',sans-serif]">Get Stuff</h3>
+              <h3 class="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-[#3a2f25] font-['DynaPuff',sans-serif]">Get Stuff</h3>
               <p class="font-['Fredoka',sans-serif] font-normal text-base md:text-lg text-[#3a2f25]">
                 Redeem your <span class="">shells<img src="/shell.png" class="inline-block mx-1 mb-1 w-5 h-5" alt="shell"></span> for awesome prizes like Raspberry Pis, Server hosting credits, 3D printers, and more to fuel your next creation.
               </p>
@@ -151,20 +166,21 @@
     </div>
   </div>
 
-  <div class="max-w-9xl mx-auto mt-12 md:mt-25 px-2 md:px-0 rotate-0 md:-rotate-2">
+  <%# prize section %>
+  <div class="max-w-9xl mx-auto mb-12 md:mt-25 md:px-0 rotate-0 md:-rotate-2">
     <%= render "shared/container", classes: 'mx-auto max-w-7xl w-full relative' do %>
-      <div class="p-3 md:p-5 relative">
+      <div class="relative">
         <div class="parchment-texture"></div>
 
-        <h2 class="head-big text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-3 md:mb-4 text-[#4A2D24] relative font-['DynaPuff',sans-serif]">
+        <h2 class="text-4xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-center -mt-4 mb-3 md:mb-4 text-[#4A2D24] relative font-['DynaPuff',sans-serif]">
           Amazing Prizes
         </h2>
-        <p class="font-['Fredoka',sans-serif] font-normal text-center text-lg md:text-xl mb-8 md:mb-16 text-[#8B4513] opacity-90 px-2">
-          These are some of the things we’re giving away this summer (and about how long it takes to earn them)!
+        <p class="font-['Fredoka',sans-serif] font-normal text-center text-sm sm:text-lg md:text-2xl lg:text-2xl mx-0 lg:mx-0 mb-6 md:mb-12 text-[#8B4513] opacity-90">
+          This isn't some contest with just a few winners.<br class="block lg:hidden"> If you build stuff, you get stuff, guaranteed!
         </p>
 
         <div class="relative mx-2 md:mx-15 sm:mx-10 z-20 rotate-0 md:-rotate-3" data-controller="carousel" data-carousel-row-value="1">
-          <div class="carousel-track flex gap-2 md:gap-4 sm:gap-2" data-carousel-target="container">
+          <div class="carousel-track flex gap-2 md:gap-4 sm:gap-2 " data-carousel-target="container">
             <% @prizes.each_with_index do |prize, index| %>
               <div class="carousel-slide flex-none w-40 md:w-44 sm:w-36" style="transform: <%= prize[:random_transform] %>; animation-delay: <%= (index * 0.5) %>s;">
                 <div class="parchment-prize-card p-3 md:p-3 sm:p-2 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:scale-105" style="animation-delay: <%= (index * 0.3) %>s;">
@@ -223,11 +239,14 @@
   </div>
 
   <div class="max-w-7xl mx-auto text-center relative z-10 px-2 md:px-4">
-    <h2 class="head-big text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-6 md:mb-8 text-[#3a2f25] font-['DynaPuff',sans-serif]">
-      Last Time Was Epic! 🌊
+    <%# <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-6 md:mb-8 text-[#3a2f25] font-['DynaPuff',sans-serif]">
+      Last Time Was F#@!ing <span class="italic text-[#E06540]">Biblical.</span>
+    </h2> %>
+    <h2 class="text-5xl md:text-5xl lg:text-6xl font-bold text-center mb-6 md:mb-8 text-[#3a2f25] font-['DynaPuff',sans-serif]">
+      Last Time Was <span class="italic text-[#E06540]">Monumental.</span>
     </h2>
     <p class="font-['Fredoka',sans-serif] font-normal text-lg md:text-xl mb-8 md:mb-16 text-[#4A2D24] opacity-90 max-w-3xl mx-auto px-4">
-      In our previous event, High Seas we shipped incredible prizes to makers around the world. Here's what we gave away:
+      Last winter we shipped over <span class="font-semibold text-[#E06540]">$330,000</span> worth of incredible prizes to makers around the world for an event called <a href="https://highseas.hackclub.com/" target="_blank" class="font-semibold text-[#E06540] underline hover:text-[#a8956b] transition-colors">High Seas</a>. Here's just some of what we gave away:
     </p>
 
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 lg:gap-8 max-w-6xl mx-auto px-2">
@@ -318,38 +337,6 @@
       </div>
     </div>
 
-    <% reviews = JSON.parse(@high_seas_reviews) rescue [] %>
-    <div class="py-12 md:py-20 px-2 md:px-4 sm:px-8 overflow-hidden">
-      <div class="max-w-6xl mx-auto">
-        <h2 class="head-big text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-8 md:mb-12 text-[#3a2f25] font-['DynaPuff',sans-serif]">
-          What High Seas Participants Say
-        </h2>
-        <div class="relative mx-2 md:mx-15 sm:mx-10 z-20 rotate-0 md:-rotate-3 overflow-x-visible">
-          <div class="carousel-track flex gap-6 md:gap-10 sm:gap-6" data-carousel-target="container" style="margin-left:-4rem;margin-right:-4rem;">
-            <% reviews.each_with_index do |review, index| %>
-              <% text = review["text"] || review[:text] %>
-              <% image = review["image"] || review[:image] %>
-              <div class="carousel-slide flex-none w-full max-w-2xl md:max-w-3xl lg:max-w-4xl">
-                <div class="parchment-prize-card p-0 md:p-0 sm:p-0 text-center transition-all duration-300 hover:scale-105 h-56 md:h-64 flex flex-row items-stretch justify-between min-h-[14rem] max-h-[16rem] w-full overflow-hidden">
-                  <div class="parchment-texture absolute inset-0 z-0"></div>
-                  <div class="flex-1 flex flex-col justify-center items-start px-6 py-6 md:px-10 md:py-8 z-10 text-left">
-                    <p class="font-['Fredoka',sans-serif] text-[#3a2f25] text-left mb-0 text-lg md:text-xl lg:text-2xl leading-relaxed">
-                      “<%= text %>”
-                    </p>
-                  </div>
-                  <% if image.present? %>
-                    <div class="flex items-center justify-center w-48 md:w-64 h-full bg-transparent z-10">
-                      <img src="<%= image %>" alt="Review image" class="rounded-xl object-cover h-40 md:h-48 w-auto max-w-full shadow-md" style="min-width: 120px; max-width: 100%;" loading="lazy">
-                    </div>
-                  <% end %>
-                </div>
-              </div>
-            <% end %>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="mt-6 max-w-4xl mx-auto">
       <div class="p-6 md:p-8 text-center relative">
         <p class="font-['Fredoka',sans-serif] font-semibold text-lg md:text-xl text-[#4A2D24] relative z-10 mb-2">
@@ -360,12 +347,89 @@
         </p>
       </div>
     </div>
+
+    <div class="pt-12 md:pt-20">
+      <div class="max-w-6xl mx-auto overflow-x-none">
+        <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-8 md:mb-12 text-[#3a2f25] font-['DynaPuff',sans-serif]">
+          What Past Participants Say
+        </h2>
+        <div class="relative z-20 w-full max-w-full px-0 overflow-x-hidden" style="max-width:100vw;" data-controller="carousel">
+          <div class="carousel-track flex gap-4 md:gap-10 sm:gap-6 w-full overflow-hidden p-3" data-carousel-target="container">
+            <!-- Review Card 1 -->
+            <div class="carousel-slide flex-none w-full max-w-xs sm:max-w-md md:max-w-2xl">
+              <div class="parchment-prize-card p-0 md:p-0 sm:p-0 text-center transition-all duration-300 hover:scale-105 w-full overflow-visible flex flex-col sm:flex-row items-stretch justify-start min-h-0 h-auto">
+                <div class="flex-1 flex flex-col justify-center items-center px-2 py-2 sm:items-start sm:px-4 sm:py-4 md:px-6 md:py-6 z-10 text-left h-full font-normal overflow-hidden">
+                  <p class="font-['Fredoka',sans-serif] text-sm sm:text-md md:text-lg text-[#3a2f25] leading-relaxed mb-2 break-words text-center sm:text-left">
+                    High Seas has been one of the best events I’ve ever joined ... every moment I spent was incredible ... through Slack, I met amazing people and finally found the motivation to create my portfolio ... huge thanks to the staff, friends, and everyone who worked behind the scenes to make High Seas such a special experience!
+                  </p>
+                </div>
+                <div class="relative flex-shrink-0 flex items-center justify-center z-10 rounded-lg overflow-hidden h-40 w-40 mx-auto mt-4 sm:h-45 sm:w-45 sm:mt-0 sm:ml-4 sm:items-start sm:justify-start" style="aspect-ratio: 1/1; max-width: 220px; min-width: 100px;">
+                  <img src="https://hc-cdn.hel1.your-objectstorage.com/s/v3/d518e0249edc2182c478ad887f18808dbcf3cc85_image.png" alt="photo" class="h-full w-auto object-cover object-center rounded-lg">
+                </div>
+              </div>
+            </div>
+            <!-- Review Card 2 -->
+            <div class="carousel-slide flex-none w-full max-w-xs sm:max-w-md md:max-w-2xl">
+              <div class="parchment-prize-card p-0 md:p-0 sm:p-0 text-center transition-all duration-300 hover:scale-105 w-full overflow-visible flex flex-col sm:flex-row items-stretch justify-start min-h-0 h-auto">
+                <div class="flex-1 flex flex-col justify-center items-center px-2 py-2 sm:items-start sm:px-4 sm:py-4 md:px-6 md:py-6 z-10 text-left h-full font-normal overflow-hidden">
+                  <p class="font-['Fredoka',sans-serif] text-sm sm:text-md md:text-lg text-[#3a2f25] leading-relaxed mb-2 break-words text-center sm:text-left">
+                    I spent over 400 hours at High Seas working on my project, ... and connected with people from all over the world—not just Japan ... these interactions led to incredible opportunities, including the chance to participate in major events like DEF CON...
+                  </p>
+                </div>
+                <div class="relative flex-shrink-0 flex items-center justify-center z-10 rounded-lg overflow-hidden h-40 w-40 mx-auto mt-4 sm:h-45 sm:w-45 sm:mt-0 sm:ml-4 sm:items-start sm:justify-start" style="aspect-ratio: 1/1; max-width: 220px; min-width: 100px;">
+                  <img src="https://hc-cdn.hel1.your-objectstorage.com/s/v3/5b481eeb5c2a2f05492e8fb09641f1849db78c6d_image.png" alt="photo" class="h-full w-auto object-cover object-center rounded-lg">
+                </div>
+              </div>
+            </div>
+            <!-- Review Card 3 -->
+            <div class="carousel-slide flex-none w-full max-w-xs sm:max-w-md md:max-w-2xl">
+              <div class="parchment-prize-card p-0 md:p-0 sm:p-0 text-center transition-all duration-300 hover:scale-105 w-full overflow-visible flex flex-col sm:flex-row items-stretch justify-start min-h-0 h-auto">
+                <div class="flex-1 flex flex-col justify-center items-center px-2 py-2 sm:items-start sm:px-4 sm:py-4 md:px-6 md:py-6 z-10 text-left h-full font-normal overflow-hidden">
+                  <p class="font-['Fredoka',sans-serif] text-sm sm:text-md md:text-lg text-[#3a2f25] leading-relaxed mb-2 break-words text-center sm:text-left">
+                    High Seas was my gateway to Hack Club ... I was so happy to find an active community of teens working on incredible projects and discovering many new things, which helped me step out of my comfort zone—from just software to even hardware and automation.
+                  </p>
+                </div>
+                <div class="relative flex-shrink-0 flex items-center justify-center z-10 rounded-lg overflow-hidden h-40 w-40 mx-auto mt-4 sm:h-45 sm:w-45 sm:mt-0 sm:ml-4 sm:items-start sm:justify-start" style="aspect-ratio: 1/1; max-width: 220px; min-width: 100px;">
+                  <img src="https://hc-cdn.hel1.your-objectstorage.com/s/v3/a486f717f4f7082552bcec16353c7ad267226631_image.png" alt="photo" class="h-full w-auto object-cover object-center rounded-lg">
+                </div>
+              </div>
+            </div>
+            <!-- Review Card 4 -->
+            <div class="carousel-slide flex-none w-full max-w-xs sm:max-w-md md:max-w-2xl">
+              <div class="parchment-prize-card p-0 md:p-0 sm:p-0 text-center transition-all duration-300 hover:scale-105 w-full overflow-visible flex flex-col sm:flex-row items-stretch justify-start min-h-0 h-auto">
+                <div class="flex-1 flex flex-col justify-center items-center px-2 py-2 sm:items-start sm:px-4 sm:py-4 md:px-6 md:py-6 z-10 text-left h-full font-normal overflow-hidden">
+                  <p class="font-['Fredoka',sans-serif] text-sm sm:text-md md:text-lg text-[#3a2f25] leading-relaxed mb-2 break-words text-center sm:text-left">
+                    High seas made me consistent with coding, now I code basically everyday. I was also so excited to get a new mouse in the mail!
+                  </p>
+                </div>
+                <div class="relative flex-shrink-0 flex items-center justify-center z-10 rounded-lg overflow-hidden h-40 w-40 mx-auto mt-4 sm:h-45 sm:w-45 sm:mt-0 sm:ml-4 sm:items-start sm:justify-start" style="aspect-ratio: 1/1; max-width: 220px; min-width: 100px;">
+                  <img src="https://hc-cdn.hel1.your-objectstorage.com/s/v3/0414ad866b46e2ed0451eebecf09522a6193acee_image.png" alt="photo" class="h-full w-auto object-cover object-center rounded-lg">
+                </div>
+              </div>
+            </div>
+            <!-- Review Card 5 -->
+            <div class="carousel-slide flex-none w-full max-w-xs sm:max-w-md md:max-w-2xl">
+              <div class="parchment-prize-card p-0 md:p-0 sm:p-0 text-center transition-all duration-300 hover:scale-105 w-full overflow-visible flex flex-col sm:flex-row items-stretch justify-start min-h-0 h-auto">
+                <div class="flex-1 flex flex-col justify-center items-center px-2 py-2 sm:items-start sm:px-4 sm:py-4 md:px-6 md:py-6 z-10 text-left h-full font-normal overflow-hidden">
+                  <p class="font-['Fredoka',sans-serif] text-sm sm:text-md md:text-lg text-[#3a2f25] leading-relaxed mb-2 break-words text-center sm:text-left">
+                    High Seas introduced me to hackathons and Hack Club ... I’ve never learned or experienced so much in such a short time ... it helped me through a really difficult period in my life by teaching me discipline, dedication, and giving me a sense of purpose ... now I’m hooked.
+                  </p>
+                </div>
+                <div class="relative flex-shrink-0 flex items-center justify-center z-10 rounded-lg overflow-hidden h-40 w-40 mx-auto mt-4 sm:h-45 sm:w-45 sm:mt-0 sm:ml-4 sm:items-start sm:justify-start" style="aspect-ratio: 1/1; max-width: 220px; min-width: 100px;">
+                  <img src="https://hc-cdn.hel1.your-objectstorage.com/s/v3/1da4a54d3438180fe9187d22f7c085e3d94a818f_image.png" alt="photo" class="h-full w-auto object-cover object-center rounded-lg">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
 <div class="py-12 md:py-20 px-2 md:px-4 sm:px-8 relative">
   <div class="relative z-10 max-w-7xl mx-auto">
-    <h2 class="head-big text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-8 md:mb-16 text-[#3a2f25] font-['DynaPuff',sans-serif]">
+    <h2 class="text-6xl md:text-6xl lg:text-6xl font-bold text-center mb-8 md:mb-8 text-[#3a2f25] font-['DynaPuff',sans-serif]">
       FAQ
     </h2>
 
@@ -392,7 +456,7 @@
         <%= render "shared/card", classes: 'faq-con h-full' do %>
           <div class="p-1 md:p-3 relative">
             <h3 class="font-['DynaPuff'] font-bold text-lg md:text-xl text-[#8B4513] mb-2 md:mb-3 z-10">What types of projects count?</h3>
-            <p class="font-['Fredoka'] font-normal text-base md:text-lg text-[#3a2f25] z-10">Anything that you've programmed and is open-source!</p>
+            <p class="font-['Fredoka'] font-normal text-base md:text-lg text-[#3a2f25] z-10">Anything open-source that you code over the summer!</p>
           </div>
         <% end %>
       </div>
@@ -401,7 +465,7 @@
         <%= render "shared/card", classes: 'faq-con h-full' do %>
           <div class="p-1 md:p-3 relative">
             <h3 class="font-['DynaPuff'] font-bold text-lg md:text-xl text-[#8B4513] mb-2 md:mb-3 z-10">How many projects can I build?</h3>
-            <p class="font-['Fredoka'] font-normal text-base md:text-lg text-[#3a2f25] z-10">All the projects! The land's the limit! (But seriously, you could build as many as you want.)</p>
+            <p class="font-['Fredoka'] font-normal text-base md:text-lg text-[#3a2f25] z-10">All the projects! The sky's the limit! Build as many as you want.</p>
           </div>
         <% end %>
       </div>
@@ -411,7 +475,7 @@
           <div class="p-1 md:p-3 relative">
             <h3 class="font-['DynaPuff'] font-bold text-lg md:text-xl text-[#8B4513] mb-2 md:mb-3 z-10">Is this legit?</h3>
             <p class="font-['Fredoka'] font-normal text-base md:text-lg text-[#3a2f25] z-10">
-              Yup! Last winter, we ran <a href="https://highseas.hackclub.com/" target="_blank" class="text-[#8B4513] underline hover:text-[#a8956b] transition-colors font-semibold">High Seas</a>, which gave out over 12,000 prizes with 3,865 projects being shipped, and we have the <a href="https://hcb.hackclub.com/highseas" target="_blank" class="text-[#8B4513] underline hover:text-[#a8956b] transition-colors font-semibold">receipts</a> to prove it.
+              Yup! Last winter, we ran <a href="https://highseas.hackclub.com/" target="_blank" class="text-[#8B4513] underline hover:text-[#a8956b] transition-colors font-semibold">High Seas</a>, which gave out over 12,000 prizes with 3,865 projects shipped, and we have the <a href="https://hcb.hackclub.com/highseas" target="_blank" class="text-[#8B4513] underline hover:text-[#a8956b] transition-colors font-semibold">receipts</a> to prove it.
             </p>
           </div>
         <% end %>
@@ -421,7 +485,7 @@
         <%= render "shared/card", classes: 'faq-con h-full' do %>
           <div class="p-1 md:p-3 relative">
             <h3 class="font-['DynaPuff'] font-bold text-lg md:text-xl text-[#8B4513] mb-2 md:mb-3 z-10">I need help!</h3>
-            <p class="font-['Fredoka'] font-normal text-base md:text-lg text-[#3a2f25] z-10">Still stuck? Reach out in #summer-help channel of the Hack Club Slack and we'll help you out!</p>
+            <p class="font-['Fredoka'] font-normal text-base md:text-lg text-[#3a2f25] z-10">Stuck on something or have a question? Contact support in the <span class="font-semibold text-[#E06540]">#summer-of-making-help</span> channel in the Hack Club Slack.</p>
           </div>
         <% end %>
       </div>
@@ -429,18 +493,19 @@
   </div>
 </div>
 
-<div class="py-12 md:py-20 px-2 md:px-4 sm:px-8">
+<div class="pt-12 md:pt-20 pb-24 md:pb-48 px-2 md:px-4 sm:px-8">
   <div class="max-w-6xl mx-auto text-center">
-    <h3 class="head-big text-3xl md:text-4xl font-bold mb-6 md:mb-8 text-[#3a2f25] font-['DynaPuff',sans-serif]">
-      Build stuff. <br class="block md:hidden">Get stuff. <br class="block md:hidden">Repeat.
+    <h3 class="text-4xl md:text-4xl lg:text-5xl font-bold mb-6 md:mb-8 text-[#3a2f25] font-['DynaPuff',sans-serif] flex flex-col md:flex-row gap-2 md:gap-3 lg:gap-4 justify-center">
+      <span class="mr-36 md:mr-0">Build stuff.</span><span class="ml-36 md:ml-0">Get stuff.</span><span class="text-[#E06540] text-5xl md:text-4xl lg:text-5xl">Repeat.</span>
     </h3>
-    <div class="flex items-center justify-center max-w-3xl mx-auto px-2">
+    <div class="flex items-center justify-center max-w-md mx-auto px-2">
       <%= render "signup" %>
     </div>
   </div>
 </div>
 
 <div class="relative min-h-[60vh] md:min-h-[80vh] flex flex-col bg-gradient-to-b from-[#E7CFB5] via-[#C7A077] to-[#E7CFB5] border-t-[0.8em] border-[#592F31] border-dashed" id="about-hack-club">
+  <div class="absolute border-t-[0.1em] border-b-[0.1em] border-[#592F31] h-[0.8em] w-full top-[-0.8em]"></div>
   <div class="absolute inset-0" style="background: url('/smiles.png') center/cover no-repeat; mask: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.8) 80%, rgba(0,0,0,1) 100%); -webkit-mask: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.8) 80%, rgba(0,0,0,1) 100%);"></div>
   <div class="max-w-6xl mx-auto text-center relative z-10 pt-12 md:pt-16 pb-6 md:pb-8 px-2 md:px-4 sm:px-8 lg:py-24">
     <h4 class="text-xl md:text-2xl font-bold mb-4 md:mb-6 lg:mb-8 text-[#3a2f25] font-['DynaPuff',sans-serif]">About Hack Club</h4>
@@ -462,7 +527,7 @@
   <div class="flex-grow min-h-[5vh] md:min-h-[10vh] lg:min-h-[10vh]"></div>
   <footer class="w-full py-8 text-center text-[#f6dbba] font-['Fredoka',sans-serif] text-base md:text-lg opacity-100  z-10">
     <div class="mb-1">
-      Summer of Making is built with <span class="text-red-500">♥︎</span> from Hack Clubbers around the world.
+      Summer of Making is built with <span class="text-red-500">♥︎</span> by Hack Clubbers around the world.
     </div>
     <div>
       <a href="https://hackclub.com/" target="_blank" class="text-[#f6dbba] font-semibold underline hover:text-[#a8956b] transition-colors">Hack Club</a> ・
@@ -475,3 +540,16 @@
 </div>
 
 <%= render "signup_wizard_modal" %>
+
+<%# Helper method for random transform, can be moved to a helper file %>
+<% content_for :page_specific_scripts do %>
+  <script type="text/javascript">
+    function prize_transform_for_review(index) {
+      // You can adjust these values for different effects
+      const rotation = Math.floor(Math.random() * 6) - 3; // -3 to 3 degrees
+      const scale = (Math.floor(Math.random() * 6) + 97) / 100; // 0.97 to 1.02
+      const translateY = Math.floor(Math.random() * 17) - 8; // -8 to 8 px
+      return `rotate(${rotation}deg) scale(${scale}) translateY(${translateY}px)`;
+    }
+  </script>
+<% end %>

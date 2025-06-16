@@ -1,18 +1,15 @@
 # frozen_string_literal: true
 
 require "open-uri"
-CHANNEL_LIST = [ "C08MYN7HVN2", "C08N1NWKEF4", "C016DEDUL87", "C75M7C0SY", "C090JKDJYN8", "C090B3T9R9R", "C0M8PUPU6", "C05B6DBN802" ]
+CHANNEL_LIST = [ "C015M4L9AHW", "C091CEEHJ9K", "C090JKDJYN8", "C090B3T9R9R" ]
+
 class LandingController < ApplicationController
   skip_before_action :authenticate_user!, only: %i[index sign_up]
 
   def index
-    @high_seas_reviews = [
-  { text: "High Seas wasn’t just fun, it gave me a real reason to get into programming. The rewards were super exciting and pushed me to try out new languages and improve how I think through problems. Even though I didn’t join in a ton, it was still an awesome experience." },
-  { text: "Through High Seas, I met new people who helped me out, reconnected with old friends, and even met some folks in person that I’d only ever messaged before. I learned to code way faster than I usually do (which is kinda a downside since it means fewer doubloons, lol). The people in #high-seas-help were awesome whenever I got stuck. Huge shoutout to Amber, who helped me fix a shop issue that no one else could figure out—thank you!" },
-  { text: "I joined Hack Club back in July, but to be honest, I didn’t totally get how it all worked at first. Then around November, I saw that High Seas had started and decided to sign up. I checked out the YSWS projects (can’t really remember what was up at the time), but one that caught my eye was Browser Buddy. I ended up spending over 12 hours on it, even though I still couldn’t figure out how the MV3 API works 😅.", image: "https://v5.airtableusercontent.com/v3/u/42/42/1749837600000/6ioLYZabCvaEQhtrzuEa0g/qtpC2rYSKi0HBPcR9EhILYbkUnCe4YWvNzS57cdln00cwXhPra9zmSG_4JsivEpgWPPwqFzJAZJ2XetcnS9CJt87LoGOi4s8onvEWGcuH3-RHSCrpZMZdP8vwaCiho5i2X7rIULedXIJEjgAf9juJA/--u6P5kh4mQX7Kb_Nw7WAZ6jwhOFHZZPROO1nvFIL1A" },
-  { text: "High Seas totally changed how I see tech. Before, I thought it was mostly just programming, app development, and other software stuff. But thanks to High Seas, I realized there’s so much more to it. I got to mess around with hardware, learned how things work under the hood, used Raspberry Pis, and even built my own PCBs. And I was able to do all that thanks to you—for helping make High Seas happen." },
-    { text: "High Seas really helped me get consistent with coding—now I’m basically coding every day. And getting a new mouse in the mail was such an exciting bonus!", image: "https://v5.airtableusercontent.com/v3/u/42/42/1749837600000/B60VyBKYiXCI4RFMomciMw/Ev05FpSunc3QvfuuY-VjUO49RVVFuLTl7dEr2QWg3zYndHe8Ug82_4Hz-dioEr6gWC0RGfJEkmTKOalTuYl3bxRf5Z9y_lMrL-lZRicMH6EdAoDspLdrUaL1WVbdW2j0JKkCHgJAurwYE4jAXcbXmg/3xscQ5gkMcGdFcWl6cBg1E7AH0yNxZQvKSw8EUHW78Y" }
-    ].to_json
+    # @high_seas_reviews = Rails.cache.fetch("high_seas_reviews", expires_in: 1.hour) do
+    #   Airtable::HighSeasBook::StorySubmission.has_attached_photo.includes([ :photo_attachment ])
+    # end.sample(5)
 
     if user_signed_in?
       if current_user.tutorial_progress.completed_at.nil?
@@ -20,172 +17,44 @@ class LandingController < ApplicationController
       else
         redirect_to explore_path
       end
-    end
+    else
+      ahoy.track "tutorial_step_landing_first_visit"
 
-    @prizes = [
-      {
-        name: "Flipper Zero Device",
-        time: "~120 hours",
-        image: "https://files.catbox.moe/eiflg8.png"
-      },
-      {
-        name: "Framework Laptop 16",
-        time: ">500 hours",
-        image: "https://files.catbox.moe/g143bn.png"
-      },
-      {
-        name: "3D Printer Filament",
-        time: "~40 hours",
-        image: "https://files.catbox.moe/9plgxa.png"
-      },
-      {
-        name: "Pinecil Soldering Iron",
-        time: "~30 hours",
-        image: "https://files.catbox.moe/l6txpc.png"
-      },
-      {
-        name: "Cloudflare Credits",
-        time: "~50 hours",
-        image: "https://files.catbox.moe/dlxfqe.png"
-      },
-      {
-        name: "DigitalOcean Credits",
-        time: "~60 hours",
-        image: "https://files.catbox.moe/9rh45c.png"
-      },
-      {
-        name: "JLCPCB Credits",
-        time: "~30 hours",
-        image: "https://files.catbox.moe/91z02d.png"
-      },
-      {
-        name: "Digikey Credits",
-        time: "~80 hours",
-        image: "https://files.catbox.moe/8dmgvm.png"
-      },
-      {
-        name: "Domain Registration",
-        time: "~25 hours",
-        image: "https://files.catbox.moe/523zji.png"
-      },
-      {
-        name: "iPad with Apple Pencil",
-        time: ">500 hours",
-        image: "https://files.catbox.moe/44rj2b.png"
-      },
-      {
-        name: "Mode Design Sonnet Keyboard",
-        time: "~300 hours",
-        image: "https://files.catbox.moe/r2f8ug.png"
-      },
-      {
-        name: "GitHub Notebook",
-        time: "~15 hours",
-        image: "https://files.catbox.moe/l12lhl.png"
-      },
-      {
-        name: "Raspberry Pi 5 Making Kit",
-        time: "~90 hours",
-        image: "https://files.catbox.moe/w3a964.png"
-      },
-      {
-        name: "Raspberry Pi Zero 2 W Kit",
-        time: "~35 hours",
-        image: "https://files.catbox.moe/rcg0s0.png"
-      },
-      {
-        name: "ThinkPad X1 (Renewed)",
-        time: ">500 hours",
-        image: "https://files.catbox.moe/fidiwz.png"
-      },
-      {
-        name: "BLÅHAJ Soft Toy Shark",
-        time: "~20 hours",
-        image: "https://files.catbox.moe/h16yjs.png"
-      },
-      {
-        name: "Sony XM4 Headphones",
-        time: "~250 hours",
-        image: "https://files.catbox.moe/vvn9cw.png"
-      },
-      {
-        name: "Bose QuietComfort 45",
-        time: "~280 hours",
-        image: "https://files.catbox.moe/5i8ff8.png"
-      },
-      {
-        name: "Logitech MX Master 3S Mouse",
-        time: "~80 hours",
-        image: "https://files.catbox.moe/iidxib.png"
-      },
-      {
-        name: "Logitech Pro X Superlight Mouse",
-        time: "~150 hours",
-        image: "https://files.catbox.moe/uw1iu0.png"
-      },
-      {
-        name: "Steam Game - Factorio",
-        time: "~25 hours",
-        image: "https://files.catbox.moe/ld6igi.png"
-      },
-      {
-        name: "Steam Game - Satisfactory",
-        time: "~30 hours",
-        image: "https://files.catbox.moe/2zjc85.png"
-      },
-      {
-        name: "Cricut Explore 3 Cutting Machine",
-        time: "~180 hours",
-        image: "https://files.catbox.moe/cydelv.png"
-      },
-      {
-        name: "Yummy Fudge from HQ",
-        time: "~35 hours",
-        image: "https://files.catbox.moe/djmsr8.png"
-      },
-      {
-        name: "Hack Club Sticker Pack",
-        time: "~10 hours",
-        image: "https://files.catbox.moe/uukr9a.png"
-      },
-      {
-        name: "Speedcube",
-        time: "~20 hours",
-        image: "https://files.catbox.moe/sqltgo.png"
-      },
-      {
-        name: "Personal Drawing from MSW",
-        time: "~200 hours",
-        image: "https://files.catbox.moe/aic9z4.png"
-      },
-      {
-        name: "Random Object from HQ",
-        time: "~15 hours",
-        image: nil
-      }
-    ]
-
-    @prizes = @prizes.map do |prize|
-      hours =
-        if prize[:time].to_s.include?(">500")
-          9999
-        elsif prize[:time].to_s =~ /([0-9]+)/
-          prize[:time].to_s.include?("~") ? $1.to_i : $1.to_i
-        else
-          0
+      @prizes = Rails.cache.fetch("landing_shop_carousel", expires_in: 10.minutes) do
+        prizes = ShopItem.includes(image_attachment: { blob: :variant_records }).shown_in_carousel.order(ticket_cost: :asc).map do |item|
+          hours = item.average_hours_estimated.to_i
+          {
+            name: item.name,
+            time: "~#{hours} #{"hour".pluralize(hours)}",
+            image: item.image.present? ? url_for(item.image) : "https://crouton.net/crouton.png",
+            ticket_cost: item.ticket_cost
+          }
         end
-      prize.merge(
-        numeric_hours: hours,
-        display_time: hours >= 500 ? ">500 hours" : prize[:time],
-        random_transform: "rotate(#{rand(-3..3)}deg) scale(#{(rand(97..103).to_f/100).round(2)}) translateY(#{rand(-8..8)}px)"
-      )
-    end
 
-    @prizes = @prizes.sort_by { |p| p[:numeric_hours] }
+        prizes.map! do |prize|
+          hours =
+            if prize[:time].to_s.include?(">500")
+              9999
+            elsif prize[:time].to_s =~ /([0-9]+)/
+              prize[:time].to_s.include?("~") ? $1.to_i : $1.to_i
+            else
+              0
+            end
+          prize.merge(
+            numeric_hours: hours,
+            display_time: hours >= 500 ? ">500 hours" : prize[:time],
+            random_transform: "rotate(#{rand(-3..3)}deg) scale(#{(rand(97..103).to_f / 100).round(2)}) translateY(#{rand(-8..8)}px)"
+          )
+        end
+
+        prizes.sort_by { |p| [ p[:ticket_cost] || 0, p[:numeric_hours] ] }
+      end
+    end
   end
 
   def sign_up
-    email = params.require(:email)
+    email = params.require(:email).downcase
+    ref = params[:ref]
 
     unless email.match?(URI::MailTo::EMAIL_REGEXP)
       return respond_to do |format|
@@ -199,7 +68,9 @@ class LandingController < ApplicationController
       end
     end
 
-    EmailSignup.create!(email:, ip: request.remote_ip, user_agent: request.headers["User-Agent"])
+    EmailSignup.create!(email:, ref:, ip: request.remote_ip, user_agent: request.headers["User-Agent"])
+
+    ahoy.track "tutorial_step_email_signup", email: email
 
     slack_invite_response = send_slack_invite(email)
 
@@ -225,33 +96,32 @@ class LandingController < ApplicationController
   private
 
   def send_slack_invite(email)
-  payload = {
-    token: Rails.application.credentials.explorpheus.slack_xoxc,
-    email: email,
-    invites: [
-    {
+    payload = {
+      token: Rails.application.credentials.explorpheus.slack_xoxc,
       email: email,
-      type: "restricted",
-      mode: "manual"
+      invites: [
+        {
+          email: email,
+          type: "restricted",
+          mode: "manual"
+        }
+      ],
+      restricted: true,
+      channels: CHANNEL_LIST
     }
-  ],
-    restricted: true,
-    channels: CHANNEL_LIST
-  }
-  uri = URI.parse("https://slack.com/api/users.admin.inviteBulk")
-  http = Net::HTTP.new(uri.host, uri.port)
-  http.use_ssl = true
+    uri = URI.parse("https://slack.com/api/users.admin.inviteBulk")
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
 
+    request = Net::HTTP::Post.new(uri)
+    request["Content-Type"] = "application/json"
+    request["Cookie"] = "d=#{Rails.application.credentials.explorpheus.slack_xoxd}"
+    request["Authorization"] = "Bearer #{Rails.application.credentials.explorpheus.slack_xoxc}"
+    request.body = JSON.generate(payload)
 
-  request = Net::HTTP::Post.new(uri)
-  request["Content-Type"] = "application/json"
-  request["Cookie"] = "d=#{Rails.application.credentials.explorpheus.slack_xoxd}"
-  request["Authorization"] = "Bearer #{Rails.application.credentials.explorpheus.slack_xoxc}"
-  request.body = JSON.generate(payload)
-
-  # Send the request
-  response = http.request(request)
-  response
+    # Send the request
+    response = http.request(request)
+    response
   end
 
   def fetch_continent(ip)

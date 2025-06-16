@@ -132,6 +132,6 @@ class DevlogsController < ApplicationController
   end
 
   def devlog_params
-    params.expect(devlog: %i[text attachment timer_session_id])
+    params.expect(devlog: %i[text file timer_session_id])
   end
 end

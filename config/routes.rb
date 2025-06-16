@@ -166,6 +166,15 @@
 #   avo_private_debug_refresh_license POST   /avo_private/debug/refresh_license(.:format)                                                       avo/debug#refresh_license
 #                  avo_private_design GET    /avo_private/design(.:format)                                                                      avo/private#design
 
+class AdminConstraint
+  def self.matches?(request)
+    return false unless request.session[:user_id]
+
+    user = User.find_by(id: request.session[:user_id])
+    user&.is_admin?
+  end
+end
+
 Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -284,16 +293,21 @@ Rails.application.routes.draw do
   post "users/refresh_hackatime", to: "users#refresh_hackatime"
   post "users/check_hackatime_connection", to: "users#check_hackatime_connection"
 
-  namespace :admin do
+  namespace :admin, constraint: AdminConstraint do
+    mount MissionControl::Jobs::Engine, at: "jobs"
+    mount AhoyCaptain::Engine, at: "ahoy_captain"
     mount Blazer::Engine, at: "blazer"
-    mount_avo
+    mount Flipper::UI.app(Flipper), at: "flipper", as: :flipper
+    # mount_avo
     get "/", to: "static_pages#index", as: :root
     resources :users, only: [ :index, :show ] do
       member do
         post :internal_notes
         post :create_payout
+        post :nuke_idv_data
       end
     end
+    resources :shop_items
     resources :shop_orders do
       collection do
         get :pending

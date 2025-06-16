@@ -5,6 +5,8 @@ class VotesController < ApplicationController
   before_action :set_projects, only: %i[new create]
   before_action :check_identity_verification
 
+  before_action -> { render :locked } # For the first week
+
   def new
     @vote = Vote.new
     @user_vote_count = current_user.votes.count
@@ -41,6 +43,9 @@ class VotesController < ApplicationController
     else
       redirect_to new_vote_path, alert: @vote.errors.full_messages.join(", ")
     end
+  end
+
+  def locked
   end
 
   private

@@ -1,9 +1,13 @@
 <h1>users</h1>
-
+<ul>
+  <li>
+    #<%= current_user.id %>: <%= link_to "the girl(?) reading this", admin_user_path(current_user) %> &lt;3
+  </li>
+</ul>
 <ul>
   <% @users.each do |user| %>
     <li>
-      #<%= user.id %>: <%= link_to "#{user.first_name} #{user.last_name}", admin_user_path(user) %>
+      #<%= user.id %>: <%= link_to "#{user.display_name || "????"}", admin_user_path(user) %> (<%= user.email %>)
     </li>
   <% end %>
 </ul>

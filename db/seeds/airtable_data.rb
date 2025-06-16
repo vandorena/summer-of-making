@@ -74,6 +74,7 @@ begin
         item.hacker_score = fields['hacker_score']&.to_i || 0
         item.requires_black_market = false
         item.one_per_person_ever = %w[ShopItem::SpecialFulfillmentItem ShopItem::FreeStickers].include?(item_type) ? true : false
+        item.show_in_carousel = fields['show_in_carousel']
 
         if fields['image_url'].present?
           begin
@@ -112,6 +113,40 @@ begin
     end
 
     puts "Airtable import completed!"
+
+    begin
+      sync_count = Airtable::HighSeasBook::StorySubmission.sync_with_airtable
+      puts "found #{sync_count} records"
+
+      processed_submissions = 0
+      attached_photos_count = 0
+      Airtable::HighSeasBook::StorySubmission.all.each do |submission|
+        next unless submission.airtable_fields["Show in Summer of Making"] == true
+        processed_submissions += 1
+        photos_field = submission.airtable_fields["Photos (Optional)"]
+        next if photos_field.blank?
+        if submission.photos.attached?
+          submission.photos.each(&:purge)
+          puts "destroy dupes #{submission.id}."
+        end
+        photos_field.each do |photo_data|
+          url = photo_data["url"]
+          if url.present?
+            begin
+              submission.attach_photo_from_url(url)
+              attached_photos_count += 1
+            rescue => e
+            puts "getting #{url} for submission ID #{submission.id}: #{e.message}"
+            end
+          end
+        end
+      end
+      puts "  Processed #{processed_submissions} StorySubmissions for photo attachment."
+      puts "  Attempted to attach #{attached_photos_count} photos in total."
+    rescue StandardError => e
+    puts "error #{e.message}"
+    puts "#{e.backtrace.first(5).join("\\n  ")}"
+    end
 
   else
     puts "❌ Failed to fetch Airtable data: #{response.code} #{response.message}"

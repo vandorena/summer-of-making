@@ -1,10 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <title><%= content_for(:title) || "Summer of Making" %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="canonical" href="https://summer.hackclub.com/">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -25,7 +23,22 @@
     <%= stylesheet_link_tag "tutorial", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
 
-    <script defer data-domain="summer.hackclub.com" src="https://plausible.io/js/script.hash.outbound-links.js"></script>
+    <script defer data-domain="summer.hackclub.com" src="https://plausible.io/js/script.file-downloads.hash.outbound-links.tagged-events.js"></script>
+    <script>window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }</script>
+
+    <!-- Social Card Meta Tags -->
+    <meta property="og:title" content="Hack Club Summer of Making">
+    <meta property="og:description" content="Build stuff, Get stuff, Repeat! Win awesome prizes for building personal coding projects, from June 16 - August 31, 2025">
+    <meta property="og:image" content="<%= asset_url('social_card.png') %>">
+    <meta property="og:url" content="<%= request.original_url %>">
+    <meta property="og:type" content="website">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Hack Club Summer of Making">
+    <meta name="twitter:description" content="Build stuff, Get stuff, Repeat! Win awesome prizes for building personal coding projects, from June 16 - August 31, 2025">
+    <meta name="twitter:image" content="<%= asset_url('social_card.png') %>">
   </head>
 
   <body class="min-h-screen font-national-park font-bold text-[#4A2D24]">
@@ -41,56 +54,76 @@
         <% end %>
 
         <div data-controller="sidebar" data-sidebar-collapsed-value="false">
-        <% if mobile_device? %>
-          <%= render "shared/mobile_nav" %>
-          <main class="pb-20 pt-12 px-4">
-            <div id="flash-container">
-              <%= render "shared/flash" %>
-            </div>
-            <%= yield %>
-          </main>
-        <% else %>
-          <div class="flex flex-col h-screen box-border p-4">
-            <% if !current_user.has_hackatime? && !current_user.tutorial_progress.completed_at.nil? %>
-              <div class="w-full bg-vintage-red text-white flex flex-col justify-center py-2">
-                <p class="text-center">
-                  Your time spent coding is not currently being tracked, therefore you can't create any projects.
-                  <br>
-                  <%= link_to "Connect Hackatime (our coding time tracking thing)", hackatime_auth_redirect_path, class: "underline", target: "_blank" %>
-                </p>
-              </div>
-            <% end %>
-
-          <div class="flex h-full min-h-0">
-            <%= render "shared/sidebar" %>
-            <main class="overflow-auto w-full" data-sidebar-target="mainContent">
+          <% if mobile_device? %>
+            <%= render "shared/mobile_nav" %>
+            <main class="pb-20 pt-12 px-4">
               <div id="flash-container">
                 <%= render "shared/flash" %>
               </div>
               <%= yield %>
             </main>
-          </div>
+          <% else %>
+            <div class="flex flex-col h-screen box-border p-0">
+              <% if !current_user.has_hackatime? && !current_user.tutorial_progress.completed_at.nil? %>
+                <div class="w-full bg-vintage-red text-white flex flex-col justify-center py-2">
+                  <p class="text-center">
+                    Your time spent coding is not currently being tracked, therefore you can't create any projects.
+                    <br>
+                    <%= link_to "Connect Hackatime (our coding time tracking thing)", hackatime_auth_redirect_path, class: "underline", target: "_blank" %>
+                  </p>
+                </div>
+              <% end %>
 
+              <div class="flex h-full min-h-0">
+                <%= render "shared/sidebar" %>
+                <main class="overflow-auto w-full" data-sidebar-target="mainContent">
+                  <div id="flash-container">
+                    <%= render "shared/flash" %>
+                  </div>
+                  <%= yield %>
+                </main>
+              </div>
+
+            </div>
+          <% end %>
+
+          <!-- Tutorial angry button thingie-->
+          <% soft_step_paths = {
+            campfire: campfire_path,
+            explore: explore_path,
+            my_projects: my_projects_path,
+            vote: new_vote_path,
+            shop: shop_path
+          } %>
+          <% current_soft_step = soft_step_paths.find { |k, v|
+            if k == :explore
+              request.path == '/explore' || current_page?(v)
+            else
+              current_page?(v)
+            end
+          }&.first %>
+          <% should_shake = current_soft_step && !current_user.tutorial_progress.soft_step_completed?(current_soft_step) %>
+          <% if should_shake %>
+            <div class="fixed bottom-16 right-18 z-50" data-tutorial-target="helpButton" data-action="click->tutorial#toggle">
+              <div class="absolute -top-8 -left-24 p-3 bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] max-w-[120px] animate-pulse -rotate-24">
+                <div class="text-sm text-[#4A2D24] font-bold text-center lg:text-lg">Click me!</div>
+                <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-[#E4DCC6]"></div>
+                <div class="absolute top-full left-1/2 transform -translate-x-1/2 translate-y-[-2px] w-0 h-0 border-l-6 border-r-6 border-t-6 border-l-transparent border-r-transparent border-t-[#F3ECD8]"></div>
+              </div>
+              <%= image_tag "tutorial-mascot.png",
+                class: "w-32 h-32 2xl:w-40 2xl:h-40 cursor-pointer transition-all duration-200 hover:scale-110 animate-bounce -rotate-12",
+                title: "Show tutorial for this page" %>
+            </div>
+          <% else %>
+            <button id="tutorial-help-btn"
+              data-tutorial-target="helpButton"
+              data-action="click->tutorial#toggle"
+              class="tutorial-help-btn fixed top-4 right-4 md:top-auto md:bottom-8 md:right-6 z-50 w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 bg-gray-600 text-white"
+              title="Show tutorial for this page">
+              <span class="text-2xl font-bold">?</span>
+            </button>
+          <% end %>
         </div>
-        <% end %>
-
-        <!-- Tutorial angry button thingie-->
-        <% soft_step_paths = {
-          campfire: campfire_path,
-          explore: explore_path,
-          my_projects: my_projects_path,
-          vote: new_vote_path,
-          shop: shop_path
-        } %>
-        <% current_soft_step = soft_step_paths.find { |k, v| current_page?(v) }&.first %>
-        <% should_shake = current_soft_step && !current_user.tutorial_progress.soft_step_completed?(current_soft_step) %>
-        <button id="tutorial-help-btn"
-                data-tutorial-target="helpButton"
-                data-action="click->tutorial#toggle"
-                class="tutorial-help-btn fixed bottom-6 right-6 z-50 w-16 h-16 text-white rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 <%= 'animate-bouncee scale-140 hover:scale-160' if should_shake %>"
-                title="Show tutorial for this page">
-          <span class="text-2xl font-bold <%= "scale-120" if should_shake %>">?</span>
-        </button>
       </div>
     <% else %>
       <div id="flash-container">

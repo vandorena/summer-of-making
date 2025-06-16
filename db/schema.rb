@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_13_144837) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_16_220300) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -59,6 +59,58 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_13_144837) do
     t.index ["recipient_type", "recipient_id"], name: "index_activities_on_recipient"
     t.index ["trackable_id", "trackable_type"], name: "index_activities_on_trackable_id_and_trackable_type"
     t.index ["trackable_type", "trackable_id"], name: "index_activities_on_trackable"
+  end
+
+  create_table "ahoy_events", force: :cascade do |t|
+    t.bigint "visit_id"
+    t.bigint "user_id"
+    t.string "name"
+    t.jsonb "properties"
+    t.datetime "time"
+    t.index ["name", "time"], name: "index_ahoy_events_on_name_and_time"
+    t.index ["properties"], name: "index_ahoy_events_on_properties", opclass: :jsonb_path_ops, using: :gin
+    t.index ["time"], name: "index_ahoy_events_on_time"
+    t.index ["user_id"], name: "index_ahoy_events_on_user_id"
+    t.index ["visit_id"], name: "index_ahoy_events_on_visit_id"
+  end
+
+  create_table "ahoy_visits", force: :cascade do |t|
+    t.string "visit_token"
+    t.string "visitor_token"
+    t.bigint "user_id"
+    t.string "ip"
+    t.text "user_agent"
+    t.text "referrer"
+    t.string "referring_domain"
+    t.text "landing_page"
+    t.string "browser"
+    t.string "os"
+    t.string "device_type"
+    t.string "country"
+    t.string "region"
+    t.string "city"
+    t.float "latitude"
+    t.float "longitude"
+    t.string "utm_source"
+    t.string "utm_medium"
+    t.string "utm_term"
+    t.string "utm_content"
+    t.string "utm_campaign"
+    t.string "app_version"
+    t.string "os_version"
+    t.string "platform"
+    t.datetime "started_at"
+    t.index ["started_at"], name: "index_ahoy_visits_on_started_at"
+    t.index ["user_id"], name: "index_ahoy_visits_on_user_id"
+    t.index ["visit_token"], name: "index_ahoy_visits_on_visit_token", unique: true
+    t.index ["visitor_token", "started_at"], name: "index_ahoy_visits_on_visitor_token_and_started_at"
+  end
+
+  create_table "airtable_high_seas_book_story_submissions", force: :cascade do |t|
+    t.string "airtable_id"
+    t.jsonb "airtable_fields"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "blazer_audits", force: :cascade do |t|
@@ -153,6 +205,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_13_144837) do
     t.datetime "updated_at", null: false
     t.inet "ip"
     t.string "user_agent"
+    t.string "ref"
   end
 
   create_table "hackatime_stats", force: :cascade do |t|
@@ -219,6 +272,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_13_144837) do
     t.boolean "is_shipped", default: false
     t.string "hackatime_project_keys", default: [], array: true
     t.boolean "is_deleted", default: false
+    t.boolean "used_ai"
+    t.boolean "ysws_submission", default: false, null: false
+    t.string "ysws_type"
     t.index ["user_id"], name: "index_projects_on_user_id"
   end
 
@@ -258,6 +314,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_13_144837) do
     t.datetime "updated_at", null: false
     t.boolean "one_per_person_ever", default: false
     t.integer "max_qty", default: 10
+    t.boolean "show_in_carousel"
+    t.boolean "limited", default: false
+    t.integer "stock"
     t.check_constraint "hacker_score >= 0 AND hacker_score <= 100", name: "hacker_score_percentage_check"
   end
 
@@ -483,7 +542,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_13_144837) do
     t.string "avatar"
     t.boolean "has_commented", default: false
     t.boolean "has_hackatime", default: false
-    t.boolean "hackatime_confirmation_shown", default: false
     t.boolean "is_admin", default: false, null: false
     t.string "identity_vault_id"
     t.string "identity_vault_access_token"
@@ -492,6 +550,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_13_144837) do
     t.boolean "has_black_market"
     t.boolean "has_hackatime_account"
     t.boolean "has_clicked_completed_tutorial_modal", default: false, null: false
+    t.boolean "tutorial_video_seen", default: false, null: false
   end
 
   create_table "votes", force: :cascade do |t|
