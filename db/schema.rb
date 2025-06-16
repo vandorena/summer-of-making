@@ -205,6 +205,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_16_111912) do
     t.datetime "updated_at", null: false
     t.inet "ip"
     t.string "user_agent"
+    t.string "ref"
   end
 
   create_table "hackatime_stats", force: :cascade do |t|
