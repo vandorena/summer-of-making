@@ -91,13 +91,16 @@ export default class extends Controller {
     if (metaTag) {
       csrfToken = metaTag.content;
     }
+
+    const ref = new URL(location.href).searchParams.get("ref");
+
     const response = await fetch("/sign-up", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "X-CSRF-Token": csrfToken,
       },
-      body: JSON.stringify({ email: email }),
+      body: JSON.stringify({ email, ref }),
     });
     if (!response.ok) {
       throw new Error("Failed to send email");
