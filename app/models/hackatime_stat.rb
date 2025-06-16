@@ -23,7 +23,7 @@ class HackatimeStat < ApplicationRecord
   belongs_to :user
 
   def total_seconds_for_project(project)
-    return 0 if data.blank? || !data["data"]["projects"].is_a?(Array)
+    return 0 if data.blank? || data["data"].blank? || !data["data"]["projects"].is_a?(Array)
     project_keys = project.hackatime_keys
     return 0 if project_keys.blank?
 
@@ -37,7 +37,7 @@ class HackatimeStat < ApplicationRecord
   end
 
   def total_seconds_across_all_projects
-    return 0 if data.blank? || !data["data"]["projects"].is_a?(Array)
+    return 0 if data.blank? || data["data"].blank? || !data["data"]["projects"].is_a?(Array)
 
     data["data"]["projects"].sum do |hackatime_project|
       hackatime_project["total_seconds"] || 0
