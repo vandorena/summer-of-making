@@ -280,7 +280,8 @@ class User < ApplicationRecord
       :needs_resubmission
     when "verified"
       if idv_data[:ysws_eligible]
-        notify_xyz_on_verified()
+        notify_xyz_on_verified
+        update(ysws_verified: true) unless ysws_verified?
         :verified
       else
         :ineligible
@@ -288,6 +289,10 @@ class User < ApplicationRecord
     else
       :ineligible
     end
+  end
+
+  def identity_vault_linked?
+    identity_vault_access_token.present?
   end
 
   private
@@ -299,6 +304,7 @@ class User < ApplicationRecord
   def create_tutorial_progress
     TutorialProgress.create!(user: self)
   end
+
 
   def notify_xyz_on_verified
       # if  ysws_verified
