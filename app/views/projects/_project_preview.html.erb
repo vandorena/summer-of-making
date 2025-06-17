@@ -42,7 +42,7 @@
         <%= "by #{project.user.display_name}  •  " if show_author %><%= project.devlogs.count %> devlogs  •  <%= format_seconds(total_time_seconds) %>
       </p>
 
-      <p>
+      <p class="line-clamp-3 text-sm md:text-base 2xl:text-lg flex-grow overflow-hidden">
         <%= project.description %>
       </p>
     </div>
