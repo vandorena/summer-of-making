@@ -120,7 +120,6 @@ class ShopOrder < ApplicationRecord
         save
       end
     end
-
   end
 
   def check_one_per_person_ever_limit
