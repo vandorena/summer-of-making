@@ -1,19 +1,33 @@
-<h1>users</h1>
-<ul>
-  <li>
-    #<%= current_user.id %>: <%= link_to "the girl(?) reading this", admin_user_path(current_user) %> &lt;3
-  </li>
-</ul>
-<ul>
-  <% @users.each do |user| %>
-    <li>
-      #<%= user.id %>: <%= link_to "#{user.display_name || "????"}", admin_user_path(user) %> (<%= user.email %>)
-    </li>
-  <% end %>
-</ul>
-
-<%== pagy_nav(@pagy) %> <br>
-<%== pagy_info(@pagy) %> <br>
-
-jsyk, avo is probably a better bet for managing users!
-<%= link_to "← back", admin_root_path %>
+<%= stylesheet_link_tag 'admin_dashboard' %>
+<h1 style="color: var(--color-primary); margin-bottom: 1.5em;">Users</h1>
+<table class="atable">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><%= current_user.id %></td>
+      <td><span style="color: var(--color-primary); font-weight: bold;">the girl(?) reading this &lt;3</span></td>
+      <td><%= current_user.email %></td>
+      <td><%= link_to "View", admin_user_path(current_user), class: 'abtn secondary', style: 'padding: 0.3em 0.8em; font-size: 0.95em;' %></td>
+    </tr>
+    <% @users.each do |user| %>
+      <tr>
+        <td><%= user.id %></td>
+        <td><span style="color: var(--color-primary);"><%= user.display_name || "????" %></span></td>
+        <td><%= user.email %></td>
+        <td><%= link_to "View", admin_user_path(user), class: 'abtn secondary', style: 'padding: 0.3em 0.8em; font-size: 0.95em;' %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<div style="margin: 2em 0;">
+  <%== pagy_nav(@pagy) %> <br>
+  <%== pagy_info(@pagy) %>
+</div>
+<%= link_to "← back", admin_root_path, class: 'aout' %>
