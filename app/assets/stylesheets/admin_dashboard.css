@@ -1,0 +1,176 @@
+:root {
+  --color-darker: #121217;
+  --color-dark: #17171d;
+  --color-darkless: #252429;
+  --color-black: #1f2d3d;
+  --color-steel: #273444;
+  --color-slate: #3c4858;
+  --color-muted: #8492a6;
+  --color-smoke: #e0e6ed;
+  --color-snow: #f9fafc;
+  --color-white: #ffffff;
+  --color-red: #ec3750;
+  --color-orange: #ff8c37;
+  --color-yellow: #f1c40f;
+  --color-green: #33d6a6;
+  --color-cyan: #5bc0de;
+  --color-blue: #338eda;
+  --color-purple: #a633d6;
+  --color-text: var(--color-white);
+  --color-background: #1c1b22;
+  --color-elevated: var(--color-darkless);
+  --color-sheet: var(--color-dark);
+  --color-sunken: var(--color-darker);
+  --color-border: #42191f;
+  --color-primary: #ec3750;
+  --color-secondary: #42191f;
+}
+
+body.adash {
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: 'Inter', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.adash h1 {
+  color: var(--color-primary);
+  font-size: 2.2rem;
+  margin-bottom: 0.5em;
+  letter-spacing: 1px;
+}
+
+.adash p {
+  color: var(--color-muted);
+  margin-bottom: 2em;
+  font-size: 1.1rem;
+}
+
+.asecs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2.5em;
+  margin-bottom: 2em;
+  justify-content: space-between;
+}
+
+.asec {
+  flex: 1 1 300px;
+  background: var(--color-sheet);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px #0002;
+  min-width: 260px;
+}
+
+.asec h2 {
+  color: var(--color-primary);
+  font-size: 1.2rem;
+  margin-bottom: 1em;
+  letter-spacing: 0.5px;
+}
+
+.agrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 1.5em;
+  row-gap: 1em;
+}
+
+.abtn {
+  display: block;
+  width: 75%;
+  background: var(--color-secondary);
+  color: var(--color-white);
+  border: none;
+  border-radius: 6px;
+  padding: 0.9em 1em;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  margin-bottom: 0.2em;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 4px #0002;
+  cursor: pointer;
+}
+
+.abtn.primary {
+  background: var(--color-primary);
+  color: var(--color-white);
+}
+
+.abtn.secondary {
+  background: var(--color-secondary);
+  color: var(--color-white);
+}
+
+.abtn:hover, .abtn:focus {
+  background: var(--color-red);
+  color: var(--color-white);
+  box-shadow: 0 2px 8px #0003;
+}
+
+.aout {
+  display: inline-block;
+  margin-top: 2em;
+  color: var(--color-white);
+  background: var(--color-secondary);
+  padding: 0.6em 1.2em;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.2s, color 0.2s;
+}
+
+.aout:hover {
+  background: var(--color-primary);
+  color: var(--color-background);
+}
+
+.atable {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-sheet);
+  color: var(--color-text);
+  margin-bottom: 2em;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px #0002;
+}
+
+.atable th, .atable td {
+  padding: 0.7em 1em;
+  text-align: left;
+}
+
+.atable th {
+  background: var(--color-darkless);
+  color: var(--color-primary);
+  font-weight: 700;
+  font-size: 1.05em;
+  border-bottom: 2px solid var(--color-border);
+}
+
+.atable tr {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.atable tr:last-child {
+  border-bottom: none;
+}
+
+.atable td {
+  font-size: 1em;
+  vertical-align: middle;
+}
+
+.atable a {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.atable a:hover {
+  text-decoration: underline;
+}
