@@ -111,6 +111,12 @@ body.adash {
   box-shadow: 0 2px 8px #0003;
 }
 
+.abtn.small {
+  max-width: fit-content;
+  padding: 5px 7px;
+  display: inline;
+}
+
 .aout {
   display: inline-block;
   margin-top: 2em;

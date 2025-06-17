@@ -55,6 +55,16 @@ class User < ApplicationRecord
   include PublicActivity::Model
   tracked only: [], owner: Proc.new { |controller, model| controller&.current_user }
 
+  scope :search, ->(query) {
+    return all if query.blank?
+
+    query = "%#{query}%"
+    res = where(
+      "first_name ILIKE ? OR last_name ILIKE ? OR email ILIKE ? OR slack_id = ? OR display_name ILIKE ?",
+      query, query, query, query, query
+    )
+  }
+
   def self.exchange_slack_token(code, redirect_uri)
     response = Faraday.post("https://slack.com/api/oauth.v2.access",
                             {

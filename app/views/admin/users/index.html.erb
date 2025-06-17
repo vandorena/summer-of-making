@@ -1,5 +1,20 @@
 <%= stylesheet_link_tag 'admin_dashboard' %>
 <h1 style="color: var(--color-primary); margin-bottom: 1.5em;">Users</h1>
+
+<%= form_with url: admin_users_path, method: :get, local: true, class: "search-form" do |f| %>
+  <div class="grid">
+    <div>
+      <%= f.search_field :search, value: params[:search], placeholder: "Search users...", class: "form-control" %>
+    </div>
+    <div>
+      <%= f.submit "Search", class: "abtn primary small", style: "display: inline" %>
+      <% if params[:search].present? %>
+        <sup><%= link_to "(clear)", admin_users_path %></sup>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
 <table class="atable">
   <thead>
     <tr>

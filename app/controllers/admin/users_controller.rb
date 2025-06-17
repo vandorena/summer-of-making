@@ -4,7 +4,12 @@ module Admin
     before_action :set_user, except: [ :index ]
 
     def index
-      @pagy, @users = pagy(User.all.order(id: :desc), items: 50)
+      @pagy, @users = pagy(
+        User
+          .all
+          .search(params[:search]&.sub("mailto:", ""))
+          .order(id: :desc),
+        items: 50)
     end
 
     def show
