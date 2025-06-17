@@ -49,7 +49,7 @@ class ShopOrder < ApplicationRecord
   scope :worth_counting, -> { where.not(aasm_state: %w[rejected refunded]) }
 
   def full_name
-    "#{user.first_name} #{user.last_name}'s order for #{quantity} #{shop_item.name.pluralize(quantity)}"
+    "#{user.display_name}'s order for #{quantity} #{shop_item.name.pluralize(quantity)}"
   end
 
   aasm timestamps: true do # SAGA PATTERN TIME BABEY
