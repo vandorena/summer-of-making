@@ -60,8 +60,8 @@ class User < ApplicationRecord
 
     query = "%#{query}%"
     res = where(
-      "first_name ILIKE ? OR last_name ILIKE ? OR email ILIKE ? OR slack_id ILIKE ? OR display_name ILIKE ?",
-      query, query, query, query, query
+      "first_name ILIKE ? OR last_name ILIKE ? OR email ILIKE ? OR slack_id ILIKE ? OR display_name ILIKE ? OR identity_vault_id ILIKE ?",
+      query, query, query, query, query, query
     )
   }
 
