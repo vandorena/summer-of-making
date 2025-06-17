@@ -44,7 +44,7 @@ class ShopOrder < ApplicationRecord
   validate :check_black_market_access
   validate :check_user_balance
   after_create :create_negative_payout
-  before_create :set_initial_state_for_free_stickers, on: :create
+  before_create :set_initial_state_for_free_stickers
 
   scope :worth_counting, -> { where.not(aasm_state: %w[rejected refunded]) }
 
@@ -109,11 +109,16 @@ class ShopOrder < ApplicationRecord
   def set_initial_state_for_free_stickers
     return unless new_record? && shop_item.is_a?(ShopItem::FreeStickers)
 
-    if user&.ysws_verified?
-      self.aasm_state = "awaiting_periodical_fulfillment"
-      self.awaiting_periodical_fulfillment_at = Time.current
-    else
-      self.aasm_state = "in_verification_limbo"
+    ShopOrder.all.each do |o|
+      o.instance_eval do
+        if user&.ysws_verified?
+          self.aasm_state = "awaiting_periodical_fulfillment"
+          self.awaiting_periodical_fulfillment_at = Time.current
+        else
+          self.aasm_state = "in_verification_limbo"
+        end
+        save
+      end
     end
 
   end
