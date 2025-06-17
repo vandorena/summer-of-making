@@ -178,8 +178,8 @@ class User < ApplicationRecord
 
   def project_time_from_hackatime(project_key)
     data = hackatime_stat&.data
-    project_stats = data["projects"]&.find { |p| p["key"] == project_key }
-    project_stats&.dig("total") || 0
+    project_stats = data&.dig("data", "projects")&.find { |p| p["name"] == project_key }
+    project_stats&.dig("total_seconds") || 0
   end
 
   def has_hackatime?

@@ -116,11 +116,7 @@
       <span class="text-gray-800"><%= @project.devlogs.count %> </span> <%= "devlog".pluralize(@project.devlogs.count) %>
       •&nbsp;
       <%
-        timer_total_time = @project.timer_sessions.where(status: :stopped).sum(:net_time)
-
-        hackatime_total_time = @project.hackatime_total_time
-
-        total_time_seconds = timer_total_time + hackatime_total_time
+        total_time_seconds = @project.hackatime_total_time
       %>
       <span class="text-gray-800"><%= format_seconds(total_time_seconds) %></span>
     </div>
