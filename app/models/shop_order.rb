@@ -44,7 +44,7 @@ class ShopOrder < ApplicationRecord
   validate :check_black_market_access
   validate :check_user_balance
   after_create :create_negative_payout
-  after_initialize :set_initial_state_for_free_stickers
+  after_create :set_initial_state_for_free_stickers
 
   scope :worth_counting, -> { where.not(aasm_state: %w[rejected refunded]) }
 
