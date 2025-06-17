@@ -19,11 +19,11 @@
 </div>
 <b>Address:</b> <br>
 <% addy = @shop_order.frozen_address || {} %>
-<%= addy[:first_name] %> <%= addy[:first_name] %> <br>
-<%= addy[:line_1] %> <br>
-<%= addy[:line_2] %> <br>
-<%= addy[:city] %>, <%= addy[:state] %> <%= addy[:postal_code] %><br>
-<%= addy[:country] %> <br>
+<%= addy["first_name"] %> <%= addy["last_name"] %> <br>
+<%= addy["line_1"] %> <br>
+<%= addy["line_2"] %> <br>
+<%= addy["city"] %>, <%= addy["state"] %> <%= addy["postal_code"] %><br>
+<%= addy["country"] %> <br>
 <br>
 <br>
 <% state = @shop_order.aasm.current_state %>
