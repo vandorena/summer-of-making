@@ -12,11 +12,12 @@ class LandingController < ApplicationController
     # end.sample(5)
 
     if user_signed_in?
-      if current_user.tutorial_progress.completed_at.nil?
-        redirect_to campfire_path
-      else
-        redirect_to explore_path
-      end
+      redirect_to campfire_path
+      # if current_user.tutorial_progress.completed_at.nil?
+      #   redirect_to campfire_path
+      # else
+      #   redirect_to explore_path
+      # end
     else
       ahoy.track "tutorial_step_landing_first_visit"
 
