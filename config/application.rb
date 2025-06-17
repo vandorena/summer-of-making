@@ -23,7 +23,7 @@ module Journey
     config.mission_control.jobs.http_basic_auth_enabled = false
 
     # html minify
-    config.middleware.use HtmlCompressor::Rack
+    # config.middleware.use HtmlCompressor::Rack
 
     # Configuration for the application, engines, and railties goes here.
     #
