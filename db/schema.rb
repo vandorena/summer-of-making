@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_16_220300) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_17_224139) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -206,6 +206,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_16_220300) do
     t.inet "ip"
     t.string "user_agent"
     t.string "ref"
+  end
+
+  create_table "hackatime_projects", force: :cascade do |t|
+    t.string "name"
+    t.integer "seconds"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_hackatime_projects_on_user_id"
   end
 
   create_table "hackatime_stats", force: :cascade do |t|
@@ -580,6 +589,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_16_220300) do
   add_foreign_key "comments", "users"
   add_foreign_key "devlogs", "projects"
   add_foreign_key "devlogs", "users"
+  add_foreign_key "hackatime_projects", "users"
   add_foreign_key "hackatime_stats", "users"
   add_foreign_key "likes", "users"
   add_foreign_key "magic_links", "users"
