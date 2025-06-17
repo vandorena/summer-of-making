@@ -44,7 +44,7 @@ class ShopOrder < ApplicationRecord
   validate :check_black_market_access
   validate :check_user_balance
   after_create :create_negative_payout
-  after_create :set_initial_state_for_free_stickers
+  before_create :set_initial_state_for_free_stickers, on: :create
 
   scope :worth_counting, -> { where.not(aasm_state: %w[rejected refunded]) }
 
@@ -115,6 +115,7 @@ class ShopOrder < ApplicationRecord
     else
       self.aasm_state = "in_verification_limbo"
     end
+
   end
 
   def check_one_per_person_ever_limit
