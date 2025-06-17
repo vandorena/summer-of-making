@@ -353,7 +353,7 @@
         <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-8 md:mb-12 text-[#3a2f25] font-['DynaPuff',sans-serif]">
           What Past Participants Say
         </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 justify-center mx-auto w-full px-2">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 justify-center items-center mx-auto w-full px-2">
           <div class="transition-all duration-300 hover:-translate-y-1">
             <div class="parchment-prize-card p-4 text-center flex flex-col items-center justify-between">
               <div class="parchment-texture absolute inset-0 z-0 p-2"></div>
@@ -462,7 +462,7 @@
       FAQ
     </h2>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 justify-center-safe mx-auto max-w-6xl px-2">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 justify-center items-center mx-auto max-w-6xl px-2">
       <div class="transition-all duration-300 hover:-translate-y-1">
         <%= render "shared/card", classes: 'faq-con h-full' do %>
           <div class="p-1 md:p-3 relative">
@@ -571,7 +571,7 @@
 <%= render "signup_wizard_modal" %>
 
 <%# Helper method for random transform, can be moved to a helper file %>
-<% content_for :page_specific_scripts do %>
+<% content_for :page_specific_scripts do%>
   <script type="text/javascript">
     function prize_transform_for_review(index) {
       // You can adjust these values for different effects
