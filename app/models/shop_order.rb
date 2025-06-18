@@ -110,16 +110,11 @@ class ShopOrder < ApplicationRecord
   def set_initial_state_for_free_stickers
     return unless new_record? && shop_item.is_a?(ShopItem::FreeStickers)
 
-    ShopOrder.all.each do |o|
-      o.instance_eval do
-        if user&.ysws_verified?
-          self.aasm_state = "awaiting_periodical_fulfillment"
-          self.awaiting_periodical_fulfillment_at = Time.current
-        else
-          self.aasm_state = "in_verification_limbo"
-        end
-        save
-      end
+    if user&.ysws_verified?
+      self.aasm_state = "awaiting_periodical_fulfillment"
+      self.awaiting_periodical_fulfillment_at = Time.current
+    else
+      self.aasm_state = "in_verification_limbo"
     end
   end
 
