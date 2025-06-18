@@ -263,7 +263,6 @@ GEM
     honeybadger (5.28.0)
       logger
       ostruct
-    htmlcompressor (0.4.0)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
     image_processing (1.14.0)
@@ -650,7 +649,6 @@ DEPENDENCIES
   geocoder
   groupdate (~> 6.6)
   honeybadger (~> 5.28)
-  htmlcompressor (~> 0.4.0)
   image_processing (~> 1.14)
   importmap-rails
   inline_svg
