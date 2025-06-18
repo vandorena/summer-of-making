@@ -17,6 +17,8 @@ class EmailSignup < ApplicationRecord
   private
 
   def sync_to_airtable
+    return unless Rails.env.production?
+
     SyncEmailSignupToAirtableJob.perform_later(id)
   end
 end

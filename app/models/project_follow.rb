@@ -40,10 +40,14 @@ class ProjectFollow < ApplicationRecord
   end
 
   def sync_to_airtable
+    return unless Rails.env.production?
+
     SyncProjectFollowToAirtableJob.perform_later(id)
   end
 
   def delete_from_airtable
+    return unless Rails.env.production?
+
     DeleteProjectFollowFromAirtableJob.perform_later(id)
   end
 end

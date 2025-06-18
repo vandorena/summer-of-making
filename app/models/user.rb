@@ -327,6 +327,8 @@ class User < ApplicationRecord
   private
 
   def sync_to_airtable
+    return unless Rails.env.production?
+
     SyncUserToAirtableJob.perform_later(id)
   end
 

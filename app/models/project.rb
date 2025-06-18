@@ -208,6 +208,8 @@ class Project < ApplicationRecord
   end
 
   def sync_to_airtable
+    return unless Rails.env.production?
+
     SyncProjectToAirtableJob.perform_later(id)
   end
 end
