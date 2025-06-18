@@ -13,7 +13,8 @@
 #
 # Indexes
 #
-#  index_hackatime_projects_on_user_id  (user_id)
+#  index_hackatime_projects_on_user_id           (user_id)
+#  index_hackatime_projects_on_user_id_and_name  (user_id,name) UNIQUE
 #
 # Foreign Keys
 #
