@@ -39,6 +39,7 @@ class ShopOrder < ApplicationRecord
 
   has_many :payouts, as: :payable, dependent: :destroy
 
+  validates :quantity, presence: true, numericality: { greater_than: 0 }
   validate :check_one_per_person_ever_limit
   validate :check_max_quantity_limit
   validate :check_black_market_access
