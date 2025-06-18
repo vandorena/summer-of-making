@@ -142,6 +142,14 @@
         </div>
       <% end %>
 
+      <div class="space-y-1 sm:space-y-2">
+        <div class="flex items-center space-x-2">
+          <%= f.check_box :used_ai, id: "used_ai", class: "h-5 w-5 text-forest focus:ring-forest border-saddle-taupe rounded" %>
+          <%= f.label :used_ai, "AI helped me build this (AI is allowed if you're transparent about it!)", class: "text-base sm:text-lg font-medium cursor-pointer", for: "used_ai" %>
+        </div>
+        <p class="text-xs sm:text-sm text-gray-700">Did you generate code, READMEs, art, or any other part of your project with Copilot, ChatGPT, Claude, Gemini, or any other kind of AI?</p>
+      </div>
+
       <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 mt-6">
         <%= link_to "Cancel", project_path(@project), class: "w-full sm:w-auto px-4 py-2 bg-vintage-red text-white hover:scale-[1.05] btn-pixel text-base sm:text-lg text-center" %>
         <%= f.submit "Update Project", class: "w-full sm:w-auto px-4 py-2 bg-forest text-white hover:scale-[1.05] btn-pixel text-base sm:text-lg" %>
