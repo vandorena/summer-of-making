@@ -35,7 +35,7 @@ class Devlog < ApplicationRecord
   attr_accessor :timer_session_id
 
   validates :text, presence: true
-  validate :file_must_be_attached
+  validate :file_must_be_attached, on: %i[ create ]
 
   # Validates if only MD changes are made
   validate :only_formatting_changes, on: :update
