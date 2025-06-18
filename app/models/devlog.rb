@@ -7,6 +7,7 @@
 #  id                  :bigint           not null, primary key
 #  attachment          :string
 #  last_hackatime_time :integer
+#  seconds_coded       :integer
 #  text                :text
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
