@@ -61,17 +61,22 @@
               <% if item.is_free? %>
                 Acquire!
               <% else %>
-                <span class="flex items-center justify-center gap-1">Buy for <%= render_shells item.ticket_cost %></span>
+                <span class="flex items-center justify-center gap-1">Buy for
+                  <span class="flex items-center gap-1">
+                    <%= render_shells item.ticket_cost, icon_class: 'w-5 h-5' %>
+                    <span><%= item.ticket_cost %></span>
+                  </span>
+                </span>
               <% end %>
             </span>
           <% else %>
-            <span>
+            <span class="flex items-center gap-1 justify-center">
               <picture>
                 <source srcset="/shell.avif" type="image/avif">
                 <source srcset="/shell.webp" type="image/webp">
                 <img src="/shell.png" width="15px" style="vertical-align:text-top" alt="shell">
               </picture>
-              <%= (item.ticket_cost - current_user.balance).ceil %> needed
+              <span><%= (item.ticket_cost - current_user.balance).ceil %> needed</span>
             </span>
           <% end %>
         <% end %>
