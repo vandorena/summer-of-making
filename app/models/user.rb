@@ -172,15 +172,15 @@ class User < ApplicationRecord
     result = JSON.parse(response.body)
     projects = result.dig("data", "projects")
 
-    if !has_hackatime_account?
-      update!(has_hackatime_account: result.dig("data", "status") == "ok")
-    end
+    update!(has_hackatime_account: result.dig("data", "status") == "ok")
 
     return if projects.empty?
 
     update!(has_hackatime: true) unless has_hackatime?
 
-    Rails.logger.info("Hackatime projects:= #{result.dig("data", "total_seconds")}")
+    Rails.logger.tagged("User.refresh_hackatime_data_now") do
+      Rails.logger.debug("User #{id} (#{slack_id}) total seconds: #{result.dig("data", "total_seconds")}")
+    end
 
     stats = hackatime_stat || build_hackatime_stat
     stats.update(data: result, last_updated_at: Time.current)
