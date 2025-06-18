@@ -184,10 +184,10 @@ class User < ApplicationRecord
     end
 
     rows = projects
-      .map { |p| {user_id: id, name: p["name"], seconds: p["total_seconds"]} }
+      .map { |p| { user_id: id, name: p["name"], seconds: p["total_seconds"] } }
       .reject { |p| [ "<<LAST_PROJECT>>", "Other" ].include?(p[:name]) }
       .group_by { |r| r[:name] }
-      .map { |name, group| group.reduce { |acc, h| acc.merge(seconds: acc[:seconds] + h[:seconds]) }}
+      .map { |name, group| group.reduce { |acc, h| acc.merge(seconds: acc[:seconds] + h[:seconds]) } }
 
     HackatimeProject.upsert_all(
       rows,
