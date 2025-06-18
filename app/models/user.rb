@@ -102,8 +102,6 @@ class User < ApplicationRecord
   end
 
   def self.create_from_slack(slack_id)
-    # eligible_record = check_eligibility(slack_id)
-
     user_info = fetch_slack_user_info(slack_id)
 
     Rails.logger.tagged("UserCreation") do
