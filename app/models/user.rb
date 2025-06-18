@@ -183,6 +183,19 @@ class User < ApplicationRecord
       Rails.logger.debug("User #{id} (#{slack_id}) total seconds: #{result.dig("data", "total_seconds")}")
     end
 
+    rows = projects
+      .map { |p| {user_id: id, name: p["name"], seconds: p["total_seconds"]} }
+      .reject { |p| [ "<<LAST_PROJECT>>", "Other" ].include?(p[:name]) }
+      .group_by { |r| r[:name] }
+      .map { |name, group| group.reduce { |acc, h| acc.merge(seconds: acc[:seconds] + h[:seconds]) }}
+
+    HackatimeProject.upsert_all(
+      rows,
+      unique_by: %i[user_id name],
+      update_only: %i[seconds],
+      record_timestamps: true
+    )
+
     stats = hackatime_stat || build_hackatime_stat
     stats.update(data: result, last_updated_at: Time.current)
   end
