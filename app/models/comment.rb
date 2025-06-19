@@ -26,7 +26,7 @@ class Comment < ApplicationRecord
   include ActionView::Helpers::SanitizeHelper
 
   belongs_to :user
-  belongs_to :devlog
+  belongs_to :devlog, counter_cache: { active: false }
 
   validates :rich_content, presence: true
 
