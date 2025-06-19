@@ -28,7 +28,7 @@
 #
 class Devlog < ApplicationRecord
   belongs_to :user
-  belongs_to :project
+  belongs_to :project, counter_cache: { active: false }
   has_many :comments, -> { order(created_at: :desc) }, dependent: :destroy
   has_many :timer_sessions, dependent: :nullify
   has_many :likes, as: :likeable, dependent: :destroy
@@ -60,30 +60,6 @@ class Devlog < ApplicationRecord
     return false unless user
 
     likes.exists?(user: user)
-  end
-
-  delegate :count, to: :likes, prefix: true
-
-  def recalculate_seconds_coded
-    prev_time = project
-                  .devlogs
-                  .where("created_at < ?", created_at)
-                  .order(created_at: :desc)
-                  .limit(1)
-                  .pick(:created_at) || project.created_at
-
-    bounded_prev_time = [ prev_time, created_at - 24.hours ].max
-
-    res = user.fetch_raw_hackatime_stats(from: bounded_prev_time, to: created_at)
-    data = JSON.parse(res.body)
-    projects = data.dig("data", "projects")
-
-    seconds_coded = projects
-      .filter { |p| devlog.project.hackatime_project_keys.include?(p["name"]) }
-      .reduce(0) { |acc, h| acc += h["total_seconds"] }
-
-    Rails.logger.info "\tDevlog #{id} seconds coded: #{seconds_coded}"
-    update!(seconds_coded:)
   end
 
   private

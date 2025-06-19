@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_19_042354) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_19_174228) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -220,7 +220,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_19_042354) do
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id", "name"], name: "index_hackatime_projects_on_user_id_and_name", unique: true
     t.index ["user_id"], name: "index_hackatime_projects_on_user_id"
   end
 
@@ -291,6 +290,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_19_042354) do
     t.boolean "used_ai"
     t.boolean "ysws_submission", default: false, null: false
     t.string "ysws_type"
+    t.integer "devlogs_count", default: 0, null: false
     t.index ["user_id"], name: "index_projects_on_user_id"
   end
 
