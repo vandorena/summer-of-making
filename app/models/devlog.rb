@@ -8,6 +8,7 @@
 #  attachment          :string
 #  comments_count      :integer          default(0), not null
 #  last_hackatime_time :integer
+#  seconds_coded       :integer
 #  likes_count         :integer          default(0), not null
 #  text                :text
 #  created_at          :datetime         not null
@@ -36,7 +37,7 @@ class Devlog < ApplicationRecord
   attr_accessor :timer_session_id
 
   validates :text, presence: true
-  validate :file_must_be_attached
+  validate :file_must_be_attached, on: %i[ create ]
 
   # Validates if only MD changes are made
   validate :only_formatting_changes, on: :update
@@ -131,10 +132,14 @@ class Devlog < ApplicationRecord
   end
 
   def sync_to_airtable
+    return unless Rails.env.production?
+
     SyncUpdateToAirtableJob.perform_later(id)
   end
 
   def delete_from_airtable
+    return unless Rails.env.production?
+
     DeleteUpdateFromAirtableJob.perform_later(id)
   end
 

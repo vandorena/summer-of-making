@@ -54,10 +54,14 @@ class Vote < ApplicationRecord
   end
 
   def sync_to_airtable
+    return unless Rails.env.production?
+
     SyncVoteToAirtableJob.perform_later(id)
   end
 
   def delete_from_airtable
+    return unless Rails.env.production?
+
     DeleteVoteFromAirtableJob.perform_later(id)
   end
 end

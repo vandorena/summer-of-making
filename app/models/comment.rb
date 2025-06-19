@@ -62,10 +62,14 @@ class Comment < ApplicationRecord
   end
 
   def sync_to_airtable
+    return unless Rails.env.production?
+
     SyncCommentToAirtableJob.perform_later(id)
   end
 
   def delete_from_airtable
+    return unless Rails.env.production?
+
     DeleteCommentFromAirtableJob.perform_later(id)
   end
 end
