@@ -93,32 +93,56 @@
       <!-- Explore and Following tabs - show devlogs -->
       <div class="px-4 md:px-8 max-w-6xl mx-auto" data-tabs-target="content" id="devlogs-list-container" data-tab-content="explore">
         <div class="space-y-4 sm:space-y-6" id="devlogs-list">
-          <%= turbo_frame_tag "initial-devlogs",
-                src: explore_path(tab: 'explore', format: :turbo_stream),
-                loading: "eager" do %>
+          <% if @recent_devlogs&.any? %>
+            <% @recent_devlogs.each do |devlog| %>
+              <%= render "devlogs/devlog_card",
+                devlog: devlog,
+                context: 'explore',
+                show_project_title: true,
+                show_project_navigation: true,
+                show_likes: true,
+                show_project_link: true,
+                show_comment_modal: true,
+                show_stonks: false %>
+            <% end %>
           <% end %>
         </div>
 
-        <!-- Dear Lord Pagy life saver, but it is infitnie scroll trigger -->
+        <!-- Dear Lord Pagy life saver, but it is infinite scroll trigger -->
         <div id="load-more-devlogs">
-          <!-- It'll be replaced, i'm idiot -->
+          <% if @pagy&.next %>
+            <%= turbo_frame_tag "load-more-devlogs",
+              src: explore_path(page: @pagy.next, format: :turbo_stream),
+              loading: "lazy",
+              class: "block" do %>
+              <div class="flex flex-col items-center justify-center">
+                <%= image_tag 'lollipop.svg', class: 'w-8 h-8 sm:w-16 sm:h-16 animate-spin' %>
+              </div>
+            <% end %>
+          <% end %>
         </div>
       </div>
 
       <!-- Gallery tab - show projects -->
       <div class="px-4 md:px-8 hidden max-w-7xl mx-auto" data-tabs-target="content" data-tab-content="gallery">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
-          <% if @projects.any? %>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8" id="projects-grid">
+          <% if @projects&.any? %>
             <% @projects.each do |project| %>
               <%= render partial: "project_preview", locals: { project: project } %>
             <% end %>
-          <% else %>
-            <div class="col-span-full flex flex-col items-center justify-center bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] p-6 md:p-8 mt-2 md:mt-0">
-              <div class="flex justify-center items-center">
-                <%= image_tag 'sadjourneypheus.png', class: 'w-32 h-32 sm:w-48 sm:h-48 2xl:w-64 2xl:h-64 transform scale-x-[-1] mb-4 sm:mb-6' %>
+          <% end %>
+        </div>
+
+        <div id="load-more-projects">
+          <% if @gallery_pagy&.next %>
+            <%= turbo_frame_tag "load-more-projects",
+              src: explore_path(tab: 'gallery', page: @gallery_pagy.next, format: :turbo_stream),
+              loading: "lazy",
+              class: "block" do %>
+              <div class="flex flex-col items-center justify-center py-6">
+                <%= image_tag 'lollipop.svg', class: 'w-8 h-8 sm:w-16 sm:h-16 animate-spin' %>
               </div>
-              <p class="mb-6 sm:mb-8 text-black text-large sm:text-xl 2xl:text-2xl text-center">No projects found in the gallery yet!</p>
-            </div>
+            <% end %>
           <% end %>
         </div>
       </div>
