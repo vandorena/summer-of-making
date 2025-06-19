@@ -79,7 +79,7 @@ class Devlog < ApplicationRecord
     projects = data.dig("data", "projects")
 
     seconds_coded = projects
-      .filter { |p| devlog.project.hackatime_project_keys.include?(p["name"]) }
+      .filter { |p| project.hackatime_project_keys.include?(p["name"]) }
       .reduce(0) { |acc, h| acc += h["total_seconds"] }
 
     Rails.logger.info "\tDevlog #{id} seconds coded: #{seconds_coded}"
