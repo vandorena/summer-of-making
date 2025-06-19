@@ -93,18 +93,16 @@
       <!-- Explore and Following tabs - show devlogs -->
       <div class="px-4 md:px-8 max-w-6xl mx-auto" data-tabs-target="content" id="devlogs-list-container" data-tab-content="explore">
         <div class="space-y-4 sm:space-y-6" id="devlogs-list">
-          <% if @recent_devlogs&.any? %>
-            <% @recent_devlogs.each do |devlog| %>
-              <%= render "devlogs/devlog_card",
-                devlog: devlog,
-                context: 'explore',
-                show_project_title: true,
-                show_project_navigation: true,
-                show_likes: true,
-                show_project_link: true,
-                show_comment_modal: true,
-                show_stonks: false %>
-            <% end %>
+          <% @recent_devlogs&.each do |devlog| %>
+            <%= render "devlogs/devlog_card",
+              devlog: devlog,
+              context: 'explore',
+              show_project_title: true,
+              show_project_navigation: true,
+              show_likes: true,
+              show_project_link: true,
+              show_comment_modal: true,
+              show_stonks: false %>
           <% end %>
         </div>
 
