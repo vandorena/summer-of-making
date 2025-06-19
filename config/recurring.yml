@@ -36,3 +36,8 @@ production:
     queue: default
     schedule: every day
     description: "Pull new High Seas Book story submissions from Airtable"
+
+  recalculate_devlog_times:
+    class: RecalculateDevlogTimesJob
+    schedule: every hour
+    description: "Recalculate all devlogs' seconds_coded columns"
