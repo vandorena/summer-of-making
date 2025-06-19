@@ -6,8 +6,10 @@
 #
 #  id                  :bigint           not null, primary key
 #  attachment          :string
+#  comments_count      :integer          default(0), not null
 #  last_hackatime_time :integer
 #  seconds_coded       :integer
+#  likes_count         :integer          default(0), not null
 #  text                :text
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
