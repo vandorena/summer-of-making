@@ -42,6 +42,8 @@ class Project < ApplicationRecord
   has_one :stonk_tickler
   has_one_attached :banner
 
+  has_many :ship_certifications
+
   has_many :won_votes, class_name: "Vote", foreign_key: "winner_id"
   has_many :lost_votes, class_name: "Vote", foreign_key: "loser_id"
 
