@@ -304,6 +304,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_20_150916) do
     t.index ["project_id"], name: "index_readme_checks_on_project_id"
   end
 
+  create_table "ship_certifications", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "project_id", null: false
+    t.integer "judgement", default: 0, null: false
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id", "judgement"], name: "index_ship_certifications_on_project_id_and_judgement"
+    t.index ["project_id"], name: "index_ship_certifications_on_project_id"
+    t.index ["user_id"], name: "index_ship_certifications_on_user_id"
+  end
+
   create_table "ship_event_feedbacks", force: :cascade do |t|
     t.bigint "ship_event_id", null: false
     t.string "comment"
