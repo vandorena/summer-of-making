@@ -1,14 +1,39 @@
 <div class="md:px-8">
-    <div class="flex justify-between items-start mb-6">
-      <div>
-        <%= render "shared/page_title",
-            title: "Campfire",
-            subtitle: "Huddle around! Get your news here." %>
-      </div>
-      <div>
-        <%= image_tag "fixit-SOM.png", alt: "Fix it SOM", class: "w-32 h-32 object-contain" %>
-      </div>
+  <div class="flex justify-between items-start mb-6" id="fxb">
+    <div>
+      <%= render "shared/page_title",
+          title: "Campfire",
+          subtitle: "Huddle around! Get your news here." %>
     </div>
+    <div class="mr-18">
+      <div class="relative" style="transform: scale(1.2);">
+      <%= link_to "https://fixit.hackclub.com/", target: "_blank" do %>
+        <%= image_tag "fixit-SOM.png", alt: "Fix it SOM", class: "w-64 object-contain" %>
+        <span id="fxc" class="absolute top-13 right-8 text-[#750404] text-xl font-mono" style="display:inline-block; transform: scaleY(1.75); transform-origin: left center; font-size: 18px;"></span>
+      <% end %>
+      </div>
+      <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        function u() {
+        var d = new Date(1750453200 * 1000) - new Date();
+        var el = document.getElementById("fxc");
+        if (d > 0) {
+          var h = Math.floor((d / (1000 * 60 * 60)) % 24);
+          var m = Math.floor((d / (1000 * 60)) % 60);
+          var s = Math.floor((d / 1000) % 60);
+          function p(n) { return n < 10 ? '0' + n : n; }
+          el.textContent = h + ":" + p(m) + ":" + p(s);
+        } else {
+          var banner = document.getElementById("fxb");
+          if (banner) banner.remove();
+        }
+        }
+        u();
+        setInterval(u, 1000);
+      });
+      </script>
+    </div>
+  </div>
 
   <!-- Hackatime Dashboard Section -->
   <% if @account_status[:hackatime_setup] %>
