@@ -176,7 +176,6 @@ class AdminConstraint
 end
 
 Rails.application.routes.draw do
-  resources :ship_event_feedbacks
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -293,6 +292,8 @@ Rails.application.routes.draw do
   post "users/update_hackatime_confirmation", to: "users#update_hackatime_confirmation"
   post "users/refresh_hackatime", to: "users#refresh_hackatime"
   post "users/check_hackatime_connection", to: "users#check_hackatime_connection"
+
+  resources :ship_event_feedbacks
 
   namespace :admin, constraint: AdminConstraint do
     mount MissionControl::Jobs::Engine, at: "jobs"

@@ -17,6 +17,7 @@
 #
 class ShipEvent < ApplicationRecord
   belongs_to :project
+  has_one :ship_event_feedback
 
   def user
     project.user

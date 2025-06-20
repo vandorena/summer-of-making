@@ -43,6 +43,10 @@
               <% elsif item.is_a? ShipEvent %>
                 <div class="w-full border-5 border-[#E4DCC6] bg-[#F3ECD8] p-2 rounded-xl">
 
+                  <% admin_tool do %>
+                    <%= link_to "New ship feedback!", new_ship_event_feedback_path(ship_event_id: item.id) %>
+                  <% end %>
+
                   <% p = @ship_events.where("created_at < ?", item.created_at).order(:created_at) %>
                   <% position = p.count + 1 %>
                   <p class="font-medium text-base sm:text-lg 2xl:text-xl mb-2 sm:mb-3">Ship <%= position %></p>
