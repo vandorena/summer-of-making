@@ -2,23 +2,32 @@ class SyncUsersIdvVerificationStatusInAirtableJob < ApplicationJob
   queue_as :default
 
   def perform
-    table = Airrecord.table(Rails.application.credentials.airtable.api_key,
-                            Rails.application.credentials.airtable.base_id, "_users")
+    Rails.logger.tagged("SyncUsersIdvVerificationStatusInAirtableJob") do
+      table = Airrecord.table(Rails.application.credentials.airtable.api_key,
+                              Rails.application.credentials.airtable.base_id, "_users")
 
-    User.find_each do |user|
-      next if user.identity_vault_access_token.nil?
-      current_status = user.fetch_idv&.[](:identity)&.[](:verification_status)
+      User.find_each do |user|
+        if user.identity_vault_access_token.nil?
+          Rails.logger.info("Skipped #{user.id} (no idv access token)")
+          next
+        end
 
-      existing_record = table.all(filter: "{slack_id} = '#{user.slack_id}'").first
-      next if existing_record.nil?
+        current_status = user.fetch_idv&.[](:identity)&.[](:verification_status)
 
-      old_value = existing_record["verification_status"]
-      existing_record["verification_status"] = current_status
+        existing_record = table.all(filter: "{slack_id} = '#{user.slack_id}'").first
+        if existing_record.nil?
+          Rails.logger.info("Skipped #{user.id} (no record)")
+          next
+        end
 
-      if old_value != current_status
-        existing_record.save
-        Rails.logger.tagged("SyncUsersIdvVerificationStatusInAirtableJob") do
+        old_value = existing_record["verification_status"]
+        existing_record["verification_status"] = current_status
+
+        if old_value != current_status
+          existing_record.save
           Rails.logger.info("Updated user #{user.id} from #{old_value || "jack shit"} to #{current_status}")
+        else
+          Rails.logger.info("Skipped #{user.id} (same status)")
         end
       end
     end
