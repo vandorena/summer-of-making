@@ -1,7 +1,14 @@
 <div class="md:px-8">
-    <%= render "shared/page_title",
-        title: "Campfire",
-        subtitle: "Huddle around! Get your news here." %>
+    <div class="flex justify-between items-start mb-6">
+      <div>
+        <%= render "shared/page_title",
+            title: "Campfire",
+            subtitle: "Huddle around! Get your news here." %>
+      </div>
+      <div>
+        <%= image_tag "fixit-SOM.png", alt: "Fix it SOM", class: "w-32 h-32 object-contain" %>
+      </div>
+    </div>
 
   <!-- Hackatime Dashboard Section -->
   <% if @account_status[:hackatime_setup] %>
