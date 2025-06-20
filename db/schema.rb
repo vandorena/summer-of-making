@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_19_174228) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_20_150916) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -217,6 +217,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_19_174228) do
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["user_id", "name"], name: "index_hackatime_projects_on_user_id_and_name", unique: true
     t.index ["user_id"], name: "index_hackatime_projects_on_user_id"
   end
 
@@ -301,6 +302,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_19_174228) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["project_id"], name: "index_readme_checks_on_project_id"
+  end
+
+  create_table "ship_event_feedbacks", force: :cascade do |t|
+    t.bigint "ship_event_id", null: false
+    t.string "comment"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ship_event_id"], name: "index_ship_event_feedbacks_on_ship_event_id"
   end
 
   create_table "ship_events", force: :cascade do |t|
@@ -601,6 +610,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_19_174228) do
   add_foreign_key "project_follows", "users"
   add_foreign_key "projects", "users"
   add_foreign_key "readme_checks", "projects"
+  add_foreign_key "ship_event_feedbacks", "ship_events"
   add_foreign_key "ship_events", "projects"
   add_foreign_key "shop_orders", "shop_items"
   add_foreign_key "shop_orders", "users"
