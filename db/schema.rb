@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_20_184104) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_20_193342) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -304,7 +304,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_20_184104) do
   end
 
   create_table "ship_certifications", force: :cascade do |t|
-    t.bigint "user_id", null: false
+    t.bigint "reviewer_id"
     t.bigint "project_id", null: false
     t.integer "judgement", default: 0, null: false
     t.text "notes"
@@ -312,7 +312,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_20_184104) do
     t.datetime "updated_at", null: false
     t.index ["project_id", "judgement"], name: "index_ship_certifications_on_project_id_and_judgement"
     t.index ["project_id"], name: "index_ship_certifications_on_project_id"
-    t.index ["user_id"], name: "index_ship_certifications_on_user_id"
+    t.index ["reviewer_id"], name: "index_ship_certifications_on_reviewer_id"
   end
 
   create_table "ship_events", force: :cascade do |t|
@@ -613,6 +613,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_20_184104) do
   add_foreign_key "project_follows", "users"
   add_foreign_key "projects", "users"
   add_foreign_key "readme_checks", "projects"
+  add_foreign_key "ship_certifications", "projects"
+  add_foreign_key "ship_certifications", "users", column: "reviewer_id"
+  add_foreign_key "ship_event_feedbacks", "ship_events"
   add_foreign_key "ship_events", "projects"
   add_foreign_key "shop_orders", "shop_items"
   add_foreign_key "shop_orders", "users"
