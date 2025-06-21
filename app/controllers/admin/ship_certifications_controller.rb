@@ -9,12 +9,6 @@ module Admin
       @ship_certification.reviewer = current_user if @ship_certification.reviewer.nil?
     end
 
-
-
-    def show
-      @ship_certification = ShipCertification.find(params[:id])
-    end
-
     def update
       @ship_certification = ShipCertification.find(params[:id])
       
