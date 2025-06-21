@@ -1,0 +1,24 @@
+<h1>Ship Certifications</h1>
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Project</th>
+      <th>Judgement</th>
+      <th>Created At</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @ship_certifications.each do |ship_certification| %>
+      <tr>
+        <td><%= link_to ship_certification.id, admin_ship_certification_path(ship_certification) %></td>
+        <td><%= ship_certification.project.title %></td>
+        <td>
+          <%= ship_certification.judgement %>
+          <%= link_to "Edit", edit_admin_ship_certification_path(ship_certification) %>
+        </td>
+        <td><%= time_ago_in_words(ship_certification.created_at) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

@@ -59,6 +59,10 @@ class Project < ApplicationRecord
     with_deleted.find(id)
   end
 
+  scope :pending_certification, -> {
+    joins(:ship_certifications).where(ship_certifications: { judgement: "pending" })
+  }
+
   validates :title, :description, :category, presence: true
 
   validates :readme_link, :demo_link, :repo_link,
