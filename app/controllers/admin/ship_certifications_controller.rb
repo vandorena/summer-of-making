@@ -5,15 +5,15 @@ module Admin
     end
 
     def edit
-      @ship_certification = ShipCertification.includes(project: [:user, :ship_events]).find(params[:id])
+      @ship_certification = ShipCertification.includes(project: [ :user, :ship_events ]).find(params[:id])
       @ship_certification.reviewer = current_user if @ship_certification.reviewer.nil?
     end
 
     def update
       @ship_certification = ShipCertification.find(params[:id])
-      
+
       if @ship_certification.update(ship_certification_params)
-        redirect_to admin_ship_certifications_path, notice: 'Ship certification updated successfully.'
+        redirect_to admin_ship_certifications_path, notice: "Ship certification updated successfully."
       else
         render :edit
       end
