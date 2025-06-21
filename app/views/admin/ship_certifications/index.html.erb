@@ -1,5 +1,7 @@
+<%= stylesheet_link_tag 'admin_dashboard' %>
+<body class="adash" style="background: var(--color-background); color: var(--color-text); min-height: 100vh;">
 <h1>Ship Certifications</h1>
-<table>
+<table class="atable">
   <thead>
     <tr>
       <th>ID</th>
@@ -11,14 +13,24 @@
   <tbody>
     <% @ship_certifications.each do |ship_certification| %>
       <tr>
-        <td><%= link_to ship_certification.id, admin_ship_certification_path(ship_certification) %></td>
-        <td><%= ship_certification.project.title %></td>
+        <td><%= ship_certification.id %></td>
         <td>
-          <%= ship_certification.judgement %>
-          <%= link_to "Edit", edit_admin_ship_certification_path(ship_certification) %>
+          <%= link_to ship_certification.project.title, edit_admin_ship_certification_path(ship_certification) %>
+          <span><%= ship_certification.project.category %></span>
+        </td>
+        <td>
+          <% case ship_certification.judgement %>
+          <% when 'approved' %>
+            <span class="pill pill-green">approved</span>
+          <% when 'rejected' %>
+            <span class="pill pill-blue">rejected</span>
+          <% else %>
+            <span class="pill pill-yellow">pending</span>
+          <% end %>
         </td>
         <td><%= time_ago_in_words(ship_certification.created_at) %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
+</body>

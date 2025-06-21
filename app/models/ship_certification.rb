@@ -27,6 +27,8 @@ class ShipCertification < ApplicationRecord
   belongs_to :project
   has_one_attached :proof_video, dependent: :destroy
 
+  default_scope { joins(:project).where(projects: { is_deleted: false }) }
+
   enum :judgement, {
     pending: 0,
     approved: 1,
