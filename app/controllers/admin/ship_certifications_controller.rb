@@ -1,7 +1,7 @@
 module Admin
   class ShipCertificationsController < ApplicationController
     def index
-      @ship_certifications = ShipCertification.all.includes(:project)
+      @ship_certifications = ShipCertification.includes(:project).order(updated_at: :asc)
     end
 
     def edit
