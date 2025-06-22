@@ -27,6 +27,8 @@ class ShipCertification < ApplicationRecord
   belongs_to :project
   has_one_attached :proof_video, dependent: :destroy
 
+  after_commit :schedule_video_conversion, if: :should_convert_video?
+
   default_scope { joins(:project).where(projects: { is_deleted: false }) }
 
   enum :judgement, {
@@ -34,4 +36,18 @@ class ShipCertification < ApplicationRecord
     approved: 1,
     rejected: 2
   }
+
+  private
+
+  def should_convert_video?
+    return false unless proof_video.attached?
+
+    content_type = proof_video.content_type
+    !content_type&.include?("mp4") && !content_type&.include?("webm")
+  end
+
+  def schedule_video_conversion
+    Rails.logger.info "Scheduling video conversion for ShipCertification #{id}"
+    VideoConversionJob.perform_unique(id)
+  end
 end
