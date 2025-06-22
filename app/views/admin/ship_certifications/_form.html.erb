@@ -20,7 +20,7 @@
     <%= f.label :judgement %>
     <%= f.select :judgement, options_for_select([
       ['Pending', 'pending'],
-      ['Approved', 'approved'], 
+      ['Approved', 'approved'],
       ['Rejected', 'rejected']
     ], ship_certification.judgement), {}, { class: 'form-control' } %>
   </div>
@@ -40,8 +40,8 @@
 
   <div class="field">
     <%= f.label :reviewer_id, "Reviewer" %>
-    <%= f.collection_select :reviewer_id, User.where(is_admin: true), :id, :email, 
-                           { prompt: 'Select reviewer', selected: ship_certification.reviewer_id || current_user.id }, 
+    <%= f.collection_select :reviewer_id, User.where(is_admin: true), :id, :email,
+                           { prompt: 'Select reviewer', selected: ship_certification.reviewer_id || current_user.id },
                            { class: 'form-control' } %>
   </div>
 
