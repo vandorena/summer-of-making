@@ -16,9 +16,9 @@ production:
     schedule: every hour
     description: "Refresh Hackatime stats for all users with Hackatime enabled"
 
-  generate_stonk_reports:
-    class: GenerateStonkReportJob
-    schedule: every day
+  # generate_stonk_reports:
+  #   class: GenerateStonkReportJob
+  #   schedule: every day
 
   sync_slack_emotes:
     class: SyncSlackEmotesJob
