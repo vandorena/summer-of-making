@@ -26,8 +26,9 @@ module Shop
     included do
       # Define scope methods for each region
       REGION_CODES.each do |code|
-        scope :"enabled_in_#{code.downcase}", -> { where("enabled_#{code.downcase}" => true) }
-        scope :"disabled_in_#{code.downcase}", -> { where("enabled_#{code.downcase}" => [ false, nil ]) }
+        column = "enabled_#{code.downcase}".to_sym
+        scope :"enabled_in_#{code.downcase}", -> { where(column => true) }
+        scope :"disabled_in_#{code.downcase}", -> { where(column => [ false, nil ]) }
       end
     end
 
