@@ -9,6 +9,7 @@
 #  display_name                         :string
 #  email                                :string
 #  first_name                           :string
+#  freeze_shop_activity                 :boolean          default(FALSE)
 #  has_black_market                     :boolean
 #  has_clicked_completed_tutorial_modal :boolean          default(FALSE), not null
 #  has_commented                        :boolean          default(FALSE)
@@ -41,6 +42,7 @@ class User < ApplicationRecord
   has_one :tutorial_progress, dependent: :destroy
   has_one :magic_link, dependent: :destroy
   has_many :shop_orders
+  has_many :shop_card_grants
   has_many :hackatime_projects
 
   before_validation { self.email = email.to_s.downcase.strip }

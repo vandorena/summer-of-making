@@ -310,13 +310,16 @@ Rails.application.routes.draw do
         post :internal_notes
         post :create_payout
         post :nuke_idv_data
+        post :cancel_card_grants
+        post :freeze
+        post :defrost
       end
     end
     resources :shop_items
     resources :shop_orders do
       collection do
         get :pending
-        get :to_be_fulfilled
+        get :awaiting_fulfillment
       end
       member do
         post :internal_notes
@@ -327,5 +330,6 @@ Rails.application.routes.draw do
         post :mark_fulfilled
       end
     end
+    resources :shop_card_grants, only: [ :index, :show ]
   end
 end

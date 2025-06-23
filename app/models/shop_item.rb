@@ -4,28 +4,49 @@
 #
 # Table name: shop_items
 #
-#  id                    :bigint           not null, primary key
-#  agh_contents          :jsonb
-#  description           :string
-#  hacker_score          :integer          default(0)
-#  hcb_category_lock     :string
-#  hcb_keyword_lock      :string
-#  hcb_merchant_lock     :string
-#  internal_description  :string
-#  limited               :boolean          default(FALSE)
-#  max_qty               :integer          default(10)
-#  name                  :string
-#  one_per_person_ever   :boolean          default(FALSE)
-#  requires_black_market :boolean
-#  show_in_carousel      :boolean
-#  stock                 :integer
-#  ticket_cost           :decimal(6, 2)
-#  type                  :string
-#  usd_cost              :decimal(6, 2)
-#  created_at            :datetime         not null
-#  updated_at            :datetime         not null
+#  id                         :bigint           not null, primary key
+#  agh_contents               :jsonb
+#  description                :string
+#  enabled_au                 :boolean          default(FALSE)
+#  enabled_ca                 :boolean          default(FALSE)
+#  enabled_eu                 :boolean          default(FALSE)
+#  enabled_in                 :boolean          default(FALSE)
+#  enabled_us                 :boolean          default(FALSE)
+#  enabled_xx                 :boolean          default(FALSE)
+#  hacker_score               :integer          default(0)
+#  hcb_category_lock          :string
+#  hcb_keyword_lock           :string
+#  hcb_merchant_lock          :string
+#  internal_description       :string
+#  limited                    :boolean          default(FALSE)
+#  max_qty                    :integer          default(10)
+#  name                       :string
+#  one_per_person_ever        :boolean          default(FALSE)
+#  price_offset_au            :decimal(6, 2)    default(0.0)
+#  price_offset_ca            :decimal(6, 2)    default(0.0)
+#  price_offset_eu            :decimal(6, 2)    default(0.0)
+#  price_offset_in            :decimal(6, 2)    default(0.0)
+#  price_offset_us            :decimal(6, 2)    default(0.0)
+#  price_offset_xx            :decimal(6, 2)    default(0.0)
+#  requires_black_market      :boolean
+#  show_in_carousel           :boolean
+#  stock                      :integer
+#  ticket_cost                :decimal(6, 2)
+#  type                       :string
+#  under_the_fold_description :text
+#  usd_cost                   :decimal(6, 2)
+#  created_at                 :datetime         not null
+#  updated_at                 :datetime         not null
 #
 class ShopItem < ApplicationRecord
+  include Shop::Regionalizable
+
+  MANUAL_FULFILLMENT_TYPES = [
+    ShopItem::ThirdPartyPhysical,
+    ShopItem::HQMailItem,
+    ShopItem::SpecialFulfillmentItem
+  ]
+
   has_one_attached :image do |attachable|
     attachable.variant :thumb, resize_to_limit: [ 256, 256 ]
   end
@@ -35,11 +56,15 @@ class ShopItem < ApplicationRecord
   scope :black_market, -> { where(requires_black_market: true) }
   scope :not_black_market, -> { where(requires_black_market: [ false, nil ]) }
   scope :shown_in_carousel, -> { where(show_in_carousel: true) }
+  scope :manually_fulfilled, -> { where(type: MANUAL_FULFILLMENT_TYPES) }
+
+  def fulfill!(shop_order)
+    shop_order.queue_for_nightly!
+  end
 
   validates_presence_of :ticket_cost, :name, :description
-
   def manually_fulfilled?
-    true
+    MANUAL_FULFILLMENT_TYPES.include? self.class
   end
 
   def can_afford?(user)
