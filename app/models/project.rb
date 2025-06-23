@@ -104,7 +104,7 @@ class Project < ApplicationRecord
 
   before_save :remove_duplicate_hackatime_keys
 
-  after_commit :sync_to_airtable, on: %i[create update]
+  # after_commit :sync_to_airtable, on: %i[create update]
 
   def total_votes
     won_votes.count + lost_votes.count
