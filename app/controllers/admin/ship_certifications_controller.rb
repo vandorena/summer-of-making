@@ -15,7 +15,7 @@ module Admin
       if @ship_certification.update(ship_certification_params)
         redirect_to admin_ship_certifications_path, notice: "Ship certification updated successfully."
       else
-        render :edit
+        render :edit, status: :unprocessable_entity
       end
     end
 
