@@ -46,9 +46,9 @@ class VotesController < ApplicationController
   end
 
   def locked
-    @approve_projects_count = Projects.joins(:ship_certifications)
-                                      .where(ship_certifications: { judgement: :approved })
-                                      .size
+    @approve_projects_count = Project.joins(:ship_certifications)
+                                     .where(ship_certifications: { judgement: :approved })
+                                     .size
     @full_projects_count = Project.joins(:ship_certifications, :devlogs)
                                   .where(ship_certifications: { judgement: :approved })
                                   .group("projects.id")
