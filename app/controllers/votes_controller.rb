@@ -46,13 +46,16 @@ class VotesController < ApplicationController
   end
 
   def locked
-    @projects_count = Project.joins(:ship_certifications, :devlogs)
-                    .where(ship_certifications: { judgement: :approved })
-                    .group("projects.id")
-                    .having("SUM(COALESCE(devlogs.seconds_coded, 0)) > ?", 10 * 3600)
-                    .count
-                    .keys
-                    .size
+    @approve_projects_count = Projects.joins(:ship_certifications)
+                                      .where(ship_certifications: { judgement: :approved })
+                                      .size
+    @full_projects_count = Project.joins(:ship_certifications, :devlogs)
+                                  .where(ship_certifications: { judgement: :approved })
+                                  .group("projects.id")
+                                  .having("SUM(COALESCE(devlogs.seconds_coded, 0)) > ?", 10 * 3600)
+                                  .count
+                                  .keys
+                                  .size
   end
 
   private

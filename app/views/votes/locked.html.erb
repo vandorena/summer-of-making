@@ -5,6 +5,7 @@
 
   <%= render "shared/card", classes: "text-lg text-center", padding: "lg" do %>
     <p class="mb-4">Voting will begin globally after 100 certified projects with at least 10 hours of coding time have been shipped!</p>
-    <p class="text-2xl"><%= @projects_count %> / 100 approved projects</p>
+    <p class="text-2xl"><%= @full_projects_count %> / 100 approved 10+ hr projects</p>
+    <p>(<%= @approve_projects_count %> certified projects, reguardless of coding time)</p>
   <% end %>
 </div>
