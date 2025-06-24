@@ -5,9 +5,9 @@
 <div style="display: flex; gap: 2rem; margin-bottom: 2rem;">
   <div style="background: var(--color-card); padding: 1rem; border-radius: 8px; flex: 1;">
     <h3>Totals</h3>
-    <p><strong>Approved:</strong> <%= @total_approved %></p>
-    <p><strong>Rejected:</strong> <%= @total_rejected %></p>
-    <p><strong>Pending:</strong> <%= @total_pending %></p>
+    <p><strong>Approved:</strong> <span class="pill pill-green"><%= @total_approved %></span></p>
+    <p><strong>Rejected:</strong> <span class="pill pill-blue"><%= @total_rejected %></span></p>
+    <p><strong>Pending:</strong> <span class="pill pill-yellow"><%= @total_pending %></span></p>
   </div>
 
   <div style="background: var(--color-card); padding: 1rem; border-radius: 8px; flex: 2;">
