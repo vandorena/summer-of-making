@@ -1,9 +1,8 @@
 class VideoConversionJob < ApplicationJob
-  queue_as :video_conversion
+  queue_as :literally_whenever
 
   def self.perform_unique(ship_certification_id)
     return if SolidQueue::Job.where(
-      queue_name: "video_conversion",
       class_name: "VideoConversionJob"
     ).pending.any? { |job| job.arguments.first == ship_certification_id }
 

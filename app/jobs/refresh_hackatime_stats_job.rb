@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class RefreshHackatimeStatsJob < ApplicationJob
-  queue_as :default
+  queue_as :literally_whenever
 
   def perform(user_id, options = {})
     user = User.find_by(id: user_id)
