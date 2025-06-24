@@ -106,8 +106,6 @@ class Project < ApplicationRecord
 
   before_save :remove_duplicate_hackatime_keys
 
-  # after_commit :sync_to_airtable, on: %i[create update]
-
   def total_votes
     won_votes.count + lost_votes.count
   end
@@ -246,12 +244,6 @@ class Project < ApplicationRecord
 
   def remove_duplicate_hackatime_keys
     self.hackatime_project_keys = hackatime_project_keys.uniq if hackatime_project_keys
-  end
-
-  def sync_to_airtable
-    return unless Rails.env.production?
-
-    SyncProjectToAirtableJob.perform_later(id)
   end
 
   def maybe_create_readme_certification
