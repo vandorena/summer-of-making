@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_24_202548) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_24_205930) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -198,6 +198,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_24_202548) do
     t.integer "likes_count", default: 0, null: false
     t.integer "comments_count", default: 0, null: false
     t.integer "seconds_coded"
+    t.datetime "hackatime_pulled_at"
     t.index ["project_id"], name: "index_devlogs_on_project_id"
     t.index ["user_id"], name: "index_devlogs_on_user_id"
   end
