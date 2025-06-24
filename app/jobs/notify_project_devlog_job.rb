@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class NotifyProjectDevlogJob < ApplicationJob
-  queue_as :default
+  queue_as :latency_5m
 
   def perform(devlog_id)
     devlog = Devlog.find(devlog_id)

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class CancelUserCardGrantsJob < ApplicationJob
+  queue_as :latency_10s
+
   def perform(user)
     user.shop_card_grants.find_each do |card_grant|
       next unless card_grant.hcb_grant_hashid.present?
