@@ -47,8 +47,6 @@ class Devlog < ApplicationRecord
   validate :validate_timer_session_required, on: :create
   validate :validate_hackatime_time_since_last_update, on: :create
 
-  after_destroy :delete_from_airtable
-  after_commit :sync_to_airtable, on: %i[create update]
   after_commit :associate_timer_session, on: :create
   after_commit :notify_followers_and_stakers, on: :create
 
@@ -153,14 +151,6 @@ class Devlog < ApplicationRecord
     return "" if text.nil?
 
     text.gsub(/[\s\n\r\t\*\_\#\~\`\>\<\-\+\.\,\;\:\!\?\(\)\[\]\{\}]/i, "").downcase
-  end
-
-  def sync_to_airtable
-    # SyncUpdateToAirtableJob.perform_later(id)
-  end
-
-  def delete_from_airtable
-    # DeleteUpdateFromAirtableJob.perform_later(id)
   end
 
   def notify_followers_and_stakers
