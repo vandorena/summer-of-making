@@ -156,15 +156,11 @@ class Devlog < ApplicationRecord
   end
 
   def sync_to_airtable
-    return unless Rails.env.production?
-
-    SyncUpdateToAirtableJob.perform_later(id)
+    # SyncUpdateToAirtableJob.perform_later(id)
   end
 
   def delete_from_airtable
-    return unless Rails.env.production?
-
-    DeleteUpdateFromAirtableJob.perform_later(id)
+    # DeleteUpdateFromAirtableJob.perform_later(id)
   end
 
   def notify_followers_and_stakers
