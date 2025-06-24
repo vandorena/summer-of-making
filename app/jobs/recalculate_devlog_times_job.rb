@@ -8,6 +8,9 @@ class RecalculateDevlogTimesJob < ApplicationJob
   private
 
   def devlogs_to_update
-    @devlogs_to_update ||= Devlog.joins(:project).where(projects: { is_deleted: false }).order("hackatime_pulled_at ASC NULLS FIRST").limit(20)
+    @devlogs_to_update ||= Devlog.joins(:project)
+                                 .where(projects: { is_deleted: false })
+                                 .order("hackatime_pulled_at ASC NULLS FIRST")
+                                 .limit(60)
   end
 end
