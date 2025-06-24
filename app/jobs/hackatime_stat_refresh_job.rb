@@ -2,7 +2,7 @@
 
 # This refreshes every user's Hackatime Project data.
 class HackatimeStatRefreshJob < ApplicationJob
-  queue_as :default
+  queue_as :literally_whenever
 
   def perform
     Rails.logger.tagged("HackatimeStatRefreshJob") do

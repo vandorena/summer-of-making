@@ -1,5 +1,5 @@
-class BackfillVideoConversionsJob < ApplicationJob
-  queue_as :default
+class OneTime::BackfillVideoConversionsJob < ApplicationJob
+  queue_as :literally_whenever
 
   def perform
     Rails.logger.info "Starting video conversion backfill..."

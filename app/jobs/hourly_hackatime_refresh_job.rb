@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class HourlyHackatimeRefreshJob < ApplicationJob
-  queue_as :default
+  queue_as :literally_whenever
 
   def perform
     users = User.where(has_hackatime: true).distinct
