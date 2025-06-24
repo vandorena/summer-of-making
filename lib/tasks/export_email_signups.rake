@@ -3,10 +3,10 @@
 namespace :export do
   desc "Export email signups to CSV with failsafe restart capability"
   task email_signups: :environment do
-    require 'csv'
+    require "csv"
 
-    output_file = File.join(Rails.root, 'email_signups_export.csv')
-    progress_file = File.join(Rails.root, 'email_signups_export_progress.txt')
+    output_file = File.join(Rails.root, "email_signups_export.csv")
+    progress_file = File.join(Rails.root, "email_signups_export_progress.txt")
 
     # Read last processed ID from progress file
     last_id = 0
@@ -22,19 +22,19 @@ namespace :export do
 
     # Initialize CSV file if starting fresh
     if last_id == 0
-      CSV.open(output_file, 'w') do |csv|
+      CSV.open(output_file, "w") do |csv|
         csv << headers
       end
     end
 
     batch_size = 1000
-    total_email_signups = EmailSignup.where('id > ?', last_id).count
+    total_email_signups = EmailSignup.where("id > ?", last_id).count
     processed = 0
 
     puts "Processing #{total_email_signups} email signups in batches of #{batch_size}"
 
-    EmailSignup.where('id > ?', last_id).find_in_batches(batch_size:) do |email_signups|
-      CSV.open(output_file, 'a') do |csv|
+    EmailSignup.where("id > ?", last_id).find_in_batches(batch_size:) do |email_signups|
+      CSV.open(output_file, "a") do |csv|
         email_signups.each do |email_signup|
           begin
             row = [
