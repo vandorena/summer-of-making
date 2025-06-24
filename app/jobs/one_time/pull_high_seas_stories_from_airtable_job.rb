@@ -1,4 +1,4 @@
-class PullHighSeasStoriesFromAirtableJob < ApplicationJob
+class OneTime::PullHighSeasStoriesFromAirtableJob < ApplicationJob
   queue_as :default
 
   def perform
