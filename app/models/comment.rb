@@ -31,8 +31,6 @@ class Comment < ApplicationRecord
   validates :rich_content, presence: true
 
   after_create :notify_devlog_author
-  after_destroy :delete_from_airtable
-  after_commit :sync_to_airtable, on: [ :create ]
 
   def display_content
     sanitized_content = sanitize(render_rich_content,
@@ -59,17 +57,5 @@ class Comment < ApplicationRecord
       devlog.project, host: ENV.fetch('APP_HOST', nil)
     )}"
     SendSlackDmJob.perform_later(devlog.user.slack_id, message)
-  end
-
-  def sync_to_airtable
-    return unless Rails.env.production?
-
-    SyncCommentToAirtableJob.perform_later(id)
-  end
-
-  def delete_from_airtable
-    return unless Rails.env.production?
-
-    DeleteCommentFromAirtableJob.perform_later(id)
   end
 end

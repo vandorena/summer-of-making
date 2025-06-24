@@ -11,5 +11,4 @@
 #  updated_at :datetime         not null
 #
 class EmailSignup < ApplicationRecord
-  after_create { Faraday.post("https://7f972d8eaf28.ngrok.app/dong") rescue nil }
 end
