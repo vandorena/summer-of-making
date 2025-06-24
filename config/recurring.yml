@@ -33,8 +33,9 @@ production:
 
   recalculate_devlog_times:
     class: RecalculateDevlogTimesJob
-    schedule: every hour
-    description: "Recalculate all devlogs' seconds_coded columns"
+    schedule: every minute
+    concurrency: 1
+    description: "Recalculate devlogs' seconds_coded columns"
 
   sync_user_idv_verification_statuses_to_airtable:
     class: SyncUsersIdvVerificationStatusInAirtableJob
