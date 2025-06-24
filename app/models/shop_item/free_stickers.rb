@@ -44,7 +44,7 @@ class ShopItem::FreeStickers < ShopItem
       {
         recipient_email: shop_order.user.email,
         address: shop_order.frozen_address,
-        idempotency_key: "som25_free_stickers_order_#{Rails.env}_#{shop_order.id}"
+        idempotency_key: "som25_free_stickers_order_#{Rails.env}_#{shop_order.id}",
       }
     )
     shop_order.mark_fulfilled!(response[:id])
