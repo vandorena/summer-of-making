@@ -43,6 +43,7 @@ class Project < ApplicationRecord
   has_one_attached :banner
 
   has_many :ship_certifications
+  has_many :readme_certifications
 
   has_many :won_votes, class_name: "Vote", foreign_key: "winner_id"
   has_many :lost_votes, class_name: "Vote", foreign_key: "loser_id"
@@ -100,6 +101,7 @@ class Project < ApplicationRecord
   validate :user_must_have_hackatime, on: :create
 
   after_initialize :set_default_rating, if: :new_record?
+  after_update :maybe_create_readme_certification
   before_save :filter_hackatime_keys
 
   before_save :remove_duplicate_hackatime_keys
@@ -250,5 +252,13 @@ class Project < ApplicationRecord
     return unless Rails.env.production?
 
     SyncProjectToAirtableJob.perform_later(id)
+  end
+
+  def maybe_create_readme_certification
+    return unless saved_change_to_readme_link?
+    return if readme_link.blank?
+    return if readme_certifications.exists?
+
+    readme_certifications.create!
   end
 end

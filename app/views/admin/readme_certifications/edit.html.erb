@@ -1,0 +1,12 @@
+<h1>Edit README Certification</h1>
+
+<div class="project-links">
+  <b>Project Links:</b>
+  <%= link_to "Play", @readme_certification.project.demo_link, target: "_blank" if @readme_certification.project.demo_link.present? %>
+  <%= link_to "Repo", @readme_certification.project.repo_link, target: "_blank" if @readme_certification.project.repo_link.present? %>
+  <%= link_to "Readme", @readme_certification.project.readme_link, target: "_blank" if @readme_certification.project.readme_link.present? %>
+</div>
+
+<%= render 'form', readme_certification: @readme_certification %>
+
+<%= link_to "Back", admin_readme_certifications_path %>

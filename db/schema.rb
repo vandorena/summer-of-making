@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_23_193631) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_24_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -290,6 +290,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_23_193631) do
     t.string "ysws_type"
     t.integer "devlogs_count", default: 0, null: false
     t.index ["user_id"], name: "index_projects_on_user_id"
+  end
+
+  create_table "readme_certifications", force: :cascade do |t|
+    t.bigint "reviewer_id"
+    t.bigint "project_id", null: false
+    t.integer "judgement", default: 0, null: false
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id", "judgement"], name: "index_readme_certifications_on_project_id_and_judgement"
+    t.index ["project_id"], name: "index_readme_certifications_on_project_id"
+    t.index ["reviewer_id"], name: "index_readme_certifications_on_reviewer_id"
   end
 
   create_table "readme_checks", force: :cascade do |t|
@@ -649,6 +661,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_23_193631) do
   add_foreign_key "project_follows", "projects"
   add_foreign_key "project_follows", "users"
   add_foreign_key "projects", "users"
+  add_foreign_key "readme_certifications", "projects"
+  add_foreign_key "readme_certifications", "users", column: "reviewer_id"
   add_foreign_key "readme_checks", "projects"
   add_foreign_key "ship_certifications", "projects"
   add_foreign_key "ship_certifications", "users", column: "reviewer_id"
