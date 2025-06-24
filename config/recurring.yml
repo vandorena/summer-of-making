@@ -52,3 +52,9 @@ production:
     schedule: every minute
     concurrency: 1
     description: "Sync user data to Airtable every minute with single execution limit"
+
+  sync_email_signup_to_airtable:
+    class: SyncEmailSignupToAirtableJob
+    schedule: every minute
+    concurrency: 1
+    description: "Sync email signups to Airtable every minute with single execution limit"
