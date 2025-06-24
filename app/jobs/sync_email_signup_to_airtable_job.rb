@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class SyncEmailSignupToAirtableJob < ApplicationJob
-  queue_as :default
+  queue_as :literally_whenever
 
   # Prevent multiple jobs from being enqueued
   def self.perform_later(*args)
