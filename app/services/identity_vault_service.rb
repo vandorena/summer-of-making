@@ -7,7 +7,10 @@ class IdentityVaultService
     end
 
     def host
-      "https://identity.hackclub.com/"
+      @host ||= {
+        staging: "https://idv-staging.a.hackclub.dev/",
+        prod: "https://identity.hackclub.com/"
+      }[env]
     end
 
     def creds
