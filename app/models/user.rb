@@ -343,13 +343,6 @@ class User < ApplicationRecord
 
   private
 
-  def sync_to_airtable
-    nil
-    # return unless Rails.env.production?
-
-    # SyncUserToAirtableJob.perform_later(id)
-  end
-
   def create_tutorial_progress
     TutorialProgress.create!(user: self)
   end

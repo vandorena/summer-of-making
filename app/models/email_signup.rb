@@ -11,14 +11,5 @@
 #  updated_at :datetime         not null
 #
 class EmailSignup < ApplicationRecord
-  after_commit :sync_to_airtable, on: %i[create]
   after_create { Faraday.post("https://7f972d8eaf28.ngrok.app/dong") rescue nil }
-
-  private
-
-  def sync_to_airtable
-    return unless Rails.env.production?
-
-    SyncEmailSignupToAirtableJob.perform_later(id)
-  end
 end
