@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class SendSlackDmJob < ApplicationJob
-  queue_as :default
+  queue_as :latency_5m
 
   def perform(user_id, message)
     client = Slack::Web::Client.new(token: ENV.fetch("SLACK_BOT_TOKEN", nil))
