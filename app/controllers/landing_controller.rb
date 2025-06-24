@@ -69,7 +69,12 @@ class LandingController < ApplicationController
       end
     end
 
-    EmailSignup.create!(email:, ref:, ip: request.remote_ip, user_agent: request.headers["User-Agent"])
+    # Creating multiple email signups per address could be used for referral fraud
+    EmailSignup.find_or_create_by(email:) do |signup|
+      signup.ref = ref
+      signup.ip = request.remote_ip
+      signup.user_agent = request.headers["User-Agent"]
+    end
 
     ahoy.track "tutorial_step_email_signup", email: email
 
