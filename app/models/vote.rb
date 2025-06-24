@@ -40,8 +40,6 @@ class Vote < ApplicationRecord
 
   validates :explanation, presence: true, length: { minimum: 10 }
   validates :user_id, uniqueness: { scope: :winner_id, message: "has already voted for this project" }
-  after_create :sync_to_airtable
-  after_destroy :delete_from_airtable
 
   attr_accessor :token
 
@@ -51,17 +49,5 @@ class Vote < ApplicationRecord
     token_data["user_id"] == user_id &&
       token_data["project_id"].to_s == winner_id.to_s &&
       Time.zone.parse(token_data["expires_at"]) > Time.current
-  end
-
-  def sync_to_airtable
-    return unless Rails.env.production?
-
-    SyncVoteToAirtableJob.perform_later(id)
-  end
-
-  def delete_from_airtable
-    return unless Rails.env.production?
-
-    DeleteVoteFromAirtableJob.perform_later(id)
   end
 end

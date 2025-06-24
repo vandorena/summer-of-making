@@ -19,6 +19,7 @@
 #  internal_notes                       :text
 #  is_admin                             :boolean          default(FALSE), not null
 #  last_name                            :string
+#  synced_at                            :datetime
 #  timezone                             :string
 #  tutorial_video_seen                  :boolean          default(FALSE), not null
 #  ysws_verified                        :boolean          default(FALSE)
@@ -53,7 +54,6 @@ class User < ApplicationRecord
 
   after_create :create_tutorial_progress
   after_create { Faraday.post("https://7f972d8eaf28.ngrok.app/ding") rescue nil }
-  after_commit :sync_to_airtable, on: %i[create update]
 
   include PublicActivity::Model
   tracked only: [], owner: Proc.new { |controller, model| controller&.current_user }
