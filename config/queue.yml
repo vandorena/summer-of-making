@@ -14,7 +14,8 @@ default: &default
     #   processes: <%= ENV.fetch("JOB_CONCURRENCY", 1) %>
     #   polling_interval: 0.1
     #   # slow lane
-    - queues: "latency_10s,latency_5m,literally_whenever,default,*"
+    - queues: ["latency_10s","latency_5m","literally_whenever","default","*"]
+      name: <%= Rails.env %>
       threads: 8
       # processes: <%= ENV.fetch("JOB_CONCURRENCY", 1) %>
       polling_interval: 0.1
