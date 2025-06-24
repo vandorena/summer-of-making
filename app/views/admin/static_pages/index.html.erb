@@ -15,6 +15,9 @@
     <%= link_to admin_ship_certifications_path, class: 'abtn secondary' do %>
       Ship certs <span class="pill"><%= ShipCertification.pending.size %></span>
     <% end %>
+    <%= link_to admin_readme_certifications_path, class: 'abtn secondary' do %>
+      README certs <span class="pill"><%= ReadmeCertification.pending.size %></span>
+    <% end %>
   </div>
   <div style="margin: 2em 2em 0 2em;">
     <%= link_to "← escape hatch", root_path, class: 'aout' %>
