@@ -15,8 +15,8 @@ default: &default
     #   polling_interval: 0.1
     #   # slow lane
     - queues: "latency_10s,latency_5m,literally_whenever,default,*"
-      threads: 16
-      processes: <%= ENV.fetch("JOB_CONCURRENCY", 1) %>
+      threads: 8
+      # processes: <%= ENV.fetch("JOB_CONCURRENCY", 1) %>
       polling_interval: 0.1
 
 development:
