@@ -2,6 +2,19 @@ module Admin
   class ShipCertificationsController < ApplicationController
     def index
       @ship_certifications = ShipCertification.includes(:project).order(updated_at: :asc)
+
+      # Totals
+      @total_approved = ShipCertification.approved.count
+      @total_rejected = ShipCertification.rejected.count
+      @total_pending = ShipCertification.pending.count
+
+      # Leaderboard - reviewers by number of certifications reviewed
+      @leaderboard = User.joins("INNER JOIN ship_certifications ON users.id = ship_certifications.reviewer_id")
+                         .where.not(ship_certifications: { reviewer_id: nil })
+                         .group("users.id", "users.display_name", "users.email")
+                         .order("COUNT(ship_certifications.id) DESC")
+                         .limit(10)
+                         .pluck("users.display_name", "users.email", "COUNT(ship_certifications.id)")
     end
 
     def edit
