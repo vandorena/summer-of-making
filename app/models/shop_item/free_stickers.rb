@@ -37,4 +37,16 @@
 #  updated_at                 :datetime         not null
 #
 class ShopItem::FreeStickers < ShopItem
+  QUEUE_ID = "som-free-stickers"
+  def fulfill!(shop_order)
+    response = TheseusService.create_letter_v1(
+      QUEUE_ID,
+      {
+        recipient_email: shop_order.user.email,
+        address: shop_order.frozen_address,
+        idempotency_key: "som25_free_stickers_order_#{Rails.env}_#{shop_order.id}",
+      }
+    )
+    shop_order.mark_fulfilled!(response[:id])
+  end
 end
