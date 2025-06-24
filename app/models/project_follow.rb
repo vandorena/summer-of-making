@@ -28,26 +28,11 @@ class ProjectFollow < ApplicationRecord
   validates :user_id, uniqueness: { scope: :project_id, message: "is already following this project" }
   validate :cannot_follow_own_project
 
-  after_destroy :delete_from_airtable
-  after_commit :sync_to_airtable, on: [ :create ]
-
   private
 
   def cannot_follow_own_project
     return unless user_id == project.user_id
 
     errors.add(:user_id, "cannot follow your own project")
-  end
-
-  def sync_to_airtable
-    return unless Rails.env.production?
-
-    SyncProjectFollowToAirtableJob.perform_later(id)
-  end
-
-  def delete_from_airtable
-    return unless Rails.env.production?
-
-    DeleteProjectFollowFromAirtableJob.perform_later(id)
   end
 end
