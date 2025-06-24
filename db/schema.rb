@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_24_000001) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_24_195431) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -195,9 +195,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_24_000001) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "last_hackatime_time"
-    t.integer "seconds_coded"
     t.integer "likes_count", default: 0, null: false
     t.integer "comments_count", default: 0, null: false
+    t.integer "seconds_coded"
     t.index ["project_id"], name: "index_devlogs_on_project_id"
     t.index ["user_id"], name: "index_devlogs_on_user_id"
   end
@@ -209,6 +209,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_24_000001) do
     t.inet "ip"
     t.string "user_agent"
     t.string "ref"
+    t.datetime "synced_at"
   end
 
   create_table "hackatime_projects", force: :cascade do |t|
