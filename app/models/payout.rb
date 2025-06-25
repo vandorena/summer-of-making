@@ -25,7 +25,7 @@ class Payout < ApplicationRecord
   before_validation :set_user_id
 
   # x = ELO percentile (0-1)
-  def self.calculate_multiplier x
+  def self.calculate_multiplier(x)
     t = 0.5; a = 10.0 # Between the minimum and maximum ELO scores, a project with the ELO score at point T between these points (you know what t-values are) will get the multiplier A. So when T = 0.5 and A = 10, the average multiplier is 10.
     n = 1.0 # The minimum payout multiplier
     m = 30.0 # The maximum payout multiplier

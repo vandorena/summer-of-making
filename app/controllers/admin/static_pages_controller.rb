@@ -8,7 +8,7 @@ module Admin
     # Generate data points for Payout.calculate_multiplier from 0 to 1 in steps of 0.01
     @multiplier_data = (0..100).map do |i|
       x = i / 100.0
-      [x, Payout.calculate_multiplier(x)]
+      [ x, Payout.calculate_multiplier(x) ]
     end
   end
   end
