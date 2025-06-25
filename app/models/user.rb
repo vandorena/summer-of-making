@@ -164,20 +164,22 @@ class User < ApplicationRecord
 
   # This is a network call. Do you really need to use this?
   def fetch_raw_hackatime_stats(from: nil, to: nil)
-    if from.present?
-      start_date = Time.parse(from.to_s).freeze
-    else
-      start_date = Time.use_zone("America/New_York") { Time.parse("2025-06-16").beginning_of_day }.freeze
+    Rails.cache.fetch("User.fetch_raw_hackatime_stats/#{id}/#{from}-#{to}/1", expires_in: 5.seconds) do
+      if from.present?
+        start_date = Time.parse(from.to_s).freeze
+      else
+        start_date = Time.use_zone("America/New_York") { Time.parse("2025-06-16").beginning_of_day }.freeze
+      end
+
+      if to.present?
+        end_date = Time.parse(to.to_s).freeze
+      end
+
+      url = "https://hackatime.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects&start_date=#{start_date}"
+      url += "&end_date=#{end_date}" if end_date.present?
+
+      Faraday.get(url, nil, { "RACK_ATTACK_BYPASS" => Rails.application.credentials.hackatime.ratelimit_bypass_header })
     end
-
-    if to.present?
-      end_date = Time.parse(to.to_s).freeze
-    end
-
-    url = "https://hackatime.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects&start_date=#{start_date}"
-    url += "&end_date=#{end_date}" if end_date.present?
-
-    Faraday.get(url, nil, { "RACK_ATTACK_BYPASS" => Rails.application.credentials.hackatime.ratelimit_bypass_header })
   end
 
   def refresh_hackatime_data_now
