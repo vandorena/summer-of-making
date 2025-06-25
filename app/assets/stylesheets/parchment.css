@@ -8,7 +8,6 @@
   transform-style: preserve-3d;
   border: 2px solid rgba(89, 47, 49, 0.3);
   overflow: hidden;
-  padding: 10px;
   animation: parchment-float 6s ease-in-out infinite;
 }
 
@@ -89,20 +88,8 @@
   z-index: 1;
 }
 
-/* Prize seal/stamp */
-.parchment-prize-card .seal {
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
-  width: 32px;
-  height: 32px;
-  opacity: 0.3;
-  transition: opacity 0.3s ease;
-}
-
 @media (max-width: 768px) {
   .parchment-prize-card {
-    padding: 0.75rem;
     border-width: 1px;
     animation: none;
   }
@@ -134,38 +121,4 @@
   .parchment-prize-time {
     font-size: 0.65rem;
   }
-
-  .parchment-prize-card .seal,
-  .parchment-prize-card .absolute {
-    display: none;
-  }
-}
-
-/* Parchment FAQ Card Styles */
-.parchment-faq-card {
-  transform-style: preserve-3d;
-  transition: all 0.3s ease;
-}
-
-.parchment-faq-card h3 {
-  color: #4a2d24 !important;
-  font-weight: 600;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
-}
-
-.parchment-faq-card p {
-  color: #3a2f25 !important;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
-}
-
-.parchment-faq-card a {
-  color: #e06540;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  font-weight: 600;
-  transition: color 0.3s ease;
-}
-
-.parchment-faq-card a:hover {
-  color: #a8956b;
 }

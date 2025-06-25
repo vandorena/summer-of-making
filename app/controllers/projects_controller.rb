@@ -24,44 +24,49 @@ class ProjectsController < ApplicationController
 
       @show_create_project = true if @projects.empty?
     elsif params[:tab] == "gallery"
-      @projects = Project.includes(:user)
-                         .order(rating: :asc)
+      # Optimize gallery with pagination and DB-level ordering
+      projects_query = Project.includes(:user)
+                              .joins("LEFT JOIN devlogs ON devlogs.project_id = projects.id")
+                              .where(is_deleted: false)
+                              .group("projects.id")
+                              .order(Arel.sql("COUNT(devlogs.id) DESC, projects.created_at DESC"))
 
-      @projects = @projects.sort_by do |project|
-        weight = rand + (project.devlogs.count.positive? ? 1.5 : 0)
-        -weight
-      end
+      @pagy, @projects = pagy(projects_query, items: 12)
     elsif params[:tab] == "following"
       @followed_projects = current_user.followed_projects.includes(:user)
       @recent_devlogs = Devlog.joins(:project)
-                              .includes(:project, :user)
+                              .includes(:project, :user, :timer_sessions, :file_attachment, comments: :user)
                               .where(project_id: @followed_projects.pluck(:id))
                               .where(projects: { is_deleted: false })
                               .order(created_at: :desc)
 
-      @pagy, @recent_devlogs = pagy(@recent_devlogs, items: 5)
+      @pagy, @recent_devlogs = pagy(@recent_devlogs, items: 8)
     elsif params[:tab] == "stonked"
       @stonked_projects = current_user.staked_projects.includes(:user)
       @recent_devlogs = Devlog.joins(:project)
-                              .includes(:project, :user)
+                              .includes(:project, :user, :timer_sessions, :file_attachment, comments: :user)
                               .where(project_id: @stonked_projects.pluck(:id))
                               .where(projects: { is_deleted: false })
                               .order(created_at: :desc)
 
-      @pagy, @recent_devlogs = pagy(@recent_devlogs, items: 5)
+      @pagy, @recent_devlogs = pagy(@recent_devlogs, items: 8)
     else
+      # Optimize main devlogs query
       devlogs_query = Devlog.joins(:project)
-                            .includes(:project, :user, comments: :user)
+                            .includes(:project, :user, :timer_sessions, :file_attachment, comments: :user)
                             .where(projects: { is_deleted: false })
                             .order(created_at: :desc)
 
-      @pagy, @recent_devlogs = pagy(devlogs_query, items: 5)
+      @pagy, @recent_devlogs = pagy(devlogs_query, items: 8)
 
-      @projects = Project.includes(:user).order(rating: :asc)
-      @projects = @projects.sort_by do |project|
-        weight = rand + (project.devlogs.count.positive? ? 1.5 : 0)
-        -weight
-      end
+      # we can just load stuff for the gallery here too!!
+      projects_query = Project.includes(:user, :banner_attachment)
+                              .joins("LEFT JOIN devlogs ON devlogs.project_id = projects.id")
+                              .where(is_deleted: false)
+                              .group("projects.id")
+                              .order(Arel.sql("COUNT(devlogs.id) DESC, projects.created_at DESC"))
+
+      @gallery_pagy, @projects = pagy(projects_query, items: 12)
     end
   end
 
@@ -71,6 +76,7 @@ class ProjectsController < ApplicationController
     @timeline = (@devlogs + @ship_events).sort_by(&:created_at)
 
     @stonks = @project.stonks.includes(:user).order(amount: :desc)
+    @latest_ship_certification = @project.latest_ship_certification
 
     return unless current_user
 
@@ -527,7 +533,7 @@ class ProjectsController < ApplicationController
   end
 
   def set_project
-    @project = Project.includes(:user, devlogs: :user).find(params[:id])
+    @project = Project.includes(:user, devlogs: [ :user, :timer_sessions, :likes, :comments, :file_attachment ]).find(params[:id])
   rescue ActiveRecord::RecordNotFound
     deleted_project = Project.with_deleted.find_by(id: params[:id])
     if deleted_project&.is_deleted?

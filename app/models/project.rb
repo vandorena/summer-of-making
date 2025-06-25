@@ -8,6 +8,7 @@
 #  category               :string
 #  demo_link              :string
 #  description            :text
+#  devlogs_count          :integer          default(0), not null
 #  hackatime_project_keys :string           default([]), is an Array
 #  is_deleted             :boolean          default(FALSE)
 #  is_shipped             :boolean          default(FALSE)
@@ -41,6 +42,9 @@ class Project < ApplicationRecord
   has_one :stonk_tickler
   has_one_attached :banner
 
+  has_many :ship_certifications
+  has_many :readme_certifications
+
   has_many :won_votes, class_name: "Vote", foreign_key: "winner_id"
   has_many :lost_votes, class_name: "Vote", foreign_key: "loser_id"
 
@@ -55,6 +59,10 @@ class Project < ApplicationRecord
   def self.find_with_deleted(id)
     with_deleted.find(id)
   end
+
+  scope :pending_certification, -> {
+    joins(:ship_certifications).where(ship_certifications: { judgement: "pending" })
+  }
 
   validates :title, :description, :category, presence: true
 
@@ -84,6 +92,7 @@ class Project < ApplicationRecord
     toppings: "Toppings",
     waffles: "Waffles",
     waveband: "Waveband",
+    fixit: "FIX IT!",
     other: "Other"
   }
 
@@ -92,11 +101,10 @@ class Project < ApplicationRecord
   validate :user_must_have_hackatime, on: :create
 
   after_initialize :set_default_rating, if: :new_record?
+  after_update :maybe_create_readme_certification
   before_save :filter_hackatime_keys
 
   before_save :remove_duplicate_hackatime_keys
-
-  after_commit :sync_to_airtable, on: %i[create update]
 
   def total_votes
     won_votes.count + lost_votes.count
@@ -187,6 +195,37 @@ class Project < ApplicationRecord
     shipping_requirements.all? { |_key, req| req[:met] }
   end
 
+  def latest_ship_certification
+    @latest_ship_certification ||= ship_certifications.order(created_at: :desc).first
+  end
+
+  def certification_status
+    latest_ship_certification.judgement
+  end
+
+  def certification_status_text
+    case certification_status
+    when "pending"
+      "awaiting ship certification"
+    when "approved"
+      "ship certified"
+    when "rejected"
+      "no ship certification"
+    else
+      nil
+    end
+  end
+
+  def certification_visible_to?(user)
+    return false unless latest_ship_certification
+
+    return true if latest_ship_certification.approved?
+
+    return true if user && (user == self.user || user.is_admin?)
+
+    false
+  end
+
   private
 
   def set_default_rating
@@ -207,7 +246,11 @@ class Project < ApplicationRecord
     self.hackatime_project_keys = hackatime_project_keys.uniq if hackatime_project_keys
   end
 
-  def sync_to_airtable
-    SyncProjectToAirtableJob.perform_later(id)
+  def maybe_create_readme_certification
+    return unless saved_change_to_readme_link?
+    return if readme_link.blank?
+    return if readme_certifications.exists?
+
+    readme_certifications.create!
   end
 end

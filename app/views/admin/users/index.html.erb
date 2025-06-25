@@ -1,19 +1,48 @@
-<h1>users</h1>
-<ul>
-  <li>
-    #<%= current_user.id %>: <%= link_to "the girl(?) reading this", admin_user_path(current_user) %> &lt;3
-  </li>
-</ul>
-<ul>
-  <% @users.each do |user| %>
-    <li>
-      #<%= user.id %>: <%= link_to "#{user.display_name || "????"}", admin_user_path(user) %> (<%= user.email %>)
-    </li>
-  <% end %>
-</ul>
+<%= stylesheet_link_tag 'admin_dashboard' %>
+<h1 style="color: var(--color-primary); margin-bottom: 1.5em;">Users</h1>
 
-<%== pagy_nav(@pagy) %> <br>
-<%== pagy_info(@pagy) %> <br>
+<%= form_with url: admin_users_path, method: :get, local: true, class: "search-form" do |f| %>
+  <div class="grid">
+    <div>
+      <%= f.search_field :search, value: params[:search], placeholder: "Search users...", class: "form-control" %>
+    </div>
+    <div>
+      <%= f.submit "Search", class: "abtn primary small", style: "display: inline" %>
+      <% if params[:search].present? %>
+        <sup><%= link_to "(clear)", admin_users_path %></sup>
+      <% end %>
+    </div>
+  </div>
+<% end %>
 
-jsyk, avo is probably a better bet for managing users!
-<%= link_to "← back", admin_root_path %>
+<table class="atable">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><%= current_user.id %></td>
+      <td><%= link_to admin_user_path(current_user) do %><span style="color: var(--color-primary); font-weight: bold;">the girl(?) reading this &lt;3</span><% end %></td>
+      <td><%= current_user.email %></td>
+      <td><%= link_to "View", admin_user_path(current_user), class: 'abtn secondary', style: 'padding: 0.3em 0.8em; font-size: 0.95em;' %></td>
+    </tr>
+    <% @users.each do |user| %>
+      <tr>
+        <td><%= user.id %></td>
+        <td><%= link_to admin_user_path(user) do %><span style="color: var(--color-primary);"><%= user.display_name || "????" %></span><% end %></td>
+        <td><%= user.email %></td>
+        <td><%= link_to "View", admin_user_path(user), class: 'abtn secondary', style: 'padding: 0.3em 0.8em; font-size: 0.95em;' %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<div style="margin: 2em 0;">
+  <%== pagy_nav(@pagy) %> <br>
+  <%== pagy_info(@pagy) %>
+</div>
+<%= link_to "← back", admin_root_path, class: 'aout' %>

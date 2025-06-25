@@ -9,6 +9,7 @@
 #  display_name                         :string
 #  email                                :string
 #  first_name                           :string
+#  freeze_shop_activity                 :boolean          default(FALSE)
 #  has_black_market                     :boolean
 #  has_clicked_completed_tutorial_modal :boolean          default(FALSE), not null
 #  has_commented                        :boolean          default(FALSE)
@@ -18,6 +19,7 @@
 #  internal_notes                       :text
 #  is_admin                             :boolean          default(FALSE), not null
 #  last_name                            :string
+#  synced_at                            :datetime
 #  timezone                             :string
 #  tutorial_video_seen                  :boolean          default(FALSE), not null
 #  ysws_verified                        :boolean          default(FALSE)
@@ -41,6 +43,8 @@ class User < ApplicationRecord
   has_one :tutorial_progress, dependent: :destroy
   has_one :magic_link, dependent: :destroy
   has_many :shop_orders
+  has_many :shop_card_grants
+  has_many :hackatime_projects
 
   before_validation { self.email = email.to_s.downcase.strip }
 
@@ -50,10 +54,19 @@ class User < ApplicationRecord
 
   after_create :create_tutorial_progress
   after_create { Faraday.post("https://7f972d8eaf28.ngrok.app/ding") rescue nil }
-  after_commit :sync_to_airtable, on: %i[create update]
 
   include PublicActivity::Model
   tracked only: [], owner: Proc.new { |controller, model| controller&.current_user }
+
+  scope :search, ->(query) {
+    return all if query.blank?
+
+    query = "%#{query}%"
+    res = where(
+      "first_name ILIKE ? OR last_name ILIKE ? OR email ILIKE ? OR slack_id ILIKE ? OR display_name ILIKE ? OR identity_vault_id ILIKE ?",
+      query, query, query, query, query, query
+    )
+  }
 
   def self.exchange_slack_token(code, redirect_uri)
     response = Faraday.post("https://slack.com/api/oauth.v2.access",
@@ -91,8 +104,6 @@ class User < ApplicationRecord
   end
 
   def self.create_from_slack(slack_id)
-    # eligible_record = check_eligibility(slack_id)
-
     user_info = fetch_slack_user_info(slack_id)
 
     Rails.logger.tagged("UserCreation") do
@@ -134,7 +145,7 @@ class User < ApplicationRecord
   end
 
   def hackatime_projects
-    hackatime_stat&.projects
+    hackatime_stat&.projects || []
   end
 
   def format_seconds(seconds)
@@ -152,25 +163,55 @@ class User < ApplicationRecord
     RefreshHackatimeStatsJob.perform_later(id, from: from, to: to)
   end
 
-  def refresh_hackatime_data_now
-    start_date = Time.use_zone("America/New_York") do
-      Time.parse("2025-06-16").beginning_of_day
+  # This is a network call. Do you really need to use this?
+  def fetch_raw_hackatime_stats(from: nil, to: nil)
+    if from.present?
+      start_date = Time.parse(from.to_s).freeze
+    else
+      start_date = Time.use_zone("America/New_York") { Time.parse("2025-06-16").beginning_of_day }.freeze
     end
-    response = Faraday.get("https://hackatime.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects&start_date=#{start_date}")
+
+    if to.present?
+      end_date = Time.parse(to.to_s).freeze
+    end
+
+    url = "https://hackatime.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects&start_date=#{start_date}"
+    url += "&end_date=#{end_date}" if end_date.present?
+
+    Faraday.get(url)
+  end
+
+  def refresh_hackatime_data_now
+    response = fetch_raw_hackatime_stats
     return unless response.success?
 
     result = JSON.parse(response.body)
     projects = result.dig("data", "projects")
+    has_hackatime_account = result.dig("data", "status") == "ok"
 
-    if !has_hackatime_account?
-      update!(has_hackatime_account: result.dig("data", "status") == "ok")
+    if projects.empty?
+      update!(has_hackatime_account:)
+      return
     end
 
-    return if projects.empty?
+    update!(has_hackatime_account:, has_hackatime: true)
 
-    update!(has_hackatime: true) unless has_hackatime?
+    Rails.logger.tagged("User.refresh_hackatime_data_now") do
+      Rails.logger.debug("User #{id} (#{slack_id}) total seconds: #{result.dig("data", "total_seconds")}")
+    end
 
-    Rails.logger.info("Hackatime projects:= #{result.dig("data", "total_seconds")}")
+    rows = projects
+      .map { |p| { user_id: id, name: p["name"], seconds: p["total_seconds"] } }
+      .reject { |p| [ "<<LAST_PROJECT>>", "Other" ].include?(p[:name]) }
+      .group_by { |r| r[:name] }
+      .map { |name, group| group.reduce { |acc, h| acc.merge(seconds: acc[:seconds] + h[:seconds]) } }
+
+    HackatimeProject.upsert_all(
+      rows,
+      unique_by: %i[user_id name],
+      update_only: %i[seconds],
+      record_timestamps: true
+    )
 
     stats = hackatime_stat || build_hackatime_stat
     stats.update(data: result, last_updated_at: Time.current)
@@ -178,8 +219,8 @@ class User < ApplicationRecord
 
   def project_time_from_hackatime(project_key)
     data = hackatime_stat&.data
-    project_stats = data["projects"]&.find { |p| p["key"] == project_key }
-    project_stats&.dig("total") || 0
+    project_stats = data&.dig("data", "projects")&.find { |p| p["name"] == project_key }
+    project_stats&.dig("total_seconds") || 0
   end
 
   def has_hackatime?
@@ -214,7 +255,8 @@ class User < ApplicationRecord
                                            first_name: first_name,
                                            last_name: last_name
                                          },
-                                         context: "stickers"
+                                         context: "stickers",
+                                         invalidate_session: true
                                        })
   end
 
@@ -300,10 +342,6 @@ class User < ApplicationRecord
   end
 
   private
-
-  def sync_to_airtable
-    SyncUserToAirtableJob.perform_later(id)
-  end
 
   def create_tutorial_progress
     TutorialProgress.create!(user: self)

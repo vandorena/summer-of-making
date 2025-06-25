@@ -236,7 +236,9 @@ Rails.application.routes.draw do
   end
 
   get "devlogs", to: "devlogs#index"
-  resources :votes, only: [ :new, :create ]
+  resources :votes, only: [ :new, :create ] do
+    get :locked, on: :collection
+  end
 
   scope :shop do
     get "/", to: "shop_items#index", as: :shop
@@ -293,6 +295,8 @@ Rails.application.routes.draw do
   post "users/refresh_hackatime", to: "users#refresh_hackatime"
   post "users/check_hackatime_connection", to: "users#check_hackatime_connection"
 
+  resources :ship_event_feedbacks
+
   namespace :admin, constraint: AdminConstraint do
     mount MissionControl::Jobs::Engine, at: "jobs"
     mount AhoyCaptain::Engine, at: "ahoy_captain"
@@ -300,18 +304,23 @@ Rails.application.routes.draw do
     mount Flipper::UI.app(Flipper), at: "flipper", as: :flipper
     # mount_avo
     get "/", to: "static_pages#index", as: :root
+    resources :ship_certifications, only: [ :index, :edit, :update ]
+    resources :readme_certifications, only: [ :index, :edit, :update ]
     resources :users, only: [ :index, :show ] do
       member do
         post :internal_notes
         post :create_payout
         post :nuke_idv_data
+        post :cancel_card_grants
+        post :freeze
+        post :defrost
       end
     end
     resources :shop_items
     resources :shop_orders do
       collection do
         get :pending
-        get :to_be_fulfilled
+        get :awaiting_fulfillment
       end
       member do
         post :internal_notes
@@ -322,5 +331,6 @@ Rails.application.routes.draw do
         post :mark_fulfilled
       end
     end
+    resources :shop_card_grants, only: [ :index, :show ]
   end
 end

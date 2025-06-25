@@ -10,15 +10,15 @@
 #     schedule: at 5am every day
 
 production:
-  hourly_hackatime_refresh:
-    class: HourlyHackatimeRefreshJob
-    queue: default
-    schedule: every hour
-    description: "Refresh Hackatime stats for all users with Hackatime enabled"
+  # hourly_hackatime_refresh:
+  #   class: HourlyHackatimeRefreshJob
+  #   queue: default
+  #   schedule: every hour
+  #   description: "Refresh Hackatime stats for all users with Hackatime enabled"
 
-  generate_stonk_reports:
-    class: GenerateStonkReportJob
-    schedule: every day
+  # generate_stonk_reports:
+  #   class: GenerateStonkReportJob
+  #   schedule: every day
 
   sync_slack_emotes:
     class: SyncSlackEmotesJob
@@ -31,8 +31,25 @@ production:
     schedule: every day
     description: "Clean up unattached ActiveStorage blobs older than 7 days"
 
-  pull_airtable_high_seas_book_story_submissions:
-    class: PullHighSeasStoriesFromAirtableJob
-    queue: default
-    schedule: every day
-    description: "Pull new High Seas Book story submissions from Airtable"
+  recalculate_devlog_times:
+    class: RecalculateDevlogTimesJob
+    schedule: every minute
+    concurrency: 1
+    description: "Recalculate devlogs' seconds_coded columns"
+
+  sync_user_idv_verification_statuses_to_airtable:
+    class: SyncUsersIdvVerificationStatusInAirtableJob
+    schedule: every hour
+    description: "Update all users' verification_status values in the Summer of Making 2025 Airtable `_users` table."
+
+  sync_user_to_airtable:
+    class: SyncUserToAirtableJob
+    schedule: every minute
+    concurrency: 1
+    description: "Sync user data to Airtable every minute with single execution limit"
+
+  sync_email_signup_to_airtable:
+    class: SyncEmailSignupToAirtableJob
+    schedule: every minute
+    concurrency: 1
+    description: "Sync email signups to Airtable every minute with single execution limit"

@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class UpdateSlackAvatarJob < ApplicationJob
-  queue_as :default
+  queue_as :literally_whenever
 
   def perform
-    User.find_each do |user|
+    User.find_each(batch_size: 5000) do |user|
       update_avatar_if_needed(user)
     end
   end

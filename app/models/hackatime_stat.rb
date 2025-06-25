@@ -51,7 +51,7 @@ class HackatimeStat < ApplicationRecord
   end
 
   def total_seconds_across_all_projects
-    projects.sum {|p| p[:total_seconds]}
+    projects.sum { |p| p[:total_seconds] }
   end
 
   def today_seconds_across_all_projects

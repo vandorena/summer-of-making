@@ -1,0 +1,69 @@
+<%= stylesheet_link_tag 'admin_dashboard' %>
+<body class="adash" style="background: var(--color-background); color: var(--color-text); min-height: 100vh;">
+<h1>Ship Certifications</h1>
+
+<div style="display: flex; gap: 2rem; margin-bottom: 2rem;">
+  <div style="background: var(--color-card); padding: 1rem; border-radius: 8px; flex: 1;">
+    <h3>Totals</h3>
+    <p><strong>Approved:</strong> <span class="pill pill-green"><%= @total_approved %></span></p>
+    <p><strong>Rejected:</strong> <span class="pill pill-blue"><%= @total_rejected %></span></p>
+    <p><strong>Pending:</strong> <span class="pill pill-yellow"><%= @total_pending %></span></p>
+  </div>
+
+  <div style="background: var(--color-card); padding: 1rem; border-radius: 8px; flex: 2;">
+    <h3>Reviewer Leaderboard</h3>
+    <% if @leaderboard.any? %>
+      <table style="width: 100%; font-size: 0.9rem;">
+        <thead>
+          <tr>
+            <th style="text-align: left;">Reviewer</th>
+            <th style="text-align: right;">Reviews</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @leaderboard.each do |name, email, count| %>
+            <tr>
+              <td><%= name || email %></td>
+              <td style="text-align: right;"><%= count %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p>No reviews yet</p>
+    <% end %>
+  </div>
+</div>
+<table class="atable">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Project</th>
+      <th>Judgement</th>
+      <th>Created At</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @ship_certifications.each do |ship_certification| %>
+      <tr>
+        <td><%= ship_certification.id %></td>
+        <td>
+          <%= link_to ship_certification.project.title, edit_admin_ship_certification_path(ship_certification) %>
+          <span><%= ship_certification.project.category %></span>
+        </td>
+        <td>
+          <% case ship_certification.judgement %>
+          <% when 'approved' %>
+            <span class="pill pill-green">approved</span>
+          <% when 'rejected' %>
+            <span class="pill pill-blue">rejected</span>
+          <% else %>
+            <span class="pill pill-yellow">pending</span>
+          <% end %>
+        </td>
+        <td><%= time_ago_in_words(ship_certification.created_at) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+</body>

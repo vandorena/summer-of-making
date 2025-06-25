@@ -1,8 +1,7 @@
-<b>Display name:</b> <%= user.display_name %> <br>
-<b>Name: </b> <%= link_to admin_user_path(user) do %>
-  <%= user.first_name %> <%= user.last_name %>
-<% end %> <br>
+<b>Display name:</b> <%= link_to user.display_name, admin_user_path(user) %> <br>
+<b>Name: </b> <%= user.first_name %> <%= user.last_name %><br>
 <b>Verified: </b> <%= !!user.ysws_verified %> <br>
 <b>Balance: </b> <%= render_shells user.balance %><br>
+<b>Shop frozen: </b> <%= user.freeze_shop_activity ? "yes" : "no" %><br>
 <%= render "admin/shared/internal_notes", record: user %>
 <%# link_to "visit on Avo?", "/avo/resources/users/#{user.id}" %>

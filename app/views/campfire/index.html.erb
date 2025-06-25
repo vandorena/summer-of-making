@@ -1,14 +1,18 @@
 <div class="md:px-8">
-    <%= render "shared/page_title",
-        title: "Campfire",
-        subtitle: "Huddle around! Get your news here." %>
+  <div class="flex justify-between items-start mb-6" id="fxb">
+    <div>
+      <%= render "shared/page_title",
+          title: "Campfire",
+          subtitle: "Huddle around! Get your news here." %>
+    </div>
+  </div>
 
   <!-- Hackatime Dashboard Section -->
   <% if @account_status[:hackatime_setup] %>
     <div class="mb-8">
       <h2 class="text-xl text-gray-900 mb-4">Hackatime Dashboard</h2>
       <%= render "shared/card", data: { controller: "hackatime-dashboard" } do %>
-        <div class="mb-6">
+        <div class="">
           <div class="flex items-center gap-3 mb-6">
             <div class="flex-shrink-0">
               <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
@@ -50,9 +54,13 @@
               <div class="text-sm font-medium text-gray-600">Total Coding Time</div>
             </div>
           </div>
+             <p class="text-sm sm:text-sm md:text-md lg:text-md xl:text-lg">
+              You will need to post a devlog <span class="text-[#E65A42]">after 10 hours of work</span> before you can log more time!
+              <%# TODO: Show currently time before next devlog needed, or show amount of time being cut off %>
+             </p>
 
          <% unless @hackatime_dashboard[:has_time_recorded] %>
-             <div class="bg-gray-50 rounded-xl p-4" data-hackatime-dashboard-target="noDataAlert">
+            <div class="bg-gray-50 rounded-xl p-4" data-hackatime-dashboard-target="noDataAlert">
               <div class="flex items-start gap-3">
                 <div class="flex-shrink-0">
                   <div class="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center">

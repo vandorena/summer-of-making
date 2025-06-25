@@ -1,0 +1,36 @@
+<%= stylesheet_link_tag 'admin_dashboard' %>
+<body class="adash" style="background: var(--color-background); color: var(--color-text); min-height: 100vh;">
+<h1>README Certifications</h1>
+<table class="atable">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Project</th>
+      <th>Judgement</th>
+      <th>Created At</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @readme_certifications.each do |readme_certification| %>
+      <tr>
+        <td><%= readme_certification.id %></td>
+        <td>
+          <%= link_to readme_certification.project.title, edit_admin_readme_certification_path(readme_certification) %>
+          <span><%= readme_certification.project.category %></span>
+        </td>
+        <td>
+          <% case readme_certification.judgement %>
+          <% when 'approved' %>
+            <span class="pill pill-green">approved</span>
+          <% when 'rejected' %>
+            <span class="pill pill-blue">rejected</span>
+          <% else %>
+            <span class="pill pill-yellow">pending</span>
+          <% end %>
+        </td>
+        <td><%= time_ago_in_words(readme_certification.created_at) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+</body>

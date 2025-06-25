@@ -6,7 +6,11 @@
 #
 #  id                  :bigint           not null, primary key
 #  attachment          :string
+#  comments_count      :integer          default(0), not null
+#  hackatime_pulled_at :datetime
 #  last_hackatime_time :integer
+#  likes_count         :integer          default(0), not null
+#  seconds_coded       :integer
 #  text                :text
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
@@ -25,7 +29,7 @@
 #
 class Devlog < ApplicationRecord
   belongs_to :user
-  belongs_to :project
+  belongs_to :project, counter_cache: { active: false }
   has_many :comments, -> { order(created_at: :desc) }, dependent: :destroy
   has_many :timer_sessions, dependent: :nullify
   has_many :likes, as: :likeable, dependent: :destroy
@@ -34,7 +38,7 @@ class Devlog < ApplicationRecord
   attr_accessor :timer_session_id
 
   validates :text, presence: true
-  validate :file_must_be_attached
+  validate :file_must_be_attached, on: %i[ create ]
 
   # Validates if only MD changes are made
   validate :only_formatting_changes, on: :update
@@ -44,8 +48,6 @@ class Devlog < ApplicationRecord
   validate :validate_timer_session_required, on: :create
   validate :validate_hackatime_time_since_last_update, on: :create
 
-  after_destroy :delete_from_airtable
-  after_commit :sync_to_airtable, on: %i[create update]
   after_commit :associate_timer_session, on: :create
   after_commit :notify_followers_and_stakers, on: :create
 
@@ -60,6 +62,28 @@ class Devlog < ApplicationRecord
   end
 
   delegate :count, to: :likes, prefix: true
+
+  def recalculate_seconds_coded
+    prev_time = project
+                  .devlogs
+                  .where("created_at < ?", created_at)
+                  .order(created_at: :desc)
+                  .limit(1)
+                  .pick(:created_at) || project.created_at
+
+    bounded_prev_time = [ prev_time, created_at - 24.hours ].max
+
+    res = user.fetch_raw_hackatime_stats(from: bounded_prev_time, to: created_at)
+    data = JSON.parse(res.body)
+    projects = data.dig("data", "projects")
+
+    seconds_coded = projects
+      .filter { |p| project.hackatime_project_keys.include?(p["name"]) }
+      .reduce(0) { |acc, h| acc += h["total_seconds"] }
+
+    Rails.logger.info "\tDevlog #{id} seconds coded: #{seconds_coded}"
+    update!(seconds_coded:, hackatime_pulled_at: Time.now)
+  end
 
   private
 
@@ -128,14 +152,6 @@ class Devlog < ApplicationRecord
     return "" if text.nil?
 
     text.gsub(/[\s\n\r\t\*\_\#\~\`\>\<\-\+\.\,\;\:\!\?\(\)\[\]\{\}]/i, "").downcase
-  end
-
-  def sync_to_airtable
-    SyncUpdateToAirtableJob.perform_later(id)
-  end
-
-  def delete_from_airtable
-    DeleteUpdateFromAirtableJob.perform_later(id)
   end
 
   def notify_followers_and_stakers

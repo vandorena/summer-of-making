@@ -9,6 +9,7 @@
 #  display_name                         :string
 #  email                                :string
 #  first_name                           :string
+#  freeze_shop_activity                 :boolean          default(FALSE)
 #  has_black_market                     :boolean
 #  has_clicked_completed_tutorial_modal :boolean          default(FALSE), not null
 #  has_commented                        :boolean          default(FALSE)
@@ -18,6 +19,7 @@
 #  internal_notes                       :text
 #  is_admin                             :boolean          default(FALSE), not null
 #  last_name                            :string
+#  synced_at                            :datetime
 #  timezone                             :string
 #  tutorial_video_seen                  :boolean          default(FALSE), not null
 #  ysws_verified                        :boolean          default(FALSE)

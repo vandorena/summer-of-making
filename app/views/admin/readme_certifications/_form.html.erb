@@ -1,0 +1,42 @@
+<%= form_with model: [:admin, readme_certification], local: true do |f| %>
+  <% if readme_certification.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(readme_certification.errors.count, "error") %> prohibited this README certification from being saved:</h2>
+      <ul>
+        <% readme_certification.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <b>Project:</b> <%= link_to readme_certification.project.title, readme_certification.project %><br>
+    <b>User:</b> <%= readme_certification.project.user.email %><br>
+  </div>
+
+  <div class="field">
+    <%= f.label :judgement %>
+    <%= f.select :judgement, options_for_select([
+      ['Pending', 'pending'],
+      ['Approved', 'approved'],
+      ['Rejected', 'rejected']
+    ], readme_certification.judgement), {}, { class: 'form-control' } %>
+  </div>
+
+  <div class="field">
+    <%= f.label :notes %>
+    <%= f.text_area :notes, rows: 4, class: 'form-control' %>
+  </div>
+
+  <div class="field">
+    <%= f.label :reviewer_id, "Reviewer" %>
+    <%= f.collection_select :reviewer_id, User.where(is_admin: true), :id, :email,
+                           { prompt: 'Select reviewer', selected: readme_certification.reviewer_id || current_user.id },
+                           { class: 'form-control' } %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit "Update README Certification", class: 'btn btn-primary' %>
+  </div>
+<% end %>

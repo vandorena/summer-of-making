@@ -16,16 +16,19 @@
 #  rejection_reason                   :string
 #  created_at                         :datetime         not null
 #  updated_at                         :datetime         not null
+#  shop_card_grant_id                 :bigint
 #  shop_item_id                       :bigint           not null
 #  user_id                            :bigint           not null
 #
 # Indexes
 #
-#  index_shop_orders_on_shop_item_id  (shop_item_id)
-#  index_shop_orders_on_user_id       (user_id)
+#  index_shop_orders_on_shop_card_grant_id  (shop_card_grant_id)
+#  index_shop_orders_on_shop_item_id        (shop_item_id)
+#  index_shop_orders_on_user_id             (user_id)
 #
 # Foreign Keys
 #
+#  fk_rails_...  (shop_card_grant_id => shop_card_grants.id)
 #  fk_rails_...  (shop_item_id => shop_items.id)
 #  fk_rails_...  (user_id => users.id)
 #
@@ -38,18 +41,22 @@ class ShopOrder < ApplicationRecord
   belongs_to :shop_item
 
   has_many :payouts, as: :payable, dependent: :destroy
+  belongs_to :shop_card_grant, optional: true
 
+  validates :quantity, presence: true, numericality: { greater_than: 0 }
   validate :check_one_per_person_ever_limit
   validate :check_max_quantity_limit
   validate :check_black_market_access
   validate :check_user_balance
+  validate :check_regional_availability
   after_create :create_negative_payout
-  after_initialize :set_initial_state_for_free_stickers
+  before_create :set_initial_state_for_free_stickers
 
   scope :worth_counting, -> { where.not(aasm_state: %w[rejected refunded]) }
+  scope :manually_fulfilled, -> { joins(:shop_item).where(shop_items: { type: ShopItem::MANUAL_FULFILLMENT_TYPES }) }
 
   def full_name
-    "#{user.first_name} #{user.last_name}'s order for #{quantity} #{shop_item.name.pluralize(quantity)}"
+    "#{user.display_name}'s order for #{quantity} #{shop_item.name.pluralize(quantity)}"
   end
 
   aasm timestamps: true do # SAGA PATTERN TIME BABEY
@@ -102,6 +109,14 @@ class ShopOrder < ApplicationRecord
         self.awaiting_periodical_fulfillment_at = Time.current
       end
     end
+  end
+
+  def approve!
+    shop_item.fulfill!(self)
+  end
+
+  def total_cost
+    frozen_item_price * quantity
   end
 
   private
@@ -159,10 +174,24 @@ class ShopOrder < ApplicationRecord
     end
   end
 
+  def check_regional_availability
+    return unless Flipper.enabled?(:shop_regionalization)
+    return unless shop_item.present? && frozen_address.present?
+
+    address_country = frozen_address["country"]
+    return unless address_country.present?
+
+    address_region = Shop::Regionalizable.country_to_region(address_country)
+
+    # Allow items enabled for the address region OR for XX (Rest of World)
+    unless shop_item.enabled_in_region?(address_region) || shop_item.enabled_in_region?("XX")
+      errors.add(:base, "This item is not available for shipping to #{address_country}.")
+    end
+  end
+
   def create_negative_payout
     return unless frozen_item_price.present? && frozen_item_price > 0 && quantity.present?
 
-    total_cost = frozen_item_price * quantity
 
     user.payouts.create!(
       amount: -total_cost,

@@ -10,7 +10,7 @@ namespace :sync do
     failed_count = 0
 
     User.find_each do |user|
-      SyncUserToAirtableJob.perform_now(user.id)
+      SyncUserToAirtableJob.perform_now
       synced_count += 1
       print "."
     rescue StandardError => e

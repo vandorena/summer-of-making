@@ -15,7 +15,7 @@ module Admin
     private
 
     def authenticate_admin!
-      redirect_to "https://www.youtube.com/watch?v=dQw4w9WgXcQ" unless current_user&.is_admin?
+      redirect_to("https://www.youtube.com/watch?v=dQw4w9WgXcQ", allow_other_host: true) unless current_user&.is_admin?
     end
   end
 end

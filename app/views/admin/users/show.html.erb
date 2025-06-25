@@ -1,12 +1,19 @@
 <h1>User #<%= @user.id %></h1>
 <%= render @user %> <br>
-<b>IDV ID:</b> <%= @user.identity_vault_id || "None" %> <br>
+<b>IDV ID:</b> <%= @user.identity_vault_id || "None" %> <%= link_to "visit", "#{IdentityVaultService.host}backend/identities/#{@user.identity_vault_id}" if @user.identity_vault_id.present? %><br>
 <b>Slack ID:</b> <%= (link_to @user.slack_id, "https://hackclub.slack.com/team/#{@user.slack_id}") || "None?!" %> <br>
 <b>Email:</b> <%= (link_to @user.email, "mailto:#{@user.email}") || "None" %>
 <div style="border: 1px dashed red; width: fit-content; padding: 1rem">
   <b style="color: red;">DON'T DO THIS:</b>
   <%= button_to "nuke IDV data", nuke_idv_data_admin_user_path(@user) %>
+  <%= button_to "cancel all card grants (only do this if you're banning somebody)", cancel_card_grants_admin_user_path(@user) %>
 </div>
+<br><br>
+<% if @user.freeze_shop_activity? %>
+  <%= button_to "defrost (allow shop activity again)", defrost_admin_user_path(@user) %>
+<% else %>
+  <%= button_to "freeze (don't allow shop activity)", freeze_admin_user_path(@user) %>
+<% end %>
 <br><br>
 <b>Payouts:</b>
 <ul>

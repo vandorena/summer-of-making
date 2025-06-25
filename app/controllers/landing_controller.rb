@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "open-uri"
-CHANNEL_LIST = [ "C015M4L9AHW", "C091CEEHJ9K", "C090JKDJYN8", "C090B3T9R9R" ]
+CHANNEL_LIST = %w[C015M4L9AHW C091CEEHJ9K C090JKDJYN8 C090B3T9R9R C092833JXKK]
 
 class LandingController < ApplicationController
   skip_before_action :authenticate_user!, only: %i[index sign_up]
@@ -12,11 +12,12 @@ class LandingController < ApplicationController
     # end.sample(5)
 
     if user_signed_in?
-      if current_user.tutorial_progress.completed_at.nil?
-        redirect_to campfire_path
-      else
-        redirect_to explore_path
-      end
+      redirect_to campfire_path
+      # if current_user.tutorial_progress.completed_at.nil?
+      #   redirect_to campfire_path
+      # else
+      #   redirect_to explore_path
+      # end
     else
       ahoy.track "tutorial_step_landing_first_visit"
 
@@ -68,7 +69,12 @@ class LandingController < ApplicationController
       end
     end
 
-    EmailSignup.create!(email:, ref:, ip: request.remote_ip, user_agent: request.headers["User-Agent"])
+    # Creating multiple email signups per address could be used for referral fraud
+    EmailSignup.find_or_create_by(email:) do |signup|
+      signup.ref = ref
+      signup.ip = request.remote_ip
+      signup.user_agent = request.headers["User-Agent"]
+    end
 
     ahoy.track "tutorial_step_email_signup", email: email
 

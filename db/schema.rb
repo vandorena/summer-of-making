@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_16_220300) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_24_205930) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -195,6 +195,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_16_220300) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "last_hackatime_time"
+    t.integer "likes_count", default: 0, null: false
+    t.integer "comments_count", default: 0, null: false
+    t.integer "seconds_coded"
+    t.datetime "hackatime_pulled_at"
     t.index ["project_id"], name: "index_devlogs_on_project_id"
     t.index ["user_id"], name: "index_devlogs_on_user_id"
   end
@@ -206,6 +210,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_16_220300) do
     t.inet "ip"
     t.string "user_agent"
     t.string "ref"
+    t.datetime "synced_at"
+    t.index ["email"], name: "index_email_signups_on_email", unique: true
+  end
+
+  create_table "hackatime_projects", force: :cascade do |t|
+    t.string "name"
+    t.integer "seconds"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "name"], name: "index_hackatime_projects_on_user_id_and_name", unique: true
+    t.index ["user_id"], name: "index_hackatime_projects_on_user_id"
   end
 
   create_table "hackatime_stats", force: :cascade do |t|
@@ -275,7 +291,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_16_220300) do
     t.boolean "used_ai"
     t.boolean "ysws_submission", default: false, null: false
     t.string "ysws_type"
+    t.integer "devlogs_count", default: 0, null: false
     t.index ["user_id"], name: "index_projects_on_user_id"
+  end
+
+  create_table "readme_certifications", force: :cascade do |t|
+    t.bigint "reviewer_id"
+    t.bigint "project_id", null: false
+    t.integer "judgement", default: 0, null: false
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id", "judgement"], name: "index_readme_certifications_on_project_id_and_judgement"
+    t.index ["project_id"], name: "index_readme_certifications_on_project_id"
+    t.index ["reviewer_id"], name: "index_readme_certifications_on_reviewer_id"
   end
 
   create_table "readme_checks", force: :cascade do |t|
@@ -290,11 +319,42 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_16_220300) do
     t.index ["project_id"], name: "index_readme_checks_on_project_id"
   end
 
+  create_table "ship_certifications", force: :cascade do |t|
+    t.bigint "reviewer_id"
+    t.bigint "project_id", null: false
+    t.integer "judgement", default: 0, null: false
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id", "judgement"], name: "index_ship_certifications_on_project_id_and_judgement"
+    t.index ["project_id"], name: "index_ship_certifications_on_project_id"
+    t.index ["reviewer_id"], name: "index_ship_certifications_on_reviewer_id"
+  end
+
+  create_table "ship_event_feedbacks", force: :cascade do |t|
+    t.bigint "ship_event_id", null: false
+    t.string "comment"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ship_event_id"], name: "index_ship_event_feedbacks_on_ship_event_id"
+  end
+
   create_table "ship_events", force: :cascade do |t|
     t.bigint "project_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["project_id"], name: "index_ship_events_on_project_id"
+  end
+
+  create_table "shop_card_grants", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "shop_item_id", null: false
+    t.string "hcb_grant_hashid"
+    t.integer "expected_amount_cents"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["shop_item_id"], name: "index_shop_card_grants_on_shop_item_id"
+    t.index ["user_id"], name: "index_shop_card_grants_on_user_id"
   end
 
   create_table "shop_items", force: :cascade do |t|
@@ -317,6 +377,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_16_220300) do
     t.boolean "show_in_carousel"
     t.boolean "limited", default: false
     t.integer "stock"
+    t.text "under_the_fold_description"
+    t.boolean "enabled_us", default: false
+    t.boolean "enabled_eu", default: false
+    t.boolean "enabled_in", default: false
+    t.boolean "enabled_ca", default: false
+    t.boolean "enabled_au", default: false
+    t.boolean "enabled_xx", default: false
+    t.decimal "price_offset_us", precision: 6, scale: 2, default: "0.0"
+    t.decimal "price_offset_eu", precision: 6, scale: 2, default: "0.0"
+    t.decimal "price_offset_in", precision: 6, scale: 2, default: "0.0"
+    t.decimal "price_offset_ca", precision: 6, scale: 2, default: "0.0"
+    t.decimal "price_offset_au", precision: 6, scale: 2, default: "0.0"
+    t.decimal "price_offset_xx", precision: 6, scale: 2, default: "0.0"
     t.check_constraint "hacker_score >= 0 AND hacker_score <= 100", name: "hacker_score_percentage_check"
   end
 
@@ -336,6 +409,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_16_220300) do
     t.datetime "rejected_at"
     t.datetime "on_hold_at"
     t.text "internal_notes"
+    t.bigint "shop_card_grant_id"
+    t.index ["shop_card_grant_id"], name: "index_shop_orders_on_shop_card_grant_id"
     t.index ["shop_item_id"], name: "index_shop_orders_on_shop_item_id"
     t.index ["user_id"], name: "index_shop_orders_on_user_id"
   end
@@ -551,6 +626,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_16_220300) do
     t.boolean "has_hackatime_account"
     t.boolean "has_clicked_completed_tutorial_modal", default: false, null: false
     t.boolean "tutorial_video_seen", default: false, null: false
+    t.boolean "freeze_shop_activity", default: false
+    t.datetime "synced_at", precision: nil
   end
 
   create_table "votes", force: :cascade do |t|
@@ -580,14 +657,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_16_220300) do
   add_foreign_key "comments", "users"
   add_foreign_key "devlogs", "projects"
   add_foreign_key "devlogs", "users"
+  add_foreign_key "hackatime_projects", "users"
   add_foreign_key "hackatime_stats", "users"
   add_foreign_key "likes", "users"
   add_foreign_key "magic_links", "users"
   add_foreign_key "project_follows", "projects"
   add_foreign_key "project_follows", "users"
   add_foreign_key "projects", "users"
+  add_foreign_key "readme_certifications", "projects"
+  add_foreign_key "readme_certifications", "users", column: "reviewer_id"
   add_foreign_key "readme_checks", "projects"
+  add_foreign_key "ship_certifications", "projects"
+  add_foreign_key "ship_certifications", "users", column: "reviewer_id"
+  add_foreign_key "ship_event_feedbacks", "ship_events"
   add_foreign_key "ship_events", "projects"
+  add_foreign_key "shop_card_grants", "shop_items"
+  add_foreign_key "shop_card_grants", "users"
+  add_foreign_key "shop_orders", "shop_card_grants"
   add_foreign_key "shop_orders", "shop_items"
   add_foreign_key "shop_orders", "users"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
