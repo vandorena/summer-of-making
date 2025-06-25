@@ -8,11 +8,11 @@ class CreateVoteChanges < ActiveRecord::Migration[8.0]
       t.integer :elo_delta, null: false
       t.string :result, null: false
       t.integer :project_vote_count, null: false
-      
+
       t.timestamps
     end
-    
-    add_index :vote_changes, [:project_id, :created_at]
+
+    add_index :vote_changes, [ :project_id, :created_at ]
     add_index :vote_changes, :result
   end
 end
