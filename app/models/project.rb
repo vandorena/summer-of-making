@@ -67,7 +67,7 @@ class Project < ApplicationRecord
   validates :title, :description, :category, presence: true
 
   validates :readme_link, :demo_link, :repo_link,
-            format: { with: URI::DEFAULT_PARSER.make_regexp, message: "must be a valid URL" },
+            format: { with: /\A(?:https?:\/\/).*\z/i, message: "must be a valid HTTP or HTTPS URL" },
             allow_blank: true
 
   validates :category,
