@@ -296,6 +296,10 @@ class User < ApplicationRecord
     )
   end
 
+  def sync_slack_id_into_idv!
+    IdentityVaultService.set_slack_id(identity_vault_id, slack_id)
+  end
+
   def has_idv_addresses?
     return false if identity_vault_access_token.blank?
 
