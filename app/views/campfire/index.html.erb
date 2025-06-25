@@ -55,11 +55,12 @@
             </div>
           </div>
              <p class="text-sm sm:text-sm md:text-md lg:text-md xl:text-lg">
-            Hackatime minutes <span class="text-[#E65A42]">expire after 24 hours</span> without a devlog post, so commit your code and devlog your progress after every work session!
+              You will need to post a devlog <span class="text-[#E65A42]">after 10 hours of work</span> before you can log more time!
+              <%# TODO: Show currently time before next devlog needed, or show amount of time being cut off %>
              </p>
 
          <% unless @hackatime_dashboard[:has_time_recorded] %>
-             <div class="bg-gray-50 rounded-xl p-4" data-hackatime-dashboard-target="noDataAlert">
+            <div class="bg-gray-50 rounded-xl p-4" data-hackatime-dashboard-target="noDataAlert">
               <div class="flex items-start gap-3">
                 <div class="flex-shrink-0">
                   <div class="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center">
