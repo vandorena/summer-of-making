@@ -86,6 +86,9 @@ class ShopOrder < ApplicationRecord
       before do |rejection_reason|
         self.rejection_reason = rejection_reason
       end
+      after do
+        create_refund_payout
+      end
     end
 
     event :mark_fulfilled do
@@ -197,6 +200,16 @@ class ShopOrder < ApplicationRecord
       amount: -total_cost,
       payable: self,
       reason: "Shop order of #{shop_item.name.pluralize(quantity)}"
+    )
+  end
+
+  def create_refund_payout
+    return unless frozen_item_price.present? && frozen_item_price > 0 && quantity.present?
+
+    user.payouts.create!(
+      amount: total_cost,
+      payable: self,
+      reason: "Refund for rejected order of #{shop_item.name.pluralize(quantity)}"
     )
   end
 end
