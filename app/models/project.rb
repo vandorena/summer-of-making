@@ -45,8 +45,8 @@ class Project < ApplicationRecord
   has_many :ship_certifications
   has_many :readme_certifications
 
-  has_many :won_votes, class_name: "Vote", foreign_key: "winner_id"
-  has_many :lost_votes, class_name: "Vote", foreign_key: "loser_id"
+  has_many :won_votes, class_name: "Vote", foreign_key: "winning_project_id"
+  has_many :vote_changes, dependent: :destroy
 
   has_many :timer_sessions
 
@@ -107,12 +107,24 @@ class Project < ApplicationRecord
   before_save :remove_duplicate_hackatime_keys
 
   def total_votes
-    won_votes.count + lost_votes.count
+    vote_changes.count
   end
 
-  delegate :count, to: :won_votes, prefix: true
+  def wins_count
+    vote_changes.wins.count
+  end
 
-  delegate :count, to: :lost_votes, prefix: true
+  def losses_count
+    vote_changes.losses.count
+  end
+
+  def ties_count
+    vote_changes.ties.count
+  end
+
+  def current_elo_rating
+    rating
+  end
 
   def hackatime_total_time
     return 0 unless user.has_hackatime? && hackatime_project_keys.present?

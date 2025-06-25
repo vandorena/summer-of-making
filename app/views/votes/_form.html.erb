@@ -10,7 +10,7 @@
     "data-analytics-form": ""
   },
   onclick: "event.stopPropagation()") do |f| %>
-  <%= f.hidden_field :winner_id, value: project.id %>
+  <%= f.hidden_field :winning_project_id, value: project.id %>
 
   <%= f.hidden_field :winner_demo_opened, value: false, data: { voting_steps_target: "winnerDemoOpenedInput" } %>
   <%= f.hidden_field :winner_readme_opened, value: false, data: { voting_steps_target: "winnerReadmeOpenedInput" } %>
