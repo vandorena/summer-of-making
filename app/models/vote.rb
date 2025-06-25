@@ -56,9 +56,9 @@ class Vote < ApplicationRecord
   private
 
   def potentially_pay_out_yayyyyy
-    if loser.votes.count == Payout::VOTE_COUNT_REQUIRED
+    # if loser.votes.count == Payout::VOTE_COUNT_REQUIRED
 
-    end
+    # end
   end
 
   def unlerp(start, stop, value)
