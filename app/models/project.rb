@@ -226,6 +226,24 @@ class Project < ApplicationRecord
     false
   end
 
+  def self.cumulative_elo_bounds_at_vote_count count
+    [100, 2000]
+  end
+
+  def calculate_payout
+    min, max = Project.cumulative_elo_bounds_at_vote_count 1
+
+    pc = unlerp(min, max, rating)
+
+    mult = Payout.calculate_multiplier pc
+
+    puts "mult", mult
+
+    hours = devlogs.sum(:seconds_coded).fdiv(3600)
+
+    payout = hours * mult
+  end
+
   private
 
   def set_default_rating
