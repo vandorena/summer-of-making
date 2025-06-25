@@ -97,6 +97,22 @@
             underline_attr: { data: { sidebar_target: "underline" } }
           } %>
         </li>
+        
+        <li class="flex justify-start">
+          <%= render partial: "shared/link", locals: {
+            target: map_path,
+            text: "Map",
+            icon: tab_unlocked?(:map) ? "map" : "lock",
+            large: true,
+            highlight: current_page?(map_path),
+            text_attr: {
+              data: { sidebar_target: "collapseFade" },
+              class: "text-3xl"
+            },
+            underline_attr: { data: { sidebar_target: "underline" } },
+            class: tab_unlocked?(:map) ? "" : "opacity-50 cursor-not-allowed"
+          } %>
+        </li>
 
         <% if current_user&.is_admin? %>
           <li class="flex justify-start border-2 border-dashed border-orange-500 bg-orange-500/10" style="margin-right: 10px; border-radius: 10px;">

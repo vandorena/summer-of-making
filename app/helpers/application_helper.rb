@@ -53,6 +53,8 @@ module ApplicationHelper
       unlocked
     when :vote
       unlocked
+    when :map
+      unlocked
     when :shop
       true
     else

@@ -1,4 +1,28 @@
-<div>
-  <h1 class="font-bold text-4xl">Map#index</h1>
-  <p>Find me in app/views/map/index.html.erb</p>
+<div data-controller="map" class="relative w-screen h-screen overflow-hidden bg-[#3f9acf]">
+  <div data-map-target="canvas"
+       class="w-full h-full"
+       data-action="mousedown->map#startDrag mousemove->map#drag mouseup->map#endDrag mouseleave->map#endDrag">
+    <%= image_tag "map_colored.jpg",
+        class: "w-full h-full object-cover pointer-events-none select-none",
+        alt: "The Map",
+        data: { map_target: "image" } %>
+    <div data-map-target="pointsContainer" class="absolute inset-0"></div>
+  </div>
+
+  <div class="absolute top-4 left-4 z-10">
+    <%= link_to root_path, class: "px-4 md:px-6 py-1 md:py-2 marble-button cursor-pointer flex items-center justify-center" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+      </svg>
+    <% end %>
+  </div>
+
+  <div class="absolute top-4 right-4 z-10 flex flex-col gap-2">
+    <button data-action="click->map#zoomIn" data-map-target="zoomInButton" class="px-4 md:px-6 py-1 md:py-2 marble-button cursor-pointer flex items-center justify-center disabled:opacity-50">
+      <%= image_tag "plus.svg", alt: "Zoom In", class: "h-6 w-6" %>
+    </button>
+    <button data-action="click->map#zoomOut" data-map-target="zoomOutButton" class="px-4 md:px-6 py-1 md:py-2 marble-button cursor-pointer flex items-center justify-center disabled:opacity-50">
+      <%= image_tag "minus.svg", alt: "Zoom Out", class: "h-6 w-6" %>
+    </button>
+  </div>
 </div>
