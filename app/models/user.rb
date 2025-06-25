@@ -124,14 +124,13 @@ class User < ApplicationRecord
   end
 
   def self.check_hackatime(slack_id)
-    start_date = Time.use_zone("America/New_York") do
-      Time.parse("2025-06-16").beginning_of_day
-    end
-    response = Faraday.get("https://hackatime.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects&start_date=#{start_date}")
+    user = User.find_by(slack_id:)
+
+    response = user.fetch_raw_hackatime_stats
     result = JSON.parse(response.body)&.dig("data")
+
     return unless result["status"] == "ok"
 
-    user = User.find_by(slack_id:)
     user.has_hackatime = true
     user.save!
 
