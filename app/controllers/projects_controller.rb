@@ -557,6 +557,6 @@ class ProjectsController < ApplicationController
 
   def project_params
     params.expect(project: [ :title, :description, :used_ai, :readme_link, :demo_link, :repo_link,
-                             :banner, :ysws_submission, :ysws_type, :category, { hackatime_project_keys: [] } ])
+                             :banner, :ysws_submission, :ysws_type, :category, :certification_type, { hackatime_project_keys: [] } ])
   end
 end
