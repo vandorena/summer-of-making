@@ -261,8 +261,28 @@ class Project < ApplicationRecord
     puts "mult", mult
 
     hours = devlogs.sum(:seconds_coded).fdiv(3600)
+    puts "hours", hours
 
     payout = hours * mult
+  end
+
+  def pay_out
+    unpaid_shipevents_since_last_payout.each do |ship|
+      vote_count = VoteChange.where(project: self).maximum(:project_vote_count)
+      min, max = Project.cumulative_elo_bounds_at_vote_count vote_count
+
+      pc = unlerp(min, max, rating)
+
+      mult = Payout.calculate_multiplier pc
+
+      hours = ship.hours_covered
+
+      Rails.logger.info ">>> \##{vote_count} | #{min},#{max} | << #{rating} >>| #{pc} | #{mult} | #{hours} | YAY"
+    end
+
+    # amount = calculate_payout.ceil
+
+    # Payout.create(payable_type: ShipEvent, amount:, reason: "Payout for #{title}.")
   end
 
   private
@@ -291,5 +311,10 @@ class Project < ApplicationRecord
     return if readme_certifications.exists?
 
     readme_certifications.create!
+  end
+
+  def unlerp(start, stop, value)
+    return 0.0 if start == stop
+    (value - start) / (stop - start).to_f
   end
 end
