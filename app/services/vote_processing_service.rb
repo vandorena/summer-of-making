@@ -6,9 +6,11 @@ class VoteProcessingService
   end
 
   def process
-    # TODO: Handle ties
-
-    process_winner_loser_vote
+    if @vote.winning_project_id.nil?
+      process_tie
+    else
+      process_winner_loser_vote
+    end
   end
 
   def process_winner_loser_vote

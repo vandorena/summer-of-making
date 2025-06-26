@@ -89,13 +89,22 @@ class Vote < ApplicationRecord
   def projects
     vote_changes.includes(:project).map(&:project)
   end
+
   def authorized_with_token?(token_data)
     return false unless token_data
 
-    token_data["user_id"] == user_id &&
-      token_data["project_1_id"] == project_1_id &&
-      token_data["project_2_id"] == project_2_id &&
-      Time.zone.parse(token_data["expires_at"]) > Time.current
+    return false unless token_data["user_id"].to_i == user_id.to_i
+    return false unless token_data["project_1_id"].to_i == project_1_id.to_i
+    return false unless token_data["project_2_id"].to_i == project_2_id.to_i
+    return false unless Time.zone.parse(token_data["expires_at"]) > Time.current
+
+    # check if the winning project is one of the two projects
+    if winning_project_id.present?
+      valid_project_ids = [ project_1_id.to_i, project_2_id.to_i ]
+      return false unless valid_project_ids.include?(winning_project_id.to_i)
+    end
+
+    true
   end
 
   private
