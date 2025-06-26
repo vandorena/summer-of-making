@@ -52,7 +52,7 @@ class Vote < ApplicationRecord
   validates :status, inclusion: { in: %w[active invalid] }
 
   # only for ties
-  validates :winning_project_id, presence: true, unless: :tie?
+  validates :winning_project_id, presence: true, unless: :is_tie?
 
   attr_accessor :token, :project_1_id, :project_2_id
 
@@ -116,9 +116,7 @@ class Vote < ApplicationRecord
       marked_invalid_by: marked_by_user
     )
   end
-
-  private
-
+  
   def process_vote_results
     VoteProcessingService.new(self).process
   end
