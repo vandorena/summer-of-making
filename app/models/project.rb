@@ -87,7 +87,8 @@ class Project < ApplicationRecord
     android_app: 6,
     desktop_app: 7,
     command_line_tool: 8,
-    game_mod: 9
+    game_mod: 9,
+    chat_bot: 10
   }
 
   enum :ysws_type, {
