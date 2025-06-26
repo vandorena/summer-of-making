@@ -256,6 +256,11 @@ class ProjectsController < ApplicationController
 
     begin
       uri = URI.parse(url)
+
+      unless %w[http https].include?(uri.scheme&.downcase)
+        render json: { valid: false, error: "That is not a proper link." }
+        return
+      end
       # Really, just trying to check if it's a valid repo or readme link and not some random link
       if %w[repo readme].include?(link_type)
         repo_patterns = [
