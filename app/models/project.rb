@@ -239,7 +239,10 @@ class Project < ApplicationRecord
   end
 
   def self.cumulative_elo_bounds_at_vote_count count
-    [100, 2000]
+    votes = VoteChange.where("project_vote_count <= ?", count)
+
+    col = :elo_before
+    [votes.minimum(col), votes.maximum(col)]
   end
 
   def calculate_payout
