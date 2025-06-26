@@ -51,10 +51,7 @@ class Vote < ApplicationRecord
   validates :explanation, presence: true, length: { minimum: 10 }
   validates :status, inclusion: { in: %w[active invalid] }
 
-  # only for ties
-  validates :winning_project_id, presence: true, unless: :is_tie?
-
-  attr_accessor :token, :project_1_id, :project_2_id
+  attr_accessor :winning_project_id
 
   scope :active, -> { where(status: "active") }
   scope :invalid, -> { where(status: "invalid") }
