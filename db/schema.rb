@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_25_170122) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_25_203358) do
+  create_schema "auth"
+  create_schema "extensions"
+  create_schema "graphql"
+  create_schema "graphql_public"
+  create_schema "pgbouncer"
+  create_schema "pgsodium"
+  create_schema "realtime"
+  create_schema "storage"
+  create_schema "vault"
+
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -648,32 +658,29 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_25_170122) do
 
   create_table "votes", force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.bigint "winning_project_id"
     t.text "explanation", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "loser_id"
-    t.boolean "winner_demo_opened", default: false
-    t.boolean "winner_readme_opened", default: false
-    t.boolean "winner_repo_opened", default: false
-    t.boolean "loser_demo_opened", default: false
-    t.boolean "loser_readme_opened", default: false
-    t.boolean "loser_repo_opened", default: false
+    t.boolean "project_1_demo_opened", default: false
+    t.boolean "project_1_readme_opened", default: false
+    t.boolean "project_1_repo_opened", default: false
+    t.boolean "project_2_demo_opened", default: false
+    t.boolean "project_2_readme_opened", default: false
+    t.boolean "project_2_repo_opened", default: false
     t.integer "time_spent_voting_ms"
     t.boolean "music_played"
-    t.integer "vote_number"
     t.string "status", default: "active", null: false
     t.text "invalid_reason"
     t.datetime "marked_invalid_at"
     t.bigint "marked_invalid_by_id"
-    t.index ["loser_id"], name: "index_votes_on_loser_id"
+    t.bigint "project_1_id"
+    t.bigint "project_2_id"
     t.index ["marked_invalid_at"], name: "index_votes_on_marked_invalid_at"
     t.index ["marked_invalid_by_id"], name: "index_votes_on_marked_invalid_by_id"
+    t.index ["project_1_id"], name: "index_votes_on_project_1_id"
+    t.index ["project_2_id"], name: "index_votes_on_project_2_id"
     t.index ["status"], name: "index_votes_on_status"
-    t.index ["user_id", "winning_project_id"], name: "index_votes_on_user_id_and_winning_project_id", unique: true
     t.index ["user_id"], name: "index_votes_on_user_id"
-    t.index ["vote_number"], name: "index_votes_on_vote_number", unique: true
-    t.index ["winning_project_id"], name: "index_votes_on_winning_project_id"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
@@ -716,8 +723,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_25_170122) do
   add_foreign_key "tutorial_progresses", "users"
   add_foreign_key "vote_changes", "projects"
   add_foreign_key "vote_changes", "votes"
-  add_foreign_key "votes", "projects", column: "loser_id"
-  add_foreign_key "votes", "projects", column: "winning_project_id"
+  add_foreign_key "votes", "projects", column: "project_1_id"
+  add_foreign_key "votes", "projects", column: "project_2_id"
   add_foreign_key "votes", "users"
   add_foreign_key "votes", "users", column: "marked_invalid_by_id"
 end

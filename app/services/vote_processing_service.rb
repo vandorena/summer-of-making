@@ -6,18 +6,19 @@ class VoteProcessingService
   end
 
   def process
-    if @vote.tie?
-      process_tie
-    else
-      process_winner_loser_vote
-    end
+    # TODO: Handle ties
+
+    process_winner_loser_vote
   end
 
   def process_winner_loser_vote
-    winner = @vote.winning_project
-    loser = find_losing_project
+    winner_project_id = @vote.winning_project_id
+    loser_project_id = get_loser_project_id(winner_project_id)
 
-    return unless winner && loser
+    return unless winner_project_id && loser_project_id
+
+    winner = Project.find(winner_project_id)
+    loser = Project.find(loser_project_id)
 
     winner_elo_before = winner.rating
     loser_elo_before = loser.rating
@@ -62,9 +63,8 @@ class VoteProcessingService
 
   private
 
-  def find_losing_project
-    losing_project_id = [ @vote.project_1_id, @vote.project_2_id ].find { |id| id != @vote.winning_project_id }
-    Project.find(losing_project_id) if losing_project_id
+  def get_loser_project_id(winner_id)
+    [ @vote.project_1_id, @vote.project_2_id ].find { |id| id != winner_id }
   end
 
   def expected_score(rating_a, rating_b)

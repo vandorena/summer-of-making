@@ -35,11 +35,6 @@ class VotesController < ApplicationController
     @vote.project_1_id = @projects[0].id
     @vote.project_2_id = @projects[1].id
 
-    # Handle ties – Not implemented on the frontend yet
-    if @vote.winning_project_id.blank?
-      @vote.winning_project_id = nil
-    end
-
     # unless @vote.authorized_with_token?(token_data)
     #   redirect_to new_vote_path, alert: "Vote validation failed"
     #   return
@@ -105,8 +100,8 @@ class VotesController < ApplicationController
 
   def vote_params
     params.expect(vote: %i[winning_project_id explanation
-                           winner_demo_opened winner_readme_opened winner_repo_opened
-                           loser_demo_opened loser_readme_opened loser_repo_opened
+                           project_1_demo_opened project_1_readme_opened project_1_repo_opened
+                           project_2_demo_opened project_2_readme_opened project_2_repo_opened
                            time_spent_voting_ms music_played])
   end
 end

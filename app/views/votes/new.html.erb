@@ -18,193 +18,116 @@
     <div data-controller="voting-steps"
       data-action="music:played@window->voting-steps#handleMusicPlayed"
       class="space-y-6 sm:space-y-8">
-      <!-- Step 1: Journeys -->
-      <div data-voting-steps-target="step1" class="space-y-6 sm:space-y-8">
-        <h2 class="text-xl sm:text-2xl mb-6 sm:mb-8 text-center text-gray-600"> A good ship is technical, creative, and presented well so that
-          others can understand and experience it. By that definition, which
-          of these two projects is better?</h2>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
-          <% @projects.each do |project| %>
-            <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] p-6 sm:p-12" data-project-id="<%= project.id %>">
-              <div class="space-y-6 sm:space-y-8">
-                <div class="flex items-start gap-3 sm:gap-4">
-                  <div class="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 overflow-hidden rounded-lg">
-                    <% project_image = project.banner %>
-                    <img src="<%= project_image %>" alt="<%= project.title %>" class="w-full h-full object-cover">
-                  </div>
-                  <div class="flex-grow min-w-0">
-                    <h3 class="text-xl sm:text-3xl mb-1 sm:mb-2 truncate"><%= project.title %></h3>
-                    <p class="text-base sm:text-lg text-gray-600"><%= project.description %></p>
-                  </div>
+      <h2 class="text-xl sm:text-2xl mb-6 sm:mb-8 text-center text-gray-600">
+        A good ship is technical, creative, and presented well so that others can understand and experience it.
+        By that definition, which of these two projects is better?
+      </h2>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
+        <% @projects.each do |project| %>
+          <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] p-6 sm:p-12">
+            <div class="space-y-6 sm:space-y-8">
+              <div class="flex items-start gap-3 sm:gap-4">
+                <div class="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 overflow-hidden rounded-lg">
+                  <% project_image = project.banner %>
+                  <img src="<%= project_image %>" alt="<%= project.title %>" class="w-full h-full object-cover">
                 </div>
+                <div class="flex-grow min-w-0">
+                  <h3 class="text-xl sm:text-3xl mb-1 sm:mb-2 truncate"><%= project.title %></h3>
+                  <p class="text-base sm:text-lg text-gray-600"><%= project.description %></p>
+                </div>
+              </div>
 
-                <div class="space-y-4 sm:space-y-6">
-                  <div class="grid grid-cols-1 sm:flex sm:flex-wrap gap-3 sm:gap-4">
-                    <% if project.demo_link.present? %>
-                      <a href="<%= project.demo_link %>" target="_blank"
-                        class="px-4 sm:px-6 py-2.5 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
-                        onclick="event.stopPropagation()"
-                        data-analytics-link="demo"
-                        data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
-                        Demo
-                      </a>
-                    <% end %>
-                    <% if project.repo_link.present? %>
-                      <a href="<%= project.repo_link %>" target="_blank"
-                        class="px-4 sm:px-6 py-2.5 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
-                        onclick="event.stopPropagation()"
-                        data-analytics-link="repo"
-                        data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
-                        Repository
-                      </a>
-                    <% end %>
-                    <% if project.readme_link.present? %>
-                      <a href="<%= project.readme_link %>" target="_blank"
-                        class="px-4 sm:px-6 py-2.5 bg-saddle-taupe hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
-                        onclick="event.stopPropagation()"
-                        data-analytics-link="readme"
-                        data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
+              <div class="space-y-4 sm:space-y-6">
+                <div class="grid grid-cols-1 sm:flex sm:flex-wrap gap-3 sm:gap-4">
+                  <% if project.demo_link.present? %>
+                    <a href="<%= project.demo_link %>" target="_blank"
+                      class="px-4 sm:px-6 py-2.5 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
+                      onclick="event.stopPropagation()"
+                      data-analytics-link="demo"
+                      data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
+                      Demo
+                    </a>
+                  <% end %>
+                  <% if project.repo_link.present? %>
+                    <a href="<%= project.repo_link %>" target="_blank"
+                      class="px-4 sm:px-6 py-2.5 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
+                      onclick="event.stopPropagation()"
+                      data-analytics-link="repo"
+                      data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
+                      Repository
+                    </a>
+                  <% end %>
+                  <% if project.readme_link.present? %>
+                    <a href="<%= project.readme_link %>" target="_blank"
+                      class="px-4 sm:px-6 py-2.5 bg-saddle-taupe hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
+                      onclick="event.stopPropagation()"
+                      data-analytics-link="readme"
+                      data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
                         Readme
-                      </a>
-                    <% end %>
-                  </div>
-                </div>
-
-                <div class="space-y-6 sm:space-y-8">
-                  <% project.devlogs.order(created_at: :asc).each do |devlog| %>
-                    <div class="p-4 sm:p-6 transform hover:scale-[1.02] transition-transform duration-300">
-                      <div class="flex items-center mb-3 sm:mb-4">
-                        <% if devlog.user.avatar.present? %>
-                          <img src="<%= devlog.user.avatar %>" alt="<%= devlog.user.display_name %>" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3">
-                        <% end %>
-                        <div class="min-w-0">
-                          <span class="font-medium text-base sm:text-lg truncate block"><%= devlog.user.display_name %></span>
-                          <span class="text-gray-600 text-xs sm:text-sm"><%= time_ago_in_words(devlog.created_at) %> ago</span>
-                        </div>
-                      </div>
-                      <div class="prose max-w-none text-base sm:text-xl break-words"><%= devlog.formatted_text %></div>
-                      <% if devlog.file.attached? %>
-                        <div class="mt-3 sm:mt-4 overflow-hidden rounded-lg">
-                          <% if devlog.file.image? %>
-                            <%= image_tag devlog.file,
-                              alt: "Update attachment",
-                              class: "w-full max-h-48 sm:max-h-64 object-contain cursor-pointer hover:opacity-90 transition-opacity",
-                              data: { action: "click->image-viewer#open" } %>
-                          <% elsif devlog.file.video? %>
-                            <div class="h-48 sm:h-64 flex items-center justify-center bg-black">
-                              <%= video_tag url_for(devlog.file),
-                                class: "w-full h-full object-contain",
-                                playsinline: true,
-                                controls: true do %>
-                                Your browser does not support the video tag.
-                              <% end %>
-                            </div>
-                          <% elsif devlog.file.audio? %>
-                            <div class="w-full h-48 sm:h-64 flex items-center justify-center">
-                              <%= audio_tag url_for(devlog.file),
-                                class: "w-[50%]",
-                                controls: true,
-                                controlslist: "nodownload" do %>
-                                Your browser does not support the audio tag.
-                              <% end %>
-                            </div>
-                          <% end %>
-                        </div>
-                      <% end %>
-                    </div>
+                    </a>
                   <% end %>
                 </div>
               </div>
-            </div>
-          <% end %>
-        </div>
 
-        <div class="flex justify-center mt-6 sm:mt-8">
-          <button class="w-full sm:w-auto px-6 sm:px-8 py-2 sm:py-3 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 text-lg sm:text-xl 2xl:text-2xl btn-pixel cursor-pointer" data-action="voting-steps#nextStep">
-            Compare Projects
-          </button>
-        </div>
-      </div>
-
-      <!-- Loading State -->
-      <div data-voting-steps-target="loadingIndicator" class="hidden flex items-center justify-center py-6 sm:py-12">
-        <div class="flex flex-col items-center justify-center">
-          <%= image_tag 'lollipop.svg', class: 'w-16 h-16 sm:w-24 sm:h-24 animate-spin' %>
-        </div>
-      </div>
-
-      <!-- Step 2: Voting -->
-      <div data-voting-steps-target="step2" class="hidden">
-        <h2 class="text-xl sm:text-2xl mb-6 sm:mb-8 text-center text-gray-600"> A good ship is technical, creative, and presented well so that
-          others can understand and experience it. By that definition, which
-          of these two projects is better?</h2>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
-          <% @projects.each do |project| %>
-            <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] p-6 sm:p-12 cursor-pointer transition-all duration-300"
-              data-voting-steps-target="project"
-              data-project-id="<%= project.id %>"
-              data-action="click->voting-steps#selectProject">
               <div class="space-y-6 sm:space-y-8">
-                <div class="flex items-start gap-3 sm:gap-4">
-                  <div class="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 overflow-hidden rounded-lg">
-                    <% project_image = project.banner %>
-                    <img src="<%= project_image %>" alt="<%= project.title %>" class="w-full h-full object-cover">
+                <% project.devlogs.order(created_at: :asc).each do |devlog| %>
+                  <div class="p-4 sm:p-6 transform hover:scale-[1.02] transition-transform duration-300">
+                    <div class="flex items-center mb-3 sm:mb-4">
+                      <% if devlog.user.avatar.present? %>
+                        <img src="<%= devlog.user.avatar %>" alt="<%= devlog.user.display_name %>" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3">
+                      <% end %>
+                      <div class="min-w-0">
+                        <span class="font-medium text-base sm:text-lg truncate block"><%= devlog.user.display_name %></span>
+                        <span class="text-gray-600 text-xs sm:text-sm"><%= time_ago_in_words(devlog.created_at) %> ago</span>
+                      </div>
+                    </div>
+                    <div class="prose max-w-none text-base sm:text-xl break-words"><%= devlog.formatted_text %></div>
+                    <% if devlog.file.attached? %>
+                      <div class="mt-3 sm:mt-4 overflow-hidden rounded-lg">
+                        <% if devlog.file.image? %>
+                          <%= image_tag devlog.file,
+                            alt: "Update attachment",
+                            class: "w-full max-h-48 sm:max-h-64 object-contain cursor-pointer hover:opacity-90 transition-opacity",
+                            data: { action: "click->image-viewer#open" } %>
+                        <% elsif devlog.file.video? %>
+                          <div class="h-48 sm:h-64 flex items-center justify-center bg-black">
+                            <%= video_tag url_for(devlog.file),
+                              class: "w-full h-full object-contain",
+                              playsinline: true,
+                              controls: true do %>
+                              Your browser does not support the video tag.
+                            <% end %>
+                          </div>
+                        <% elsif devlog.file.audio? %>
+                          <div class="w-full h-48 sm:h-64 flex items-center justify-center">
+                            <%= audio_tag url_for(devlog.file),
+                              class: "w-[50%]",
+                              controls: true,
+                              controlslist: "nodownload" do %>
+                              Your browser does not support the audio tag.
+                            <% end %>
+                          </div>
+                        <% end %>
+                      </div>
+                    <% end %>
                   </div>
-                  <div class="flex-grow min-w-0">
-                    <h3 class="text-xl sm:text-3xl mb-1 sm:mb-2 truncate"><%= project.title %></h3>
-                    <p class="text-base sm:text-lg text-gray-600"><%= project.description %></p>
-                  </div>
-                </div>
+                <% end %>
+              </div>
 
-                <div class="space-y-4 sm:space-y-6">
-                  <div class="grid grid-cols-1 sm:flex sm:flex-wrap gap-3 sm:gap-4">
-                    <% if project.demo_link.present? %>
-                      <a href="<%= project.demo_link %>" target="_blank"
-                        class="px-4 sm:px-6 py-2.5 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
-                        onclick="event.stopPropagation()"
-                        data-analytics-link="demo"
-                        data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
-                        Demo
-                      </a>
-                    <% end %>
-                    <% if project.repo_link.present? %>
-                      <a href="<%= project.repo_link %>" target="_blank"
-                        class="px-4 sm:px-6 py-2.5 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
-                        onclick="event.stopPropagation()"
-                        data-analytics-link="repo"
-                        data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
-                        Repository
-                      </a>
-                    <% end %>
-                    <% if project.readme_link.present? %>
-                      <a href="<%= project.readme_link %>" target="_blank"
-                        class="px-4 sm:px-6 py-2.5 bg-saddle-taupe hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
-                        onclick="event.stopPropagation()"
-                        data-analytics-link="readme"
-                        data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
-                        Readme
-                      </a>
-                    <% end %>
-                  </div>
-                </div>
-
+              <!-- Voting Form -->
+              <div class="border-t-4 border-[#E4DCC6] pt-6 sm:pt-8">
                 <%= render "votes/form", project: project, vote: Vote.new %>
               </div>
             </div>
-          <% end %>
-        </div>
-
-        <div class="flex justify-center mt-6 sm:mt-8">
-          <button class="w-full sm:w-auto px-6 sm:px-8 py-2 sm:py-3 bg-saddle-taupe hover:scale-[1.05] text-white transition-transform duration-300 text-lg sm:text-xl 2xl:text-2xl btn-pixel cursor-pointer" data-action="voting-steps#prevStep">
-            Back
-          </button>
-        </div>
+          </div>
+        <% end %>
       </div>
     </div>
   <% end %>
 </div>
+
 <!-- Music Player Toggle -->
 <div data-controller="music" class="fixed -bottom-32 -right-12 max-sm:mb-[140px]">
   <div data-music-target="speechBubble" class="absolute -top-12 -left-10 2xl:-top-16 2xl:-left-12 p-3 bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] max-w-[150px] opacity-50">
@@ -225,6 +148,7 @@
     </div>
   </button>
 </div>
+
 <!-- Image Viewer for Attachments -->
 <div data-controller="image-viewer">
   <div data-image-viewer-target="modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-75" data-action="click->image-viewer#closeBackground">
