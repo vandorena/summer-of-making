@@ -241,7 +241,7 @@ class Project < ApplicationRecord
   def self.cumulative_elo_bounds_at_vote_count count
     votes = VoteChange.where("project_vote_count <= ?", count)
 
-    col = :elo_before
+    col = :elo_after
     [votes.minimum(col), votes.maximum(col)]
   end
 
