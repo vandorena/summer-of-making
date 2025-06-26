@@ -77,25 +77,54 @@ class VotesController < ApplicationController
 
   def set_projects
     # This needs to be re-written, please ignore for now!
-    voted_project_ids = current_user.votes
-                                   .joins(:vote_changes)
-                                   .distinct
-                                   .pluck("vote_changes.project_id")
-    shipped_project_ids = Project
-                           .joins(:ship_events)
-                           .where.not(id: voted_project_ids)
-                           .where.not(user_id: current_user.id)
-                           .distinct
-                           .pluck(:id)
+    voted_ship_event_ids = current_user.votes
+                                      .joins(vote_changes: { project: :ship_events })
+                                      .distinct
+                                      .pluck("ship_events.id")
 
-    if shipped_project_ids.size < 2
+    projects_with_latest_ship = Project
+                                  .joins(:ship_events)
+                                  .joins(:ship_certifications)
+                                  .where(ship_certifications: { judgement: :approved })
+                                  .where.not(user_id: current_user.id)
+                                  .where(                              # we' are getting the max ship event id for each project which should ensure it's the latest ship event
+                                    ship_events: {  
+                                      id: ShipEvent.select('MAX(ship_events.id)')
+                                                  .where('ship_events.project_id = projects.id')
+                                                  .group('ship_events.project_id')
+                                                  .where.not(id: voted_ship_event_ids)
+                                    }
+                                  )
+                                  .distinct
+
+    if projects_with_latest_ship.count < 2
       @projects = []
       return
     end
 
-    # select 2 random projects
-    selected_ids = shipped_project_ids.sample(2)
-    @projects = Project.where(id: selected_ids)
+    eligible_projects = projects_with_latest_ship.to_a
+
+    # two projects by different authors
+    selected_projects = []
+    used_user_ids = Set.new
+
+    eligible_projects.shuffle!
+
+    eligible_projects.each do |project|
+      next if used_user_ids.include?(project.user_id)
+
+      selected_projects << project
+      used_user_ids << project.user_id
+
+      break if selected_projects.size == 2
+    end
+
+    if selected_projects.size < 2
+      @projects = []
+      return
+    end
+
+    @projects = selected_projects
   end
 
   def vote_params
