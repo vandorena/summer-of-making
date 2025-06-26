@@ -237,6 +237,13 @@ class Project < ApplicationRecord
     false
   end
 
+  def unpaid_shipevents_since_last_payout
+    ShipEvent.where(project: self)
+             .left_joins(:payouts)
+             .where(payouts: { id: nil })
+             .order("ship_events.created_at")
+  end
+
   def self.cumulative_elo_bounds_at_vote_count(count)
     votes = VoteChange.where("project_vote_count <= ?", count)
 
