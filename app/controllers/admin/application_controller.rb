@@ -3,7 +3,7 @@ module Admin
     include PublicActivity::StoreController
 
     before_action :authenticate_admin!
-    rescue_from StandardError, with: :handle_error
+    rescue_from StandardError, with: :handle_error if Rails.env.production?
 
     helper_method :current_user
 
