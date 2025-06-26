@@ -53,6 +53,8 @@ class Project < ApplicationRecord
 
   default_scope { where(is_deleted: false) }
 
+  scope :with_ship_event, -> { joins(:ship_events) }
+
   def self.with_deleted
     unscoped
   end
