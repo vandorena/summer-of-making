@@ -252,7 +252,8 @@ class Project < ApplicationRecord
   end
 
   def calculate_payout
-    min, max = Project.cumulative_elo_bounds_at_vote_count 1
+    vote_count = VoteChange.where(project: self).maximum(:project_vote_count)
+    min, max = Project.cumulative_elo_bounds_at_vote_count vote_count
 
     pc = unlerp(min, max, rating)
 

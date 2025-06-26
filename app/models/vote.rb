@@ -100,11 +100,6 @@ class Vote < ApplicationRecord
 
   private
 
-  def unlerp(start, stop, value)
-    return 0.0 if start == stop
-    (value - start) / (stop - start).to_f
-  end
-
   def mark_invalid!(reason, marked_by_user)
     update!(
       status: "invalid",
