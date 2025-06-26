@@ -242,8 +242,8 @@ class Project < ApplicationRecord
     false
   end
 
-  def self.cumulative_elo_bounds_at_vote_count count
-    [100, 2000]
+  def self.cumulative_elo_bounds_at_vote_count(count)
+    [ 100, 2000 ]
   end
 
   def calculate_payout
