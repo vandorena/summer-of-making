@@ -70,9 +70,8 @@ class Project < ApplicationRecord
             format: { with: /\A(?:https?:\/\/).*\z/i, message: "must be a valid HTTP or HTTPS URL" },
             allow_blank: true
 
-  validates :category,
-            inclusion: { in: [ "Web App", "Mobile App", "Command Line Tool", "Video Game", "Something else" ],
-                         message: "%<value>s is not a valid category" }
+  CATEGORIES = [ "Web App", "Mobile App", "Command Line Tool", "Video Game", "Something else" ]
+  validates :category, inclusion: { in: CATEGORIES, message: "%<value>s is not a valid category" }
 
   enum :ysws_type, {
     athena: "Athena",

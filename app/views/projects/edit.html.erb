@@ -18,14 +18,7 @@
       <div class="space-y-1 sm:space-y-2">
         <%= f.label :category, class: "block text-base sm:text-lg font-medium" %>
         <%= f.select :category,
-            options_for_select([
-              ['Select a category...', ''],
-              ['Web App', 'Web App'],
-              ['Mobile App', 'Mobile App'],
-              ['Command Line Tool', 'Command Line Tool'],
-              ['Video Game', 'Video Game'],
-              ['Something else', 'Something else']
-            ], @project.category),
+            options_for_select([['Select a category...', ''], *Project::CATEGORIES] @project.category),
             {},
             {
               class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm sm:text-base",
