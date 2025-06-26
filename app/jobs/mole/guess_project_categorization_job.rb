@@ -49,6 +49,7 @@ class Mole::GuessProjectCategorizationJob < ApplicationJob
 
       Visit these links and determine a classification: #{cert_types.join(', ')}
       If you are already sure, you don't need to visit every link. For example, if a release includes an APK file, you can skip the demo/play link.
+      If you are low confidence, or the main categories don't seem to fit, return "cert_other".
 
       Base your decision on:
       - Code in the repository (languages, frameworks, dependencies)
