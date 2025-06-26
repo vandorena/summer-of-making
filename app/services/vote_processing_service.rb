@@ -12,8 +12,10 @@ class VoteProcessingService
   end
 
   def process_winner_loser_vote
-    winner_project_id = @vote.winning_project_id
+    winner_project_id = @vote.winning_project_id.to_i
     loser_project_id = get_loser_project_id(winner_project_id)
+
+    puts "ASNTRSUTSRTPROJCET", winner_project_id, loser_project_id, @vote.project_1_id, @vote.project_2_id
 
     return unless winner_project_id && loser_project_id
 
