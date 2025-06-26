@@ -76,7 +76,7 @@ class VotesController < ApplicationController
   end
 
   def set_projects
-    # This needs to be re-written, please ignore for now!
+    # Get projects that haven't been voted on by current user
     voted_ship_event_ids = current_user.votes
                                       .joins(vote_changes: { project: :ship_events })
                                       .distinct
@@ -87,7 +87,7 @@ class VotesController < ApplicationController
                                   .joins(:ship_certifications)
                                   .where(ship_certifications: { judgement: :approved })
                                   .where.not(user_id: current_user.id)
-                                  .where(                              # we' are getting the max ship event id for each project which should ensure it's the latest ship event
+                                  .where(
                                     ship_events: {
                                       id: ShipEvent.select("MAX(ship_events.id)")
                                                   .where("ship_events.project_id = projects.id")
@@ -104,19 +104,56 @@ class VotesController < ApplicationController
 
     eligible_projects = projects_with_latest_ship.to_a
 
-    # two projects by different authors
+    projects_with_time = eligible_projects.map do |project|
+      total_time_seconds = project.hackatime_total_time
+
+      {
+        project: project,
+        total_time: total_time_seconds
+      }
+    end
+
+    if projects_with_time.size < 2
+      @projects = []
+      return
+    end
+
     selected_projects = []
     used_user_ids = Set.new
+    max_attempts = 25 # infinite loop!
 
-    eligible_projects.shuffle!
+    attempts = 0
+    while selected_projects.size < 2 && attempts < max_attempts
+      attempts += 1
 
-    eligible_projects.each do |project|
-      next if used_user_ids.include?(project.user_id)
+      # pick a raqndom project and get smth in it's range
+      if selected_projects.empty?
+        first_project_data = projects_with_time.select { |p| !used_user_ids.include?(p[:project].user_id) }.sample
+        next unless first_project_data
 
-      selected_projects << project
-      used_user_ids << project.user_id
+        selected_projects << first_project_data[:project]
+        used_user_ids << first_project_data[:project].user_id
+        first_time = first_project_data[:total_time]
 
-      break if selected_projects.size == 2
+        # find projects within the constraints (set to 30%)
+        min_time = first_time * 0.7
+        max_time = first_time * 1.3
+
+        compatible_projects = projects_with_time.select do |p|
+          !used_user_ids.include?(p[:project].user_id) &&
+          p[:total_time] >= min_time &&
+          p[:total_time] <= max_time
+        end
+
+        if compatible_projects.any?
+          second_project_data = compatible_projects.sample
+          selected_projects << second_project_data[:project]
+          used_user_ids << second_project_data[:project].user_id
+        else
+          selected_projects.clear
+          used_user_ids.clear
+        end
+      end
     end
 
     if selected_projects.size < 2
