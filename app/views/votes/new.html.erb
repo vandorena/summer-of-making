@@ -128,6 +128,64 @@
           </div>
         <% end %>
       </div>
+
+      <div class="mt-8 sm:mt-12">
+        <%= render layout: "shared/container" do %>
+          <div class="p-6 sm:p-8">
+            <h3 class="text-xl sm:text-2xl mb-6 text-center text-gray-700">Cast Your Vote</h3>
+
+            <%= form_with model: @vote, url: votes_path, method: :post, class: "space-y-6" do |form| %>
+              <% token = session[:vote_tokens].keys.first %>
+              <%= hidden_field_tag :vote_token, token %>
+
+              <%= form.hidden_field :project_1_demo_opened, value: false %>
+              <%= form.hidden_field :project_1_readme_opened, value: false %>
+              <%= form.hidden_field :project_1_repo_opened, value: false %>
+              <%= form.hidden_field :project_2_demo_opened, value: false %>
+              <%= form.hidden_field :project_2_readme_opened, value: false %>
+              <%= form.hidden_field :project_2_repo_opened, value: false %>
+              <%= form.hidden_field :time_spent_voting_ms, value: 0 %>
+              <%= form.hidden_field :music_played, value: false %>
+
+              <div class="flex justify-center items-center space-x-6 sm:space-x-12">
+                <label class="flex items-center cursor-pointer">
+                  <%= form.radio_button :winning_project_id, @projects.first.id, class: "sr-only peer" %>
+                  <div class="px-4 sm:px-6 py-2 sm:py-3 bg-gray-200 hover:bg-forest hover:text-white peer-checked:bg-forest peer-checked:text-white transition-colors duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center">
+                    Project 1 – <%= @projects.first.title %>
+                  </div>
+                </label>
+
+                <label class="flex items-center cursor-pointer">
+                  <%= form.radio_button :winning_project_id, "tie", class: "sr-only peer" %>
+                  <div class="px-4 sm:px-6 py-2 sm:py-3 bg-gray-200 hover:bg-nice-blue hover:text-white peer-checked:bg-nice-blue peer-checked:text-white transition-colors duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center">
+                    Tie
+                  </div>
+                </label>
+
+                <label class="flex items-center cursor-pointer">
+                  <%= form.radio_button :winning_project_id, @projects.last.id, class: "sr-only peer" %>
+                  <div class="px-4 sm:px-6 py-2 sm:py-3 bg-gray-200 hover:bg-saddle-taupe hover:text-white peer-checked:bg-saddle-taupe peer-checked:text-white transition-colors duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center">
+                    Project 2 – <%= @projects.last.title %>
+                  </div>
+                </label>
+              </div>
+
+              <div>
+                <%= form.text_area :explanation,
+                    class: "w-full p-3 border-2 border-saddle-taupe/70 focus:border-forest focus:outline-none resize-none",
+                    rows: 4,
+                    placeholder: "Tell us why you made this choice...",
+                    required: true %>
+              </div>
+
+              <div class="text-center">
+                <%= form.submit "Submit Vote",
+                    class: "px-6 sm:px-8 py-2 sm:py-3 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl disabled:bg-gray-400 disabled:hover:scale-100 disabled:cursor-not-allowed" %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
     </div>
   <% end %>
 </div>
