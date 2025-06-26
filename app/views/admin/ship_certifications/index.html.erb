@@ -62,6 +62,7 @@
           <% end %>
         </td>
         <td><%= time_ago_in_words(ship_certification.created_at) %></td>
+        <td><%= ship_certification.project.certification_type ?? 'N/A' %></td>
       </tr>
     <% end %>
   </tbody>

@@ -1,0 +1,8 @@
+services:
+  mole:
+    build: .
+    ports:
+      - "5001:5001"
+    volumes:
+      - .:/app
+    command: python app.py
