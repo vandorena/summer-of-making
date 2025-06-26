@@ -59,8 +59,6 @@ class Vote < ApplicationRecord
 
   attr_accessor :token, :project_1_id, :project_2_id
 
-  after_create :potentially_pay_out_yayyyyy
-
   scope :active, -> { where(status: "active") }
   scope :invalid, -> { where(status: "invalid") }
   scope :recent, -> { order(created_at: :desc) }
@@ -95,12 +93,6 @@ class Vote < ApplicationRecord
   end
 
   private
-
-  def potentially_pay_out_yayyyyy
-    # if loser.votes.count == Payout::VOTE_COUNT_REQUIRED
-
-    # end
-  end
 
   def unlerp(start, stop, value)
     return 0.0 if start == stop
