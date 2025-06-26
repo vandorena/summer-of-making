@@ -82,49 +82,49 @@ class VotesController < ApplicationController
                                       .distinct
                                       .pluck("ship_events.id")
 
-    projects_with_latest_ship = Project
-                                  .joins(:ship_events)
-                                  .joins(:ship_certifications)
-                                  .where(ship_certifications: { judgement: :approved })
-                                  .where.not(user_id: current_user.id)
-                                  .where(                              # we' are getting the max ship event id for each project which should ensure it's the latest ship event
-                                    ship_events: {
-                                      id: ShipEvent.select("MAX(ship_events.id)")
-                                                  .where("ship_events.project_id = projects.id")
-                                                  .group("ship_events.project_id")
-                                                  .where.not(id: voted_ship_event_ids)
-                                    }
-                                  )
-                                  .distinct
+    @projects = [Project.find(1), Project.find(4)]
+                                  # .joins(:ship_events)
+                                  # .joins(:ship_certifications)
+                                  # .where(ship_certifications: { judgement: :approved })
+                                  # # .where.not(user_id: current_user.id)
+                                  # .where(                              # we' are getting the max ship event id for each project which should ensure it's the latest ship event
+                                  #   ship_events: {
+                                  #     id: ShipEvent.select("MAX(ship_events.id)")
+                                  #                 .where("ship_events.project_id = projects.id")
+                                  #                 .group("ship_events.project_id")
+                                  #                 .where.not(id: voted_ship_event_ids)
+                                  #   }
+                                  # )
+                                  # .distinct
 
-    if projects_with_latest_ship.count < 2
-      @projects = []
-      return
-    end
+    # if projects_with_latest_ship.count < 2
+    #   @projects = []
+    #   return
+    # end
 
-    eligible_projects = projects_with_latest_ship.to_a
+    # eligible_projects = projects_with_latest_ship.to_a
 
-    # two projects by different authors
-    selected_projects = []
-    used_user_ids = Set.new
+    # # two projects by different authors
+    # selected_projects = []
+    # used_user_ids = Set.new
 
-    eligible_projects.shuffle!
+    # eligible_projects.shuffle!
 
-    eligible_projects.each do |project|
-      next if used_user_ids.include?(project.user_id)
+    # eligible_projects.each do |project|
+    #   next if used_user_ids.include?(project.user_id)
 
-      selected_projects << project
-      used_user_ids << project.user_id
+    #   selected_projects << project
+    #   used_user_ids << project.user_id
 
-      break if selected_projects.size == 2
-    end
+    #   break if selected_projects.size == 2
+    # end
 
-    if selected_projects.size < 2
-      @projects = []
-      return
-    end
+    # if selected_projects.size < 2
+    #   @projects = []
+    #   return
+    # end
 
-    @projects = selected_projects
+    # @projects = selected_projects
   end
 
   def vote_params
