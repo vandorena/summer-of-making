@@ -88,10 +88,10 @@ class VotesController < ApplicationController
                                   .where(ship_certifications: { judgement: :approved })
                                   .where.not(user_id: current_user.id)
                                   .where(                              # we' are getting the max ship event id for each project which should ensure it's the latest ship event
-                                    ship_events: {  
-                                      id: ShipEvent.select('MAX(ship_events.id)')
-                                                  .where('ship_events.project_id = projects.id')
-                                                  .group('ship_events.project_id')
+                                    ship_events: {
+                                      id: ShipEvent.select("MAX(ship_events.id)")
+                                                  .where("ship_events.project_id = projects.id")
+                                                  .group("ship_events.project_id")
                                                   .where.not(id: voted_ship_event_ids)
                                     }
                                   )

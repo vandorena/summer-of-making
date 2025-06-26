@@ -113,7 +113,7 @@ class Vote < ApplicationRecord
       marked_invalid_by: marked_by_user
     )
   end
-  
+
   def process_vote_results
     VoteProcessingService.new(self).process
   end
