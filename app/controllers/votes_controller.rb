@@ -2,7 +2,7 @@
 
 class VotesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_projects, only: %i[new create]
+  before_action :set_projects, only: %i[new]
   before_action :check_identity_verification
 
   # before_action :redirect_to_locked, except: [ :locked ] # For the first week
@@ -13,8 +13,7 @@ class VotesController < ApplicationController
 
     session[:vote_tokens] = {}
 
-    # Don't really care for now
-    @projects.each do |project|
+    if @projects.present? && @projects.size == 2
       token = SecureRandom.hex(16)
       session[:vote_tokens][token] = {
         "user_id" => current_user.id,
@@ -22,28 +21,43 @@ class VotesController < ApplicationController
         "project_2_id" => @projects[1].id,
         "expires_at" => 2.hours.from_now.iso8601
       }
+      @vote_token = token
     end
     Rails.logger.info("Vote tokens: #{session[:vote_tokens]}")
   end
 
   def create
     token = params[:vote_token]
-    token_data = session[:vote_tokens]
+    token_data = session[:vote_tokens]&.[](token)
+
+    unless token_data
+      redirect_to new_vote_path, alert: "Invalid or expired vote token"
+      return
+    end
 
     @vote = current_user.votes.build(vote_params)
 
-    @vote.project_1_id = @projects[0].id
-    @vote.project_2_id = @projects[1].id
+    @vote.project_1_id = token_data["project_1_id"]
+    @vote.project_2_id = token_data["project_2_id"]
 
-    # unless @vote.authorized_with_token?(token_data)
-    #   redirect_to new_vote_path, alert: "Vote validation failed"
-    #   return
-    # end
+    # Handle tie case
+    if @vote.winning_project_id.blank?
+      @vote.winning_project_id = nil
+    end
+
+    unless @vote.authorized_with_token?(token_data)
+      redirect_to new_vote_path, alert: "Vote validation failed"
+      return
+    end
 
     if @vote.save
-      session[:vote_tokens].delete(token)
+      vote_result = if @vote.winning_project_id.nil?
+                     "Tie vote submitted!"
+      else
+                     "Vote submitted!"
+      end
 
-      redirect_to new_vote_path, notice: "Vote Submitted!"
+      redirect_to new_vote_path, notice: vote_result
     else
       redirect_to new_vote_path, alert: @vote.errors.full_messages.join(", ")
     end
@@ -76,7 +90,7 @@ class VotesController < ApplicationController
   end
 
   def set_projects
-    # This needs to be re-written, please ignore for now!
+    # Get projects that haven't been voted on by current user
     voted_ship_event_ids = current_user.votes
                                       .joins(vote_changes: { project: :ship_events })
                                       .distinct
