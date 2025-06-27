@@ -11,9 +11,14 @@
   <% end %>
 
   <div class="field">
-    <b>Project:</b> <%= link_to ship_certification.project.title, ship_certification.project %><br>
-    <b>User:</b> <%= ship_certification.project.user.email %><br>
+    <b>Project ID:</b> <%= ship_certification.project.id %><br>
+    <b>Project:</b> <%= link_to ship_certification.project.title, ship_certification.project %> | <%= link_to "View on Platform", project_path(ship_certification.project), target: "_blank" %><br>
+    <b>User:</b> <%= ship_certification.project.user.email %> | <%= link_to "Admin Profile", admin_user_path(ship_certification.project.user), target: "_blank" %><br>
     <b>Ship Events:</b> <%= ship_certification.project.ship_events.count %><br>
+    <b>Category:</b> <%= ship_certification.project.category&.humanize %><br>
+    <b>Certification Type:</b> <%= ship_certification.project.certification_type&.humanize %><br>
+    <b>Created:</b> <%= ship_certification.project.created_at.strftime("%m/%d/%Y at %I:%M %p") %><br>
+    <b>Last Updated:</b> <%= ship_certification.project.updated_at.strftime("%m/%d/%Y at %I:%M %p") %><br>
   </div>
 
   <div class="field">
