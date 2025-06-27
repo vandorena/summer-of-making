@@ -59,10 +59,6 @@ class Project < ApplicationRecord
     unscoped
   end
 
-  def self.find_with_deleted(id)
-    with_deleted.find(id)
-  end
-
   scope :pending_certification, -> {
     joins(:ship_certifications).where(ship_certifications: { judgement: "pending" })
   }
@@ -88,7 +84,9 @@ class Project < ApplicationRecord
     desktop_app: 7,
     command_line_tool: 8,
     game_mod: 9,
-    chat_bot: 10
+    chat_bot: 10,
+    video: 11,
+    hardware_or_pcb_project: 12
   }
 
   enum :ysws_type, {
