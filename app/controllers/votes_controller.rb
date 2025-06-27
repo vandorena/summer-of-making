@@ -99,6 +99,8 @@ class VotesController < ApplicationController
     @projects = [Project.find(1), Project.find(4)]
                                   # .joins(:ship_events)
                                   # .joins(:ship_certifications)
+                                  # .includes(:user, :banner_attachment,
+                                  #   devlogs: [ :user, :file_attachment ])
                                   # .where(ship_certifications: { judgement: :approved })
                                   # # .where.not(user_id: current_user.id)
                                   # .where(                              # we' are getting the max ship event id for each project which should ensure it's the latest ship event
