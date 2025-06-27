@@ -7,6 +7,8 @@
     "data-analytics-form": ""
   }) do |f| %>
 
+  <%= f.hidden_field :project_1_id, value: @projects.first&.id %>
+  <%= f.hidden_field :project_2_id, value: @projects.last&.id %>
   <%= f.hidden_field :project_1_demo_opened, value: false %>
   <%= f.hidden_field :project_1_readme_opened, value: false %>
   <%= f.hidden_field :project_1_repo_opened, value: false %>

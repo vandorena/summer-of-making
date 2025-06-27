@@ -13,12 +13,25 @@ class VotesController < ApplicationController
   end
 
   def create
-    return redirect_to new_vote_path, alert: "No projects available for voting" if @projects.size != 2
+    project_1_id = params[:vote][:project_1_id]&.to_i
+    project_2_id = params[:vote][:project_2_id]&.to_i
+
+    unless project_1_id && project_2_id
+      redirect_to new_vote_path, alert: "Missing project information"
+      return
+    end
+
+    @projects = Project.where(id: [project_1_id, project_2_id]).to_a
+    
+    if @projects.size != 2
+      redirect_to new_vote_path, alert: "Invalid projects selected"
+      return
+    end
 
     @vote = current_user.votes.build(vote_params)
 
-    @vote.project_1_id = @projects[0].id
-    @vote.project_2_id = @projects[1].id
+    @vote.project_1_id = project_1_id
+    @vote.project_2_id = project_2_id
 
     # Handle tie case
     if @vote.winning_project_id.blank?
@@ -27,7 +40,7 @@ class VotesController < ApplicationController
 
     # Validate that winning project is one of the two projects
     if @vote.winning_project_id.present?
-      valid_project_ids = [@projects[0].id, @projects[1].id]
+      valid_project_ids = [project_1_id, project_2_id]
       unless valid_project_ids.include?(@vote.winning_project_id.to_i)
         redirect_to new_vote_path, alert: "Invalid project selection"
         return
@@ -175,6 +188,6 @@ class VotesController < ApplicationController
     params.expect(vote: %i[winning_project_id explanation
                            project_1_demo_opened project_1_readme_opened project_1_repo_opened
                            project_2_demo_opened project_2_readme_opened project_2_repo_opened
-                           time_spent_voting_ms music_played])
+                           time_spent_voting_ms music_played project_1_id project_2_id])
   end
 end
