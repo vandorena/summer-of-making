@@ -61,7 +61,8 @@ class ShopItem < ApplicationRecord
   scope :enabled, -> { where(enabled: true) }
 
   def fulfill!(shop_order)
-    shop_order.queue_for_nightly!
+    shop_order.queue_for_nightly
+    shop_order.save!
   end
 
   validates_presence_of :ticket_cost, :name, :description
