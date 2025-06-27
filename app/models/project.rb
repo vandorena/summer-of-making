@@ -270,7 +270,7 @@ class Project < ApplicationRecord
   def issue_payouts
     ship_events.each_with_index do |ship, idx|
       next_ship_created_at = ship_events[idx + 1]&.created_at || Float::INFINITY
-      changes = vote_changes.where("created_at < ?", next_ship_created_at)
+      changes = vote_changes.where("created_at < ?", next_ship_created_at).limit(Payout::VOTE_COUNT_REQUIRED)
 
       vote_count = changes.count
       next if vote_count < Payout::VOTE_COUNT_REQUIRED
