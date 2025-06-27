@@ -33,7 +33,7 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
         reason = row["reason"]&.strip || "Manual payout from CSV"
 
         # Parse amount (already validated above)
-        amount = BigDecimal(amount_str)
+        amount = parse_amount(amount_str)
 
         # Find user by Slack ID (already validated above)
         user = User.find_by(slack_id: slack_id)
@@ -117,12 +117,13 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
 
       # Validate amount format
       begin
-        amount = BigDecimal(amount_str)
+        # Handle both integer and decimal amounts
+        amount = parse_amount(amount_str)
         if amount <= 0
           errors << "Row #{index + 2}: Amount must be positive for Slack ID '#{slack_id}'"
         end
-      rescue ArgumentError
-        errors << "Row #{index + 2}: Invalid amount format '#{amount_str}' for Slack ID '#{slack_id}'"
+      rescue ArgumentError, TypeError => e
+        errors << "Row #{index + 2}: Invalid amount format '#{amount_str}' for Slack ID '#{slack_id}': #{e.message}"
         next
       end
 
@@ -134,5 +135,26 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
     end
 
     errors
+  end
+
+  def parse_amount(amount_str)
+    return nil if amount_str.nil? || amount_str.strip.empty?
+
+    # Remove any currency symbols and whitespace
+    cleaned_amount = amount_str.strip.gsub(/[$,\s]/, "")
+
+    # Handle both integer and decimal formats
+    if cleaned_amount.match?(/^\d+$/)
+      # Integer format (e.g., "100")
+      BigDecimal(cleaned_amount)
+    elsif cleaned_amount.match?(/^\d+\.\d+$/)
+      # Decimal format (e.g., "100.50")
+      BigDecimal(cleaned_amount)
+    elsif cleaned_amount.match?(/^\d+\.$/)
+      # Decimal with no cents (e.g., "100.")
+      BigDecimal(cleaned_amount + "0")
+    else
+      raise ArgumentError, "Invalid amount format: #{amount_str}"
+    end
   end
 end
