@@ -47,7 +47,7 @@ class ShopOrder < ApplicationRecord
   validate :check_one_per_person_ever_limit
   validate :check_max_quantity_limit
   validate :check_black_market_access
-  validate :check_user_balance
+  validate :check_user_balance, on: :create
   validate :check_regional_availability
   after_create :create_negative_payout
   before_create :set_initial_state_for_free_stickers
