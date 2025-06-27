@@ -120,10 +120,5 @@ class Vote < ApplicationRecord
 
   def process_vote_results
     VoteProcessingService.new(self).process
-
-    winner = vote_changes.where(result: "win").first
-    loser = vote_changes.where(result: "loss").first
-
-    if winner.
   end
 end
