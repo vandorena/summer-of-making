@@ -15,9 +15,13 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
     csv_data = fetch_csv_data(csv_source, source_type)
 
     # Parse CSV data
-    csv_rows = CSV.parse(csv_data, headers: true)
+    csv_rows = CSV.parse(csv_data, headers: false)
 
     puts "📊 Found #{csv_rows.count} rows in CSV"
+    puts "🔍 First few rows for debugging:"
+    csv_rows.first(5).each_with_index do |row, i|
+      puts "  Row #{i}: #{row.inspect}"
+    end
     puts "---"
 
     # Phase 1: Validate and identify issues
@@ -163,25 +167,25 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
     puts "🔍 Validating #{csv_rows.count} rows..."
 
     csv_rows.each_with_index do |row, index|
-      slack_id = row["slack_id"]&.strip
-      amount_str = row["amount"]&.strip
+      slack_id = row[0]&.strip
+      amount_str = row[1]&.strip
 
       # Skip empty rows
       if slack_id.blank? && amount_str.blank?
-        puts "  ⏭️  Row #{index + 2}: Skipping empty row"
+        puts "  ⏭️  Row #{index + 1}: Skipping empty row"
         next
       end
 
       # Check for required fields
       if slack_id.blank?
-        error_msg = "Row #{index + 2}: Missing slack_id"
+        error_msg = "Row #{index + 1}: Missing slack_id"
         puts "  ❌ #{error_msg}"
         critical_errors << error_msg
         next
       end
 
       if amount_str.blank?
-        error_msg = "Row #{index + 2}: Missing amount for Slack ID '#{slack_id}'"
+        error_msg = "Row #{index + 1}: Missing amount for Slack ID '#{slack_id}'"
         puts "  ❌ #{error_msg}"
         critical_errors << error_msg
         next
@@ -192,13 +196,13 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
         # Handle both integer and decimal amounts
         amount = parse_amount(amount_str)
         if amount <= 0
-          error_msg = "Row #{index + 2}: Amount must be positive for Slack ID '#{slack_id}'"
+          error_msg = "Row #{index + 1}: Amount must be positive for Slack ID '#{slack_id}'"
           puts "  ❌ #{error_msg}"
           critical_errors << error_msg
           next
         end
       rescue ArgumentError, TypeError => e
-        error_msg = "Row #{index + 2}: Invalid amount format '#{amount_str}' for Slack ID '#{slack_id}': #{e.message}"
+        error_msg = "Row #{index + 1}: Invalid amount format '#{amount_str}' for Slack ID '#{slack_id}': #{e.message}"
         puts "  ❌ #{error_msg}"
         critical_errors << error_msg
         next
@@ -207,18 +211,18 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
       # Validate user exists
       user = User.find_by(slack_id: slack_id)
       if user.nil?
-        missing_user_info = { slack_id: slack_id, amount: amount, reason: row["reason"]&.strip || "Manual payout from CSV" }
+        missing_user_info = { slack_id: slack_id, amount: amount, reason: row[2]&.strip || "Manual payout from CSV" }
         missing_users << missing_user_info
-        puts "  ⚠️  Row #{index + 2}: User not found with Slack ID '#{slack_id}' (Amount: $#{amount})"
+        puts "  ⚠️  Row #{index + 1}: User not found with Slack ID '#{slack_id}' (Amount: $#{amount})"
       else
         valid_row_data = {
           slack_id: slack_id,
           amount: amount,
-          reason: row["reason"]&.strip || "Manual payout from CSV",
+          reason: row[2]&.strip || "Manual payout from CSV",
           user: user
         }
         valid_rows << valid_row_data
-        puts "  ✅ Row #{index + 2}: Valid - #{user.display_name} (#{slack_id}) - $#{amount}"
+        puts "  ✅ Row #{index + 1}: Valid - #{user.display_name} (#{slack_id}) - $#{amount}"
       end
     end
 
