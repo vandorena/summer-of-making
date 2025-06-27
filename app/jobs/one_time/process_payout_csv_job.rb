@@ -148,8 +148,11 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
         raise StandardError, "Failed to fetch CSV from URL: #{response.code} #{response.message}"
       end
 
-      puts "✅ Successfully fetched CSV data (#{response.body.length} characters)"
-      response.body
+      # Fix encoding issues by forcing UTF-8
+      csv_body = response.body.force_encoding("UTF-8")
+
+      puts "✅ Successfully fetched CSV data (#{csv_body.length} characters)"
+      csv_body
 
     when :data
       # Assume source is already CSV data
@@ -212,14 +215,14 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
       # Validate user exists
       user = User.find_by(slack_id: slack_id)
       if user.nil?
-        missing_user_info = { slack_id: slack_id, amount: amount, reason: row[2]&.strip || "Manual payout from CSV" }
+        missing_user_info = { slack_id: slack_id, amount: amount, reason: sanitize_reason(row[2]) }
         missing_users << missing_user_info
         puts "  ⚠️  Row #{index + 1}: User not found with Slack ID '#{slack_id}' (Amount: $#{amount})"
       else
         valid_row_data = {
           slack_id: slack_id,
           amount: amount,
-          reason: row[2]&.strip || "Manual payout from CSV",
+          reason: sanitize_reason(row[2]),
           user: user
         }
         valid_rows << valid_row_data
@@ -263,5 +266,18 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
     else
       raise ArgumentError, "Invalid amount format: #{amount_str}"
     end
+  end
+
+  def sanitize_reason(reason)
+    return "Manual payout from CSV" if reason.blank?
+
+    # Remove any non-ASCII characters and normalize
+    sanitized = reason.strip
+      .encode("UTF-8", invalid: :replace, undef: :replace, replace: "")
+      .gsub(/[^\x20-\x7E]/, "") # Keep only printable ASCII characters
+      .strip
+
+    # Fallback if everything was removed
+    sanitized.present? ? sanitized : "Manual payout from CSV"
   end
 end
