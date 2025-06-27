@@ -97,21 +97,23 @@ class VotesController < ApplicationController
                                       .pluck("ship_events.id")
 
     @projects = [Project.find(1), Project.find(4)]
-                                  # .joins(:ship_events)
-                                  # .joins(:ship_certifications)
-                                  # .includes(:user, :banner_attachment,
-                                  #   devlogs: [ :user, :file_attachment ])
-                                  # .where(ship_certifications: { judgement: :approved })
-                                  # # .where.not(user_id: current_user.id)
-                                  # .where(                              # we' are getting the max ship event id for each project which should ensure it's the latest ship event
-                                  #   ship_events: {
-                                  #     id: ShipEvent.select("MAX(ship_events.id)")
-                                  #                 .where("ship_events.project_id = projects.id")
-                                  #                 .group("ship_events.project_id")
-                                  #                 .where.not(id: voted_ship_event_ids)
-                                  #   }
-                                  # )
-                                  # .distinct
+
+    # projects_with_latest_ship = Project
+    #                               .joins(:ship_events)
+    #                               .joins(:ship_certifications)
+    #                               .includes(:user, :banner_attachment,
+    #                                         devlogs: [ :user, :file_attachment ])
+    #                               .where(ship_certifications: { judgement: :approved })
+    #                               .where.not(user_id: current_user.id)
+    #                               .where(
+    #                                 ship_events: {
+    #                                   id: ShipEvent.select("MAX(ship_events.id)")
+    #                                               .where("ship_events.project_id = projects.id")
+    #                                               .group("ship_events.project_id")
+    #                                               .where.not(id: voted_ship_event_ids)
+    #                                 }
+    #                               )
+    #                               .distinct
 
     # if projects_with_latest_ship.count < 2
     #   @projects = []
@@ -120,7 +122,7 @@ class VotesController < ApplicationController
 
     # eligible_projects = projects_with_latest_ship.to_a
 
-    # # two projects by different authors
+    # two projects by different authors
     # selected_projects = []
     # used_user_ids = Set.new
 
