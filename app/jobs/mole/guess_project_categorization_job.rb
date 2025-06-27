@@ -57,6 +57,8 @@ class Mole::GuessProjectCategorizationJob < ApplicationJob
       - README description and documentation
       - Project structure and build files
 
+      Your decision is based on how to test the app- for example, a pygame app without an executable would be a command_line app. A pygame with an executable would be a desktop_app.
+
       Return your classification in this EXACT format:
       CERT_TYPE|CONFIDENCE|REASONING
 
