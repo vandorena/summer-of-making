@@ -292,7 +292,9 @@ class Project < ApplicationRecord
 
       reason = "Payout#{" recalculation" if ship.payouts.count > 0} for #{title}'s #{ship.created_at.to_s} ship."
 
-      Payout.create!(amount: current_payout_difference, payable: ship, user:, reason:)
+      payout = Payout.create!(amount: current_payout_difference, payable: ship, user:, reason:)
+
+      puts "PAYOUTCREASED(#{payout.id}) ship.id:#{ship.id} min:#{min} max:#{max} rating:#{rating} pc:#{pc} mult:#{mult} hours:#{hours} amount:#{amount} current_payout_sum:#{current_payout_sum} current_payout_difference:#{current_payout_difference}"
     end
   end
 
