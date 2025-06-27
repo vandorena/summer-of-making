@@ -272,12 +272,14 @@ class Project < ApplicationRecord
       next_ship_created_at = ship_events[idx + 1]&.created_at || Float::INFINITY
       changes = vote_changes.where("created_at < ?", next_ship_created_at).limit(Payout::VOTE_COUNT_REQUIRED)
 
-      vote_count = changes.count
-      next if vote_count < Payout::VOTE_COUNT_REQUIRED
+      next if changes.count < Payout::VOTE_COUNT_REQUIRED
 
-      min, max = Project.cumulative_elo_bounds_at_vote_count vote_count
+      min, max = Project.cumulative_elo_bounds_at_vote_count Payout::VOTE_COUNT_REQUIRED
 
-      pc = unlerp(min, max, rating)
+      rating_at_vote_count = changes.last.elo_after
+      pc = unlerp(min, max, rating_at_vote_count)
+
+      puts "FKDF", pc, min, max, rating_at_vote_count
 
       mult = Payout.calculate_multiplier pc
 
@@ -294,7 +296,7 @@ class Project < ApplicationRecord
 
       payout = Payout.create!(amount: current_payout_difference, payable: ship, user:, reason:)
 
-      puts "PAYOUTCREASED(#{payout.id}) ship.id:#{ship.id} min:#{min} max:#{max} rating:#{rating} pc:#{pc} mult:#{mult} hours:#{hours} amount:#{amount} current_payout_sum:#{current_payout_sum} current_payout_difference:#{current_payout_difference}"
+      puts "PAYOUTCREASED(#{payout.id}) ship.id:#{ship.id} min:#{min} max:#{max} rating_at_vote_count:#{rating_at_vote_count} pc:#{pc} mult:#{mult} hours:#{hours} amount:#{amount} current_payout_sum:#{current_payout_sum} current_payout_difference:#{current_payout_difference}"
     end
   end
 
