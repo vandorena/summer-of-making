@@ -96,97 +96,95 @@ class VotesController < ApplicationController
                                       .distinct
                                       .pluck("ship_events.id")
 
-    @projects = Project.find([1, 4])
+    projects_with_latest_ship = Project
+                                  .joins(:ship_events)
+                                  .joins(:ship_certifications)
+                                  .includes(:user, :banner_attachment,
+                                           devlogs: [ :user, :file_attachment ])
+                                  .where(ship_certifications: { judgement: :approved })
+                                  .where.not(user_id: current_user.id)
+                                  .where(
+                                    ship_events: {
+                                      id: ShipEvent.select("MAX(ship_events.id)")
+                                                  .where("ship_events.project_id = projects.id")
+                                                  .group("ship_events.project_id")
+                                                  .where.not(id: voted_ship_event_ids)
+                                    }
+                                  )
+                                  .distinct
 
-    # projects_with_latest_ship = Project
-    #                               .joins(:ship_events)
-    #                               .joins(:ship_certifications)
-    #                               .includes(:user, :banner_attachment,
-    #                                        devlogs: [ :user, :file_attachment ])
-    #                               .where(ship_certifications: { judgement: :approved })
-    #                               .where.not(user_id: current_user.id)
-    #                               .where(
-    #                                 ship_events: {
-    #                                   id: ShipEvent.select("MAX(ship_events.id)")
-    #                                               .where("ship_events.project_id = projects.id")
-    #                                               .group("ship_events.project_id")
-    #                                               .where.not(id: voted_ship_event_ids)
-    #                                 }
-    #                               )
-    #                               .distinct
+    if projects_with_latest_ship.count < 2
+      @projects = []
+      return
+    end
 
-    # if projects_with_latest_ship.count < 2
-    #   @projects = []
-    #   return
-    # end
+    eligible_projects = projects_with_latest_ship.to_a
 
-    # eligible_projects = projects_with_latest_ship.to_a
+      projects_with_time = eligible_projects.map do |project|
+        latest_ship_event = project.ship_events.order(:created_at).last
 
-    #   projects_with_time = eligible_projects.map do |project|
-    #     latest_ship_event = project.ship_events.order(:created_at).last
+        ship_devlogs = latest_ship_event.devlogs_since_last
+                                       .where("created_at < ?", latest_ship_event.created_at)
+        total_time_seconds = ship_devlogs.sum(:last_hackatime_time)
 
-    #     ship_devlogs = latest_ship_event.devlogs_since_last
-    #                                    .where("created_at < ?", latest_ship_event.created_at)
-    #     total_time_seconds = ship_devlogs.sum(:last_hackatime_time)
+      {
+        project: project,
+        total_time: total_time_seconds
+      }
+    end
 
-    #   {
-    #     project: project,
-    #     total_time: total_time_seconds
-    #   }
-    # end
+    if projects_with_time.size < 2
+      @projects = []
+      return
+    end
 
-    # if projects_with_time.size < 2
-    #   @projects = []
-    #   return
-    # end
+    selected_projects = []
+    used_user_ids = Set.new
+    max_attempts = 25 # infinite loop!
 
-    # selected_projects = []
-    # used_user_ids = Set.new
-    # max_attempts = 25 # infinite loop!
+    attempts = 0
+    while selected_projects.size < 2 && attempts < max_attempts
+      attempts += 1
 
-    # attempts = 0
-    # while selected_projects.size < 2 && attempts < max_attempts
-    #   attempts += 1
+      # pick a raqndom project and get smth in it's range
+      if selected_projects.empty?
+        first_project_data = projects_with_time.select { |p| !used_user_ids.include?(p[:project].user_id) }.sample
+        next unless first_project_data
 
-    #   # pick a raqndom project and get smth in it's range
-    #   if selected_projects.empty?
-    #     first_project_data = projects_with_time.select { |p| !used_user_ids.include?(p[:project].user_id) }.sample
-    #     next unless first_project_data
+        selected_projects << first_project_data[:project]
+        used_user_ids << first_project_data[:project].user_id
+        first_time = first_project_data[:total_time]
 
-    #     selected_projects << first_project_data[:project]
-    #     used_user_ids << first_project_data[:project].user_id
-    #     first_time = first_project_data[:total_time]
+        # find projects within the constraints (set to 30%)
+        min_time = first_time * 0.7
+        max_time = first_time * 1.3
 
-    #     # find projects within the constraints (set to 30%)
-    #     min_time = first_time * 0.7
-    #     max_time = first_time * 1.3
+        compatible_projects = projects_with_time.select do |p|
+          !used_user_ids.include?(p[:project].user_id) &&
+          p[:total_time] >= min_time &&
+          p[:total_time] <= max_time
+        end
 
-    #     compatible_projects = projects_with_time.select do |p|
-    #       !used_user_ids.include?(p[:project].user_id) &&
-    #       p[:total_time] >= min_time &&
-    #       p[:total_time] <= max_time
-    #     end
+        if compatible_projects.any?
+          second_project_data = compatible_projects.sample
+          selected_projects << second_project_data[:project]
+          used_user_ids << second_project_data[:project].user_id
+        else
+          selected_projects.clear
+          used_user_ids.clear
+        end
+      end
+    end
 
-    #     if compatible_projects.any?
-    #       second_project_data = compatible_projects.sample
-    #       selected_projects << second_project_data[:project]
-    #       used_user_ids << second_project_data[:project].user_id
-    #     else
-    #       selected_projects.clear
-    #       used_user_ids.clear
-    #     end
-    #   end
-    # end
+    if selected_projects.size < 2
+      @projects = []
+      return
+    end
 
-    # if selected_projects.size < 2
-    #   @projects = []
-    #   return
-    # end
-
-    # @projects = selected_projects
-    # @ship_events = selected_projects.map do |project|
-    #   project.ship_events.order(:created_at).last
-    # end
+    @projects = selected_projects
+    @ship_events = selected_projects.map do |project|
+      project.ship_events.order(:created_at).last
+    end
   end
 
   def vote_params
