@@ -84,7 +84,8 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
         payout = Payout.create!(
           user: user,
           amount: amount,
-          reason: reason
+          reason: reason,
+          payable: user
         )
 
         processed_count += 1
