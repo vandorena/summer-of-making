@@ -267,9 +267,14 @@ class Project < ApplicationRecord
     payout = hours * mult
   end
 
-  def pay_out
-    unpaid_shipevents_since_last_payout.each do |ship|
-      vote_count = VoteChange.where(project: self).maximum(:project_vote_count)
+  def issue_payouts
+    ship_events.each_with_index do |ship, idx|
+      next_ship_created_at = ship_events[idx + 1]&.created_at || Float::INFINITY
+      changes = vote_changes.where("created_at < ?", next_ship_created_at)
+
+      vote_count = changes.count
+      next if vote_count < Payout::VOTE_COUNT_REQUIRED
+
       min, max = Project.cumulative_elo_bounds_at_vote_count vote_count
 
       pc = unlerp(min, max, rating)
@@ -278,12 +283,17 @@ class Project < ApplicationRecord
 
       hours = ship.hours_covered
 
-      Rails.logger.info ">>> \##{vote_count} | #{min},#{max} | << #{rating} >>| #{pc} | #{mult} | #{hours} | YAY"
+      amount = (mult * hours).ceil
+
+      current_payout_sum = ship.payouts.sum(:amount)
+      current_payout_difference = amount - current_payout_sum
+
+      next if current_payout_difference.zero?
+
+      reason = "Payout#{" recalculation" if ship.payouts.count > 0} for #{title}'s #{ship.created_at.to_s} ship."
+
+      Payout.create!(amount: current_payout_difference, payable: ship, user:, reason:)
     end
-
-    # amount = calculate_payout.ceil
-
-    # Payout.create(payable_type: ShipEvent, amount:, reason: "Payout for #{title}.")
   end
 
   private
