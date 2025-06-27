@@ -9,29 +9,49 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
     # Auto-detect source type
     source_type = detect_source_type(csv_source)
 
+    puts "🔍 Detected source type: #{source_type}"
+
     # Fetch CSV data based on source type
     csv_data = fetch_csv_data(csv_source, source_type)
 
     # Parse CSV data
     csv_rows = CSV.parse(csv_data, headers: true)
 
-    Rails.logger.info "Processing #{csv_rows.count} payout records from #{source_type} source"
+    puts "📊 Found #{csv_rows.count} rows in CSV"
+    puts "---"
 
     # Phase 1: Validate and identify issues
+    puts "🔍 Starting validation..."
     validation_result = validate_csv_data(csv_rows)
 
+    # Print validation summary
+    puts ""
+    puts "📋 VALIDATION SUMMARY:"
+    puts "  ✅ Valid rows: #{validation_result[:valid_rows].count}"
+    puts "  ❌ Critical errors: #{validation_result[:critical_errors].count}"
+    puts "  ⚠️  Missing users: #{validation_result[:missing_users].count}"
+    puts ""
+
     if validation_result[:critical_errors].any?
-      Rails.logger.error "Critical validation errors found. Aborting payout processing:"
-      validation_result[:critical_errors].each { |error| Rails.logger.error "  #{error}" }
-      raise StandardError, "CSV validation failed: #{validation_result[:critical_errors].join(', ')}"
+      puts "🚨 CRITICAL VALIDATION ERRORS FOUND:"
+      validation_result[:critical_errors].each_with_index do |error, index|
+        puts "  #{index + 1}. #{error}"
+      end
+      puts ""
+      puts "❌ Aborting payout processing due to critical errors."
+      raise StandardError, "CSV validation failed with #{validation_result[:critical_errors].count} critical errors"
     end
 
     # Check for missing users
     if validation_result[:missing_users].any? && !force_proceed
-      missing_users_message = generate_missing_users_message(validation_result[:missing_users])
-      Rails.logger.warn "MISSING USERS DETECTED:"
-      Rails.logger.warn missing_users_message
-      Rails.logger.warn "To proceed with only valid users, run with force_proceed: true"
+      puts "⚠️  MISSING USERS DETECTED:"
+      validation_result[:missing_users].each_with_index do |missing, index|
+        puts "  #{index + 1}. Slack ID: #{missing[:slack_id]} | Amount: $#{missing[:amount]} | Reason: #{missing[:reason]}"
+      end
+      puts ""
+      puts "💰 Total amount for missing users: $#{validation_result[:missing_users].sum { |u| u[:amount] }}"
+      puts ""
+      puts "💡 To proceed with only valid users, run with force_proceed: true"
       raise StandardError, "Missing users detected. Set force_proceed: true to continue with valid users only."
     end
 
@@ -39,17 +59,18 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
     valid_rows = validation_result[:valid_rows]
 
     if valid_rows.empty?
-      Rails.logger.warn "No valid rows to process"
+      puts "⚠️  No valid rows to process"
       return { processed_count: 0, error_count: 0, errors: [], missing_users: validation_result[:missing_users] }
     end
 
-    Rails.logger.info "Proceeding with #{valid_rows.count} valid users"
+    puts "🚀 Proceeding with #{valid_rows.count} valid users..."
+    puts ""
 
     # Process all payouts in a single transaction
     processed_count = 0
 
     ActiveRecord::Base.transaction do
-      valid_rows.each do |row_data|
+      valid_rows.each_with_index do |row_data, index|
         slack_id = row_data[:slack_id]
         amount = row_data[:amount]
         reason = row_data[:reason]
@@ -63,11 +84,19 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
         )
 
         processed_count += 1
-        Rails.logger.info "Created payout: $#{amount} for user #{user.display_name} (#{slack_id}) - Reason: #{reason}"
+        puts "✅ #{index + 1}/#{valid_rows.count}: Created payout $#{amount} for #{user.display_name} (#{slack_id}) - #{reason}"
       end
     end
 
-    Rails.logger.info "Payout processing completed successfully: #{processed_count} payouts created"
+    puts ""
+    puts "🎉 PAYOUT PROCESSING COMPLETED SUCCESSFULLY!"
+    puts "  📊 Total payouts created: #{processed_count}"
+    puts "  💰 Total amount processed: $#{valid_rows.sum { |r| r[:amount] }}"
+
+    if validation_result[:missing_users].any?
+      puts "  ⚠️  Skipped users: #{validation_result[:missing_users].count}"
+      puts "  💰 Skipped amount: $#{validation_result[:missing_users].sum { |u| u[:amount] }}"
+    end
 
     # Return results for potential use by caller
     {
@@ -79,6 +108,10 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
     }
 
   rescue StandardError => e
+    puts ""
+    puts "💥 PAYOUT PROCESSING FAILED:"
+    puts "  Error: #{e.message}"
+    puts "  Backtrace: #{e.backtrace.first(5).join("\n    ")}"
     Rails.logger.error "Payout processing failed: #{e.message}"
     Rails.logger.error e.backtrace.join("\n")
     raise e
@@ -102,6 +135,7 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
       File.read(source)
 
     when :url
+      puts "🌐 Fetching CSV from URL: #{source}"
       uri = URI.parse(source)
       response = Net::HTTP.get_response(uri)
 
@@ -109,6 +143,7 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
         raise StandardError, "Failed to fetch CSV from URL: #{response.code} #{response.message}"
       end
 
+      puts "✅ Successfully fetched CSV data (#{response.body.length} characters)"
       response.body
 
     when :data
@@ -125,21 +160,30 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
     missing_users = []
     valid_rows = []
 
+    puts "🔍 Validating #{csv_rows.count} rows..."
+
     csv_rows.each_with_index do |row, index|
       slack_id = row["slack_id"]&.strip
       amount_str = row["amount"]&.strip
 
       # Skip empty rows
-      next if slack_id.blank? && amount_str.blank?
+      if slack_id.blank? && amount_str.blank?
+        puts "  ⏭️  Row #{index + 2}: Skipping empty row"
+        next
+      end
 
       # Check for required fields
       if slack_id.blank?
-        critical_errors << "Row #{index + 2}: Missing slack_id"
+        error_msg = "Row #{index + 2}: Missing slack_id"
+        puts "  ❌ #{error_msg}"
+        critical_errors << error_msg
         next
       end
 
       if amount_str.blank?
-        critical_errors << "Row #{index + 2}: Missing amount for Slack ID '#{slack_id}'"
+        error_msg = "Row #{index + 2}: Missing amount for Slack ID '#{slack_id}'"
+        puts "  ❌ #{error_msg}"
+        critical_errors << error_msg
         next
       end
 
@@ -148,25 +192,33 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
         # Handle both integer and decimal amounts
         amount = parse_amount(amount_str)
         if amount <= 0
-          critical_errors << "Row #{index + 2}: Amount must be positive for Slack ID '#{slack_id}'"
+          error_msg = "Row #{index + 2}: Amount must be positive for Slack ID '#{slack_id}'"
+          puts "  ❌ #{error_msg}"
+          critical_errors << error_msg
           next
         end
       rescue ArgumentError, TypeError => e
-        critical_errors << "Row #{index + 2}: Invalid amount format '#{amount_str}' for Slack ID '#{slack_id}': #{e.message}"
+        error_msg = "Row #{index + 2}: Invalid amount format '#{amount_str}' for Slack ID '#{slack_id}': #{e.message}"
+        puts "  ❌ #{error_msg}"
+        critical_errors << error_msg
         next
       end
 
       # Validate user exists
       user = User.find_by(slack_id: slack_id)
       if user.nil?
-        missing_users << { slack_id: slack_id, amount: amount, reason: row["reason"]&.strip || "Manual payout from CSV" }
+        missing_user_info = { slack_id: slack_id, amount: amount, reason: row["reason"]&.strip || "Manual payout from CSV" }
+        missing_users << missing_user_info
+        puts "  ⚠️  Row #{index + 2}: User not found with Slack ID '#{slack_id}' (Amount: $#{amount})"
       else
-        valid_rows << {
+        valid_row_data = {
           slack_id: slack_id,
           amount: amount,
           reason: row["reason"]&.strip || "Manual payout from CSV",
           user: user
         }
+        valid_rows << valid_row_data
+        puts "  ✅ Row #{index + 2}: Valid - #{user.display_name} (#{slack_id}) - $#{amount}"
       end
     end
 
