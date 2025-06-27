@@ -1,10 +1,13 @@
 class OneTime::ProcessPayoutCsvJob < ApplicationJob
   queue_as :default
 
-  def perform(csv_source, source_type = :file)
+  def perform(csv_source, force_proceed = false)
     require "csv"
     require "net/http"
     require "uri"
+
+    # Auto-detect source type
+    source_type = detect_source_type(csv_source)
 
     # Fetch CSV data based on source type
     csv_data = fetch_csv_data(csv_source, source_type)
@@ -14,29 +17,43 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
 
     Rails.logger.info "Processing #{csv_rows.count} payout records from #{source_type} source"
 
-    # Validate all data before processing
-    validation_errors = validate_csv_data(csv_rows)
+    # Phase 1: Validate and identify issues
+    validation_result = validate_csv_data(csv_rows)
 
-    if validation_errors.any?
-      Rails.logger.error "Validation failed. Aborting payout processing:"
-      validation_errors.each { |error| Rails.logger.error "  #{error}" }
-      raise StandardError, "CSV validation failed: #{validation_errors.join(', ')}"
+    if validation_result[:critical_errors].any?
+      Rails.logger.error "Critical validation errors found. Aborting payout processing:"
+      validation_result[:critical_errors].each { |error| Rails.logger.error "  #{error}" }
+      raise StandardError, "CSV validation failed: #{validation_result[:critical_errors].join(', ')}"
     end
+
+    # Check for missing users
+    if validation_result[:missing_users].any? && !force_proceed
+      missing_users_message = generate_missing_users_message(validation_result[:missing_users])
+      Rails.logger.warn "MISSING USERS DETECTED:"
+      Rails.logger.warn missing_users_message
+      Rails.logger.warn "To proceed with only valid users, run with force_proceed: true"
+      raise StandardError, "Missing users detected. Set force_proceed: true to continue with valid users only."
+    end
+
+    # Phase 2: Process only valid users
+    valid_rows = validation_result[:valid_rows]
+
+    if valid_rows.empty?
+      Rails.logger.warn "No valid rows to process"
+      return { processed_count: 0, error_count: 0, errors: [], missing_users: validation_result[:missing_users] }
+    end
+
+    Rails.logger.info "Proceeding with #{valid_rows.count} valid users"
 
     # Process all payouts in a single transaction
     processed_count = 0
 
     ActiveRecord::Base.transaction do
-      csv_rows.each_with_index do |row, index|
-        slack_id = row["slack_id"]&.strip
-        amount_str = row["amount"]&.strip
-        reason = row["reason"]&.strip || "Manual payout from CSV"
-
-        # Parse amount (already validated above)
-        amount = parse_amount(amount_str)
-
-        # Find user by Slack ID (already validated above)
-        user = User.find_by(slack_id: slack_id)
+      valid_rows.each do |row_data|
+        slack_id = row_data[:slack_id]
+        amount = row_data[:amount]
+        reason = row_data[:reason]
+        user = row_data[:user]
 
         # Create payout
         payout = Payout.create!(
@@ -56,7 +73,9 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
     {
       processed_count: processed_count,
       error_count: 0,
-      errors: []
+      errors: [],
+      missing_users: validation_result[:missing_users],
+      skipped_count: validation_result[:missing_users].count
     }
 
   rescue StandardError => e
@@ -66,6 +85,13 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
   end
 
   private
+
+  def detect_source_type(source)
+    return :data if source.is_a?(String) && source.include?("\n") && source.include?(",")
+    return :url if source.is_a?(String) && (source.start_with?("http://", "https://") || source.match?(/^https?:\/\//))
+    return :file if source.is_a?(String) && File.exist?(source)
+    :data # Default to treating as raw CSV data
+  end
 
   def fetch_csv_data(source, source_type)
     case source_type.to_sym
@@ -95,7 +121,9 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
   end
 
   def validate_csv_data(csv_rows)
-    errors = []
+    critical_errors = []
+    missing_users = []
+    valid_rows = []
 
     csv_rows.each_with_index do |row, index|
       slack_id = row["slack_id"]&.strip
@@ -106,12 +134,12 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
 
       # Check for required fields
       if slack_id.blank?
-        errors << "Row #{index + 2}: Missing slack_id"
+        critical_errors << "Row #{index + 2}: Missing slack_id"
         next
       end
 
       if amount_str.blank?
-        errors << "Row #{index + 2}: Missing amount for Slack ID '#{slack_id}'"
+        critical_errors << "Row #{index + 2}: Missing amount for Slack ID '#{slack_id}'"
         next
       end
 
@@ -120,21 +148,43 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
         # Handle both integer and decimal amounts
         amount = parse_amount(amount_str)
         if amount <= 0
-          errors << "Row #{index + 2}: Amount must be positive for Slack ID '#{slack_id}'"
+          critical_errors << "Row #{index + 2}: Amount must be positive for Slack ID '#{slack_id}'"
+          next
         end
       rescue ArgumentError, TypeError => e
-        errors << "Row #{index + 2}: Invalid amount format '#{amount_str}' for Slack ID '#{slack_id}': #{e.message}"
+        critical_errors << "Row #{index + 2}: Invalid amount format '#{amount_str}' for Slack ID '#{slack_id}': #{e.message}"
         next
       end
 
       # Validate user exists
       user = User.find_by(slack_id: slack_id)
       if user.nil?
-        errors << "Row #{index + 2}: User not found with Slack ID '#{slack_id}'"
+        missing_users << { slack_id: slack_id, amount: amount, reason: row["reason"]&.strip || "Manual payout from CSV" }
+      else
+        valid_rows << {
+          slack_id: slack_id,
+          amount: amount,
+          reason: row["reason"]&.strip || "Manual payout from CSV",
+          user: user
+        }
       end
     end
 
-    errors
+    {
+      critical_errors: critical_errors,
+      missing_users: missing_users,
+      valid_rows: valid_rows
+    }
+  end
+
+  def generate_missing_users_message(missing_users)
+    message = "The following users were not found in the database:\n"
+    missing_users.each do |missing|
+      message += "  - Slack ID: #{missing[:slack_id]}, Amount: $#{missing[:amount]}, Reason: #{missing[:reason]}\n"
+    end
+    message += "\nTotal missing users: #{missing_users.count}"
+    message += "\nTotal amount for missing users: $#{missing_users.sum { |u| u[:amount] }}"
+    message
   end
 
   def parse_amount(amount_str)
