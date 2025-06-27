@@ -226,8 +226,8 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
       begin
         # Handle both integer and decimal amounts
         amount = parse_amount(amount_str)
-        if amount <= 0
-          error_msg = "Row #{index + 1}: Amount must be positive for Slack ID '#{slack_id}'"
+        if amount == 0
+          error_msg = "Row #{index + 1}: Amount cannot be zero for Slack ID '#{slack_id}'"
           puts "  ❌ #{error_msg}"
           critical_errors << error_msg
           next
@@ -299,15 +299,15 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
     # Remove any currency symbols and whitespace
     cleaned_amount = amount_str.strip.gsub(/[$,\s]/, "")
 
-    # Handle both integer and decimal formats
-    if cleaned_amount.match?(/^\d+$/)
-      # Integer format (e.g., "100")
+    # Handle both integer and decimal formats (including negative)
+    if cleaned_amount.match?(/^-?\d+$/)
+      # Integer format (e.g., "100", "-100")
       BigDecimal(cleaned_amount)
-    elsif cleaned_amount.match?(/^\d+\.\d+$/)
-      # Decimal format (e.g., "100.50")
+    elsif cleaned_amount.match?(/^-?\d+\.\d+$/)
+      # Decimal format (e.g., "100.50", "-100.50")
       BigDecimal(cleaned_amount)
-    elsif cleaned_amount.match?(/^\d+\.$/)
-      # Decimal with no cents (e.g., "100.")
+    elsif cleaned_amount.match?(/^-?\d+\.$/)
+      # Decimal with no cents (e.g., "100.", "-100.")
       BigDecimal(cleaned_amount + "0")
     else
       raise ArgumentError, "Invalid amount format: #{amount_str}"
