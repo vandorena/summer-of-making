@@ -12,7 +12,7 @@ class Mole::GuessProjectCategorizationJob < ApplicationJob
       project.demo_link,
       project.repo_link,
       project.readme_link
-    ].compact.uniq
+    ].reject { |c| c.empty? }.compact.uniq
 
     Rails.logger.info "Project #{project_id} URLs: #{urls.join(', ')}"
 
@@ -45,16 +45,19 @@ class Mole::GuessProjectCategorizationJob < ApplicationJob
     <<~PROMPT
       You are helping a hackathon project reviewer for an adventure-themed hackathon. You are a mascot mole, the thing that digs in the dirt and can't see well.
 
-      Analyze this project to classify it based on the provided URLs (README, demo/play link, and repository).
+      Analyze this project to classify how it can be tested on the provided URLs (README, demo/play link, and repository).
 
       Visit these links and determine a classification: #{cert_types.join(', ')}
       If you are already sure, you don't need to visit every link. For example, if a release includes an APK file, you can skip the demo/play link.
+      If you are low confidence, or the main categories don't seem to fit, return "cert_other".
 
       Base your decision on:
       - Code in the repository (languages, frameworks, dependencies)
       - Demo/play functionality if available
       - README description and documentation
       - Project structure and build files
+
+      Your decision is based on how to test the app- for example, a pygame app without an executable would be a command_line app. A pygame with an executable would be a desktop_app.
 
       Return your classification in this EXACT format:
       CERT_TYPE|CONFIDENCE|REASONING

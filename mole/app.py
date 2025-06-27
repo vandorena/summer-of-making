@@ -3,7 +3,7 @@ import asyncio
 import tempfile
 import uuid
 from flask import Flask, request, jsonify
-from browser_use import Agent
+from browser_use import Agent, BrowserSession
 from dotenv import load_dotenv
 import requests
 from pathlib import Path
@@ -30,14 +30,30 @@ class BrowserAgent:
         else:
             raise ValueError(f"Unsupported provider: {provider}")
         
+        # Create browser session with custom configuration
+        browser_session = BrowserSession(
+            headless=False,  # Make Chrome visible in VNC
+            executable_path="/usr/bin/chromium",  # Use system Chromium
+            args=[
+                "--no-sandbox",
+                "--disable-dev-shm-usage", 
+                "--disable-gpu",
+                "--disable-web-security",
+                "--allow-running-insecure-content",
+                "--display=:1"   # Use virtual display
+            ]
+        )
+        
         # Create agent with the actual task prompt
         agent_kwargs = {
             "task": task_prompt,
-            "llm": llm
+            "llm": llm,
+            "browser_session": browser_session
         }
         
-        if gif_path:
-            agent_kwargs["generate_gif"] = gif_path
+        # Note: GIF generation disabled for now due to API issues
+        # if gif_path:
+        #     agent_kwargs["generate_gif"] = gif_path
         
         if initial_actions:
             agent_kwargs["initial_actions"] = initial_actions
@@ -69,7 +85,7 @@ class BrowserAgent:
         gif_url = None
         
         try:
-            # Create temporary directory for GIF
+            # Create temporary directory for GIF (even though we're not using it yet)
             temp_dir = tempfile.mkdtemp(prefix="mole_gif_")
             session_id = str(uuid.uuid4())
             gif_path = os.path.join(temp_dir, f"session_{session_id}.gif")
@@ -91,19 +107,13 @@ class BrowserAgent:
             # Run the task
             result = await agent.run()
             
-            # Check if GIF was generated and upload it
-            if os.path.exists(gif_path):
-                try:
-                    gif_url = await self.upload_to_hackclub_cdn(gif_path)
-                except Exception as e:
-                    # If Bucky upload fails, log it but continue with classification
-                    print(f"Bucky upload failed: {e}")
-                    gif_url = f"file://{gif_path}"  # Return local path as fallback
+            # For now, skip GIF upload since generation isn't working
+            # TODO: Fix GIF generation later
             
             return {
                 "success": True,
                 "result": str(result.final_result()) if hasattr(result, 'final_result') else str(result),
-                "gif_url": gif_url,
+                "gif_url": None,  # Disabled for now
                 "session_id": session_id,
                 "error": None
             }
