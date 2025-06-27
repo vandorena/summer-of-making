@@ -10,44 +10,28 @@ class VotesController < ApplicationController
   def new
     @vote = Vote.new
     @user_vote_count = current_user.votes.count
-
-    session[:vote_tokens] = {}
-
-    if @projects.present? && @projects.size == 2
-      token = SecureRandom.hex(16)
-      session[:vote_tokens][token] = {
-        "user_id" => current_user.id,
-        "project_1_id" => @projects[0].id,
-        "project_2_id" => @projects[1].id,
-        "expires_at" => 2.hours.from_now.iso8601
-      }
-      @vote_token = token
-    end
-    Rails.logger.info("Vote tokens: #{session[:vote_tokens]}")
   end
 
   def create
-    token = params[:vote_token]
-    token_data = session[:vote_tokens]&.[](token)
-
-    unless token_data
-      redirect_to new_vote_path, alert: "Invalid or expired vote token"
-      return
-    end
+    return redirect_to new_vote_path, alert: "No projects available for voting" if @projects.size != 2
 
     @vote = current_user.votes.build(vote_params)
 
-    @vote.project_1_id = token_data["project_1_id"]
-    @vote.project_2_id = token_data["project_2_id"]
+    @vote.project_1_id = @projects[0].id
+    @vote.project_2_id = @projects[1].id
 
     # Handle tie case
     if @vote.winning_project_id.blank?
       @vote.winning_project_id = nil
     end
 
-    unless @vote.authorized_with_token?(token_data)
-      redirect_to new_vote_path, alert: "Vote validation failed"
-      return
+    # Validate that winning project is one of the two projects
+    if @vote.winning_project_id.present?
+      valid_project_ids = [@projects[0].id, @projects[1].id]
+      unless valid_project_ids.include?(@vote.winning_project_id.to_i)
+        redirect_to new_vote_path, alert: "Invalid project selection"
+        return
+      end
     end
 
     if @vote.save
