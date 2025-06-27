@@ -56,7 +56,8 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
         <% @projects.each do |project| %>
-          <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] p-6 sm:p-12">
+          <%= render layout: "shared/container" do %>
+          <div class="p-6 sm:p-12">
             <div class="space-y-6 sm:space-y-8">
               <div class="flex items-start gap-3 sm:gap-4">
                 <div class="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 overflow-hidden rounded-lg">
@@ -124,9 +125,9 @@
                       content_margin: 'p-4 sm:p-6' %>
                 <% end %>
               </div>
-
+              </div>
             </div>
-          </div>
+          <% end %>
         <% end %>
       </div>
 
