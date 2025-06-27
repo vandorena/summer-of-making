@@ -34,6 +34,7 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
     puts "  ✅ Valid rows: #{validation_result[:valid_rows].count}"
     puts "  ❌ Critical errors: #{validation_result[:critical_errors].count}"
     puts "  ⚠️  Missing users: #{validation_result[:missing_users].count}"
+    puts "  🔄 Duplicate payouts: #{validation_result[:duplicate_payouts].count}"
     puts ""
 
     if validation_result[:critical_errors].any?
@@ -59,12 +60,31 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
       raise StandardError, "Missing users detected. Set force_proceed: true to continue with valid users only."
     end
 
+    # Show duplicate payouts if any
+    if validation_result[:duplicate_payouts].any?
+      puts "🔄 DUPLICATE PAYOUTS FOUND (will be skipped):"
+      validation_result[:duplicate_payouts].each_with_index do |duplicate, index|
+        puts "  #{index + 1}. #{duplicate[:user].display_name} (#{duplicate[:slack_id]}) - $#{duplicate[:amount]} - #{duplicate[:reason]}"
+        puts "     Existing payout ID: #{duplicate[:existing_payout_id]} (created: #{duplicate[:created_at].strftime('%Y-%m-%d %H:%M:%S')})"
+      end
+      puts ""
+      puts "💰 Total amount for duplicates: $#{validation_result[:duplicate_payouts].sum { |d| d[:amount] }}"
+      puts ""
+    end
+
     # Phase 2: Process only valid users
     valid_rows = validation_result[:valid_rows]
 
     if valid_rows.empty?
       puts "⚠️  No valid rows to process"
-      return { processed_count: 0, error_count: 0, errors: [], missing_users: validation_result[:missing_users] }
+      return {
+        processed_count: 0,
+        error_count: 0,
+        errors: [],
+        missing_users: validation_result[:missing_users],
+        duplicate_payouts: validation_result[:duplicate_payouts],
+        skipped_count: validation_result[:missing_users].count + validation_result[:duplicate_payouts].count
+      }
     end
 
     puts "🚀 Proceeding with #{valid_rows.count} valid users..."
@@ -99,8 +119,13 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
     puts "  💰 Total amount processed: $#{valid_rows.sum { |r| r[:amount] }}"
 
     if validation_result[:missing_users].any?
-      puts "  ⚠️  Skipped users: #{validation_result[:missing_users].count}"
-      puts "  💰 Skipped amount: $#{validation_result[:missing_users].sum { |u| u[:amount] }}"
+      puts "  ⚠️  Skipped missing users: #{validation_result[:missing_users].count}"
+      puts "  💰 Skipped amount (missing): $#{validation_result[:missing_users].sum { |u| u[:amount] }}"
+    end
+
+    if validation_result[:duplicate_payouts].any?
+      puts "  🔄 Skipped duplicates: #{validation_result[:duplicate_payouts].count}"
+      puts "  💰 Skipped amount (duplicates): $#{validation_result[:duplicate_payouts].sum { |d| d[:amount] }}"
     end
 
     # Return results for potential use by caller
@@ -109,7 +134,8 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
       error_count: 0,
       errors: [],
       missing_users: validation_result[:missing_users],
-      skipped_count: validation_result[:missing_users].count
+      duplicate_payouts: validation_result[:duplicate_payouts],
+      skipped_count: validation_result[:missing_users].count + validation_result[:duplicate_payouts].count
     }
 
   rescue StandardError => e
@@ -167,6 +193,7 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
     critical_errors = []
     missing_users = []
     valid_rows = []
+    duplicate_payouts = []
 
     puts "🔍 Validating #{csv_rows.count} rows..."
 
@@ -219,21 +246,40 @@ class OneTime::ProcessPayoutCsvJob < ApplicationJob
         missing_users << missing_user_info
         puts "  ⚠️  Row #{index + 1}: User not found with Slack ID '#{slack_id}' (Amount: $#{amount})"
       else
-        valid_row_data = {
-          slack_id: slack_id,
-          amount: amount,
-          reason: sanitize_reason(row[2]),
-          user: user
-        }
-        valid_rows << valid_row_data
-        puts "  ✅ Row #{index + 1}: Valid - #{user.display_name} (#{slack_id}) - $#{amount}"
+        reason = sanitize_reason(row[2])
+
+        # Check for existing payout
+        existing_payout = Payout.find_by(user: user, amount: amount, reason: reason)
+
+        if existing_payout
+          duplicate_info = {
+            slack_id: slack_id,
+            amount: amount,
+            reason: reason,
+            user: user,
+            existing_payout_id: existing_payout.id,
+            created_at: existing_payout.created_at
+          }
+          duplicate_payouts << duplicate_info
+          puts "  🔄 Row #{index + 1}: Duplicate payout found - #{user.display_name} (#{slack_id}) - $#{amount} (ID: #{existing_payout.id})"
+        else
+          valid_row_data = {
+            slack_id: slack_id,
+            amount: amount,
+            reason: reason,
+            user: user
+          }
+          valid_rows << valid_row_data
+          puts "  ✅ Row #{index + 1}: Valid - #{user.display_name} (#{slack_id}) - $#{amount}"
+        end
       end
     end
 
     {
       critical_errors: critical_errors,
       missing_users: missing_users,
-      valid_rows: valid_rows
+      valid_rows: valid_rows,
+      duplicate_payouts: duplicate_payouts
     }
   end
 
