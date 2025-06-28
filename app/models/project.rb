@@ -6,6 +6,7 @@
 #
 #  id                     :bigint           not null, primary key
 #  category               :string
+#  certification_type     :integer
 #  demo_link              :string
 #  description            :text
 #  devlogs_count          :integer          default(0), not null
@@ -52,12 +53,10 @@ class Project < ApplicationRecord
 
   default_scope { where(is_deleted: false) }
 
+  scope :with_ship_event, -> { joins(:ship_events) }
+
   def self.with_deleted
     unscoped
-  end
-
-  def self.find_with_deleted(id)
-    with_deleted.find(id)
   end
 
   scope :pending_certification, -> {
@@ -72,6 +71,22 @@ class Project < ApplicationRecord
 
   CATEGORIES = [ "Web App", "Mobile App", "Command Line Tool", "Video Game", "Something else" ]
   validates :category, inclusion: { in: CATEGORIES, message: "%<value>s is not a valid category" }
+
+  enum :certification_type, {
+    cert_other: 0,
+    static_site: 1,
+    web_app: 2,
+    browser_extension: 3,
+    userscript: 4,
+    iphone_app: 5,
+    android_app: 6,
+    desktop_app: 7,
+    command_line_tool: 8,
+    game_mod: 9,
+    chat_bot: 10,
+    video: 11,
+    hardware_or_pcb_project: 12
+  }
 
   enum :ysws_type, {
     athena: "Athena",
@@ -92,6 +107,7 @@ class Project < ApplicationRecord
     waffles: "Waffles",
     waveband: "Waveband",
     fixit: "FIX IT!",
+    twist: "Twist",
     other: "Other"
   }
 
@@ -104,6 +120,7 @@ class Project < ApplicationRecord
   before_save :filter_hackatime_keys
 
   before_save :remove_duplicate_hackatime_keys
+  before_save :set_default_certification_type
 
   def total_votes
     vote_changes.count
@@ -331,5 +348,9 @@ class Project < ApplicationRecord
   def unlerp(start, stop, value)
     return 0.0 if start == stop
     (value - start) / (stop - start).to_f
+  end
+  
+  def set_default_certification_type
+    self.certification_type = :cert_other if certification_type.blank?
   end
 end

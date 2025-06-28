@@ -29,60 +29,80 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div class="bg-gray-50 rounded-xl p-6">
-              <div class="flex items-center justify-between mb-3">
-                <div class="w-12 h-12 bg-[#51A373] rounded-lg flex items-center justify-center">
-                  <%= inline_svg "icons/chart_bar_fill.svg", class: "w-6 h-6 text-white" %>
-                </div>
-              </div>
-              <div class="text-3xl font-bold text-gray-900 mb-1" data-hackatime-dashboard-target="todayTime">
-                 <%= current_user.format_seconds(@hackatime_dashboard[:today_time]) %>
-               </div>
-               <div class="text-sm font-medium text-gray-600">Today's Coding Time</div>
-             </div>
-
-             <div class="bg-gray-50 rounded-xl p-6">
-               <div class="flex items-center justify-between mb-3">
-                 <div class="w-12 h-12 bg-[#523A52] rounded-lg flex items-center justify-center">
-                   <%= inline_svg "icons/chart_pie_2_fill.svg", class: "w-6 h-6 text-white" %>
-                 </div>
-               </div>
-               <div class="text-3xl font-bold text-gray-900 mb-1" data-hackatime-dashboard-target="totalTime">
-                 <%= current_user.format_seconds(@hackatime_dashboard[:total_time]) %>
-               </div>
-              <div class="text-sm font-medium text-gray-600">Total Coding Time</div>
-            </div>
-          </div>
-             <p class="text-sm sm:text-sm md:text-md lg:text-md xl:text-lg">
-              You will need to post a devlog <span class="text-[#E65A42]">after 10 hours of work</span> before you can log more time!
-              <%# TODO: Show currently time before next devlog needed, or show amount of time being cut off %>
-             </p>
-
-         <% unless @hackatime_dashboard[:has_time_recorded] %>
-            <div class="bg-gray-50 rounded-xl p-4" data-hackatime-dashboard-target="noDataAlert">
+          <% if @hackatime_dashboard[:error] %>
+            <div class="bg-red-50 rounded-xl p-6 border border-red-200">
               <div class="flex items-start gap-3">
                 <div class="flex-shrink-0">
-                  <div class="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center">
+                  <div class="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center">
                     <svg class="w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
                 </div>
                 <div class="flex-1">
-                  <h4 class="text-sm font-semibold text-amber-800 mb-1">Get Started with Time Tracking</h4>
-                  <p class="text-sm text-amber-700 leading-relaxed">
-                    No time recorded yet! Install Hackatime on at least one code editor, then start coding for a few minutes to see your stats here.
-                    <span class="font-medium">Every hour of coding = 1 shell</span>
-                    <picture class="inline-block w-4 h-4 ml-1">
-                      <source srcset="/inlineshell.avif" type="image/avif">
-                      <source srcset="/inlineshell.webp" type="image/webp">
-                      <img src="/inlineshell.png" alt="shell" class="w-4 h-4 inline-block">
-                    </picture>
+                  <h4 class="text-sm font-semibold text-red-800 mb-1">Connection Issue</h4>
+                  <p class="text-sm text-red-700 leading-relaxed">
+                    <%= @hackatime_dashboard[:error_message] %>. Please try refreshing the page in a few minutes.
                   </p>
                 </div>
               </div>
             </div>
+          <% else %>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div class="bg-gray-50 rounded-xl p-6">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="w-12 h-12 bg-[#51A373] rounded-lg flex items-center justify-center">
+                    <%= inline_svg "icons/chart_bar_fill.svg", class: "w-6 h-6 text-white" %>
+                  </div>
+                </div>
+                <div class="text-3xl font-bold text-gray-900 mb-1" data-hackatime-dashboard-target="todayTime">
+                   <%= current_user.format_seconds(@hackatime_dashboard[:today_time]) %>
+                 </div>
+                 <div class="text-sm font-medium text-gray-600">Today's Coding Time</div>
+               </div>
+
+               <div class="bg-gray-50 rounded-xl p-6">
+                 <div class="flex items-center justify-between mb-3">
+                   <div class="w-12 h-12 bg-[#523A52] rounded-lg flex items-center justify-center">
+                     <%= inline_svg "icons/chart_pie_2_fill.svg", class: "w-6 h-6 text-white" %>
+                   </div>
+                 </div>
+                 <div class="text-3xl font-bold text-gray-900 mb-1" data-hackatime-dashboard-target="totalTime">
+                   <%= current_user.format_seconds(@hackatime_dashboard[:total_time]) %>
+                 </div>
+                <div class="text-sm font-medium text-gray-600">Total Coding Time</div>
+              </div>
+            </div>
+               <p class="text-sm sm:text-sm md:text-md lg:text-md xl:text-lg">
+                You will need to post a devlog <span class="text-[#E65A42]">after 10 hours of work</span> before you can log more time!
+                <%# TODO: Show currently time before next devlog needed, or show amount of time being cut off %>
+               </p>
+
+           <% unless @hackatime_dashboard[:has_time_recorded] %>
+              <div class="bg-gray-50 rounded-xl p-4" data-hackatime-dashboard-target="noDataAlert">
+                <div class="flex items-start gap-3">
+                  <div class="flex-shrink-0">
+                    <div class="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center">
+                      <svg class="w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="flex-1">
+                    <h4 class="text-sm font-semibold text-amber-800 mb-1">Get Started with Time Tracking</h4>
+                    <p class="text-sm text-amber-700 leading-relaxed">
+                      No time recorded yet! Install Hackatime on at least one code editor, then start coding for a few minutes to see your stats here.
+                      <span class="font-medium">Every hour of coding = 1 shell</span>
+                      <picture class="inline-block w-4 h-4 ml-1">
+                        <source srcset="/inlineshell.avif" type="image/avif">
+                        <source srcset="/inlineshell.webp" type="image/webp">
+                        <img src="/inlineshell.png" alt="shell" class="w-4 h-4 inline-block" loading="lazy">
+                      </picture>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            <% end %>
           <% end %>
         </div>
       <% end %>
@@ -140,7 +160,7 @@
                 <picture class="inline-block w-5 h-5 align-text-bottom">
                   <source srcset="/inlineshell.avif" type="image/avif">
                   <source srcset="/inlineshell.webp" type="image/webp">
-                  <img src="/inlineshell.png" alt="shell" class="w-5 h-5 inline-block">
+                  <img src="/inlineshell.png" alt="shell" class="w-5 h-5 inline-block" loading="lazy">
                 </picture>,
                 with up to 30x bonuses based on community votes!
                 <br><br>
