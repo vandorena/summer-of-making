@@ -35,6 +35,8 @@ class VoteChange < ApplicationRecord
   validates :result, presence: true, inclusion: { in: %w[win loss tie] }
   validates :project_vote_count, presence: true, numericality: { greater_than: 0 }
 
+  after_create :try_payout
+
   scope :wins, -> { where(result: "win") }
   scope :losses, -> { where(result: "loss") }
   scope :ties, -> { where(result: "tie") }
@@ -45,5 +47,14 @@ class VoteChange < ApplicationRecord
 
   def elo_lost?
     elo_delta < 0
+  end
+
+  private
+
+  def try_payout
+    voting_start_date =
+    is_genesis = project.ship_events.latest.created_at < Vote::VOTING_START_DATE
+
+    project.issue_payouts unless is_genesis
   end
 end
