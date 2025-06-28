@@ -9,36 +9,25 @@
 
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version
 ARG RUBY_VERSION=3.4.3
-FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
+FROM docker.io/library/ruby:$RUBY_VERSION-slim
 
 # Rails app lives here
 WORKDIR /rails
 
-# Install base packages
+# Install all packages (base + build dependencies)
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
-    curl \
-    libjemalloc2 \
-    libvips \
-    sqlite3 \
-    libpq5 \
-    vim \
-    wget && \
+    curl libjemalloc2 libvips postgresql-client wget ffmpeg \
+    build-essential git pkg-config libpq-dev libyaml-dev && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Set production environment
 ENV RAILS_ENV="production" \
     BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle" \
-    BUNDLE_WITHOUT="development"
-
-# Throw-away build stage to reduce size of final image
-FROM base AS build
-
-# Install packages needed to build gems
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential git pkg-config libpq-dev libyaml-dev && \
-    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+    BUNDLE_WITHOUT="development:test" \
+    RAILS_SERVE_STATIC_FILES="true" \
+    RAILS_LOG_TO_STDOUT="true"
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./
@@ -54,15 +43,6 @@ RUN bundle exec bootsnap precompile app/ lib/
 
 # Precompiling assets for production without requiring secret RAILS_MASTER_KEY
 RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
-
-# Final stage for app image
-FROM base
-
-# Copy built artifacts: gems, application
-COPY --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
-COPY --from=build /rails /rails
-COPY --from=build /usr/bin/git /usr/bin/git
-COPY --from=build /usr/lib/git-core /usr/lib/git-core
 
 # Run and own only the runtime files as a non-root user for security
 RUN groupadd --system --gid 1000 rails && \
