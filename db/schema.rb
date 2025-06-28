@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_28_024319) do  create_schema "auth"
+ActiveRecord::Schema[8.0].define(version: 2025_06_28_033837) do
+  create_schema "auth"
   create_schema "extensions"
   create_schema "graphql"
   create_schema "graphql_public"
@@ -688,6 +689,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_28_024319) do  create_schema "
     t.index ["ship_event_1_id"], name: "index_votes_on_ship_event_1_id"
     t.index ["ship_event_2_id"], name: "index_votes_on_ship_event_2_id"
     t.index ["status"], name: "index_votes_on_status"
+    t.index ["user_id", "ship_event_1_id", "ship_event_2_id"], name: "index_votes_on_user_and_ship_events", unique: true
     t.index ["user_id"], name: "index_votes_on_user_id"
   end
 

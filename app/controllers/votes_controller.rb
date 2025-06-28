@@ -13,34 +13,46 @@ class VotesController < ApplicationController
   end
 
   def create
-    project_1_id = params[:vote][:project_1_id]&.to_i
-    project_2_id = params[:vote][:project_2_id]&.to_i
+    ship_event_1_id = params[:vote][:ship_event_1_id]&.to_i
+    ship_event_2_id = params[:vote][:ship_event_2_id]&.to_i
+    signature = params[:vote][:signature]
 
-    unless project_1_id && project_2_id
-      redirect_to new_vote_path, alert: "Missing project information"
+    unless ship_event_1_id && ship_event_2_id && signature.present?
+      redirect_to new_vote_path, alert: "Missing vote information"
       return
     end
 
-    @projects = Project.where(id: [ project_1_id, project_2_id ]).to_a
-
-    if @projects.size != 2
-      redirect_to new_vote_path, alert: "Invalid projects selected"
+    # normalizing the order of the ship events because (5,10) and (10,5) are the same
+    verification_result = VoteSignatureService.verify_signature_with_ship_events(
+      signature, ship_event_1_id, ship_event_2_id, current_user.id
+    )
+    
+    unless verification_result[:valid]
+      redirect_to new_vote_path, alert: "Invalid vote submission: #{verification_result[:error]}"
       return
     end
 
-    @vote = current_user.votes.build(vote_params)
+    ship_events = ShipEvent.where(id: [ship_event_1_id, ship_event_2_id]).includes(:project)
+    if ship_events.size != 2
+      redirect_to new_vote_path, alert: "Invalid ship events selected"
+      return
+    end
 
-    @vote.project_1_id = project_1_id
-    @vote.project_2_id = project_2_id
+    @ship_events = ship_events.to_a
+    @projects = @ship_events.map(&:project)
+
+    @vote = current_user.votes.build(vote_params.except(:ship_event_1_id, :ship_event_2_id, :signature))
+    @vote.ship_event_1_id = ship_event_1_id
+    @vote.ship_event_2_id = ship_event_2_id
 
     # Handle tie case
     if @vote.winning_project_id.blank?
       @vote.winning_project_id = nil
     end
 
-    # Validate that winning project is one of the two projects
+    # Validate that winning project is one of the two projects (for now, until we remove client-side selection)
     if @vote.winning_project_id.present?
-      valid_project_ids = [ project_1_id, project_2_id ]
+      valid_project_ids = @projects.map(&:id)
       unless valid_project_ids.include?(@vote.winning_project_id.to_i)
         redirect_to new_vote_path, alert: "Invalid project selection"
         return
@@ -182,12 +194,21 @@ class VotesController < ApplicationController
     @ship_events = selected_projects.map do |project|
       project.ship_events.order(:created_at).last
     end
+
+    if @ship_events.size == 2
+      @vote_signature = VoteSignatureService.generate_signature(
+        @ship_events[0].id,
+        @ship_events[1].id,
+        current_user.id
+      )
+    end
   end
 
   def vote_params
     params.expect(vote: %i[winning_project_id explanation
                            project_1_demo_opened project_1_readme_opened project_1_repo_opened
                            project_2_demo_opened project_2_readme_opened project_2_repo_opened
-                           time_spent_voting_ms music_played project_1_id project_2_id])
+                           time_spent_voting_ms music_played
+                           ship_event_1_id ship_event_2_id signature])
   end
 end
