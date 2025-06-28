@@ -60,8 +60,8 @@ class HackatimeStat < ApplicationRecord
     response = user.fetch_raw_hackatime_stats(from: Time.now.beginning_of_day)
     result = JSON.parse(response.body)
 
-    return unless result["data"]["status"] == "ok"
-    total_seconds = result["data"]["total_seconds"] || 0
+    return unless result&.dig("data", "status") == "ok"
+    total_seconds = result.dig("data", "total_seconds") || 0
     total_seconds
   end
 
