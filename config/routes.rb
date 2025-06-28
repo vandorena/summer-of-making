@@ -236,7 +236,11 @@ Rails.application.routes.draw do
   end
 
   get "devlogs", to: "devlogs#index"
-  resources :votes, only: [ :new, :create ]
+  resources :votes, only: [ :new, :create ] do
+    collection do
+      get :locked
+    end
+  end
 
   scope :shop do
     get "/", to: "shop_items#index", as: :shop

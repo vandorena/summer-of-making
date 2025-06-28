@@ -5,7 +5,7 @@ class VotesController < ApplicationController
   before_action :set_projects, only: %i[new]
   before_action :check_identity_verification
 
-  before_action :redirect_to_locked, except: [ :locked ], if: (defined?(current_user) && current_user&.is_admin?)
+  before_action :redirect_to_locked, except: [ :locked ], unless: -> { current_user&.is_admin? }
 
   def new
     @vote = Vote.new
