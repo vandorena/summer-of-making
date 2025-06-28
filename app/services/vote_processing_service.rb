@@ -17,8 +17,6 @@ class VoteProcessingService
     winner_project_id = @vote.winning_project_id.to_i
     loser_project_id = get_loser_project_id(winner_project_id)
 
-    puts "ASNTRSUTSRTPROJCET", winner_project_id, loser_project_id, @vote.project_1_id, @vote.project_2_id
-
     return unless winner_project_id && loser_project_id
 
     winner = Project.find(winner_project_id)
@@ -39,15 +37,14 @@ class VoteProcessingService
     winner.update!(rating: winner_elo_after)
     loser.update!(rating: loser_elo_after)
 
-    puts "aorsntoeanrsotnasreitnasritnoasret", winner.inspect, loser.inspect
-
     create_vote_change(winner, winner_elo_before, winner_elo_after, winner_elo_delta, "win")
     create_vote_change(loser, loser_elo_before, loser_elo_after, loser_elo_delta, "loss")
   end
 
   def process_tie
-    project_1 = Project.find(@vote.project_1_id)
-    project_2 = Project.find(@vote.project_2_id)
+    project_1 = @vote.ship_event_1.project
+    project_2 = @vote.ship_event_2.project
+    
     project_1_elo_before = project_1.rating
     project_2_elo_before = project_2.rating
 
@@ -70,11 +67,13 @@ class VoteProcessingService
   private
 
   def get_loser_project_id(winner_id)
-    puts "ingetloserproject winnerid: #{winner_id.class}, p1: #{@vote.project_1_id.class}, p2: #{@vote.project_2_id.class}"
-    return @vote.project_2_id if @vote.project_1_id == winner_id
-    @vote.project_1_id if @vote.project_2_id == winner_id
-
-    # [ @vote.project_1_id, @vote.project_2_id ].find { |id| id != winner_id }
+    project_1_id = @vote.ship_event_1.project_id
+    project_2_id = @vote.ship_event_2.project_id
+        
+    return project_2_id if project_1_id == winner_id
+    return project_1_id if project_2_id == winner_id
+    
+    nil # Should not happen if winner_id is valid
   end
 
   def expected_score(rating_a, rating_b)
@@ -82,7 +81,6 @@ class VoteProcessingService
   end
 
   def create_vote_change(project, elo_before, elo_after, elo_delta, result)
-    puts "arostnawaaaaohhhh", @vote.vote_changes, project
     @vote.vote_changes.create!(
       project: project,
       elo_before: elo_before,
