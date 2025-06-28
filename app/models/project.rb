@@ -349,7 +349,7 @@ class Project < ApplicationRecord
     return 0.0 if start == stop
     (value - start) / (stop - start).to_f
   end
-  
+
   def set_default_certification_type
     self.certification_type = :cert_other if certification_type.blank?
   end
