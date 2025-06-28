@@ -31,7 +31,7 @@
                 <div class="flex items-start gap-3 sm:gap-4">
                   <div class="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 overflow-hidden rounded-lg">
                     <% project_image = project.banner %>
-                    <img src="<%= project_image %>" alt="<%= project.title %>" class="w-full h-full object-cover">
+                    <img src="<%= project_image %>" alt="<%= project.title %>" class="w-full h-full object-cover" loading="lazy">
                   </div>
                   <div class="flex-grow min-w-0">
                     <h3 class="text-xl sm:text-3xl mb-1 sm:mb-2 truncate"><%= project.title %></h3>
@@ -76,7 +76,7 @@
                     <div class="p-4 sm:p-6 transform hover:scale-[1.02] transition-transform duration-300">
                       <div class="flex items-center mb-3 sm:mb-4">
                         <% if devlog.user.avatar.present? %>
-                          <img src="<%= devlog.user.avatar %>" alt="<%= devlog.user.display_name %>" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3">
+                          <img src="<%= devlog.user.avatar %>" alt="<%= devlog.user.display_name %>" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3" loading="lazy">
                         <% end %>
                         <div class="min-w-0">
                           <span class="font-medium text-base sm:text-lg truncate block"><%= devlog.user.display_name %></span>
@@ -150,7 +150,7 @@
                 <div class="flex items-start gap-3 sm:gap-4">
                   <div class="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 overflow-hidden rounded-lg">
                     <% project_image = project.banner %>
-                    <img src="<%= project_image %>" alt="<%= project.title %>" class="w-full h-full object-cover">
+                    <img src="<%= project_image %>" alt="<%= project.title %>" class="w-full h-full object-cover" loading="lazy">
                   </div>
                   <div class="flex-grow min-w-0">
                     <h3 class="text-xl sm:text-3xl mb-1 sm:mb-2 truncate"><%= project.title %></h3>
@@ -232,7 +232,7 @@
       <button class="absolute top-2 right-2 md:top-4 md:right-4 text-white p-2 hover:scale-110 transition-transform z-10" data-action="image-viewer#close">
         <%= inline_svg "close.svg", class: "h-6 w-6 md:h-8 md:w-8" %>
       </button>
-      <img data-image-viewer-target="image" class="max-h-[85vh] max-w-full object-contain" src="" alt="Full size image">
+      <img data-image-viewer-target="image" class="max-h-[85vh] max-w-full object-contain" src="" alt="Full size image" loading="lazy">
     </div>
   </div>
 </div>

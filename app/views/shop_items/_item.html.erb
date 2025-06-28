@@ -20,7 +20,7 @@
         <picture class="inline-block mx-1 mb-2 w-5 h-5 mr-2">
           <source srcset="/shell.avif" type="image/avif">
           <source srcset="/shell.webp" type="image/webp">
-          <img src="/shell.png" class="inline-block mx-1 mb-1 w-5 h-5" alt="shell">
+          <img src="/shell.png" class="inline-block mx-1 mb-1 w-5 h-5" alt="shell" loading="lazy">
           </picture>
         <%= regional_price.round %>
       </div>
@@ -87,7 +87,7 @@
               <picture>
                 <source srcset="/shell.avif" type="image/avif">
                 <source srcset="/shell.webp" type="image/webp">
-                <img src="/shell.png" width="15px" style="vertical-align:text-top" alt="shell">
+                <img src="/shell.png" width="15px" style="vertical-align:text-top" alt="shell" loading="lazy">
               </picture>
               <span><%= (regional_price - current_user.balance).ceil %> needed</span>
             </span>

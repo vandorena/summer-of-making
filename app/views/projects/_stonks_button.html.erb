@@ -71,7 +71,7 @@
                 <div class="flex items-center justify-between py-2 <%= index < @project.stonks.count - 1 ? 'border-b border-saddle-taupe/20' : '' %>">
                   <div class="flex items-center">
                     <span class="font-bold mr-2 <%= index < 3 ? 'text-vintage-red' : 'text-gray-600' %>">#<%= index + 1 %></span>
-                    <img src="<%= stonk.user.avatar %>" alt="<%= stonk.user.display_name %>" class="w-8 h-8 mr-2 rounded-full">
+                    <img src="<%= stonk.user.avatar %>" alt="<%= stonk.user.display_name %>" class="w-8 h-8 mr-2 rounded-full" loading="lazy">
                     <span><%= stonk.user.display_name %></span>
                   </div>
                   <div class="text-sm font-medium text-forest">
@@ -94,7 +94,7 @@
                 <div class="flex items-center justify-between py-2 <%= index < @project.stonks.count - 1 ? 'border-b border-saddle-taupe/20' : '' %>">
                   <div class="flex items-center">
                     <span class="font-bold mr-2 <%= index < 3 ? 'text-vintage-red' : 'text-gray-600' %>">#<%= index + 1 %></span>
-                    <img src="<%= stonk.user.avatar %>" alt="<%= stonk.user.display_name %>" class="w-8 h-8 mr-2 rounded-full">
+                    <img src="<%= stonk.user.avatar %>" alt="<%= stonk.user.display_name %>" class="w-8 h-8 mr-2 rounded-full" loading="lazy">
                     <span><%= stonk.user.display_name %></span>
                   </div>
                   <div class="text-sm font-medium text-forest">

@@ -33,7 +33,7 @@
                   <picture>
                     <source srcset="/shell.avif" type="image/avif">
                     <source srcset="/shell.webp" type="image/webp">
-                    <img src="/shell.png" alt="Shell" class="inline w-5 h-5 align-text-bottom">
+                    <img src="/shell.png" alt="Shell" class="inline w-5 h-5 align-text-bottom" loading="lazy">
                   </picture>
                 </span>
               <%= number_with_delimiter(@order.frozen_item_price * @order.quantity) %> tickets
