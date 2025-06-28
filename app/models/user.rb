@@ -240,6 +240,10 @@ class User < ApplicationRecord
     is_admin? || Flipper.enabled?(:can_vote_2025_06_28, self)
   end
 
+  def mark_vote_tester!
+    Flipper.enable(:can_vote_2025_06_28, self)
+  end
+
   def projects_left_to_stake
     5 - staked_projects_count
   end
