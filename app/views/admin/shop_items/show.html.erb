@@ -11,8 +11,22 @@
   <div class="col-md-8">
     <table class="table">
       <tr>
+        <th>ID</th>
+        <td><%= @shop_item.id %></td>
+      </tr>
+      <tr>
         <th>Type</th>
         <td><%= @shop_item.type&.demodulize || "ShopItem" %></td>
+      </tr>
+      <tr>
+        <th>Enabled</th>
+        <td>
+          <% if @shop_item.enabled %>
+            <span class="badge bg-success">Yes</span>
+          <% else %>
+            <span class="badge bg-danger">No</span>
+          <% end %>
+        </td>
       </tr>
       <tr>
         <th>Description</th>
@@ -32,8 +46,32 @@
       </tr>
       <tr>
         <th>Hacker Score</th>
-        <td><%= @shop_item.hacker_score %></td>
+        <td>
+          <span class="badge bg-secondary"><%= @shop_item.hacker_score %></span>
+        </td>
       </tr>
+      <%
+        price_offsets = [
+          ['US', @shop_item.price_offset_us],
+          ['CA', @shop_item.price_offset_ca],
+          ['EU', @shop_item.price_offset_eu],
+          ['AU', @shop_item.price_offset_au],
+          ['IN', @shop_item.price_offset_in],
+          ['XX', @shop_item.price_offset_xx]
+        ].select { |_, offset| offset != 0.0 }
+      %>
+      <% if price_offsets.any? %>
+        <tr>
+          <th>Price Offsets</th>
+          <td>
+            <% price_offsets.each do |region, offset| %>
+              <span class="badge <%= offset > 0 ? 'bg-warning' : 'bg-info' %> me-1">
+                <%= region %>: <%= offset > 0 ? '+' : '' %><%= offset %>
+              </span>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
       <tr>
         <th>Max Quantity</th>
         <td><%= @shop_item.max_qty %></td>
