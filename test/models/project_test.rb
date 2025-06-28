@@ -6,6 +6,7 @@
 #
 #  id                     :bigint           not null, primary key
 #  category               :string
+#  certification_type     :integer
 #  demo_link              :string
 #  description            :text
 #  devlogs_count          :integer          default(0), not null
