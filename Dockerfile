@@ -29,7 +29,7 @@ ENV RAILS_ENV="production" \
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./
-RUN bundle config set --local force_ruby_platform true && \
+RUN bundle lock --add-platform x86_64-linux && \
     bundle install && \
     bundle clean --force && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
