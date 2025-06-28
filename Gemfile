@@ -148,6 +148,5 @@ gem "pundit", "~> 2.5"
 gem "awesome_print", "~> 1.9"
 
 # fer feacher flaggin'
-# gem "flipper"
-# gem "flipper-ui"
-# gem "flipper-active_record"
+gem "flipper", "~> 1.3"
+gem "flipper-ui", "~> 1.3"

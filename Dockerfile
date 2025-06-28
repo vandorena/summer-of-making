@@ -33,11 +33,7 @@ ENV RAILS_ENV="production" \
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./
-RUN bundle config set --global path "/usr/local/bundle" && \
-    bundle config set --global without "development" && \
-    bundle config set --global deployment "true" && \
-    bundle install && \
-    rm -rf /usr/local/bundle/cache/*.gem && \
+RUN bundle install && \
     bundle exec bootsnap precompile --gemfile
 
 # Copy application code
