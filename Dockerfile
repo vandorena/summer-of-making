@@ -20,18 +20,17 @@ RUN apt-get update -qq && \
     curl \
     libjemalloc2 \
     libvips \
-    postgresql-client \
-    wget \
-    ffmpeg && \
+    sqlite3 \
+    libpq5 \
+    vim \
+    wget && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Set production environment
 ENV RAILS_ENV="production" \
     BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle" \
-    BUNDLE_WITHOUT="development" \
-    RAILS_SERVE_STATIC_FILES="true" \
-    RAILS_LOG_TO_STDOUT="true"
+    BUNDLE_WITHOUT="development"
 
 # Throw-away build stage to reduce size of final image
 FROM base AS build
@@ -62,6 +61,8 @@ FROM base
 # Copy built artifacts: gems, application
 COPY --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
 COPY --from=build /rails /rails
+COPY --from=build /usr/bin/git /usr/bin/git
+COPY --from=build /usr/lib/git-core /usr/lib/git-core
 
 # Run and own only the runtime files as a non-root user for security
 RUN groupadd --system --gid 1000 rails && \
