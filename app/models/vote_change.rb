@@ -52,7 +52,6 @@ class VoteChange < ApplicationRecord
   private
 
   def try_payout
-    voting_start_date =
     is_genesis = project.ship_events.latest.created_at < Vote::VOTING_START_DATE
 
     project.issue_payouts unless is_genesis
