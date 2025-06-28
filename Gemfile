@@ -146,3 +146,8 @@ gem "blazer", "~> 3.3"
 gem "pundit", "~> 2.5"
 
 gem "awesome_print", "~> 1.9"
+
+# for feature flags
+gem "flipper"
+gem "flipper-active_record"
+gem "flipper-ui"
