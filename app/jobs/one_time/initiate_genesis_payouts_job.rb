@@ -12,7 +12,7 @@ class OneTime::InitiateGenesisPayoutsJob < ApplicationJob
   def genesis_projects
     Project
       .joins(:ship_events)
-      .group('projects.id')
-      .having('MAX(ship_events.created_at) < ?', Vote::VOTING_START_DATE)
+      .group("projects.id")
+      .having("MAX(ship_events.created_at) < ?", Vote::VOTING_START_DATE)
   end
 end

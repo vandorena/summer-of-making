@@ -292,7 +292,7 @@ class Project < ApplicationRecord
 
       next if current_payout_difference.zero?
 
-      reason = "Payout#{" recalculation" if ship.payouts.count > 0} for #{title}'s #{ship.created_at.to_s} ship."
+      reason = "Payout#{" recalculation" if ship.payouts.count > 0} for #{title}'s #{ship.created_at} ship."
 
       payout = Payout.create!(amount: current_payout_difference, payable: ship, user:, reason:)
 

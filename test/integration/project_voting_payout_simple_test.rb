@@ -57,7 +57,7 @@ class ProjectVotingSimpleTest < ActiveSupport::TestCase
         description: "Test project #{i} for integration testing",
         category: "Web App",
         user: user,
-        hackatime_project_keys: ["test-project-#{i}"]  # Add hackatime keys
+        hackatime_project_keys: [ "test-project-#{i}" ]  # Add hackatime keys
       )
       users << user
       projects << project
@@ -67,7 +67,7 @@ class ProjectVotingSimpleTest < ActiveSupport::TestCase
     projects.each_with_index do |project, i|
       # Create a temporary file for attachment since it's required
       file_content = "# Dev Log #{i}\n\nWorked on project for 1 hour today."
-      temp_file = Tempfile.new(['devlog', '.md'])
+      temp_file = Tempfile.new([ "devlog", ".md" ])
       temp_file.write(file_content)
       temp_file.rewind
 
@@ -82,7 +82,7 @@ class ProjectVotingSimpleTest < ActiveSupport::TestCase
       devlog.file.attach(
         io: temp_file,
         filename: "devlog_#{i}.md",
-        content_type: 'text/markdown'
+        content_type: "text/markdown"
       )
       devlog.save!
       temp_file.close
@@ -103,9 +103,9 @@ class ProjectVotingSimpleTest < ActiveSupport::TestCase
         # Create votes with random users and mostly deterministic winners (with 10% fuzz)
         # Higher ID project usually wins, but 10% chance for upset
         if false and rand < 0.1
-          winner_id = [project.id, other_project.id].min  # Upset: lower ID wins
+          winner_id = [ project.id, other_project.id ].min  # Upset: lower ID wins
         else
-          winner_id = [project.id, other_project.id].max  # Expected: higher ID wins
+          winner_id = [ project.id, other_project.id ].max  # Expected: higher ID wins
         end
         # winner_id = [project.id, other_project.id].max  # Expected: higher ID wins
 
@@ -148,13 +148,13 @@ class ProjectVotingSimpleTest < ActiveSupport::TestCase
 
     puts "\nProject Rankings with Payouts:"
     ordered_projects.each_with_index do |project, index|
-      total_payouts = project.ship_events.joins(:payouts).sum('payouts.amount')
+      total_payouts = project.ship_events.joins(:payouts).sum("payouts.amount")
       puts "#{index + 1}. #{project.title} - Rating: #{project.rating} - Payouts: $#{total_payouts}"
     end
 
     puts "\nUser Payout Summary:"
     User.all.each do |user|
-      total_user_payouts = user.projects.joins(ship_events: :payouts).sum('payouts.amount')
+      total_user_payouts = user.projects.joins(ship_events: :payouts).sum("payouts.amount")
       puts "#{user.display_name}: $#{total_user_payouts}"
     end
 

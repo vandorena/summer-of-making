@@ -21,8 +21,8 @@ class VotesController < ApplicationController
       return
     end
 
-    @projects = Project.where(id: [project_1_id, project_2_id]).to_a
-    
+    @projects = Project.where(id: [ project_1_id, project_2_id ]).to_a
+
     if @projects.size != 2
       redirect_to new_vote_path, alert: "Invalid projects selected"
       return
@@ -40,7 +40,7 @@ class VotesController < ApplicationController
 
     # Validate that winning project is one of the two projects
     if @vote.winning_project_id.present?
-      valid_project_ids = [project_1_id, project_2_id]
+      valid_project_ids = [ project_1_id, project_2_id ]
       unless valid_project_ids.include?(@vote.winning_project_id.to_i)
         redirect_to new_vote_path, alert: "Invalid project selection"
         return

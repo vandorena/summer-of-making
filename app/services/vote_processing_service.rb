@@ -72,7 +72,7 @@ class VoteProcessingService
   def get_loser_project_id(winner_id)
     puts "ingetloserproject winnerid: #{winner_id.class}, p1: #{@vote.project_1_id.class}, p2: #{@vote.project_2_id.class}"
     return @vote.project_2_id if @vote.project_1_id == winner_id
-    return @vote.project_1_id if @vote.project_2_id == winner_id
+    @vote.project_1_id if @vote.project_2_id == winner_id
 
     # [ @vote.project_1_id, @vote.project_2_id ].find { |id| id != winner_id }
   end
