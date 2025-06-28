@@ -148,3 +148,7 @@ gem "pundit", "~> 2.5"
 gem "awesome_print", "~> 1.9"
 
 gem "a11n", "~> 0.0.0"
+
+gem "flipper-active_record", "~> 1.3"
+
+gem "flipper-ui", "~> 1.3"
