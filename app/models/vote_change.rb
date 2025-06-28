@@ -52,7 +52,7 @@ class VoteChange < ApplicationRecord
   private
 
   def try_payout
-    is_genesis = project.ship_events.latest.created_at < Vote::VOTING_START_DATE
+    is_genesis = project.ship_events.maximum(:created_at) < Vote::VOTING_START_DATE
 
     project.issue_payouts unless is_genesis
   end
