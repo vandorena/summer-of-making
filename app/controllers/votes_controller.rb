@@ -26,13 +26,13 @@ class VotesController < ApplicationController
     verification_result = VoteSignatureService.verify_signature_with_ship_events(
       signature, ship_event_1_id, ship_event_2_id, current_user.id
     )
-    
+
     unless verification_result[:valid]
       redirect_to new_vote_path, alert: "Invalid vote submission: #{verification_result[:error]}"
       return
     end
 
-    ship_events = ShipEvent.where(id: [ship_event_1_id, ship_event_2_id]).includes(:project)
+    ship_events = ShipEvent.where(id: [ ship_event_1_id, ship_event_2_id ]).includes(:project)
     if ship_events.size != 2
       redirect_to new_vote_path, alert: "Invalid ship events selected"
       return

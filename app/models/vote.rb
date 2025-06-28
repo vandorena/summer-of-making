@@ -59,9 +59,9 @@ class Vote < ApplicationRecord
 
   validates :explanation, presence: true, length: { minimum: 10 }
   validates :status, inclusion: { in: %w[active invalid] }
-  
-  validates :user_id, uniqueness: { 
-    scope: [:ship_event_1_id, :ship_event_2_id],
+
+  validates :user_id, uniqueness: {
+    scope: [ :ship_event_1_id, :ship_event_2_id ],
     message: "You have already voted on this ship event pair"
   }
 
@@ -110,11 +110,11 @@ class Vote < ApplicationRecord
 
   # ship event helper methods
   def ship_events
-    [ship_event_1, ship_event_2]
+    [ ship_event_1, ship_event_2 ]
   end
 
   def ship_event_projects
-    [ship_event_1.project, ship_event_2.project]
+    [ ship_event_1.project, ship_event_2.project ]
   end
 
   private

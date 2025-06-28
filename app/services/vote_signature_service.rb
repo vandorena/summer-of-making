@@ -1,21 +1,21 @@
 class VoteSignatureService
   def self.verifier
-    @verifier ||= ActiveSupport::MessageVerifier.new(Rails.application.secret_key_base, digest: 'SHA256')
+    @verifier ||= ActiveSupport::MessageVerifier.new(Rails.application.secret_key_base, digest: "SHA256")
   end
 
   def self.generate_signature(ship_event_1_id, ship_event_2_id, user_id)
     # we're using ship events instead of projects, because projects can be voted on multiple times (multiple ship events aka shipchain)
     timestamp = Time.current.to_i
-    
+
     normalized_ids = normalize_ship_event_order(ship_event_1_id, ship_event_2_id)
-    
+
     payload = {
       ship_event_1_id: normalized_ids[:ship_event_1_id],
       ship_event_2_id: normalized_ids[:ship_event_2_id],
       user_id: user_id,
       timestamp: timestamp
     }
-    
+
     verifier.generate(payload)
   end
 
@@ -27,7 +27,7 @@ class VoteSignatureService
       if payload["timestamp"] < 10.minutes.ago.to_i
         return { valid: false, error: "Signature expired" }
       end
-      
+
       { valid: true, payload: payload }
     rescue ActiveSupport::MessageVerifier::InvalidSignature
       { valid: false, error: "Invalid signature" }
@@ -65,4 +65,4 @@ class VoteSignatureService
       }
     end
   end
-end 
+end

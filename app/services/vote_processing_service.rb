@@ -44,7 +44,7 @@ class VoteProcessingService
   def process_tie
     project_1 = @vote.ship_event_1.project
     project_2 = @vote.ship_event_2.project
-    
+
     project_1_elo_before = project_1.rating
     project_2_elo_before = project_2.rating
 
@@ -69,10 +69,10 @@ class VoteProcessingService
   def get_loser_project_id(winner_id)
     project_1_id = @vote.ship_event_1.project_id
     project_2_id = @vote.ship_event_2.project_id
-        
+
     return project_2_id if project_1_id == winner_id
     return project_1_id if project_2_id == winner_id
-    
+
     nil # Should not happen if winner_id is valid
   end
 
