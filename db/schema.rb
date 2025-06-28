@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_28_033837) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_28_190014) do
   create_schema "auth"
   create_schema "extensions"
   create_schema "graphql"
@@ -208,9 +208,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_28_033837) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "last_hackatime_time"
+    t.integer "seconds_coded"
     t.integer "likes_count", default: 0, null: false
     t.integer "comments_count", default: 0, null: false
-    t.integer "seconds_coded"
     t.datetime "hackatime_pulled_at"
     t.index ["project_id"], name: "index_devlogs_on_project_id"
     t.index ["user_id"], name: "index_devlogs_on_user_id"
