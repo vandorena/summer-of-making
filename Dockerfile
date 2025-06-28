@@ -17,21 +17,21 @@ WORKDIR /rails
 # Install all packages (base + build dependencies)
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
-    curl libjemalloc2 libvips postgresql-client wget ffmpeg \
-    build-essential git pkg-config libpq-dev libyaml-dev && \
+        curl libjemalloc2 libvips postgresql-client wget ffmpeg \
+        build-essential git libpq-dev libyaml-dev pkg-config && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Set production environment
 ENV RAILS_ENV="production" \
-    BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle" \
-    BUNDLE_WITHOUT="development:test" \
     RAILS_SERVE_STATIC_FILES="true" \
     RAILS_LOG_TO_STDOUT="true"
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./
-RUN bundle install && \
+RUN bundle config set --local force_ruby_platform true && \
+    bundle install && \
+    bundle clean --force && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
     bundle exec bootsnap precompile --gemfile
 
