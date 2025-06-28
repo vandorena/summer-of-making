@@ -26,7 +26,7 @@
       <div class="flex items-center justify-between mb-2 sm:mb-3">
         <div class="flex items-center">
           <% if devlog.user.avatar.present? %>
-            <img src="<%= devlog.user.avatar %>" alt="<%= devlog.user.display_name %>" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3">
+            <img src="<%= devlog.user.avatar %>" alt="<%= devlog.user.display_name %>" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3" loading="lazy">
           <% end %>
           <div>
             <% if show_project_link %>

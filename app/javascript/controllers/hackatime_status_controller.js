@@ -50,7 +50,7 @@ export default class extends Controller {
             <picture class="inline-block w-5 h-5 align-text-bottom">
               <source srcset="/inlineshell.avif" type="image/avif">
               <source srcset="/inlineshell.webp" type="image/webp">
-              <img src="/inlineshell.png" alt="shell" class="w-5 h-5 inline-block">
+              <img src="/inlineshell.png" alt="shell" class="w-5 h-5 inline-block" loading="lazy">
             </picture>, with up to 30x bonuses based on community votes!
           <br><br>
           Make sure <span class="text-[#E65A42]">all your code editors</span> are connected to Hackatime. You can’t get shells without it!`

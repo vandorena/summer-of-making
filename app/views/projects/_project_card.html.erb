@@ -193,7 +193,7 @@
         <% if @project.followers.any? %>
           <% @project.followers.each do |follower| %>
             <div class="flex items-center space-x-3">
-              <img src="<%= follower.avatar %>" alt="<%= follower.display_name %>" class="w-10 h-10 -full">
+              <img src="<%= follower.avatar %>" alt="<%= follower.display_name %>" class="w-10 h-10 -full" loading="lazy">
               <div>
                 <p class="text-black"><%= follower.display_name %></p>
                 <p class="text-sm text-gray-600">
