@@ -11,7 +11,7 @@ class ShopOrdersController < ApplicationController
 
   def new
     @order = ShopOrder.new
-    @regionalization_enabled = Flipper.enabled?(:shop_regionalization)
+    @regionalization_enabled = true
     @selected_region = @regionalization_enabled ? determine_user_region : nil
     @regional_price = @regionalization_enabled ? @item.price_for_region(@selected_region) : @item.ticket_cost
 
@@ -39,7 +39,7 @@ class ShopOrdersController < ApplicationController
   def create
     @order = current_user.shop_orders.build(shop_order_params)
     @order.shop_item = @item
-    @regionalization_enabled = Flipper.enabled?(:shop_regionalization)
+    @regionalization_enabled = true
     @selected_region = @regionalization_enabled ? determine_user_region : nil
     @regional_price = @regionalization_enabled ? @item.price_for_region(@selected_region) : @item.ticket_cost
     @order.frozen_item_price = @regional_price
