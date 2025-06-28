@@ -34,7 +34,7 @@
   <h1 class="text-4xl sm:text-5xl mb-2 sm:text-center">Vote</h1>
   <p class="text-center text-nice-blue text-lg mb-6">You have voted <%= @user_vote_count %> times.</p>
 
-  <%= @projects %>
+  <%= admin_tool { @projects } %>
   <% if @projects.size < 2 %>
     <%= render layout: "shared/container" do %>
       <div class="h-full text-center mt-8">
