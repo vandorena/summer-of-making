@@ -5,7 +5,7 @@ class ShopItemsController < ApplicationController
   before_action :require_admin!, except: [ :index ]
   before_action :refresh_verf!, only: :index
   prepend_before_action do
-    @regionalization_enabled = false # Flipper.enabled?(:shop_regionalization)
+    @regionalization_enabled = Flipper.enabled?(:shop_regionalization)
   end
 
   def index
