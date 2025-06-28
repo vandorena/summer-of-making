@@ -45,6 +45,10 @@ class VotesController < ApplicationController
     @vote.ship_event_1_id = ship_event_1_id
     @vote.ship_event_2_id = ship_event_2_id
 
+    # Backward compatibility
+    @vote.project_1_id = @ship_events[0].project.id
+    @vote.project_2_id = @ship_events[1].project.id
+
     # Handle tie case
     if @vote.winning_project_id.blank?
       @vote.winning_project_id = nil
