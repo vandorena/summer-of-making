@@ -1,50 +1,69 @@
-<%= form_with(model: [project, vote],
+<%= form_with(model: vote,
   url: votes_path,
-  class: "space-y-3 sm:space-y-4",
-  id: "vote_form_#{project.id}",
+  class: "space-y-6",
   data: {
     controller: "form",
     action: "submit->form#preventDoubleSubmission",
-    voting_steps_target: "form",
-    project_id: project.id,
     "data-analytics-form": ""
-  },
-  onclick: "event.stopPropagation()") do |f| %>
-  <%= f.hidden_field :winner_id, value: project.id %>
+  }) do |f| %>
 
-  <%= f.hidden_field :winner_demo_opened, value: false, data: { voting_steps_target: "winnerDemoOpenedInput" } %>
-  <%= f.hidden_field :winner_readme_opened, value: false, data: { voting_steps_target: "winnerReadmeOpenedInput" } %>
-  <%= f.hidden_field :winner_repo_opened, value: false, data: { voting_steps_target: "winnerRepoOpenedInput" } %>
-  <%= f.hidden_field :loser_demo_opened, value: false, data: { voting_steps_target: "loserDemoOpenedInput" } %>
-  <%= f.hidden_field :loser_readme_opened, value: false, data: { voting_steps_target: "loserReadmeOpenedInput" } %>
-  <%= f.hidden_field :loser_repo_opened, value: false, data: { voting_steps_target: "loserRepoOpenedInput" } %>
+  <%= f.hidden_field :project_1_id, value: @projects.first&.id %>
+  <%= f.hidden_field :project_2_id, value: @projects.last&.id %>
+  <%= f.hidden_field :project_1_demo_opened, value: false %>
+  <%= f.hidden_field :project_1_readme_opened, value: false %>
+  <%= f.hidden_field :project_1_repo_opened, value: false %>
+  <%= f.hidden_field :project_2_demo_opened, value: false %>
+  <%= f.hidden_field :project_2_readme_opened, value: false %>
+  <%= f.hidden_field :project_2_repo_opened, value: false %>
+  <%= f.hidden_field :time_spent_voting_ms, value: 0 %>
+  <%= f.hidden_field :music_played, value: false %>
 
-  <%= f.hidden_field :time_spent_voting_ms, data: { voting_steps_target: "timeSpentVotingInput" } %>
-  <%= f.hidden_field :music_played, value: false, data: { voting_steps_target: "musicPlayedInput" } %>
+  <div class="text-center">
+    <h3 class="text-xl sm:text-2xl mb-6 text-gray-700">Cast Your Vote</h3>
 
-  <% token = session[:vote_tokens].keys.find { |k| session[:vote_tokens][k]["project_id"] == project.id } %>
-  <%= hidden_field_tag :vote_token, token %>
+    <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6 mb-6">
+      <label class="flex items-center cursor-pointer">
+        <%= f.radio_button :winning_project_id, @projects.first.id, class: "sr-only peer" %>
+        <div class="px-4 sm:px-6 py-2 sm:py-3 bg-gray-200 hover:bg-forest hover:text-white peer-checked:bg-forest peer-checked:text-white transition-colors duration-300 btn-pixel text-base sm:text-lg text-center min-w-0">
+          <span class="block sm:hidden">Project 1</span>
+          <span class="hidden sm:block">Project 1 – <%= truncate(@projects.first.title, length: 20) %></span>
+        </div>
+      </label>
 
-  <div class="space-y-1 sm:space-y-2" onclick="event.stopPropagation()">
-    <%= f.label :explanation, "Why this project?", class: "block text-base sm:text-lg font-medium" %>
+      <label class="flex items-center cursor-pointer">
+        <%= f.radio_button :winning_project_id, "", class: "sr-only peer" %>
+        <div class="px-4 sm:px-6 py-2 sm:py-3 bg-gray-200 hover:bg-nice-blue hover:text-white peer-checked:bg-nice-blue peer-checked:text-white transition-colors duration-300 btn-pixel text-base sm:text-lg text-center min-w-0">
+          Tie
+        </div>
+      </label>
+
+      <label class="flex items-center cursor-pointer">
+        <%= f.radio_button :winning_project_id, @projects.last.id, class: "sr-only peer" %>
+        <div class="px-4 sm:px-6 py-2 sm:py-3 bg-gray-200 hover:bg-saddle-taupe hover:text-white peer-checked:bg-saddle-taupe peer-checked:text-white transition-colors duration-300 btn-pixel text-base sm:text-lg text-center min-w-0">
+          <span class="block sm:hidden">Project 2</span>
+          <span class="hidden sm:block">Project 2 – <%= truncate(@projects.last.title, length: 20) %></span>
+        </div>
+      </label>
+    </div>
+  </div>
+
+  <div class="space-y-2">
     <%= f.text_area :explanation,
-      class: "w-full p-2 sm:p-3 border-2 border-black focus:outline-none focus:border-forest bg-warm text-sm sm:text-base #{'border-vintage-red' if vote.errors[:explanation].any?}",
-      rows: 3,
+      class: "w-full p-3 border-2 border-saddle-taupe/70 focus:outline-none focus:border-fores text-base #{'border-vintage-red' if vote.errors[:explanation].any?}",
+      rows: 4,
       required: true,
-      placeholder: "I like this project because...",
-      onclick: "event.stopPropagation()" %>
+      placeholder: "Tell us why you made this choice..." %>
 
     <% if vote.errors[:explanation].any? %>
-      <div class="text-vintage-red text-xs sm:text-sm mt-1">
+      <div class="text-vintage-red text-sm mt-1">
         <%= vote.errors[:explanation].join(", ") %>
       </div>
     <% end %>
   </div>
 
-  <div class="flex justify-end" onclick="event.stopPropagation()">
-    <%= f.submit "Vote",
-      class: "w-full sm:w-auto px-4 sm:px-6 py-2 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 text-base sm:text-lg 2xl:text-xl btn-pixel cursor-pointer",
-      data: { form_target: "submitButton" },
-      onclick: "event.stopPropagation()" %>
+  <div class="text-center">
+    <%= f.submit "Submit Vote",
+      class: "px-6 sm:px-8 py-2 sm:py-3 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg disabled:bg-gray-400 disabled:hover:scale-100 disabled:cursor-not-allowed",
+      data: { form_target: "submitButton" } %>
   </div>
 <% end %>

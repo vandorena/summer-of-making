@@ -46,8 +46,8 @@ class Project < ApplicationRecord
   has_many :ship_certifications
   has_many :readme_certifications
 
-  has_many :won_votes, class_name: "Vote", foreign_key: "winner_id"
-  has_many :lost_votes, class_name: "Vote", foreign_key: "loser_id"
+  has_many :won_votes, class_name: "Vote", foreign_key: "winning_project_id"
+  has_many :vote_changes, dependent: :destroy
 
   has_many :timer_sessions
 
@@ -69,9 +69,8 @@ class Project < ApplicationRecord
             format: { with: /\A(?:https?:\/\/).*\z/i, message: "must be a valid HTTP or HTTPS URL" },
             allow_blank: true
 
-  validates :category,
-            inclusion: { in: [ "Web App", "Mobile App", "Command Line Tool", "Video Game", "Something else" ],
-                         message: "%<value>s is not a valid category" }
+  CATEGORIES = [ "Web App", "Mobile App", "Command Line Tool", "Video Game", "Something else" ]
+  validates :category, inclusion: { in: CATEGORIES, message: "%<value>s is not a valid category" }
 
   enum :certification_type, {
     cert_other: 0,
@@ -124,12 +123,24 @@ class Project < ApplicationRecord
   before_save :set_default_certification_type
 
   def total_votes
-    won_votes.count + lost_votes.count
+    vote_changes.count
   end
 
-  delegate :count, to: :won_votes, prefix: true
+  def wins_count
+    vote_changes.wins.count
+  end
 
-  delegate :count, to: :lost_votes, prefix: true
+  def losses_count
+    vote_changes.losses.count
+  end
+
+  def ties_count
+    vote_changes.ties.count
+  end
+
+  def current_elo_rating
+    rating
+  end
 
   def hackatime_total_time
     return 0 unless user.has_hackatime? && hackatime_project_keys.present?
@@ -243,12 +254,23 @@ class Project < ApplicationRecord
     false
   end
 
+  def unpaid_shipevents_since_last_payout
+    ShipEvent.where(project: self)
+             .left_joins(:payouts)
+             .where(payouts: { id: nil })
+             .order("ship_events.created_at")
+  end
+
   def self.cumulative_elo_bounds_at_vote_count(count)
-    [ 100, 2000 ]
+    votes = VoteChange.where("project_vote_count <= ?", count)
+
+    col = :elo_after
+    [ votes.minimum(col), votes.maximum(col) ]
   end
 
   def calculate_payout
-    min, max = Project.cumulative_elo_bounds_at_vote_count 1
+    vote_count = VoteChange.where(project: self).maximum(:project_vote_count)
+    min, max = Project.cumulative_elo_bounds_at_vote_count vote_count
 
     pc = unlerp(min, max, rating)
 
@@ -257,8 +279,42 @@ class Project < ApplicationRecord
     puts "mult", mult
 
     hours = devlogs.sum(:seconds_coded).fdiv(3600)
+    puts "hours", hours
 
     payout = hours * mult
+  end
+
+  def issue_payouts
+    ship_events.each_with_index do |ship, idx|
+      next_ship_created_at = ship_events[idx + 1]&.created_at || Float::INFINITY
+      changes = vote_changes.where("created_at < ?", next_ship_created_at).where("project_vote_count <= ?", Payout::VOTE_COUNT_REQUIRED)
+
+      next if changes.count < Payout::VOTE_COUNT_REQUIRED
+
+      min, max = Project.cumulative_elo_bounds_at_vote_count Payout::VOTE_COUNT_REQUIRED
+
+      rating_at_vote_count = changes.last.elo_after
+      pc = unlerp(min, max, rating_at_vote_count)
+
+      puts "FKDF", pc, min, max, rating_at_vote_count
+
+      mult = Payout.calculate_multiplier pc
+
+      hours = ship.hours_covered
+
+      amount = (mult * hours).ceil
+
+      current_payout_sum = ship.payouts.sum(:amount)
+      current_payout_difference = amount - current_payout_sum
+
+      next if current_payout_difference.zero?
+
+      reason = "Payout#{" recalculation" if ship.payouts.count > 0} for #{title}'s #{ship.created_at} ship."
+
+      payout = Payout.create!(amount: current_payout_difference, payable: ship, user:, reason:)
+
+      puts "PAYOUTCREASED(#{payout.id}) ship.id:#{ship.id} min:#{min} max:#{max} rating_at_vote_count:#{rating_at_vote_count} pc:#{pc} mult:#{mult} hours:#{hours} amount:#{amount} current_payout_sum:#{current_payout_sum} current_payout_difference:#{current_payout_difference}"
+    end
   end
 
   private
@@ -287,6 +343,11 @@ class Project < ApplicationRecord
     return if readme_certifications.exists?
 
     readme_certifications.create!
+  end
+
+  def unlerp(start, stop, value)
+    return 0.0 if start == stop
+    (value - start) / (stop - start).to_f
   end
 
   def set_default_certification_type

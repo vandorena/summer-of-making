@@ -195,9 +195,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_26_151826) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "last_hackatime_time"
+    t.integer "seconds_coded"
     t.integer "likes_count", default: 0, null: false
     t.integer "comments_count", default: 0, null: false
-    t.integer "seconds_coded"
     t.datetime "hackatime_pulled_at"
     t.index ["project_id"], name: "index_devlogs_on_project_id"
     t.index ["user_id"], name: "index_devlogs_on_user_id"
@@ -632,25 +632,47 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_26_151826) do
     t.datetime "synced_at", precision: nil
   end
 
+  create_table "vote_changes", force: :cascade do |t|
+    t.bigint "vote_id", null: false
+    t.bigint "project_id", null: false
+    t.integer "elo_before", null: false
+    t.integer "elo_after", null: false
+    t.integer "elo_delta", null: false
+    t.string "result", null: false
+    t.integer "project_vote_count", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id", "created_at"], name: "index_vote_changes_on_project_id_and_created_at"
+    t.index ["project_id"], name: "index_vote_changes_on_project_id"
+    t.index ["result"], name: "index_vote_changes_on_result"
+    t.index ["vote_id"], name: "index_vote_changes_on_vote_id"
+  end
+
   create_table "votes", force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.bigint "winner_id", null: false
     t.text "explanation", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "loser_id"
-    t.boolean "winner_demo_opened", default: false
-    t.boolean "winner_readme_opened", default: false
-    t.boolean "winner_repo_opened", default: false
-    t.boolean "loser_demo_opened", default: false
-    t.boolean "loser_readme_opened", default: false
-    t.boolean "loser_repo_opened", default: false
+    t.boolean "project_1_demo_opened", default: false
+    t.boolean "project_1_readme_opened", default: false
+    t.boolean "project_1_repo_opened", default: false
+    t.boolean "project_2_demo_opened", default: false
+    t.boolean "project_2_readme_opened", default: false
+    t.boolean "project_2_repo_opened", default: false
     t.integer "time_spent_voting_ms"
     t.boolean "music_played"
-    t.index ["loser_id"], name: "index_votes_on_loser_id"
-    t.index ["user_id", "winner_id"], name: "index_votes_on_user_id_and_winner_id", unique: true
+    t.string "status", default: "active", null: false
+    t.text "invalid_reason"
+    t.datetime "marked_invalid_at"
+    t.bigint "marked_invalid_by_id"
+    t.bigint "project_1_id"
+    t.bigint "project_2_id"
+    t.index ["marked_invalid_at"], name: "index_votes_on_marked_invalid_at"
+    t.index ["marked_invalid_by_id"], name: "index_votes_on_marked_invalid_by_id"
+    t.index ["project_1_id"], name: "index_votes_on_project_1_id"
+    t.index ["project_2_id"], name: "index_votes_on_project_2_id"
+    t.index ["status"], name: "index_votes_on_status"
     t.index ["user_id"], name: "index_votes_on_user_id"
-    t.index ["winner_id"], name: "index_votes_on_winner_id"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
@@ -691,7 +713,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_26_151826) do
   add_foreign_key "timer_sessions", "projects"
   add_foreign_key "timer_sessions", "users"
   add_foreign_key "tutorial_progresses", "users"
-  add_foreign_key "votes", "projects", column: "loser_id"
-  add_foreign_key "votes", "projects", column: "winner_id"
+  add_foreign_key "vote_changes", "projects"
+  add_foreign_key "vote_changes", "votes"
+  add_foreign_key "votes", "projects", column: "project_1_id"
+  add_foreign_key "votes", "projects", column: "project_2_id"
   add_foreign_key "votes", "users"
+  add_foreign_key "votes", "users", column: "marked_invalid_by_id"
 end
