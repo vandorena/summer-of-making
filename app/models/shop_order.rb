@@ -178,7 +178,7 @@ class ShopOrder < ApplicationRecord
   end
 
   def check_regional_availability
-    return unless Flipper.enabled?(:shop_regionalization)
+    return unless false # Flipper.enabled?(:shop_regionalization)
     return unless shop_item.present? && frozen_address.present?
 
     address_country = frozen_address["country"]

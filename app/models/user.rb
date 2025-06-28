@@ -233,7 +233,7 @@ class User < ApplicationRecord
   end
 
   def can_vote?
-    is_admin? || Flipper.enabled?("2025_06_28_voting", self)
+    is_admin? # || Flipper.enabled?("2025_06_28_voting", self)
   end
 
   def staked_projects_count
