@@ -10,8 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_26_151826) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_28_024319) do  create_schema "auth"
+  create_schema "extensions"
+  create_schema "graphql"
+  create_schema "graphql_public"
+  create_schema "pgbouncer"
+  create_schema "pgsodium"
+  create_schema "realtime"
+  create_schema "storage"
+  create_schema "vault"
+
   # These are extensions that must be enabled in order to support this database
+  enable_extension "extensions.pg_stat_statements"
+  enable_extension "extensions.pgcrypto"
+  enable_extension "extensions.uuid-ossp"
   enable_extension "pg_catalog.plpgsql"
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -195,9 +207,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_26_151826) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "last_hackatime_time"
-    t.integer "seconds_coded"
     t.integer "likes_count", default: 0, null: false
     t.integer "comments_count", default: 0, null: false
+    t.integer "seconds_coded"
     t.datetime "hackatime_pulled_at"
     t.index ["project_id"], name: "index_devlogs_on_project_id"
     t.index ["user_id"], name: "index_devlogs_on_user_id"
@@ -667,10 +679,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_26_151826) do
     t.bigint "marked_invalid_by_id"
     t.bigint "project_1_id"
     t.bigint "project_2_id"
+    t.bigint "ship_event_1_id", null: false
+    t.bigint "ship_event_2_id", null: false
     t.index ["marked_invalid_at"], name: "index_votes_on_marked_invalid_at"
     t.index ["marked_invalid_by_id"], name: "index_votes_on_marked_invalid_by_id"
     t.index ["project_1_id"], name: "index_votes_on_project_1_id"
     t.index ["project_2_id"], name: "index_votes_on_project_2_id"
+    t.index ["ship_event_1_id"], name: "index_votes_on_ship_event_1_id"
+    t.index ["ship_event_2_id"], name: "index_votes_on_ship_event_2_id"
     t.index ["status"], name: "index_votes_on_status"
     t.index ["user_id"], name: "index_votes_on_user_id"
   end
@@ -717,6 +733,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_26_151826) do
   add_foreign_key "vote_changes", "votes"
   add_foreign_key "votes", "projects", column: "project_1_id"
   add_foreign_key "votes", "projects", column: "project_2_id"
+  add_foreign_key "votes", "ship_events", column: "ship_event_1_id"
+  add_foreign_key "votes", "ship_events", column: "ship_event_2_id"
   add_foreign_key "votes", "users"
   add_foreign_key "votes", "users", column: "marked_invalid_by_id"
 end

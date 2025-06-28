@@ -22,6 +22,8 @@
 #  marked_invalid_by_id    :bigint
 #  project_1_id            :bigint
 #  project_2_id            :bigint
+#  ship_event_1_id         :bigint           not null
+#  ship_event_2_id         :bigint           not null
 #  user_id                 :bigint           not null
 #
 # Indexes
@@ -30,6 +32,8 @@
 #  index_votes_on_marked_invalid_by_id  (marked_invalid_by_id)
 #  index_votes_on_project_1_id          (project_1_id)
 #  index_votes_on_project_2_id          (project_2_id)
+#  index_votes_on_ship_event_1_id       (ship_event_1_id)
+#  index_votes_on_ship_event_2_id       (ship_event_2_id)
 #  index_votes_on_status                (status)
 #  index_votes_on_user_id               (user_id)
 #
@@ -38,6 +42,8 @@
 #  fk_rails_...  (marked_invalid_by_id => users.id)
 #  fk_rails_...  (project_1_id => projects.id)
 #  fk_rails_...  (project_2_id => projects.id)
+#  fk_rails_...  (ship_event_1_id => ship_events.id)
+#  fk_rails_...  (ship_event_2_id => ship_events.id)
 #  fk_rails_...  (user_id => users.id)
 #
 class Vote < ApplicationRecord
