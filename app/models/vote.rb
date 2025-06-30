@@ -4,27 +4,25 @@
 #
 # Table name: votes
 #
-#  id                      :bigint           not null, primary key
-#  explanation             :text             not null
-#  invalid_reason          :text
-#  marked_invalid_at       :datetime
-#  music_played            :boolean
-#  project_1_demo_opened   :boolean          default(FALSE)
-#  project_1_readme_opened :boolean          default(FALSE)
-#  project_1_repo_opened   :boolean          default(FALSE)
-#  project_2_demo_opened   :boolean          default(FALSE)
-#  project_2_readme_opened :boolean          default(FALSE)
-#  project_2_repo_opened   :boolean          default(FALSE)
-#  status                  :string           default("active"), not null
-#  time_spent_voting_ms    :integer
-#  created_at              :datetime         not null
-#  updated_at              :datetime         not null
-#  marked_invalid_by_id    :bigint
-#  project_1_id            :bigint
-#  project_2_id            :bigint
-#  ship_event_1_id         :bigint           not null
-#  ship_event_2_id         :bigint           not null
-#  user_id                 :bigint           not null
+#  id                    :bigint           not null, primary key
+#  explanation           :text             not null
+#  invalid_reason        :text
+#  marked_invalid_at     :datetime
+#  music_played          :boolean
+#  project_1_demo_opened :boolean          default(FALSE)
+#  project_1_repo_opened :boolean          default(FALSE)
+#  project_2_demo_opened :boolean          default(FALSE)
+#  project_2_repo_opened :boolean          default(FALSE)
+#  status                :string           default("active"), not null
+#  time_spent_voting_ms  :integer
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  marked_invalid_by_id  :bigint
+#  project_1_id          :bigint
+#  project_2_id          :bigint
+#  ship_event_1_id       :bigint           not null
+#  ship_event_2_id       :bigint           not null
+#  user_id               :bigint           not null
 #
 # Indexes
 #
