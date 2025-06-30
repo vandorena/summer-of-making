@@ -56,11 +56,11 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
         <% @projects.each do |project| %>
           <%= render layout: "shared/container" do %>
-          <div class="p-6 sm:p-12">
+          <div class="p-2">
             <div class="space-y-6 sm:space-y-8">
               <div class="flex items-start gap-3 sm:gap-4">
                 <div class="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 overflow-hidden rounded-lg">
-                  <%= image_tag project.banner, alt: project.title, class: "w-full h-full object-cover" %>
+                  <%= image_tag project.banner, alt: project.title, class: "w-full h-full object-cover", loading: "lazy" %>
                 </div>
                 <div class="flex-grow min-w-0">
                   <h3 class="text-xl sm:text-3xl mb-1 sm:mb-2 truncate"><%= project.title %></h3>
@@ -85,7 +85,7 @@
                 <div class="grid grid-cols-1 sm:flex sm:flex-wrap gap-3 sm:gap-4">
                   <% if project.demo_link.present? %>
                     <a href="<%= project.demo_link %>" target="_blank"
-                      class="px-4 sm:px-6 py-2.5 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
+                      class="px-4 sm:px-6 py-2.5 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 text-base sm:text-lg 2xl:text-xl text-center"
                       onclick="event.stopPropagation()"
                       data-analytics-link="demo"
                       data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
@@ -94,7 +94,7 @@
                   <% end %>
                   <% if project.repo_link.present? %>
                     <a href="<%= project.repo_link %>" target="_blank"
-                      class="px-4 sm:px-6 py-2.5 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
+                      class="px-4 sm:px-6 py-2.5 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 text-base sm:text-lg 2xl:text-xl text-center"
                       onclick="event.stopPropagation()"
                       data-analytics-link="repo"
                       data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
@@ -103,7 +103,7 @@
                   <% end %>
                   <% if project.readme_link.present? %>
                     <a href="<%= project.readme_link %>" target="_blank"
-                      class="px-4 sm:px-6 py-2.5 bg-saddle-taupe hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg 2xl:text-xl text-center"
+                      class="px-4 sm:px-6 py-2.5 bg-saddle-taupe hover:scale-[1.05] text-white transition-transform duration-300 text-base sm:text-lg 2xl:text-xl text-center"
                       onclick="event.stopPropagation()"
                       data-analytics-link="readme"
                       data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
@@ -121,7 +121,7 @@
                       show_comments_inline: false,
                       show_comment_modal: false,
                       show_likes: false,
-                      content_margin: 'p-4 sm:p-6' %>
+                      content_margin: 'p-2' %>
                 <% end %>
               </div>
               </div>
@@ -132,7 +132,7 @@
 
       <div class="mt-8 sm:mt-12">
         <%= render layout: "shared/container" do %>
-          <div class="p-6 sm:p-8">
+          <div class="p-2">
             <%= render "form", vote: @vote %>
           </div>
         <% end %>
@@ -141,7 +141,6 @@
   <% end %>
 </div>
 
-<!-- Music Player Toggle -->
 <div data-controller="music" class="fixed -bottom-32 -right-12 max-sm:mb-[140px]">
   <div data-music-target="speechBubble" class="absolute -top-12 -left-10 2xl:-top-16 2xl:-left-12 p-3 bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] max-w-[150px] opacity-50">
     <div class="text-sm text-forest font-medium">Click me, please!</div>
