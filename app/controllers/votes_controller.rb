@@ -50,7 +50,6 @@ class VotesController < ApplicationController
     @vote.project_2_id = @ship_events[1].project.id
     # Handle tie case
     @vote.winning_project_id = nil if @vote.winning_project_id == "tie"
-
     # Validate that winning project is one of the two projects (for now, until we remove client-side selection)
     if @vote.winning_project_id.present?
       valid_project_ids = @projects.map(&:id)
