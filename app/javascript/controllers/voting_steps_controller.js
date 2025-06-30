@@ -3,8 +3,8 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = [
     "step1", "step2", "loadingIndicator", "project", "form",
-    "winnerDemoOpenedInput", "winnerReadmeOpenedInput", "winnerRepoOpenedInput",
-    "loserDemoOpenedInput", "loserReadmeOpenedInput", "loserRepoOpenedInput",
+    "project1DemoOpenedInput", "project1ReadmeOpenedInput", "project1RepoOpenedInput",
+    "project2DemoOpenedInput", "project2ReadmeOpenedInput", "project2RepoOpenedInput",
     "timeSpentVotingInput", "musicPlayedInput"
   ]
   
@@ -134,35 +134,25 @@ export default class extends Controller {
 
     const link = event.currentTarget;
     const linkType = link.dataset.analyticsLink;
-    const projectCard = link.closest('[data-project-id]');
+    const projectContainer = link.closest('[data-project-index]');
     
-    if (!projectCard || !linkType) {
+    if (!projectContainer || !linkType) {
         return;
     }
 
-    const clickedProjectId = projectCard.dataset.projectId;
-
-    this.formTargets.forEach(form => {
-      const winnerInput = form.querySelector('input[name="vote[winner_id]"]');
-      if (!winnerInput) {
-          return;
-      }
-
-      const formWinnerId = winnerInput.value;
-      
-      const isWinnerClick = clickedProjectId === formWinnerId; 
-      const prefix = isWinnerClick ? 'winner' : 'loser';
-
-      const targetName = `${prefix}${linkType.charAt(0).toUpperCase() + linkType.slice(1)}OpenedInput`;
-
-      const hiddenInput = form.querySelector(`[data-voting-steps-target="${targetName}"]`);
-
-      if (hiddenInput) {
-        if (hiddenInput.value !== 'true') {
-          hiddenInput.value = 'true';
-        }
-      }
-    });
+    const projectIndex = parseInt(projectContainer.dataset.projectIndex);
+    
+    // Determine which project (1 or 2) based on index
+    const projectNumber = projectIndex + 1;
+    
+    // Find the hidden input field to update using data-voting-steps-target
+    const targetName = `project${projectNumber}${linkType.charAt(0).toUpperCase() + linkType.slice(1)}OpenedInput`;
+    const hiddenInput = document.querySelector(`[data-voting-steps-target="${targetName}"]`);
+    
+    if (hiddenInput && hiddenInput.value !== 'true') {
+      hiddenInput.value = 'true';
+      console.log(`Set ${targetName} to true`); // Debug log
+    }
   }
 
   handleMusicPlayed() {

@@ -12,14 +12,14 @@
   <%= f.hidden_field :ship_event_2_id, value: @ship_events&.last&.id %>
   <%= f.hidden_field :signature, value: @vote_signature %>
 
-  <%= f.hidden_field :project_1_demo_opened, value: false %>
-  <%= f.hidden_field :project_1_readme_opened, value: false %>
-  <%= f.hidden_field :project_1_repo_opened, value: false %>
-  <%= f.hidden_field :project_2_demo_opened, value: false %>
-  <%= f.hidden_field :project_2_readme_opened, value: false %>
-  <%= f.hidden_field :project_2_repo_opened, value: false %>
-  <%= f.hidden_field :time_spent_voting_ms, value: 0 %>
-  <%= f.hidden_field :music_played, value: false %>
+  <%= f.hidden_field :project_1_demo_opened, value: false, data: { voting_steps_target: "project1DemoOpenedInput" } %>
+  <%= f.hidden_field :project_1_readme_opened, value: false, data: { voting_steps_target: "project1ReadmeOpenedInput" } %>
+  <%= f.hidden_field :project_1_repo_opened, value: false, data: { voting_steps_target: "project1RepoOpenedInput" } %>
+  <%= f.hidden_field :project_2_demo_opened, value: false, data: { voting_steps_target: "project2DemoOpenedInput" } %>
+  <%= f.hidden_field :project_2_readme_opened, value: false, data: { voting_steps_target: "project2ReadmeOpenedInput" } %>
+  <%= f.hidden_field :project_2_repo_opened, value: false, data: { voting_steps_target: "project2RepoOpenedInput" } %>
+  <%= f.hidden_field :time_spent_voting_ms, value: 0, data: { voting_steps_target: "timeSpentVotingInput" } %>
+  <%= f.hidden_field :music_played, value: false, data: { voting_steps_target: "musicPlayedInput" } %>
 
   <div class="text-center">
     <h3 class="text-xl sm:text-2xl mb-6 text-gray-700">Cast Your Vote</h3>
