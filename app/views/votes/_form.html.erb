@@ -27,24 +27,30 @@
       By that definition, which of these two projects is better?
     </h2>
 
+    <% if vote.errors[:winning_project_id].any? %>
+      <div class="text-vintage-red text-sm mb-4">
+        Please select which project you think is better
+      </div>
+    <% end %>
+
     <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6 mb-6">
       <label class="flex items-center cursor-pointer">
-        <%= f.radio_button :winning_project_id, @projects.first.id, class: "sr-only peer" %>
-        <div class="marble-button peer-checked:bg-forest peer-checked:text-white peer-checked:border-forest-dark transition-colors duration-300 text-base sm:text-lg text-center min-w-0">
+        <%= f.radio_button :winning_project_id, @projects.first.id, class: "sr-only peer", required: true %>
+        <div class="inline-flex items-center justify-center px-6 sm:px-8 py-3 bg-[#FFE8CD] border-2 border-transparent peer-checked:bg-forest peer-checked:text-white peer-checked:border-forest-dark hover:scale-[1.05] text-[#4A2D24] transition-all duration-300 text-base sm:text-lg rounded-lg font-medium min-w-0">
           <span class=""><%= truncate(@projects.first.title, length: 20) %></span>
         </div>
       </label>
 
       <label class="flex items-center cursor-pointer">
-        <%= f.radio_button :winning_project_id, "", class: "sr-only peer" %>
-        <div class="marble-button peer-checked:bg-nice-blue peer-checked:text-white peer-checked:border-nice-blue-dark transition-colors duration-300 text-base sm:text-lg text-center min-w-0">
+        <%= f.radio_button :winning_project_id, "tie", class: "sr-only peer", required: true %>
+        <div class="inline-flex items-center justify-center px-6 sm:px-8 py-3 bg-[#FFE8CD] border-2 border-transparent peer-checked:bg-nice-blue peer-checked:text-white peer-checked:border-nice-blue-dark hover:scale-[1.05] text-[#4A2D24] transition-all duration-300 text-base sm:text-lg rounded-lg font-medium min-w-0">
           Tie
         </div>
       </label>
 
       <label class="flex items-center cursor-pointer">
-        <%= f.radio_button :winning_project_id, @projects.last.id, class: "sr-only peer" %>
-        <div class="marble-button peer-checked:bg-saddle-taupe peer-checked:text-white peer-checked:border-saddle-taupe-dark transition-colors duration-300 text-base sm:text-lg text-center min-w-0">
+        <%= f.radio_button :winning_project_id, @projects.last.id, class: "sr-only peer", required: true %>
+        <div class="inline-flex items-center justify-center px-6 sm:px-8 py-3 bg-[#FFE8CD] border-2 border-transparent peer-checked:bg-saddle-taupe peer-checked:text-white peer-checked:border-saddle-taupe-dark hover:scale-[1.05] text-[#4A2D24] transition-all duration-300 text-base sm:text-lg rounded-lg font-medium min-w-0">
           <span class=""><%= truncate(@projects.last.title, length: 20) %></span>
         </div>
       </label>
@@ -67,7 +73,7 @@
 
   <div class="text-center">
     <%= f.submit "Submit Vote",
-      class: "px-6 sm:px-8 py-2 sm:py-3 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 btn-pixel text-base sm:text-lg disabled:bg-gray-400 disabled:hover:scale-100 disabled:cursor-not-allowed",
+      class: "px-6 sm:px-8 py-2 sm:py-3 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 rounded-lg text-base sm:text-lg disabled:bg-gray-400 disabled:hover:scale-100 disabled:cursor-not-allowed",
       data: { form_target: "submitButton" } %>
   </div>
 <% end %>
