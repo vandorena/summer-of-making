@@ -73,30 +73,6 @@
         </tr>
       <% end %>
       <tr>
-        <th>Regional Availability</th>
-        <td>
-          <% if @shop_item.enabled_xx %>
-            <span class="badge bg-success me-1">Global (XX): Enabled</span>
-            <% 
-              regions = [
-                ['US', @shop_item.enabled_us],
-                ['CA', @shop_item.enabled_ca],
-                ['EU', @shop_item.enabled_eu],
-                ['AU', @shop_item.enabled_au],
-                ['IN', @shop_item.enabled_in]
-              ]
-            %>
-            <% regions.each do |region, enabled| %>
-              <span class="badge <%= enabled ? 'bg-success' : 'bg-secondary' %> me-1">
-                <%= region %>: <%= enabled ? 'Enabled' : 'Disabled' %>
-              </span>
-            <% end %>
-          <% else %>
-            <span class="badge bg-danger">Disabled in all regions</span>
-          <% end %>
-        </td>
-      </tr>
-      <tr>
         <th>Max Quantity</th>
         <td><%= @shop_item.max_qty %></td>
       </tr>
