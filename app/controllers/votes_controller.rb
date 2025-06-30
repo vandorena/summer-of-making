@@ -112,7 +112,8 @@ class VotesController < ApplicationController
     projects_with_latest_ship = Project
                                   .joins(:ship_events)
                                   .joins(:ship_certifications)
-                                  .includes(:user, :banner_attachment,
+                                  .includes(:banner_attachment, :ship_events,
+                                           user: :hackatime_stat,
                                            devlogs: [ :user, :file_attachment ])
                                   .where(ship_certifications: { judgement: :approved })
                                   .where.not(user_id: current_user.id)
@@ -134,11 +135,13 @@ class VotesController < ApplicationController
     eligible_projects = projects_with_latest_ship.to_a
 
       projects_with_time = eligible_projects.map do |project|
-        latest_ship_event = project.ship_events.order(:created_at).last
+        latest_ship_event = project.ship_events.max_by(&:created_at)
 
-        ship_devlogs = latest_ship_event.devlogs_since_last
-                                       .where("created_at < ?", latest_ship_event.created_at)
-        total_time_seconds = ship_devlogs.sum(:last_hackatime_time)
+        ship_devlogs = project.devlogs.select do |devlog|
+          devlog.created_at < latest_ship_event.created_at
+        end
+
+        total_time_seconds = ship_devlogs.sum(&:last_hackatime_time)
 
       {
         project: project,
@@ -196,7 +199,7 @@ class VotesController < ApplicationController
 
     @projects = selected_projects
     @ship_events = selected_projects.map do |project|
-      project.ship_events.order(:created_at).last
+      project.ship_events.max_by(&:created_at)
     end
 
     if @ship_events.size == 2
