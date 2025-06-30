@@ -4,13 +4,16 @@
   <%= preload_link_tag asset_path("viscosity.wav"), as: :audio %>
   <%= preload_link_tag asset_path("meowmeow.wav"), as: :audio %>
 
-  <% if @projects.present? %>
-    <% @projects.each do |project| %>
+  <% if @projects.present? && @ship_events.present? %>
+    <% @projects.each_with_index do |project, index| %>
+      <% ship_event = @ship_events[index] %>
+      <% ship_devlogs = project.devlogs.where("created_at < ?", ship_event.created_at) %>
+
       <!-- Preload project banners -->
       <%= preload_link_tag url_for(project.banner), as: :image %>
 
       <!-- Preload user avatars -->
-      <% project.devlogs.each do |devlog| %>
+      <% ship_devlogs.each do |devlog| %>
         <% if devlog.user.avatar.present? && !devlog.user.avatar.blank? %>
           <%= preload_link_tag devlog.user.avatar, as: :image %>
         <% end %>
@@ -50,6 +53,11 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-0 sm:gap-16 mobile-divide-dashed">
         <% @projects.each_with_index do |project, index| %>
+          <% ship_event = @ship_events[index] %>
+          <% ship_devlogs = project.devlogs.where("created_at < ?", ship_event.created_at).order(created_at: :asc) %>
+          <% ship_time_seconds = ship_devlogs.sum(:last_hackatime_time) %>
+          <%= render layout: "shared/container" do %>
+      
           <div class="px-4 py-8 sm:py-4 bg-[#F6DBBA] sm:rounded-xl" data-project-index="<%= index %>">
             <div class="space-y-6 sm:space-y-8">
               <div class="flex items-start gap-3 sm:gap-4">
@@ -59,12 +67,13 @@
                 <div class="flex-grow min-w-0">
                   <h3 class="text-xl sm:text-3xl mb-1 sm:mb-2 truncate"><%= project.title %></h3>
 
-                  <div class="flex flex-wrap items-center space-x-2 mb-2 text-sm text-gray-600">
-                    <span class="text-gray-800"><%= project.devlogs_count %></span>
-                    <span><%= "devlog".pluralize(project.devlogs_count) %></span>
+                  <div class="flex flex-wrap items-center space-x-2 mb-2 text-sm lg:text-base 2xl:text-lg text-gray-600">
+                    <span class="text-gray-800"><%= ship_devlogs.count %></span>
+                    <span><%= "devlog".pluralize(ship_devlogs.count) %></span>
                     <span>•</span>
-                    <% total_time_seconds = project.hackatime_total_time %>
-                    <span class="text-gray-800"><%= format_seconds(total_time_seconds) %></span>
+                    <span class="text-gray-800"><%= format_seconds(ship_time_seconds) %></span>
+                    <span>•</span>
+                    <span>Ship Date – Remove before launch: <span class="text-black"><%= ship_event.created_at.strftime("%b %d") %></span></span>
                   </div>
 
                   <div class="text-base sm:text-lg text-gray-600"
@@ -101,7 +110,7 @@
               </div>
 
               <div class="space-y-4 sm:space-y-8">
-                <% project.devlogs.order(created_at: :asc).each do |devlog| %>
+                <% ship_devlogs.each do |devlog| %>
                   <%= render "devlogs/devlog_card",
                       devlog: devlog,
                       context: 'voting',
