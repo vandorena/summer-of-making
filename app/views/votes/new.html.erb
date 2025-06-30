@@ -35,7 +35,7 @@
 
 <div class="container mx-auto px-0 sm:px-4 py-4 md:py-8">
   <h1 class="text-4xl sm:text-5xl mb-2 text-center">Vote</h1>
-  <%= more_votes_required = current_user.ship_events.size * Payout::VOTE_COUNT_REQUIRED - @user_vote_count %>
+  <% more_votes_required = current_user.ship_events.size * Payout::VOTE_COUNT_REQUIRED - @user_vote_count %>
   <% if more_votes_required > 0 %>
     <p class="text-center text-nice-blue text-lg mb-6">You need to vote <%= pluralize(more_votes_required, "time") %>!</p>
   <% end %>
