@@ -141,11 +141,20 @@ class VotesController < ApplicationController
 
       {
         project: project,
-        total_time: total_time_seconds
+        total_time: total_time_seconds,
+        ship_event: latest_ship_event,
+        is_paid: latest_ship_event.payouts.exists?,
+        ship_date: latest_ship_event.created_at
       }
     end
+    # sort by ship date
+    projects_with_time.sort_by! { |p| p[:ship_date] }
 
-    if projects_with_time.size < 2
+    unpaid_projects = projects_with_time.select { |p| !p[:is_paid] }
+    paid_projects = projects_with_time.select { |p| p[:is_paid] }
+
+    # we need at least 1 unpaid project and 1 other project (status doesn't matter)
+    if unpaid_projects.empty? || projects_with_time.size < 2
       @projects = []
       return
     end
@@ -158,9 +167,10 @@ class VotesController < ApplicationController
     while selected_projects.size < 2 && attempts < max_attempts
       attempts += 1
 
-      # pick a raqndom project and get smth in it's range
+      # pick a random unpaid project first
       if selected_projects.empty?
-        first_project_data = projects_with_time.select { |p| !used_user_ids.include?(p[:project].user_id) }.sample
+        available_unpaid = unpaid_projects.select { |p| !used_user_ids.include?(p[:project].user_id) }
+        first_project_data = weighted_sample(available_unpaid)
         next unless first_project_data
 
         selected_projects << first_project_data[:project]
@@ -178,13 +188,24 @@ class VotesController < ApplicationController
         end
 
         if compatible_projects.any?
-          second_project_data = compatible_projects.sample
+          second_project_data = weighted_sample(compatible_projects)
           selected_projects << second_project_data[:project]
           used_user_ids << second_project_data[:project].user_id
         else
           selected_projects.clear
           used_user_ids.clear
         end
+      end
+    end
+
+    # js getting smtth if after 25 attemps we have nothing
+    if selected_projects.size < 2 && unpaid_projects.any?
+      first_project_data = weighted_sample(unpaid_projects)
+      remaining_projects = projects_with_time.reject { |p| p[:project].user_id == first_project_data[:project].user_id }
+
+      if remaining_projects.any?
+        second_project_data = weighted_sample(remaining_projects)
+        selected_projects = [ first_project_data[:project], second_project_data[:project] ]
       end
     end
 
@@ -209,9 +230,33 @@ class VotesController < ApplicationController
 
   def vote_params
     params.expect(vote: %i[winning_project_id explanation
-                           project_1_demo_opened project_1_readme_opened project_1_repo_opened
-                           project_2_demo_opened project_2_readme_opened project_2_repo_opened
+                           project_1_demo_opened project_1_repo_opened
+                           project_2_demo_opened project_2_repo_opened
                            time_spent_voting_ms music_played
                            ship_event_1_id ship_event_2_id signature])
+  end
+
+  # this function is what we used in High seas
+  def weighted_sample(projects)
+    return nil if projects.empty?
+    return projects.first if projects.size == 1
+
+    # Create weights where earlier projects (index 0) have higher weight
+    # Weight decreases exponentially: first project gets weight 1.0, second gets 0.8, third gets 0.64, etc.
+    weights = projects.map.with_index { |_, index| 0.8 ** index }
+    total_weight = weights.sum
+
+    # Generate random number between 0 and total_weight
+    random = rand * total_weight
+
+    # Find the project corresponding to this random weight
+    cumulative_weight = 0
+    projects.each_with_index do |project, index|
+      cumulative_weight += weights[index]
+      return project if random <= cumulative_weight
+    end
+
+    # Fallback (should never reach here)
+    projects.first
   end
 end

@@ -5,6 +5,13 @@
 - Run `docker compose run web bundle exec rubocop -A` after any code modifications
 - Run `docker compose run --no-deps web bundle exec erb_lint --lint-all --autocorrect` after ERB template changes
 
+## CRITICAL: Always verify database environment before running commands
+
+- **ALWAYS** check which database you're connecting to before running any Rails commands
+- Run `docker compose run web rails runner "puts Rails.env"` to confirm environment
+- Run `docker compose run web rails runner "puts ActiveRecord::Base.connection.current_database"` to see database name
+- **NEVER** run commands without confirming you're not on production
+
 ## Git Best Practices
 
 - NEVER use `git add .` - Multiple agents may be running simultaneously
