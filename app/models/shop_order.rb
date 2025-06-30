@@ -54,6 +54,7 @@ class ShopOrder < ApplicationRecord
 
   scope :worth_counting, -> { where.not(aasm_state: %w[rejected refunded]) }
   scope :manually_fulfilled, -> { joins(:shop_item).where(shop_items: { type: ShopItem::MANUAL_FULFILLMENT_TYPES.map(&:name) }) }
+  scope :with_item_type, ->(item_type) { joins(:shop_item).where(shop_items: { type: item_type.to_s }) }
 
   def full_name
     "#{user.display_name}'s order for #{quantity} #{shop_item.name.pluralize(quantity)}"

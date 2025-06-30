@@ -48,3 +48,9 @@ production:
     schedule: every minute
     concurrency: 1
     description: "Sync email signups to Airtable every minute with single execution limit"
+
+  shop_reap_free_stickers_orders:
+    class: Shop::ReapFreeStickersOrdersJob
+    schedule: at 1am every day
+    concurrency: 1
+    description: "fulfill pending free stickers orders into theseus"
