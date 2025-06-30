@@ -30,8 +30,8 @@
   <% end %>
 <% end %>
 
-<div class="container mx-auto px-4 sm:px-4 pt-2 md:pt-8">
-  <h1 class="text-4xl sm:text-5xl mb-2 sm:text-center">Vote</h1>
+<div class="container mx-auto px-0 sm:px-4 py-4 md:py-8">
+  <h1 class="text-4xl sm:text-5xl mb-2 text-center">Vote</h1>
   <p class="text-center text-nice-blue text-lg mb-6">You've voted <%= pluralize(@user_vote_count, "time") %>.</p>
 
   <% if @projects.size < 2 %>
@@ -48,15 +48,9 @@
       data-action="music:played@window->voting-steps#handleMusicPlayed"
       class="space-y-6 sm:space-y-8">
 
-      <h2 class="text-xl sm:text-2xl mb-6 sm:mb-8 text-center text-gray-600">
-        A good ship is technical, creative, and presented well so that others can understand and experience it.
-        By that definition, which of these two projects is better?
-      </h2>
-
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-0 sm:gap-16 mobile-divide-dashed">
         <% @projects.each_with_index do |project, index| %>
-          <%= render layout: "shared/container" do %>
-          <div class="p-4" data-project-index="<%= index %>">
+          <div class="px-4 py-8 sm:py-4 bg-[#F6DBBA] sm:rounded-xl" data-project-index="<%= index %>">
             <div class="space-y-6 sm:space-y-8">
               <div class="flex items-start gap-3 sm:gap-4">
                 <div class="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 overflow-hidden rounded-lg">
@@ -82,38 +76,31 @@
               </div>
 
               <div class="space-y-4 sm:space-y-6">
-                <div class="grid grid-cols-1 sm:flex sm:flex-wrap gap-3 sm:gap-4">
+                <div class="grid grid-cols-1 sm:flex sm:flex-wrap justify-center gap-3 sm:gap-4">
                   <% if project.demo_link.present? %>
                     <a href="<%= project.demo_link %>" target="_blank"
-                      class="px-4 sm:px-6 py-2.5 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 text-base sm:text-lg 2xl:text-xl text-center"
+                      class="inline-flex items-center gap-2 px-6 sm:px-8 py-3 bg-[#FFE8CD] hover:scale-[1.05] text-[#4A2D24] transition-transform duration-300 text-base sm:text-lg 2xl:text-xl rounded-lg font-medium"
                       onclick="event.stopPropagation()"
                       data-analytics-link="demo"
                       data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
+                      <%= inline_svg "icons/world.svg", class: "w-5 h-5 sm:w-6 sm:h-6" %>
                       Demo
                     </a>
                   <% end %>
                   <% if project.repo_link.present? %>
                     <a href="<%= project.repo_link %>" target="_blank"
-                      class="px-4 sm:px-6 py-2.5 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 text-base sm:text-lg 2xl:text-xl text-center"
+                      class="inline-flex items-center gap-2 px-6 sm:px-8 py-3 bg-[#FFE8CD] hover:scale-[1.05] text-[#4A2D24] transition-transform duration-300 text-base sm:text-lg 2xl:text-xl rounded-lg font-medium"
                       onclick="event.stopPropagation()"
                       data-analytics-link="repo"
                       data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
+                      <%= inline_svg "icons/git.svg", class: "w-5 h-5 sm:w-6 sm:h-6" %>
                       Repository
-                    </a>
-                  <% end %>
-                  <% if project.readme_link.present? %>
-                    <a href="<%= project.readme_link %>" target="_blank"
-                      class="px-4 sm:px-6 py-2.5 bg-saddle-taupe hover:scale-[1.05] text-white transition-transform duration-300 text-base sm:text-lg 2xl:text-xl text-center"
-                      onclick="event.stopPropagation()"
-                      data-analytics-link="readme"
-                      data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
-                        Readme
                     </a>
                   <% end %>
                 </div>
               </div>
 
-              <div class="space-y-6 sm:space-y-8">
+              <div class="space-y-4 sm:space-y-8">
                 <% project.devlogs.order(created_at: :asc).each do |devlog| %>
                   <%= render "devlogs/devlog_card",
                       devlog: devlog,
@@ -127,13 +114,12 @@
               </div>
               </div>
             </div>
-          <% end %>
         <% end %>
       </div>
 
-      <div class="mt-8 sm:mt-12">
-        <%= render layout: "shared/container" do %>
-          <div class="p-4">
+      <div class="mx-2 sm:mx-0 mt-8 sm:mt-12">
+        <%= render layout: "shared/card" do %>
+          <div class="p-0 sm:p-2">
             <%= render "form", vote: @vote %>
           </div>
         <% end %>
@@ -142,7 +128,7 @@
   <% end %>
 </div>
 
-<div data-controller="music" class="fixed -bottom-32 -right-12 max-sm:mb-[140px]">
+<div data-controller="music" class="fixed -bottom-28 sm:-bottom-32 -right-12 max-sm:mb-[140px]">
   <div data-music-target="speechBubble" class="absolute -top-12 -left-10 2xl:-top-16 2xl:-left-12 p-3 bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] max-w-[150px] opacity-50">
     <div class="text-sm text-forest font-medium">Click me, please!</div>
   </div>

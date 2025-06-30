@@ -68,3 +68,9 @@
 .animate-jiggy {
   animation: jiggy 4s ease-in-out infinite;
 }
+
+.mobile-divide-dashed > *:not(:last-child) {
+  @media (max-width: 640px) {
+    border-bottom: 8px dashed #4A2D24;
+  }
+}

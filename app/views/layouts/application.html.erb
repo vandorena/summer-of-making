@@ -55,13 +55,15 @@
 
         <div data-controller="sidebar" data-sidebar-collapsed-value="false">
           <% if mobile_device? %>
-            <%= render "shared/mobile_nav" %>
-            <main class="pb-20 pt-12 px-4">
-              <div id="flash-container">
-                <%= render "shared/flash" %>
-              </div>
-              <%= yield %>
-            </main>
+            <div class="flex flex-col h-screen box-border p-0">
+              <main class="py-4 px-0 sm:px-4 overflow-y-scroll flex-grow flex-shrink">
+                <div id="flash-container">
+                  <%= render "shared/flash" %>
+                </div>
+                <%= yield %>
+              </main>
+              <%= render "shared/mobile_nav" %>
+            </div>
           <% else %>
             <div class="flex flex-col h-screen box-border p-0">
               <% if !current_user.has_hackatime? && !current_user.tutorial_progress.completed_at.nil? %>
