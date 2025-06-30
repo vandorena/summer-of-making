@@ -73,6 +73,10 @@
                         <span>Ship Date: <span class="text-black"><%= ship_event.created_at.strftime("%b %d") %></span></span>
                         <span>•</span>
                         <span>Paid: <span class="text-black"><%= ship_event.payouts.exists? ? "Yes" : "No" %></span></span>
+                        <span>•</span>
+                        <span>Ship Event ID: <span class="text-black"><%= ship_event.id %></span></span>
+                        <span>•</span>
+                        <span>Project ID: <span class="text-black"><%= project.id %></span></span>
                       <% end %>
                     </div>
 
