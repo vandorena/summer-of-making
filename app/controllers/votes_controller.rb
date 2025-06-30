@@ -141,11 +141,17 @@ class VotesController < ApplicationController
 
       {
         project: project,
-        total_time: total_time_seconds
+        total_time: total_time_seconds,
+        ship_event: latest_ship_event,
+        is_paid: latest_ship_event.payouts.exists?
       }
     end
 
-    if projects_with_time.size < 2
+    unpaid_projects = projects_with_time.select { |p| !p[:is_paid] }
+    paid_projects = projects_with_time.select { |p| p[:is_paid] }
+
+    # we need at least 1 unpaid project and 1 other project (status doesn't matter)
+    if unpaid_projects.empty? || projects_with_time.size < 2
       @projects = []
       return
     end
@@ -158,9 +164,9 @@ class VotesController < ApplicationController
     while selected_projects.size < 2 && attempts < max_attempts
       attempts += 1
 
-      # pick a raqndom project and get smth in it's range
+      # pick a random unpaid project first
       if selected_projects.empty?
-        first_project_data = projects_with_time.select { |p| !used_user_ids.include?(p[:project].user_id) }.sample
+        first_project_data = unpaid_projects.select { |p| !used_user_ids.include?(p[:project].user_id) }.sample
         next unless first_project_data
 
         selected_projects << first_project_data[:project]
@@ -189,10 +195,10 @@ class VotesController < ApplicationController
     end
 
     # js getting smtth if after 25 attemps we have nothing
-    if selected_projects.size < 2 && projects_with_time.size >= 2
-      first_project_data = projects_with_time.sample
+    if selected_projects.size < 2 && unpaid_projects.any?
+      first_project_data = unpaid_projects.sample
       remaining_projects = projects_with_time.reject { |p| p[:project].user_id == first_project_data[:project].user_id }
-
+      
       if remaining_projects.any?
         second_project_data = remaining_projects.sample
         selected_projects = [ first_project_data[:project], second_project_data[:project] ]
