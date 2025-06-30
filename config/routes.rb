@@ -242,6 +242,8 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :fraud_reports, only: [ :create ]
+
   scope :shop do
     get "/", to: "shop_items#index", as: :shop
     resources :shop_items, except: [ :index ], path: :items do
