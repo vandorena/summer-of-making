@@ -73,8 +73,6 @@ class Vote < ApplicationRecord
 
   after_create :process_vote_results
 
-  VOTING_START_DATE = Time.use_zone("America/New_York") { Time.parse("2025-06-30").beginning_of_day }
-
   # Helper methods to get winner/loser/tied projects
   def winner_project
     winner_change = vote_changes.find_by(result: "win")
