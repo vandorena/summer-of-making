@@ -52,8 +52,7 @@ class VoteChange < ApplicationRecord
   private
 
   def try_payout
-    is_genesis = project.ship_events.maximum(:created_at) < Vote::VOTING_START_DATE
-
-    project.issue_payouts unless is_genesis
+    genesis_has_run = Payout.where(payable_type: ShipEvent).any?
+    project.issue_payouts if genesis_has_run
   end
 end
