@@ -19,7 +19,7 @@
 <%= tag.div(**attrs) do %>
   <% if no_parchment %>
     <!-- Simple container with organic card styling -->
-    <div class="organic-card <%= 'h-full' if full_height %>">
+    <div class="organic-card <%= 'h-full' if full_height %>" style="padding: 16px 16px 16px 0;">
       <%= yield %>
     </div>
   <% else %>
