@@ -188,6 +188,17 @@ class VotesController < ApplicationController
       end
     end
 
+    # js getting smtth if after 25 attemps we have nothing
+    if selected_projects.size < 2 && projects_with_time.size >= 2
+      first_project_data = projects_with_time.sample
+      remaining_projects = projects_with_time.reject { |p| p[:project].user_id == first_project_data[:project].user_id }
+
+      if remaining_projects.any?
+        second_project_data = remaining_projects.sample
+        selected_projects = [ first_project_data[:project], second_project_data[:project] ]
+      end
+    end
+
     if selected_projects.size < 2
       @projects = []
       return
