@@ -52,7 +52,7 @@
 
   <div class="space-y-2">
     <%= f.text_area :explanation,
-      class: "w-full p-3 border-2 border-saddle-taupe/70 focus:outline-none focus:border-fores text-base #{'border-vintage-red' if vote.errors[:explanation].any?}",
+      class: "w-full p-3 border-2 rounded border-saddle-taupe/70 focus:outline-none focus:border-fores text-base #{'border-vintage-red' if vote.errors[:explanation].any?}",
       rows: 4,
       required: true,
       placeholder: "Tell us why you made this choice..." %>
