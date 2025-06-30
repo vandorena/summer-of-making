@@ -4,6 +4,20 @@
   <%= preload_link_tag asset_path("viscosity.wav"), as: :audio %>
   <%= preload_link_tag asset_path("meowmeow.wav"), as: :audio %>
 
+  <style>
+    .organic-card {
+      background: #f8f9fa !important;
+      border-radius: 8px !important;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+      border: 1px solid #e9ecef !important;
+    }
+    
+    .organic-card::before,
+    .organic-card::after {
+      display: none !important;
+    }
+  </style>
+
   <% if @projects.present? %>
     <% @projects.each do |project| %>
       <!-- Preload project banners -->
