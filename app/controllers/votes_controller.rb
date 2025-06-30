@@ -161,6 +161,7 @@ class VotesController < ApplicationController
 
     selected_projects = []
     used_user_ids = Set.new
+    used_repo_links = Set.new
     max_attempts = 25 # infinite loop!
 
     attempts = 0
@@ -169,12 +170,13 @@ class VotesController < ApplicationController
 
       # pick a random unpaid project first
       if selected_projects.empty?
-        available_unpaid = unpaid_projects.select { |p| !used_user_ids.include?(p[:project].user_id) }
+        available_unpaid = unpaid_projects.select { |p| !used_user_ids.include?(p[:project].user_id) && !used_repo_links.include?(p[:project].repo_link) }
         first_project_data = weighted_sample(available_unpaid)
         next unless first_project_data
 
         selected_projects << first_project_data[:project]
         used_user_ids << first_project_data[:project].user_id
+        used_repo_links << first_project_data[:project].repo_link if first_project_data[:project].repo_link.present?
         first_time = first_project_data[:total_time]
 
         # find projects within the constraints (set to 30%)
@@ -183,6 +185,7 @@ class VotesController < ApplicationController
 
         compatible_projects = projects_with_time.select do |p|
           !used_user_ids.include?(p[:project].user_id) &&
+          !used_repo_links.include?(p[:project].repo_link) &&
           p[:total_time] >= min_time &&
           p[:total_time] <= max_time
         end
@@ -191,9 +194,11 @@ class VotesController < ApplicationController
           second_project_data = weighted_sample(compatible_projects)
           selected_projects << second_project_data[:project]
           used_user_ids << second_project_data[:project].user_id
+          used_repo_links << second_project_data[:project].repo_link if second_project_data[:project].repo_link.present?
         else
           selected_projects.clear
           used_user_ids.clear
+          used_repo_links.clear
         end
       end
     end
@@ -201,7 +206,10 @@ class VotesController < ApplicationController
     # js getting smtth if after 25 attemps we have nothing
     if selected_projects.size < 2 && unpaid_projects.any?
       first_project_data = weighted_sample(unpaid_projects)
-      remaining_projects = projects_with_time.reject { |p| p[:project].user_id == first_project_data[:project].user_id }
+      remaining_projects = projects_with_time.reject { |p|
+        p[:project].user_id == first_project_data[:project].user_id ||
+        (p[:project].repo_link.present? && p[:project].repo_link == first_project_data[:project].repo_link)
+      }
 
       if remaining_projects.any?
         second_project_data = weighted_sample(remaining_projects)
@@ -242,8 +250,8 @@ class VotesController < ApplicationController
     return projects.first if projects.size == 1
 
     # Create weights where earlier projects (index 0) have higher weight
-    # Weight decreases exponentially: first project gets weight 1.0, second gets 0.8, third gets 0.64, etc.
-    weights = projects.map.with_index { |_, index| 0.8 ** index }
+    # Weight decreases exponentially: first project gets weight 1.0, second gets 0.95, third gets 0.90, etc.
+    weights = projects.map.with_index { |_, index| 0.95 ** index }
     total_weight = weights.sum
 
     # Generate random number between 0 and total_weight

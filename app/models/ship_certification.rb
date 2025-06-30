@@ -29,6 +29,7 @@ class ShipCertification < ApplicationRecord
   has_one_attached :proof_video, dependent: :destroy
 
   after_commit :schedule_video_conversion, if: :should_convert_video?
+  # after_commit :schedule_judgment_notification, if: :saved_change_to_judgement?
 
   default_scope { joins(:project).where(projects: { is_deleted: false }) }
 
@@ -50,5 +51,16 @@ class ShipCertification < ApplicationRecord
   def schedule_video_conversion
     Rails.logger.info "Scheduling video conversion for ShipCertification #{id}"
     VideoConversionJob.perform_unique(id)
+  end
+
+  def schedule_judgment_notification
+    old_judgment = judgement_before_last_save
+    new_judgment = judgement
+
+    # Don't notify when judgment is set to pending
+    return if pending?
+
+    # Schedule notification with 5-minute delay to prevent misclick notifications
+    ShipCertificationJudgmentNotificationJob.set(wait: 5.minutes).perform_later(id, old_judgment, new_judgment)
   end
 end
