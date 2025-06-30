@@ -14,6 +14,7 @@ class ProjectsController < ApplicationController
   def index
     if params[:action] == "my_projects"
       @projects = Project.includes(:user)
+                         .includes(:ship_events)
                          .where.not(user_id: current_user.id)
                          .order(rating: :asc)
 
