@@ -18,8 +18,8 @@
 
 <%= tag.div(**attrs) do %>
   <% if no_parchment %>
-    <!-- Simple container without parchment styling -->
-    <div class="bg-white rounded-lg border border-gray-200 shadow-sm <%= 'h-full' if full_height %>">
+    <!-- Simple container with organic card styling -->
+    <div class="organic-card <%= 'h-full' if full_height %>">
       <%= yield %>
     </div>
   <% else %>

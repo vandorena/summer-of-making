@@ -10,10 +10,11 @@
   show_stonks ||= false                    # Whether to show stonks count
   container_classes ||= ''                 # Additional container classes
   content_margin ||= ''                    # Content margin/padding classes
+  no_parchment ||= false                   # Whether to disable parchment styling
 %>
 
 <% cache([devlog, devlog.user, devlog.project, current_user&.id, show_likes, show_comment_modal, context]) do %>
-  <%= render layout: "shared/container" do %>
+  <%= render layout: "shared/container", locals: { no_parchment: no_parchment } do %>
 
     <div class="ml-4 <%= context == 'explore' || context == 'project' ? '' : '' %> <%= container_classes %> <%= 'cursor-pointer' if show_project_navigation %>"
          id="<%= dom_id(devlog) %>"

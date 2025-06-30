@@ -4,20 +4,6 @@
   <%= preload_link_tag asset_path("viscosity.wav"), as: :audio %>
   <%= preload_link_tag asset_path("meowmeow.wav"), as: :audio %>
 
-  <style>
-    .organic-card {
-      background: #f8f9fa !important;
-      border-radius: 8px !important;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-      border: 1px solid #e9ecef !important;
-    }
-    
-    .organic-card::before,
-    .organic-card::after {
-      display: none !important;
-    }
-  </style>
-
   <% if @projects.present? %>
     <% @projects.each do |project| %>
       <!-- Preload project banners -->
@@ -69,7 +55,7 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
         <% @projects.each do |project| %>
-          <%= render layout: "shared/container", locals: { no_parchment: true } do %>
+          <%= render layout: "shared/container" do %>
           <div class="p-4">
             <div class="space-y-6 sm:space-y-8">
               <div class="flex items-start gap-3 sm:gap-4">
@@ -135,7 +121,8 @@
                       show_comments_inline: false,
                       show_comment_modal: false,
                       show_likes: false,
-                      content_margin: 'p-2' %>
+                      content_margin: 'p-2',
+                      no_parchment: true %>
                 <% end %>
               </div>
               </div>
@@ -145,7 +132,7 @@
       </div>
 
       <div class="mt-8 sm:mt-12">
-        <%= render layout: "shared/container", locals: { no_parchment: true } do %>
+        <%= render layout: "shared/container" do %>
           <div class="p-4">
             <%= render "form", vote: @vote %>
           </div>
