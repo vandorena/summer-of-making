@@ -242,8 +242,8 @@ class VotesController < ApplicationController
     return projects.first if projects.size == 1
 
     # Create weights where earlier projects (index 0) have higher weight
-    # Weight decreases exponentially: first project gets weight 1.0, second gets 0.8, third gets 0.64, etc.
-    weights = projects.map.with_index { |_, index| 0.8 ** index }
+    # Weight decreases exponentially: first project gets weight 1.0, second gets 0.95, third gets 0.90, etc.
+    weights = projects.map.with_index { |_, index| 0.95 ** index }
     total_weight = weights.sum
 
     # Generate random number between 0 and total_weight
