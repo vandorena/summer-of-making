@@ -112,6 +112,8 @@
                       Repository
                     </a>
                   <% end %>
+
+                  <%= render "shared/report", suspect: project %>
                 </div>
               </div>
 
@@ -126,8 +128,6 @@
                       content_margin: 'p-2',
                       no_parchment: true %>
                 <% end %>
-
-                <%= render "shared/report", suspect: project %>
               </div>
             </div>
           </div>
