@@ -30,7 +30,7 @@
   <% end %>
 <% end %>
 
-<div class="container mx-auto px-4 sm:px-4 pt-2 md:pt-8">
+<div class="container mx-auto px-0 sm:px-4 pt-2 md:pt-8">
   <h1 class="text-4xl sm:text-5xl mb-2 sm:text-center">Vote</h1>
   <p class="text-center text-nice-blue text-lg mb-6">You have voted <%= @user_vote_count %> times.</p>
 
@@ -49,15 +49,14 @@
       data-action="music:played@window->voting-steps#handleMusicPlayed"
       class="space-y-6 sm:space-y-8">
 
-      <h2 class="text-xl sm:text-2xl mb-6 sm:mb-8 text-center text-gray-600">
-        A good ship is technical, creative, and presented well so that others can understand and experience it.
+      <h2 class="text-lg sm:text-xl md:text-2xl mb-6 sm:mb-8 text-center text-gray-600">
+        A good ship is technical, creative, and tells the story of how it was made.<br>
         By that definition, which of these two projects is better?
       </h2>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-0 sm:gap-16 mobile-divide-dashed">
         <% @projects.each do |project| %>
-          <%= render layout: "shared/container" do %>
-          <div class="p-6 sm:p-12">
+          <div class="px-4 py-8 sm:py-4 bg-[#F6DBBA] sm:rounded-xl">
             <div class="space-y-6 sm:space-y-8">
               <div class="flex items-start gap-3 sm:gap-4">
                 <div class="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 overflow-hidden rounded-lg">
@@ -114,7 +113,7 @@
                 </div>
               </div>
 
-              <div class="space-y-6 sm:space-y-8">
+              <div class="space-y-4 sm:space-y-8">
                 <% project.devlogs.order(created_at: :asc).each do |devlog| %>
                   <%= render "devlogs/devlog_card",
                       devlog: devlog,
@@ -127,13 +126,12 @@
               </div>
               </div>
             </div>
-          <% end %>
         <% end %>
       </div>
 
       <div class="mt-8 sm:mt-12">
-        <%= render layout: "shared/container" do %>
-          <div class="p-6 sm:p-8">
+        <%= render layout: "shared/card" do %>
+          <div class="p-2 sm:p-4">
             <%= render "form", vote: @vote %>
           </div>
         <% end %>

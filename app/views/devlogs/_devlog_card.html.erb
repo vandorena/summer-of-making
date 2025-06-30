@@ -13,7 +13,7 @@
 %>
 
 <% cache([devlog, devlog.user, devlog.project, current_user&.id, show_likes, show_comment_modal, context]) do %>
-  <%= render layout: "shared/container" do %>
+  <%= render layout: "shared/card" do %>
 
     <div class="ml-4 <%= context == 'explore' || context == 'project' ? '' : '' %> <%= container_classes %> <%= 'cursor-pointer' if show_project_navigation %>"
          id="<%= dom_id(devlog) %>"
