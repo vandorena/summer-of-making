@@ -38,14 +38,12 @@
   <p class="text-center text-nice-blue text-lg mb-6">You've voted <%= pluralize(@user_vote_count, "time") %>.</p>
 
   <% if @projects.size < 2 %>
-    <%= render layout: "shared/container" do %>
       <div class="h-full text-center mt-8">
         <p class="mb-6 sm:mb-8 text-black text-large sm:text-xl 2xl:text-2xl">There aren't enough projects in the pool to vote on. Check back later for more projects!</p>
         <%= link_to explore_path, class: "px-4 sm:px-6 py-2 sm:py-3 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 text-base sm:text-lg 2xl:text-xl btn-pixel" do %>
           Explore Projects
         <% end %>
       </div>
-    <% end %>
   <% else %>
     <div data-controller="voting-steps"
       data-action="music:played@window->voting-steps#handleMusicPlayed"
@@ -56,7 +54,6 @@
           <% ship_event = @ship_events[index] %>
           <% ship_devlogs = project.devlogs.where("created_at < ?", ship_event.created_at).order(created_at: :asc) %>
           <% ship_time_seconds = ship_devlogs.sum(:last_hackatime_time) %>
-          <%= render layout: "shared/container" do %>
             <div class="px-4 py-8 sm:py-4 bg-[#F6DBBA] sm:rounded-xl" data-project-index="<%= index %>">
               <div class="space-y-6 sm:space-y-8">
                 <div class="flex items-start gap-3 sm:gap-4">
@@ -76,6 +73,10 @@
                         <span>Ship Date: <span class="text-black"><%= ship_event.created_at.strftime("%b %d") %></span></span>
                         <span>•</span>
                         <span>Paid: <span class="text-black"><%= ship_event.payouts.exists? ? "Yes" : "No" %></span></span>
+                        <span>•</span>
+                        <span>Ship Event ID: <span class="text-black"><%= ship_event.id %></span></span>
+                        <span>•</span>
+                        <span>Project ID: <span class="text-black"><%= project.id %></span></span>
                       <% end %>
                     </div>
 
@@ -126,7 +127,6 @@
                 </div>
               </div>
             </div>
-          <% end %>
         <% end %>
       </div>
 
