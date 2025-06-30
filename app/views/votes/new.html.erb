@@ -8,7 +8,7 @@
     <% @projects.each_with_index do |project, index| %>
       <% ship_event = @ship_events[index] %>
       <% ship_devlogs = project.devlogs.where("created_at < ?", ship_event.created_at) %>
-      
+
       <!-- Preload project banners -->
       <%= preload_link_tag url_for(project.banner), as: :image %>
 
@@ -76,6 +76,8 @@
                     <span><%= "devlog".pluralize(ship_devlogs.count) %></span>
                     <span>•</span>
                     <span class="text-gray-800"><%= format_seconds(ship_time_seconds) %></span>
+                    <span>•</span>
+                    <span>Ship Date – Remove before launch: <span class="text-black"><%= ship_event.created_at.strftime("%b %d") %></span></span>
                   </div>
 
                   <div class="text-base sm:text-lg text-gray-600"
