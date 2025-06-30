@@ -45,6 +45,7 @@ class User < ApplicationRecord
   has_many :shop_orders
   has_many :shop_card_grants
   has_many :hackatime_projects
+  has_many :fraud_reports, foreign_key: :user_id, class_name: "FraudReport", dependent: :destroy
 
   before_validation { self.email = email.to_s.downcase.strip }
 

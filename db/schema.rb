@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_30_182338) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_30_183715) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -228,6 +228,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_30_182338) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["feature_key", "key", "value"], name: "index_flipper_gates_on_feature_key_and_key_and_value", unique: true
+  end
+
+  create_table "fraud_reports", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "suspect_type"
+    t.bigint "suspect_id"
+    t.string "reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_fraud_reports_on_user_id"
   end
 
   create_table "hackatime_projects", force: :cascade do |t|
@@ -700,6 +710,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_30_182338) do
   add_foreign_key "comments", "users"
   add_foreign_key "devlogs", "projects"
   add_foreign_key "devlogs", "users"
+  add_foreign_key "fraud_reports", "users"
   add_foreign_key "hackatime_projects", "users"
   add_foreign_key "hackatime_stats", "users"
   add_foreign_key "likes", "users"
