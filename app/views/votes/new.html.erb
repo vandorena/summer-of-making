@@ -85,29 +85,32 @@
                 <div class="grid grid-cols-1 sm:flex sm:flex-wrap gap-3 sm:gap-4">
                   <% if project.demo_link.present? %>
                     <a href="<%= project.demo_link %>" target="_blank"
-                      class="px-4 sm:px-6 py-2.5 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 text-base sm:text-lg 2xl:text-xl text-center"
+                      class="inline-flex items-center gap-2 px-6 sm:px-8 py-3 bg-[#FFE8CD] hover:scale-[1.05] text-[#4A2D24] transition-transform duration-300 text-base sm:text-lg 2xl:text-xl rounded-lg font-medium"
                       onclick="event.stopPropagation()"
                       data-analytics-link="demo"
                       data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
+                      <%= inline_svg "icons/world.svg", class: "w-5 h-5 sm:w-6 sm:h-6" %>
                       Demo
                     </a>
                   <% end %>
                   <% if project.repo_link.present? %>
                     <a href="<%= project.repo_link %>" target="_blank"
-                      class="px-4 sm:px-6 py-2.5 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 text-base sm:text-lg 2xl:text-xl text-center"
+                      class="inline-flex items-center gap-2 px-6 sm:px-8 py-3 bg-[#FFE8CD] hover:scale-[1.05] text-[#4A2D24] transition-transform duration-300 text-base sm:text-lg 2xl:text-xl rounded-lg font-medium"
                       onclick="event.stopPropagation()"
                       data-analytics-link="repo"
                       data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
+                      <%= inline_svg "icons/git.svg", class: "w-5 h-5 sm:w-6 sm:h-6" %>
                       Repository
                     </a>
                   <% end %>
                   <% if project.readme_link.present? %>
                     <a href="<%= project.readme_link %>" target="_blank"
-                      class="px-4 sm:px-6 py-2.5 bg-saddle-taupe hover:scale-[1.05] text-white transition-transform duration-300 text-base sm:text-lg 2xl:text-xl text-center"
+                      class="inline-flex items-center gap-2 px-6 sm:px-8 py-3 bg-[#FFE8CD] hover:scale-[1.05] text-[#4A2D24] transition-transform duration-300 text-base sm:text-lg 2xl:text-xl rounded-lg font-medium"
                       onclick="event.stopPropagation()"
                       data-analytics-link="readme"
                       data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
-                        Readme
+                      <%= inline_svg "icons/document.svg", class: "w-5 h-5 sm:w-6 sm:h-6" %>
+                      Readme
                     </a>
                   <% end %>
                 </div>
