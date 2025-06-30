@@ -4,10 +4,12 @@
     - full_height: If true, the container will fill up all vertical space available to it.
     - classes: Defines custom classes to apply to the main element of the container.
     - no_padding: If true, no upper + horizontal padding will be applied. The parchment texture will overlap the content.
+    - no_parchment: If true, completely disables parchment styling and renders a simple container.
 %>
 
 <% full_height = local_assigns.fetch(:full_height, false) %>
 <% no_padding  = local_assigns.fetch(:no_padding, false) %>
+<% no_parchment = local_assigns.fetch(:no_parchment, false) %>
 <% classes     = local_assigns.fetch(:classes, '') %>
 
 <% attrs            = local_assigns.fetch(:attr, {}) %>
@@ -15,7 +17,13 @@
 <% attrs[:class]    = [default_classes, classes, attrs[:class]].compact.join(" ") %>
 
 <%= tag.div(**attrs) do %>
-  <%# Top parchment header %>
+  <% if no_parchment %>
+    <!-- Simple container without parchment styling -->
+    <div class="bg-white rounded-lg border border-gray-200 shadow-sm <%= 'h-full' if full_height %>">
+      <%= yield %>
+    </div>
+  <% else %>
+    <%# Top parchment header %>
 
   <%#
     If we are in no-padding mode, then we create the actual, invisible "layout" element,
@@ -116,4 +124,5 @@
     </div>
   </div>
 
+  <% end %>
 <% end %>

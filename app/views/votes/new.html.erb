@@ -69,8 +69,8 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
         <% @projects.each do |project| %>
-          <%= render layout: "shared/container" do %>
-          <div class="p-2">
+          <%= render layout: "shared/container", locals: { no_parchment: true } do %>
+          <div class="p-4">
             <div class="space-y-6 sm:space-y-8">
               <div class="flex items-start gap-3 sm:gap-4">
                 <div class="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 overflow-hidden rounded-lg">
@@ -145,8 +145,8 @@
       </div>
 
       <div class="mt-8 sm:mt-12">
-        <%= render layout: "shared/container" do %>
-          <div class="p-2">
+        <%= render layout: "shared/container", locals: { no_parchment: true } do %>
+          <div class="p-4">
             <%= render "form", vote: @vote %>
           </div>
         <% end %>
