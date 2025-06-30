@@ -24,10 +24,10 @@
 
   <% if @regionalization_enabled %>
     <div class="justify-center flex mt-4 flex-col items-center gap-4">
-      <div class="region-selector bg-white p-4 rounded-lg shadow-md border-2 border-[#8b6f47] max-w-md w-full">
+      <%= render "shared/card", classes: 'max-w-md w-full' do %>
         <div class="text-center mb-3">
           <h3 class="text-lg font-semibold text-[#3a2f25] font-['DynaPuff',sans-serif] mb-1">🌍 Choose Your Region</h3>
-          <p class="text-sm text-[#666] font-['Fredoka',sans-serif]">Prices and availability vary by region</p>
+          <p class="text-sm text-[#666] font-['National Park',sans-serif]">Prices and availability vary by region</p>
         </div>
         <div class="flex flex-col gap-3">
           <select id="region-selector" class="w-full px-4 py-3 border-2 border-[#8b6f47] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8b6f47] focus:border-transparent text-center font-medium">
@@ -38,7 +38,7 @@
             <% end %>
           </select>
         </div>
-      </div>
+      <% end %>
     </div>
   <% end %>
 
@@ -105,15 +105,15 @@
   <% end %>
   <div class="my-6 text-center flex justify-center flex-col">
     <% if @shop_items.empty? %>
-      <div class="max-w-md mx-auto bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-        <div class="text-yellow-600 text-lg font-semibold mb-2">
+      <%= render "shared/card", classes: 'max-w-md mx-auto' do %>
+        <div class="text-lg font-semibold text-[#3a2f25] font-['DynaPuff',sans-serif] mb-1">
           <% if @regionalization_enabled %>
             🚫 No items available in <%= Shop::Regionalizable.region_name(@selected_region) %>
           <% else %>
             🚫 No items available
           <% end %>
         </div>
-        <p class="text-yellow-700 text-sm mb-4">
+        <p class="text-sm text-[#666] font-['National Park',sans-serif] mb-2">
           <% if @regionalization_enabled %>
             None of our shop items are currently enabled for your region. Try selecting a different region or check back later!
           <% else %>
@@ -121,14 +121,14 @@
           <% end %>
         </p>
         <% if @regionalization_enabled %>
-          <button onclick="document.getElementById('region-selector').focus()" class="bg-yellow-200 hover:bg-yellow-300 text-yellow-800 px-4 py-2 rounded-md text-sm font-medium transition-colors">
+          <button onclick="document.getElementById('region-selector').focus()" class="bg-[#E06540] hover:bg-[#d55a35] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
             Change Region
           </button>
         <% end %>
-      </div>
+      <% end %>
     <% else %>
       <div class="flex flex-col sm:grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        <% @shop_items.sort_by(&:ticket_cost).each do |item| %>
+        <% @shop_items.sort_by { |item| item.price_for_region(@selected_region) }.each do |item| %>
             <%= render partial: "item", locals: { item: } %>
         <% end %>
       </div>
