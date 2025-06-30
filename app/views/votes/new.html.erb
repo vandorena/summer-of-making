@@ -57,72 +57,72 @@
           <% ship_devlogs = project.devlogs.where("created_at < ?", ship_event.created_at).order(created_at: :asc) %>
           <% ship_time_seconds = ship_devlogs.sum(:last_hackatime_time) %>
           <%= render layout: "shared/container" do %>
-      
-          <div class="px-4 py-8 sm:py-4 bg-[#F6DBBA] sm:rounded-xl" data-project-index="<%= index %>">
-            <div class="space-y-6 sm:space-y-8">
-              <div class="flex items-start gap-3 sm:gap-4">
-                <div class="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 overflow-hidden rounded-lg">
-                  <%= image_tag project.banner, alt: project.title, class: "w-full h-full object-cover", loading: "lazy" %>
-                </div>
-                <div class="flex-grow min-w-0">
-                  <h3 class="text-xl sm:text-3xl mb-1 sm:mb-2 truncate"><%= project.title %></h3>
-
-                  <div class="flex flex-wrap items-center space-x-2 mb-2 text-sm lg:text-base 2xl:text-lg text-gray-600">
-                    <span class="text-gray-800"><%= ship_devlogs.count %></span>
-                    <span><%= "devlog".pluralize(ship_devlogs.count) %></span>
-                    <span>•</span>
-                    <span class="text-gray-800"><%= format_seconds(ship_time_seconds) %></span>
-                    <span>•</span>
-                    <span>Ship Date – Remove before launch: <span class="text-black"><%= ship_event.created_at.strftime("%b %d") %></span></span>
+            <div class="px-4 py-8 sm:py-4 bg-[#F6DBBA] sm:rounded-xl" data-project-index="<%= index %>">
+              <div class="space-y-6 sm:space-y-8">
+                <div class="flex items-start gap-3 sm:gap-4">
+                  <div class="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 overflow-hidden rounded-lg">
+                    <%= image_tag project.banner, alt: project.title, class: "w-full h-full object-cover", loading: "lazy" %>
                   </div>
+                  <div class="flex-grow min-w-0">
+                    <h3 class="text-xl sm:text-3xl mb-1 sm:mb-2 truncate"><%= project.title %></h3>
 
-                  <div class="text-base sm:text-lg text-gray-600"
-                       data-controller="devlog-card"
-                       data-devlog-card-max-length-value="150">
-                    <div data-devlog-card-target="content"><%= project.description %></div>
+                    <div class="flex flex-wrap items-center space-x-2 mb-2 text-sm lg:text-base 2xl:text-lg text-gray-600">
+                      <span class="text-gray-800"><%= ship_devlogs.count %></span>
+                      <span><%= "devlog".pluralize(ship_devlogs.count) %></span>
+                      <span>•</span>
+                      <span class="text-gray-800"><%= format_seconds(ship_time_seconds) %></span>
+                      <span>•</span>
+                      <span>Ship Date – Remove before launch: <span class="text-black"><%= ship_event.created_at.strftime("%b %d") %></span></span>
+                    </div>
+
+                    <div class="text-base sm:text-lg text-gray-600"
+                         data-controller="devlog-card"
+                         data-devlog-card-max-length-value="150">
+                      <div data-devlog-card-target="content"><%= project.description %></div>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div class="space-y-4 sm:space-y-6">
-                <div class="grid grid-cols-1 sm:flex sm:flex-wrap justify-center gap-3 sm:gap-4">
-                  <% if project.demo_link.present? %>
-                    <a href="<%= project.demo_link %>" target="_blank"
-                      class="inline-flex items-center gap-2 px-6 sm:px-8 py-3 bg-[#FFE8CD] hover:scale-[1.05] text-[#4A2D24] transition-transform duration-300 text-base sm:text-lg 2xl:text-xl rounded-lg font-medium"
-                      onclick="event.stopPropagation()"
-                      data-analytics-link="demo"
-                      data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
-                      <%= inline_svg "icons/world.svg", class: "w-5 h-5 sm:w-6 sm:h-6" %>
-                      Demo
-                    </a>
-                  <% end %>
-                  <% if project.repo_link.present? %>
-                    <a href="<%= project.repo_link %>" target="_blank"
-                      class="inline-flex items-center gap-2 px-6 sm:px-8 py-3 bg-[#FFE8CD] hover:scale-[1.05] text-[#4A2D24] transition-transform duration-300 text-base sm:text-lg 2xl:text-xl rounded-lg font-medium"
-                      onclick="event.stopPropagation()"
-                      data-analytics-link="repo"
-                      data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
-                      <%= inline_svg "icons/git.svg", class: "w-5 h-5 sm:w-6 sm:h-6" %>
-                      Repository
-                    </a>
+                <div class="space-y-4 sm:space-y-6">
+                  <div class="grid grid-cols-1 sm:flex sm:flex-wrap justify-center gap-3 sm:gap-4">
+                    <% if project.demo_link.present? %>
+                      <a href="<%= project.demo_link %>" target="_blank"
+                        class="inline-flex items-center gap-2 px-6 sm:px-8 py-3 bg-[#FFE8CD] hover:scale-[1.05] text-[#4A2D24] transition-transform duration-300 text-base sm:text-lg 2xl:text-xl rounded-lg font-medium"
+                        onclick="event.stopPropagation()"
+                        data-analytics-link="demo"
+                        data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
+                        <%= inline_svg "icons/world.svg", class: "w-5 h-5 sm:w-6 sm:h-6" %>
+                        Demo
+                      </a>
+                    <% end %>
+                    <% if project.repo_link.present? %>
+                      <a href="<%= project.repo_link %>" target="_blank"
+                        class="inline-flex items-center gap-2 px-6 sm:px-8 py-3 bg-[#FFE8CD] hover:scale-[1.05] text-[#4A2D24] transition-transform duration-300 text-base sm:text-lg 2xl:text-xl rounded-lg font-medium"
+                        onclick="event.stopPropagation()"
+                        data-analytics-link="repo"
+                        data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
+                        <%= inline_svg "icons/git.svg", class: "w-5 h-5 sm:w-6 sm:h-6" %>
+                        Repository
+                      </a>
+                    <% end %>
+                  </div>
+                </div>
+
+                <div class="space-y-4 sm:space-y-8">
+                  <% ship_devlogs.each do |devlog| %>
+                    <%= render "devlogs/devlog_card",
+                        devlog: devlog,
+                        context: 'voting',
+                        show_comments_inline: false,
+                        show_comment_modal: false,
+                        show_likes: false,
+                        content_margin: 'p-2',
+                        no_parchment: true %>
                   <% end %>
                 </div>
-              </div>
-
-              <div class="space-y-4 sm:space-y-8">
-                <% ship_devlogs.each do |devlog| %>
-                  <%= render "devlogs/devlog_card",
-                      devlog: devlog,
-                      context: 'voting',
-                      show_comments_inline: false,
-                      show_comment_modal: false,
-                      show_likes: false,
-                      content_margin: 'p-2',
-                      no_parchment: true %>
-                <% end %>
-              </div>
               </div>
             </div>
+          <% end %>
         <% end %>
       </div>
 
