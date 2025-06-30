@@ -230,8 +230,8 @@ class VotesController < ApplicationController
 
   def vote_params
     params.expect(vote: %i[winning_project_id explanation
-                           project_1_demo_opened project_1_readme_opened project_1_repo_opened
-                           project_2_demo_opened project_2_readme_opened project_2_repo_opened
+                           project_1_demo_opened project_1_repo_opened
+                           project_2_demo_opened project_2_repo_opened
                            time_spent_voting_ms music_played
                            ship_event_1_id ship_event_2_id signature])
   end

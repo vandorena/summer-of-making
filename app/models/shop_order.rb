@@ -83,7 +83,7 @@ class ShopOrder < ApplicationRecord
     end
 
     event :mark_rejected do
-      transitions from: %i[pending awaiting_periodical_fulfillment], to: :rejected
+      transitions from: %i[pending awaiting_periodical_fulfillment in_verification_limbo], to: :rejected
       before do |rejection_reason|
         self.rejection_reason = rejection_reason
       end
