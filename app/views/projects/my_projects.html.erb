@@ -34,6 +34,14 @@
                 <br>
                 <%= project.devlogs.count %> devlogs
               </p>
+
+              <% if project.ship_events&.last&.payouts&.any? %>
+                <p>You earned <%= pluralize(project.ship_events&.last&.payout.sum(:amount), "shells") %>!</p>
+              <% elsif current_user.votes.size < (Payout::VOTE_COUNT_REQUIRED * current_user.ship_events.size) %>
+                <p class="text-red-400">You should go vote - hang tight!</p>
+              <% else %>
+                <p class="text-red-400">This project is being voted on. Hang tight - you'll get your payout soon!</p>
+              <% end %>
             </div>
           </div>
         <% end %>
