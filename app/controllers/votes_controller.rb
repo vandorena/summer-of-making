@@ -206,7 +206,7 @@ class VotesController < ApplicationController
     # js getting smtth if after 25 attemps we have nothing
     if selected_projects.size < 2 && unpaid_projects.any?
       first_project_data = weighted_sample(unpaid_projects)
-      remaining_projects = projects_with_time.reject { |p| 
+      remaining_projects = projects_with_time.reject { |p|
         p[:project].user_id == first_project_data[:project].user_id ||
         (p[:project].repo_link.present? && p[:project].repo_link == first_project_data[:project].repo_link)
       }
