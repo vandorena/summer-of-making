@@ -142,7 +142,9 @@ class ShopOrder < ApplicationRecord
     "item.type" => ->(_) { shop_item.type },
     "frozen_item_price" => :frozen_item_price,
     "quantity" => :quantity,
-    "total_cost" => :total_cost
+    "total_cost" => :total_cost,
+    "addr.id" => ->(_) { frozen_address&.[]("id") },
+    "addr.country" => ->(_) { frozen_address&.[]("country") }
   }
 
   has_table_sync(:real_orders, "appNF8MGrk5KKcYZx", "tblrc0ByljGezp98v", SYNC_MAPPING, scope: :standard_sync)
