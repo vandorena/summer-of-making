@@ -2,11 +2,6 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   static targets = [
-    "step1",
-    "step2",
-    "loadingIndicator",
-    "project",
-    "form",
     "project1DemoOpenedInput",
     "project1RepoOpenedInput",
     "project2DemoOpenedInput",
@@ -15,112 +10,25 @@ export default class extends Controller {
     "musicPlayedInput",
   ];
 
-  selectedProject = null;
   votingStartTime = null;
   formSubmitListener = null;
 
-  async connect() {
-    this.step1Target.classList.add("hidden");
-    this.step2Target.classList.add("hidden");
-    this.loadingIndicatorTarget.classList.remove("hidden");
-
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    this.loadingIndicatorTarget.classList.add("hidden");
-    this.step1Target.classList.remove("hidden");
-
+  connect() {
     this.votingStartTime = Date.now();
-
-    if (this.hasFormTarget) {
-      this.formTargets.forEach((form) => {
-        form.classList.add("hidden");
-      });
-    }
+    
+    this.attachFormListener();
   }
 
-  async nextStep() {
-    this.step1Target.classList.add("hidden");
-    this.loadingIndicatorTarget.classList.remove("hidden");
-
-    await new Promise((resolve) => setTimeout(resolve, 250));
-
-    this.loadingIndicatorTarget.classList.add("hidden");
-    this.step2Target.classList.remove("hidden");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  prevStep() {
-    this.step2Target.classList.add("hidden");
-    this.step1Target.classList.remove("hidden");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-
-    this.resetSelection();
-  }
-
-  selectProject(event) {
-    const projectId = event.currentTarget.dataset.projectId;
-    let selectedForm = null;
-
-    if (this.selectedProject === projectId) {
-      this.resetSelection();
-      return;
-    }
-
-    this.selectedProject = projectId;
-
-    this.projectTargets.forEach((project) => {
-      const isSelected = project.dataset.projectId === projectId;
-
-      if (isSelected) {
-        project.classList.add("scale-105", "z-10");
-        project.classList.remove("opacity-50", "scale-95");
-      } else {
-        project.classList.add("opacity-50", "scale-95");
-        project.classList.remove("scale-105", "z-10");
-      }
-    });
-
-    if (this.formSubmitListener) {
-      this.formTargets.forEach((form) => {
-        form.removeEventListener("submit", this.formSubmitListener);
-      });
-      this.formSubmitListener = null;
-    }
-
-    this.formTargets.forEach((form) => {
-      if (form.dataset.projectId === projectId) {
-        form.classList.remove("hidden");
-        selectedForm = form;
-      } else {
-        form.classList.add("hidden");
-      }
-    });
-
-    if (selectedForm) {
+  attachFormListener() {
+    const votingForm = this.element.querySelector('form[action*="votes"]') || 
+                      this.element.querySelector('form');
+    
+    if (votingForm) {
       this.formSubmitListener = this.handleFormSubmit.bind(this);
-      selectedForm.addEventListener("submit", this.formSubmitListener, {
+      votingForm.addEventListener("submit", this.formSubmitListener, {
         once: true,
       });
     }
-  }
-
-  resetSelection() {
-    this.selectedProject = null;
-
-    if (this.formSubmitListener) {
-      this.formTargets.forEach((form) => {
-        form.removeEventListener("submit", this.formSubmitListener);
-      });
-      this.formSubmitListener = null;
-    }
-
-    this.projectTargets.forEach((project) => {
-      project.classList.remove("opacity-50", "scale-95", "scale-105", "z-10");
-    });
-
-    this.formTargets.forEach((form) => {
-      form.classList.add("hidden");
-    });
   }
 
   handleFormSubmit(event) {
@@ -164,7 +72,6 @@ export default class extends Controller {
 
     if (hiddenInput && hiddenInput.value !== "true") {
       hiddenInput.value = "true";
-      console.log(`Set ${targetName} to true`); // Debug log
     }
   }
 
@@ -178,9 +85,11 @@ export default class extends Controller {
 
   disconnect() {
     if (this.formSubmitListener) {
-      this.formTargets.forEach((form) => {
-        form.removeEventListener("submit", this.formSubmitListener);
-      });
+      const votingForm = this.element.querySelector('form[action*="votes"]') || 
+                        this.element.querySelector('form');
+      if (votingForm) {
+        votingForm.removeEventListener("submit", this.formSubmitListener);
+      }
     }
   }
 }
