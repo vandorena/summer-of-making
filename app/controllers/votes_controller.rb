@@ -247,7 +247,7 @@ class VotesController < ApplicationController
                            ship_event_1_id ship_event_2_id signature])
   end
 
-  # this function is what we used in High seas 
+  # this function is what we used in High seas
   def weighted_sample(projects)
     return nil if projects.empty?
     return projects.first if projects.size == 1
