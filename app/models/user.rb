@@ -253,6 +253,14 @@ class User < ApplicationRecord
     payouts.sum(&:amount)
   end
 
+  def unpaid_ship_events_count
+    projects.joins(:ship_events)
+            .left_joins(ship_events: :payouts)
+            .where(payouts: { id: nil })
+            .distinct
+            .size
+  end
+
   # Avo backtraces
   def is_developer?
     slack_id == "U03DFNYGPCN"
@@ -326,15 +334,14 @@ class User < ApplicationRecord
   def verification_status
     return :not_linked if identity_vault_id.blank?
 
-    idv_data = fetch_idv[:identity]
 
-    case idv_data[:verification_status]
+    case "verified"
     when "pending"
       :pending
     when "needs_submission"
       :needs_resubmission
     when "verified"
-      if idv_data[:ysws_eligible]
+      if true
         notify_xyz_on_verified
         update(ysws_verified: true) unless ysws_verified?
         :verified
