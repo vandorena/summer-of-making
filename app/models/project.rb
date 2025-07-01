@@ -213,7 +213,7 @@ class Project < ApplicationRecord
         message: "Project must have a banner image."
       },
       previous_payout: {
-        met: unpaid_shipevents_since_last_payout.empty?,
+        met: latest_ship_certification&.rejected? || unpaid_shipevents_since_last_payout.empty?,
         message: "Previous ship event must be paid out before shipping again."
       }
     }
