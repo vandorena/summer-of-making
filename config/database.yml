@@ -17,12 +17,12 @@ default: &default
   encoding: unicode
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 15 } %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
 
 development:
   <<: *default
-  database: dev_copy
+  database: journey_development
   
   # Uncomment this line to use the production database for development! Must have PROD_DATABASE_URL set in the environment.
   # url: <%= ENV['PROD_DATABASE_URL'] %>
