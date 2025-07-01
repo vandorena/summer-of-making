@@ -215,6 +215,10 @@ class Project < ApplicationRecord
       previous_payout: {
         met: latest_ship_certification&.rejected? || unpaid_shipevents_since_last_payout.empty?,
         message: "Previous ship event must be paid out before shipping again."
+      },
+      minimum_time: {
+        met: devlogs_since_last_ship.sum(:seconds_coded) >= 3600,
+        message: "Project must have at least 1 hour of tracked time since last ship."
       }
     }
   end
