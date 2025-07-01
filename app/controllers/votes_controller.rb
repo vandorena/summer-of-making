@@ -147,8 +147,10 @@ class VotesController < ApplicationController
         ship_date: latest_ship_event.created_at
       }
     end
-    # sort by ship date
-    projects_with_time.sort_by! { |p| p[:ship_date] }
+
+    # sort by ship date – disabled until genesis
+
+    # projects_with_time.sort_by! { |p| p[:ship_date] }
 
     unpaid_projects = projects_with_time.select { |p| !p[:is_paid] }
     paid_projects = projects_with_time.select { |p| p[:is_paid] }
@@ -165,13 +167,14 @@ class VotesController < ApplicationController
     max_attempts = 25 # infinite loop!
 
     attempts = 0
+    # TODO: change to weighted_sample after genesis
     while selected_projects.size < 2 && attempts < max_attempts
       attempts += 1
 
       # pick a random unpaid project first
       if selected_projects.empty?
         available_unpaid = unpaid_projects.select { |p| !used_user_ids.include?(p[:project].user_id) && !used_repo_links.include?(p[:project].repo_link) }
-        first_project_data = weighted_sample(available_unpaid)
+        first_project_data = available_unpaid.sample
         next unless first_project_data
 
         selected_projects << first_project_data[:project]
@@ -191,7 +194,7 @@ class VotesController < ApplicationController
         end
 
         if compatible_projects.any?
-          second_project_data = weighted_sample(compatible_projects)
+          second_project_data = compatible_projects.sample
           selected_projects << second_project_data[:project]
           used_user_ids << second_project_data[:project].user_id
           used_repo_links << second_project_data[:project].repo_link if second_project_data[:project].repo_link.present?
@@ -205,14 +208,14 @@ class VotesController < ApplicationController
 
     # js getting smtth if after 25 attemps we have nothing
     if selected_projects.size < 2 && unpaid_projects.any?
-      first_project_data = weighted_sample(unpaid_projects)
+      first_project_data = unpaid_projects.sample
       remaining_projects = projects_with_time.reject { |p|
         p[:project].user_id == first_project_data[:project].user_id ||
         (p[:project].repo_link.present? && p[:project].repo_link == first_project_data[:project].repo_link)
       }
 
       if remaining_projects.any?
-        second_project_data = weighted_sample(remaining_projects)
+        second_project_data = remaining_projects.sample
         selected_projects = [ first_project_data[:project], second_project_data[:project] ]
       end
     end
@@ -244,7 +247,7 @@ class VotesController < ApplicationController
                            ship_event_1_id ship_event_2_id signature])
   end
 
-  # this function is what we used in High seas
+  # this function is what we used in High seas 
   def weighted_sample(projects)
     return nil if projects.empty?
     return projects.first if projects.size == 1
