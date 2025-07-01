@@ -44,3 +44,7 @@
 .gem_rbs_collection
 
 public/temp/*
+
+*.env
+*.log
+mole/gifs/*
