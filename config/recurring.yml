@@ -54,3 +54,15 @@ production:
     schedule: at 1am every day
     concurrency: 1
     description: "fulfill pending free stickers orders into theseus"
+
+  shop_table_sync_free_stickers_orders:
+    class: Shop::TableSyncFreeStickersOrdersJob
+    schedule: every hour
+    concurrency: 1
+    description: "CSV-sync free stickers orders into Airtable"
+
+  shop_table_sync_regular_orders:
+    class: Shop::TableSyncRegularOrdersJob
+    schedule: every 7 minutes
+    concurrency: 1
+    description: "CSV-sync non-free-stickers orders into Airtable"
