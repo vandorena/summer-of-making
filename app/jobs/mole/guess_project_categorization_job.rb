@@ -53,6 +53,8 @@ class Mole::GuessProjectCategorizationJob < ApplicationJob
       Projects that can't be used as an app (ie. a research paper isn't runable, ipynotebook etc.) should be "cert_other".
       Projects that use a video as their demo link should be classified as video.
 
+      If it helps, you can visualize the filetree using https://githubtree.mgks.dev/ (for example, https://githubtree.mgks.dev/repo/hackclub/site/main/)
+
       Base your decision on:
       - Code in the repository (languages, frameworks, dependencies)
       - Demo/play functionality if available
@@ -72,6 +74,7 @@ class Mole::GuessProjectCategorizationJob < ApplicationJob
       Examples:
       web_app|0.85|Uses React framework with API calls and deployment to Vercel
       static_site|0.9|This is a github.io link, so it's hosted on github pages
+      cert_other|0.1|This is a repo of only markdown files so it's not clear how to test this
 
       Return ONLY this pipe-separated format. No other text.
     PROMPT
