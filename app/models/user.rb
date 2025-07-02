@@ -54,7 +54,7 @@ class User < ApplicationRecord
   validates :slack_id, presence: true, uniqueness: true
   validates :email, :display_name, :timezone, :avatar, presence: true
   validates :email, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP }
-  validates :permissions, presence: true
+  validate :permissions_must_not_be_nil
 
   serialize :permissions, type: Array, coder: JSON
 
@@ -63,7 +63,6 @@ class User < ApplicationRecord
 
   after_initialize :ensure_permissions_initialized
   after_create :create_tutorial_progress
-  after_create { Faraday.post("https://7f972d8eaf28.ngrok.app/ding") rescue nil }
 
   include PublicActivity::Model
   tracked only: [], owner: Proc.new { |controller, model| controller&.current_user }
@@ -411,6 +410,12 @@ class User < ApplicationRecord
 
   def create_tutorial_progress
     TutorialProgress.create!(user: self)
+  end
+
+  def permissions_must_not_be_nil
+    if permissions.nil?
+      ensure_permissions_initialized
+    end
   end
 
   def notify_xyz_on_verified
