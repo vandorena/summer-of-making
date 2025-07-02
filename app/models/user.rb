@@ -252,17 +252,20 @@ class User < ApplicationRecord
 
   # we can add more cooler stuff, and more fine grained access controls for other parts later
   def has_permission?(permission)
+    ensure_permissions_initialized
     return false if permissions.blank?
     permissions.include?(permission.to_s)
   end
 
   def add_permission(permission)
+    ensure_permissions_initialized
     current_permissions = permissions || []
     current_permissions << permission.to_s unless current_permissions.include?(permission.to_s)
     update!(permissions: current_permissions)
   end
 
   def remove_permission(permission)
+    ensure_permissions_initialized
     current_permissions = permissions || []
     current_permissions.delete(permission.to_s)
     update!(permissions: current_permissions)
@@ -278,6 +281,14 @@ class User < ApplicationRecord
 
   def projects_left_to_stake
     5 - staked_projects_count
+  end
+
+  def ensure_permissions_initialized
+    if permissions.nil?
+      self.permissions = []
+
+      update_column(:permissions, "[]") if persisted?
+    end
   end
 
   def balance
@@ -397,10 +408,6 @@ class User < ApplicationRecord
 
   def create_tutorial_progress
     TutorialProgress.create!(user: self)
-  end
-
-  def ensure_permissions_initialized
-    self.permissions ||= []
   end
 
   def notify_xyz_on_verified
