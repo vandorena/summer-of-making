@@ -140,23 +140,40 @@ class BrowserAgent:
         return Agent(**agent_kwargs), user_data_dir
     
     async def upload_to_hackclub_cdn(self, file_path):
-        """Upload file to Hack Club Bucky service"""
+        """Upload file to Hack Club CDN via Bucky transfer"""
         try:
+            # Step 1: Upload to Bucky (temporary storage)
             with open(file_path, 'rb') as f:
                 files = {'file': f}
-                response = requests.post(
+                bucky_response = requests.post(
                     'https://bucky.hackclub.com/',
                     files=files,
                     timeout=30
                 )
             
-            if response.status_code == 200:
-                # Bucky returns the URL as plain text
-                return response.text.strip()
+            if bucky_response.status_code != 200:
+                raise Exception(f"Bucky upload failed: {bucky_response.status_code} - {bucky_response.text}")
+            
+            bucky_url = bucky_response.text.strip()
+            
+            # Step 2: Transfer from Bucky to CDN (permanent storage)
+            cdn_response = requests.post(
+                'https://cdn.hackclub.com/upload',
+                json={'url': bucky_url},
+                headers={'Content-Type': 'application/json'},
+                timeout=30
+            )
+            
+            if cdn_response.status_code == 200:
+                # CDN returns the permanent URL
+                cdn_data = cdn_response.json()
+                return cdn_data.get('url', bucky_url)  # Fallback to bucky URL if no CDN URL
             else:
-                raise Exception(f"Bucky upload failed: {response.status_code} - {response.text}")
+                # If CDN transfer fails, return the Bucky URL as fallback
+                return bucky_url
+                
         except Exception as e:
-            raise Exception(f"Failed to upload to Bucky: {str(e)}")
+            raise Exception(f"Failed to upload to CDN: {str(e)}")
     
     async def run_task(self, task_prompt, urls=None, provider="anthropic", model=None, api_key=None):
         """Run a generic browser automation task with recording"""
@@ -178,7 +195,7 @@ class BrowserAgent:
                 full_prompt = f"{task_prompt}\n\nURLs to visit:\n{urls_text}"
                 
                 # Start at the first URL to speed things up
-                initial_actions = [{'go_to_url': {'url': urls[0]}}]
+                initial_actions = [{'go_to_url': {'url': urls[0], 'new_tab': False}}]
             else:
                 full_prompt = task_prompt
                 initial_actions = None
@@ -222,11 +239,15 @@ class BrowserAgent:
             end_time = time.time()
             duration = end_time - start_time
             
-            # Check if GIF was generated
+            # Check if GIF was generated and upload to Bucky
             gif_url = None
             if gif_path and os.path.exists(gif_path):
-                # Keep local path for debugging
-                gif_url = f"file://{gif_path}"
+                try:
+                    # Upload to Bucky CDN
+                    gif_url = await self.upload_to_hackclub_cdn(gif_path)
+                except Exception as e:
+                    # Fallback to local path if upload fails
+                    gif_url = f"file://{gif_path}"
             
             # Wait a bit to ensure browser actions complete
             if duration < 5:  # If task completed very quickly, it might be an error
@@ -450,8 +471,8 @@ def dashboard():
             job_info["success"] = job_data["result"].get("success", False)
             if job_data["result"].get("result"):
                 job_info["result_preview"] = str(job_data["result"]["result"])[:200]
-            if job_data["result"].get("gif_path"):
-                job_info["gif_path"] = job_data["result"]["gif_path"]
+            if job_data["result"].get("gif_url"):
+                job_info["gif_url"] = job_data["result"]["gif_url"]
         
         job_list.append(job_info)
     
@@ -529,9 +550,14 @@ def dashboard():
             if job.get('result_preview'):
                 html += f"<div class='result-preview'>Result: {job['result_preview']}...</div>"
             
-            if job.get('gif_path'):
-                gif_filename = os.path.basename(job['gif_path'])
-                html += f"<div class='result-preview'>🎬 GIF: <a href='file://{job['gif_path']}' target='_blank'>{gif_filename}</a></div>"
+            if job.get('gif_url'):
+                if job['gif_url'].startswith('http'):
+                    # Bucky CDN URL
+                    html += f"<div class='result-preview'>🎬 GIF: <a href='{job['gif_url']}' target='_blank'>View GIF</a></div>"
+                else:
+                    # Local file fallback
+                    gif_filename = os.path.basename(job['gif_url'].replace('file://', ''))
+                    html += f"<div class='result-preview'>🎬 GIF: <a href='{job['gif_url']}' target='_blank'>{gif_filename}</a></div>"
             
             html += "</div>"
     
