@@ -49,12 +49,17 @@ class User < ApplicationRecord
   has_many :fraud_reports, foreign_key: :user_id, class_name: "FraudReport", dependent: :destroy
 
   before_validation { self.email = email.to_s.downcase.strip }
+  before_validation :ensure_permissions_initialized
 
   validates :slack_id, presence: true, uniqueness: true
   validates :email, :display_name, :timezone, :avatar, presence: true
   validates :email, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :permissions, presence: true
 
   serialize :permissions, type: Array, coder: JSON
+
+  # Ensure permissions always has a default value
+  attribute :permissions, default: -> { [] }
 
   after_initialize :ensure_permissions_initialized
   after_create :create_tutorial_progress
@@ -286,8 +291,6 @@ class User < ApplicationRecord
   def ensure_permissions_initialized
     if permissions.nil?
       self.permissions = []
-
-      update_column(:permissions, "[]") if persisted?
     end
   end
 
