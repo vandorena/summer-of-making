@@ -140,6 +140,7 @@ class ShopOrder < ApplicationRecord
     "item.id" => :shop_item_id,
     "item.name" => ->(_) { shop_item.name },
     "item.type" => ->(_) { shop_item.type },
+    "item.manually_fulfilled" => ->(_) { shop_item.manually_fulfilled? },
     "frozen_item_price" => :frozen_item_price,
     "quantity" => :quantity,
     "total_cost" => :total_cost,
