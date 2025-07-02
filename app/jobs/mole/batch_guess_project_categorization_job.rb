@@ -1,44 +1,87 @@
-class Mole::GuessProjectCategorizationJob < ApplicationJob
+class Mole::BatchGuessProjectCategorizationJob < ApplicationJob
   queue_as :literally_whenever
 
-  def perform(project_id)
-    project = Project.find(project_id)
+  def perform(project_ids)
+    Rails.logger.info "Starting batch categorization for #{project_ids.length} projects"
 
-    # Skip if already categorized
-    return if project.certification_type.present? && project.category.present?
+    mole_service = MoleBrowserService.new(timeout: 600) # 10 minutes timeout for batch
 
-    # Get project URLs
-    urls = [
-      project.demo_link,
-      project.repo_link,
-      project.readme_link
-    ].reject { |c| c.empty? }.compact.uniq
+    # Prepare tasks for batch processing
+    tasks = prepare_tasks(project_ids)
+    return if tasks.empty?
 
-    Rails.logger.info "Project #{project_id} URLs: #{urls.join(', ')}"
+    # Submit all jobs to mole service
+    job_submissions = mole_service.submit_batch_jobs(tasks)
 
-    # Skip if no URLs to analyze
-    return if urls.empty?
-
-    # Classification prompt
-    task_prompt = build_classification_prompt
-
-    # Call mole browser service
-    mole_service = MoleBrowserService.new
-    response = mole_service.execute_task(task_prompt, urls)
-
-    if response[:success] && response[:result]
-      update_project_classification(project, response[:result])
-
-      # Log the GIF URL if available
-      if response[:gif_url].present?
-        Rails.logger.info "Project #{project_id} classification GIF: #{response[:gif_url]}"
-      end
-    else
-      Rails.logger.error "Failed to classify project #{project_id}: #{response[:error]}"
+    # Poll all jobs until completion
+    mole_service.poll_batch_jobs(job_submissions) do |submission, job_data, status|
+      handle_job_result(submission, job_data, status)
     end
+
+    Rails.logger.info "Completed batch categorization for #{project_ids.length} projects"
   end
 
   private
+
+  def prepare_tasks(project_ids)
+    tasks = []
+
+    project_ids.each do |project_id|
+      project = Project.find(project_id)
+
+      # Skip if already categorized
+      if project.certification_type.present? && project.category.present?
+        Rails.logger.info "Skipping project #{project_id} - already categorized"
+        next
+      end
+
+      # Get project URLs
+      urls = [
+        project.demo_link,
+        project.repo_link,
+        project.readme_link
+      ].reject { |c| c.empty? }.compact.uniq
+
+      # Skip if no URLs to analyze
+      if urls.empty?
+        Rails.logger.info "Skipping project #{project_id} - no URLs available"
+        next
+      end
+
+      tasks << {
+        name: "project_#{project_id}",
+        project_id: project_id,
+        project: project,
+        prompt: build_classification_prompt,
+        urls: urls
+      }
+    end
+
+    tasks
+  end
+
+  def handle_job_result(submission, job_data, status)
+    case status
+    when :completed
+      result = job_data["result"]
+      if result && result["success"]
+        update_project_classification(submission[:project], result["result"])
+
+        if result["gif_url"].present?
+          Rails.logger.info "Project #{submission[:project_id]} classification GIF: #{result['gif_url']}"
+        end
+
+        Rails.logger.info "Successfully categorized project #{submission[:project_id]}"
+      else
+        Rails.logger.error "Failed to categorize project #{submission[:project_id]}: #{result&.dig('error') || 'No result'}"
+      end
+    when :failed
+      error = job_data&.dig("error") || "Unknown error"
+      Rails.logger.error "Failed to categorize project #{submission[:project_id]}: #{error}"
+    when :timeout
+      Rails.logger.error "Job for project #{submission[:project_id]} timed out"
+    end
+  end
 
   def build_classification_prompt
     cert_types = Project.certification_types.keys
@@ -80,8 +123,6 @@ class Mole::GuessProjectCategorizationJob < ApplicationJob
       Return ONLY this pipe-separated format. No other text.
     PROMPT
   end
-
-
 
   def update_project_classification(project, result)
     # Parse pipe-separated result: CERT_TYPE|CONFIDENCE|REASONING
