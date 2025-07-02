@@ -56,6 +56,7 @@ class User < ApplicationRecord
 
   serialize :permissions, type: Array, coder: JSON
 
+  after_initialize :ensure_permissions_initialized
   after_create :create_tutorial_progress
   after_create { Faraday.post("https://7f972d8eaf28.ngrok.app/ding") rescue nil }
 
@@ -123,7 +124,8 @@ class User < ApplicationRecord
       display_name: user_info.user.profile.display_name.presence || user_info.user.profile.real_name,
       email: user_info.user.profile.email,
       timezone: user_info.user.tz,
-      avatar: user_info.user.profile.image_192 || user_info.user.profile.image_512
+      avatar: user_info.user.profile.image_192 || user_info.user.profile.image_512,
+      permissions: []
     )
   end
 
@@ -395,6 +397,10 @@ class User < ApplicationRecord
 
   def create_tutorial_progress
     TutorialProgress.create!(user: self)
+  end
+
+  def ensure_permissions_initialized
+    self.permissions ||= []
   end
 
   def notify_xyz_on_verified
