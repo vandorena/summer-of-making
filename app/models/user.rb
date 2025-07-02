@@ -19,6 +19,7 @@
 #  internal_notes                       :text
 #  is_admin                             :boolean          default(FALSE), not null
 #  last_name                            :string
+#  permissions                          :text             default([]), not null
 #  synced_at                            :datetime
 #  timezone                             :string
 #  tutorial_video_seen                  :boolean          default(FALSE), not null
@@ -52,6 +53,8 @@ class User < ApplicationRecord
   validates :slack_id, presence: true, uniqueness: true
   validates :email, :display_name, :timezone, :avatar, presence: true
   validates :email, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP }
+
+  serialize :permissions, type: Array, coder: JSON
 
   after_create :create_tutorial_progress
   after_create { Faraday.post("https://7f972d8eaf28.ngrok.app/ding") rescue nil }
@@ -243,6 +246,32 @@ class User < ApplicationRecord
 
   def mark_vote_tester!
     Flipper.enable(:can_vote_2025_06_28, self)
+  end
+
+  # we can add more cooler stuff, and more fine grained access controls for other parts later
+  def has_permission?(permission)
+    return false if permissions.blank?
+    permissions.include?(permission.to_s)
+  end
+
+  def add_permission(permission)
+    current_permissions = permissions || []
+    current_permissions << permission.to_s unless current_permissions.include?(permission.to_s)
+    update!(permissions: current_permissions)
+  end
+
+  def remove_permission(permission)
+    current_permissions = permissions || []
+    current_permissions.delete(permission.to_s)
+    update!(permissions: current_permissions)
+  end
+
+  def ship_certifier?
+    has_permission?("shipcert")
+  end
+
+  def admin_or_ship_certifier?
+    is_admin? || ship_certifier?
   end
 
   def projects_left_to_stake

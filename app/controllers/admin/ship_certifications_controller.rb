@@ -1,5 +1,8 @@
 module Admin
   class ShipCertificationsController < ApplicationController
+    before_action :authenticate_ship_certifier!, except: []
+    skip_before_action :authenticate_admin!
+
     def index
       @ship_certifications = ShipCertification
         .left_joins(project: :devlogs)
@@ -39,6 +42,10 @@ module Admin
     end
 
     private
+
+    def authenticate_ship_certifier!
+      redirect_to root_path unless current_user&.admin_or_ship_certifier?
+    end
 
     def ship_certification_params
       params.require(:ship_certification).permit(:judgement, :notes, :reviewer_id, :proof_video)
