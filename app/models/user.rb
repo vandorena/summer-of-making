@@ -19,7 +19,7 @@
 #  internal_notes                       :text
 #  is_admin                             :boolean          default(FALSE), not null
 #  last_name                            :string
-#  permissions                          :text             default([]), not null
+#  permissions                          :text             default([])
 #  synced_at                            :datetime
 #  timezone                             :string
 #  tutorial_video_seen                  :boolean          default(FALSE), not null
@@ -49,19 +49,13 @@ class User < ApplicationRecord
   has_many :fraud_reports, foreign_key: :user_id, class_name: "FraudReport", dependent: :destroy
 
   before_validation { self.email = email.to_s.downcase.strip }
-  before_validation :ensure_permissions_initialized
 
   validates :slack_id, presence: true, uniqueness: true
   validates :email, :display_name, :timezone, :avatar, presence: true
   validates :email, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP }
-  validate :permissions_must_not_be_nil
 
   serialize :permissions, type: Array, coder: JSON
 
-  # Ensure permissions always has a default value
-  attribute :permissions, default: -> { [] }
-
-  after_initialize :ensure_permissions_initialized
   after_create :create_tutorial_progress
 
   include PublicActivity::Model
@@ -256,20 +250,17 @@ class User < ApplicationRecord
 
   # we can add more cooler stuff, and more fine grained access controls for other parts later
   def has_permission?(permission)
-    ensure_permissions_initialized
-    return false if permissions.blank?
+    return false if permissions.nil? || permissions.empty?
     permissions.include?(permission.to_s)
   end
 
   def add_permission(permission)
-    ensure_permissions_initialized
     current_permissions = permissions || []
     current_permissions << permission.to_s unless current_permissions.include?(permission.to_s)
     update!(permissions: current_permissions)
   end
 
   def remove_permission(permission)
-    ensure_permissions_initialized
     current_permissions = permissions || []
     current_permissions.delete(permission.to_s)
     update!(permissions: current_permissions)
