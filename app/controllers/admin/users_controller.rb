@@ -67,6 +67,28 @@ module Admin
       redirect_to admin_user_path(@user)
     end
 
+    def grant_ship_certifier
+      if @user.ship_certifier?
+        flash[:notice] = "#{@user.email} nothing changed, they already have ship certifier permissions"
+      else
+        @user.add_permission("shipcert")
+        @user.create_activity("grant_ship_certifier")
+        flash[:success] = "gotcha, granted rights to #{@user.email}"
+      end
+      redirect_to admin_user_path(@user)
+    end
+
+    def revoke_ship_certifier
+      unless @user.ship_certifier?
+        flash[:notice] = "#{@user.email} nothing changed, they don't have ship certifier permissions"
+      else
+        @user.remove_permission("shipcert")
+        @user.create_activity("revoke_ship_certifier")
+        flash[:success] = "gotcha, revoked rights from #{@user.email}"
+      end
+      redirect_to admin_user_path(@user)
+    end
+
     private
 
     def set_user

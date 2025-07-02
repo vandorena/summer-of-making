@@ -2,7 +2,15 @@
 <%= render @user %> <br>
 <b>IDV ID:</b> <%= @user.identity_vault_id || "None" %> <%= link_to "visit", "#{IdentityVaultService.host}backend/identities/#{@user.identity_vault_id}" if @user.identity_vault_id.present? %><br>
 <b>Slack ID:</b> <%= (link_to @user.slack_id, "https://hackclub.slack.com/team/#{@user.slack_id}") || "None?!" %> <br>
-<b>Email:</b> <%= (link_to @user.email, "mailto:#{@user.email}") || "None" %>
+<b>Email:</b> <%= (link_to @user.email, "mailto:#{@user.email}") || "None" %><br>
+<b>Ship Certifier:</b> 
+<% if @user.ship_certifier? %>
+  <span style="color: green; font-weight: bold;">✓ Yes</span>
+<% else %>
+  <span style="color: #666;">✗ No</span>
+<% end %>
+<br>
+
 <div style="border: 1px dashed red; width: fit-content; padding: 1rem">
   <b style="color: red;">DON'T DO THIS:</b>
   <%= button_to "nuke IDV data", nuke_idv_data_admin_user_path(@user) %>
@@ -15,6 +23,17 @@
   <%= button_to "freeze (don't allow shop activity)", freeze_admin_user_path(@user) %>
 <% end %>
 <br><br>
+
+<% if @user.ship_certifier? %>
+  <%= button_to "revoke ship certifier permissions", revoke_ship_certifier_admin_user_path(@user), 
+      confirm: "ya sure you wanna do that?", 
+      class: "abtn secondary" %>
+<% else %>
+  <%= button_to "grant ship certifier permissions", grant_ship_certifier_admin_user_path(@user), 
+      class: "abtn primary" %>
+<% end %>
+<br><br>
+
 <b>Payouts:</b>
 <ul>
   <% @payouts.each do |payout| %>

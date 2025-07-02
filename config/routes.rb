@@ -318,6 +318,8 @@ Rails.application.routes.draw do
         post :cancel_card_grants
         post :freeze
         post :defrost
+        post :grant_ship_certifier
+        post :revoke_ship_certifier
       end
     end
     resources :shop_items
