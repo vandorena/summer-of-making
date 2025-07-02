@@ -5,14 +5,14 @@ class Mole::BatchGuessProjectCategorizationJob < ApplicationJob
     Rails.logger.info "Starting batch categorization for #{project_ids.length} projects"
 
     mole_service = MoleBrowserService.new(timeout: 600) # 10 minutes timeout for batch
-    
+
     # Prepare tasks for batch processing
     tasks = prepare_tasks(project_ids)
     return if tasks.empty?
 
     # Submit all jobs to mole service
     job_submissions = mole_service.submit_batch_jobs(tasks)
-    
+
     # Poll all jobs until completion
     mole_service.poll_batch_jobs(job_submissions) do |submission, job_data, status|
       handle_job_result(submission, job_data, status)
@@ -28,7 +28,7 @@ class Mole::BatchGuessProjectCategorizationJob < ApplicationJob
 
     project_ids.each do |project_id|
       project = Project.find(project_id)
-      
+
       # Skip if already categorized
       if project.certification_type.present? && project.category.present?
         Rails.logger.info "Skipping project #{project_id} - already categorized"
@@ -66,11 +66,11 @@ class Mole::BatchGuessProjectCategorizationJob < ApplicationJob
       result = job_data["result"]
       if result && result["success"]
         update_project_classification(submission[:project], result["result"])
-        
+
         if result["gif_url"].present?
           Rails.logger.info "Project #{submission[:project_id]} classification GIF: #{result['gif_url']}"
         end
-        
+
         Rails.logger.info "Successfully categorized project #{submission[:project_id]}"
       else
         Rails.logger.error "Failed to categorize project #{submission[:project_id]}: #{result&.dig('error') || 'No result'}"

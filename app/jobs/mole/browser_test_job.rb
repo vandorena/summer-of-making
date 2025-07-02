@@ -16,7 +16,7 @@ class Mole::BrowserTestJob < ApplicationJob
       puts "\n=== BROWSER TEST RESULT ==="
       puts result["result"]
       puts "=========================="
-      
+
       if result["gif_url"]
         puts "GIF available at: #{result["gif_url"]}"
       end

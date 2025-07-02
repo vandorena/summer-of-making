@@ -41,7 +41,7 @@ class MoleBrowserService
 
     while completed_jobs.size < job_submissions.size && attempts < @max_attempts
       attempts += 1
-      
+
       job_submissions.each do |submission|
         next if completed_jobs.include?(submission[:job_id])
 
@@ -115,7 +115,7 @@ class MoleBrowserService
 
     loop do
       attempts += 1
-      
+
       uri = URI("http://#{MOLE_HOST}/status/#{job_id}")
       http = Net::HTTP.new(uri.host, uri.port)
       http.read_timeout = 10
@@ -128,7 +128,7 @@ class MoleBrowserService
       end
 
       job_data = JSON.parse(response.body)
-      
+
       case job_data["status"]
       when "completed"
         return job_data["result"] || { success: false, error: "No result in completed job" }
@@ -138,7 +138,7 @@ class MoleBrowserService
         if attempts >= @max_attempts
           return { success: false, error: "Job timed out after #{@timeout} seconds" }
         end
-        
+
         log_polling_status(job_id, job_data["status"], attempts)
         sleep(POLL_INTERVAL)
         next
