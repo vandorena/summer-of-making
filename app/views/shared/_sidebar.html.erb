@@ -112,6 +112,20 @@
               underline_attr: { data: { sidebar_target: "underline" } }
             } %>
           </li>
+        <% elsif current_user&.ship_certifier? %>
+          <li class="flex justify-start border-2 border-dashed border-orange-500 bg-orange-500/10" style="margin-right: 10px; border-radius: 10px;">
+            <%= render partial: "shared/link", locals: {
+              target: admin_ship_certifications_path,
+              text: "Ship Certs",
+              icon: "edit",
+              large: true,
+              text_attr: {
+                data: { sidebar_target: "collapseFade" },
+                class: "text-3xl"
+              },
+              underline_attr: { data: { sidebar_target: "underline" } }
+            } %>
+          </li>
         <% end %>
       </ul>
     </nav>

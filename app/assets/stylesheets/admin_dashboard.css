@@ -213,3 +213,19 @@ body.adash {
   background: var(--color-yellow);
   color: var(--color-black);
 }
+
+.pill-gray {
+  background: var(--color-muted);
+  color: var(--color-white);
+}
+
+.pill-dark {
+  background: var(--color-darker);
+  color: var(--color-white);
+}
+
+.pill:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  transition: all 0.2s ease;
+}

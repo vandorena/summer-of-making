@@ -46,7 +46,7 @@
 
   <div class="field">
     <%= f.label :reviewer_id, "Reviewer" %>
-    <%= f.collection_select :reviewer_id, User.where(is_admin: true), :id, :email,
+    <%= f.collection_select :reviewer_id, User.where("is_admin = ? OR permissions LIKE ?", true, '%shipcert%'), :id, :email,
                            { prompt: 'Select reviewer', selected: ship_certification.reviewer_id || current_user.id },
                            { class: 'form-control' } %>
   </div>
