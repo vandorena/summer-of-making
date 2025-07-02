@@ -22,7 +22,7 @@ load_dotenv()
 app = Flask(__name__)
 
 # Worker pool configuration
-MAX_WORKERS = 3  # Use multiple subprocess workers
+MAX_WORKERS = 20  # Use multiple subprocess workers
 executor = ThreadPoolExecutor(max_workers=MAX_WORKERS)
 jobs = {}  # Store job status and results
 
@@ -40,6 +40,11 @@ class BrowserAgent:
             llm = ChatOpenAI(
                 model=model or "gpt-4o-mini", 
                 api_key=api_key
+            )
+        elif provider == "gemini":
+            from browser_use.llm import ChatGoogle
+            llm = ChatGoogle(
+                model=model or "gemini-2.0-flash-exp"
             )
         else:
             raise ValueError(f"Unsupported provider: {provider}")
@@ -289,66 +294,90 @@ class BrowserAgent:
 
 def run_task_subprocess(job_id, task_prompt, urls, provider, model, api_key):
     """Launch task in separate subprocess for complete isolation"""
+    result_file = None
     try:
         # Update job status
         jobs[job_id]["status"] = "running"
         jobs[job_id]["started_at"] = time.time()
         
-        # Prepare task data for subprocess
-        task_data = {
-            "task_prompt": task_prompt,
-            "urls": urls,
-            "provider": provider,
-            "model": model,
-            "api_key": api_key,
-            "job_id": job_id
-        }
+        # Create temporary files for communication
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as input_file:
+            input_path = input_file.name
+            task_data = {
+                "task_prompt": task_prompt,
+                "urls": urls,
+                "provider": provider,
+                "model": model,
+                "api_key": api_key,
+                "job_id": job_id
+            }
+            json.dump(task_data, input_file)
         
-        # Launch subprocess with stderr redirected to prevent logging corruption
+        # Create result file path
+        result_file = tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False)
+        result_path = result_file.name
+        result_file.close()
+        
+        # Launch subprocess with file-based communication
         process = subprocess.Popen([
-            sys.executable, __file__, "--subprocess"
+            sys.executable, __file__, "--subprocess", input_path, result_path
         ], 
-        stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.DEVNULL,  # Suppress stderr to prevent JSON corruption
-        text=True
+        stdout=subprocess.DEVNULL,  # No stdout needed
+        stderr=subprocess.DEVNULL,  # Suppress stderr 
         )
         
-        # Send task data to subprocess
-        task_json = json.dumps(task_data)
-        stdout, _ = process.communicate(input=task_json)
+        # Wait for subprocess to complete
+        return_code = process.wait()
         
-        # Debug logging - capture raw output
-        print(f"DEBUG: Job {job_id} - Return code: {process.returncode}")
-        print(f"DEBUG: Job {job_id} - Raw stdout length: {len(stdout)}")
-        print(f"DEBUG: Job {job_id} - Raw stdout (first 500 chars): {repr(stdout[:500])}")
+        # Debug logging
+        print(f"DEBUG: Job {job_id} - Return code: {return_code}")
         
-        if process.returncode == 0 and stdout.strip():
+        # Read result from file
+        if return_code == 0 and os.path.exists(result_path):
             try:
-                # Parse result from subprocess
-                result = json.loads(stdout.strip())
+                with open(result_path, 'r') as f:
+                    result = json.load(f)
                 jobs[job_id]["status"] = "completed"
                 jobs[job_id]["result"] = result
                 jobs[job_id]["completed_at"] = time.time()
-                print(f"DEBUG: Job {job_id} - Successfully parsed JSON result")
-            except json.JSONDecodeError as e:
-                # Handle JSON parsing error
+                print(f"DEBUG: Job {job_id} - Successfully read JSON result from file")
+            except (json.JSONDecodeError, IOError) as e:
+                # Handle JSON parsing or file reading error
                 jobs[job_id]["status"] = "failed"
-                jobs[job_id]["error"] = f"Failed to parse subprocess output: {e}. Raw output: {repr(stdout[:200])}"
+                jobs[job_id]["error"] = f"Failed to read subprocess result: {e}"
                 jobs[job_id]["completed_at"] = time.time()
-                print(f"DEBUG: Job {job_id} - JSON parse error: {e}")
+                print(f"DEBUG: Job {job_id} - Result file read error: {e}")
         else:
             # Handle subprocess error
+            error_msg = "No result file created"
+            if os.path.exists(result_path):
+                try:
+                    with open(result_path, 'r') as f:
+                        error_content = f.read()
+                        if error_content:
+                            error_msg = f"Subprocess error in result file: {error_content[:200]}"
+                except:
+                    pass
+            
             jobs[job_id]["status"] = "failed"
-            jobs[job_id]["error"] = f"Subprocess failed with return code {process.returncode}. Output: {repr(stdout[:200])}"
+            jobs[job_id]["error"] = f"Subprocess failed with return code {return_code}. {error_msg}"
             jobs[job_id]["completed_at"] = time.time()
-            print(f"DEBUG: Job {job_id} - Subprocess failed or empty output")
+            print(f"DEBUG: Job {job_id} - Subprocess failed or no result file")
             
     except Exception as e:
         # Update job with error
         jobs[job_id]["status"] = "failed"
         jobs[job_id]["error"] = str(e)
         jobs[job_id]["completed_at"] = time.time()
+    finally:
+        # Clean up temporary files
+        try:
+            if 'input_path' in locals() and os.path.exists(input_path):
+                os.unlink(input_path)
+            if 'result_path' in locals() and os.path.exists(result_path):
+                os.unlink(result_path)
+        except:
+            pass
 
 @app.route('/run', methods=['POST'])
 def start_browser_task():
@@ -584,32 +613,23 @@ def health_check():
 
 def subprocess_worker():
     """Worker function that runs in subprocess for complete browser isolation"""
-    # Debug log to file to avoid stdout contamination
-    debug_file = f"debug_subprocess_{os.getpid()}.log"
+    if len(sys.argv) < 4:
+        sys.exit(1)
+    
+    input_path = sys.argv[2]
+    result_path = sys.argv[3]
     
     try:
-        with open(debug_file, "w") as f:
-            f.write("Subprocess started\n")
-            f.flush()
-        
-        # Suppress ALL logging to prevent JSON corruption
+        # Suppress ALL logging to prevent any output interference
         import logging
-        import sys
-        
-        # Disable all logging
         logging.disable(logging.CRITICAL)
         
-        # Redirect stderr to null to catch any remaining output
+        # Redirect stderr to null
         sys.stderr = open(os.devnull, 'w')
         
-        # Read task data from stdin
-        task_json = sys.stdin.read()
-        
-        with open(debug_file, "a") as f:
-            f.write(f"Read input: {len(task_json)} chars\n")
-            f.flush()
-            
-        task_data = json.loads(task_json)
+        # Read task data from input file
+        with open(input_path, 'r') as f:
+            task_data = json.load(f)
         
         # Extract task parameters
         task_prompt = task_data["task_prompt"]
@@ -619,10 +639,6 @@ def subprocess_worker():
         api_key = task_data["api_key"]
         job_id = task_data["job_id"]
         
-        with open(debug_file, "a") as f:
-            f.write(f"Parsed task data for job {job_id}\n")
-            f.flush()
-        
         # Create browser agent and run task
         browser_agent = BrowserAgent()
         
@@ -631,44 +647,29 @@ def subprocess_worker():
         asyncio.set_event_loop(loop)
         
         try:
-            with open(debug_file, "a") as f:
-                f.write("Starting browser task\n")
-                f.flush()
-                
             result = loop.run_until_complete(
                 browser_agent.run_task(task_prompt, urls, provider, model, api_key)
             )
             
-            with open(debug_file, "a") as f:
-                f.write(f"Task completed, result type: {type(result)}\n")
-                f.flush()
-            
-            # Ensure we only output valid JSON to stdout
-            json_output = json.dumps(result)
-            
-            with open(debug_file, "a") as f:
-                f.write(f"JSON output length: {len(json_output)}\n")
-                f.flush()
-                
-            sys.stdout.write(json_output)
-            sys.stdout.flush()
+            # Write result to output file
+            with open(result_path, 'w') as f:
+                json.dump(result, f)
             
         finally:
             loop.close()
             
     except Exception as e:
-        with open(debug_file, "a") as f:
-            f.write(f"Error occurred: {str(e)}\n")
-            f.flush()
-            
-        # Output error as JSON
+        # Write error result to output file
         error_result = {
             "success": False,
             "result": None,
             "error": str(e)
         }
-        sys.stdout.write(json.dumps(error_result))
-        sys.stdout.flush()
+        try:
+            with open(result_path, 'w') as f:
+                json.dump(error_result, f)
+        except:
+            pass  # If we can't write the error, at least exit cleanly
         sys.exit(1)
 
 if __name__ == '__main__':
