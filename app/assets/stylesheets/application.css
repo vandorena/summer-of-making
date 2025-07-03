@@ -142,3 +142,33 @@ main {
 .tutorial-help-btn:hover {
   background: #2563eb;
 }
+
+.video-autoplay {
+  transition: opacity 0.3s ease;
+}
+
+.video-autoplay:hover .video-sound-hint {
+  opacity: 1;
+}
+
+.video-sound-hint {
+  transition: opacity 0.3s ease;
+  opacity: 0.7;
+}
+
+.video-sound-hint:hover {
+  opacity: 1;
+}
+
+video {
+  background-color: #000;
+  transition: opacity 0.3s ease;
+}
+
+video[data-loading="true"] {
+  opacity: 0.7;
+}
+
+.video-overlay {
+  transition: all 0.3s ease;
+}
