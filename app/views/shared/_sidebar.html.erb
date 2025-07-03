@@ -158,6 +158,7 @@
                 <%= button_to "stop pretending?", :stop_impersonating, method: :delete, style: "all: revert;" %>
               <% end %>
             <% end %>
+            <%= render "admin/inspector", record: session, thing: "session", always_inspect: true, show_in_impersonate: true %>
           </div>
         </div>
 
