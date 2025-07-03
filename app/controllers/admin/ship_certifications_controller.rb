@@ -5,6 +5,9 @@ module Admin
 
     def index
       @filter = params[:filter] || "pending"
+      @category_filter = params[:category_filter]
+
+      @category_filter = nil unless @category_filter.present? && Project::CATEGORIES.include?(@category_filter)
 
       base = ShipCertification
         .left_joins(project: :devlogs)
@@ -13,6 +16,10 @@ module Admin
         .select("ship_certifications.*, projects.id as project_id, projects.title, projects.category, projects.certification_type, COALESCE(SUM(devlogs.last_hackatime_time), 0) as devlogs_seconds_total")
         .includes(:project)
         .order(updated_at: :asc)
+
+      if @category_filter.present?
+        base = base.where(projects: { category: @category_filter })
+      end
 
       case @filter
       when "approved"
@@ -28,11 +35,22 @@ module Admin
         @ship_certifications = base.pending
       end
 
-      # Totals
-      @total_approved = ShipCertification.approved.count
-      @total_rejected = ShipCertification.rejected.count
-      @total_pending = ShipCertification.pending.count
+      base = ShipCertification.joins(:project).where(projects: { is_deleted: false })
+      if @category_filter.present?
+        base = base.where(projects: { category: @category_filter })
+      end
+
+      @total_approved = base.approved.count
+      @total_rejected = base.rejected.count
+      @total_pending = base.pending.count
       @avg_turnaround = calc_avg_turnaround
+
+      @category_counts = ShipCertification
+        .joins(:project)
+        .where(projects: { is_deleted: false })
+        .where.not(projects: { category: [ nil, "" ] })
+        .group("projects.category")
+        .count
 
       # Leaderboard - reviewers by number of certifications reviewed
       @leaderboard = User.joins("INNER JOIN ship_certifications ON users.id = ship_certifications.reviewer_id")
