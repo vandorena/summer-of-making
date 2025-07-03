@@ -32,6 +32,7 @@ module Admin
       @total_approved = ShipCertification.approved.count
       @total_rejected = ShipCertification.rejected.count
       @total_pending = ShipCertification.pending.count
+      @avg_turnaround = calc_avg_turnaround
 
       # Leaderboard - reviewers by number of certifications reviewed
       @leaderboard = User.joins("INNER JOIN ship_certifications ON users.id = ship_certifications.reviewer_id")
@@ -68,9 +69,38 @@ module Admin
       @total_approved = ShipCertification.approved.count
       @total_rejected = ShipCertification.rejected.count
       @total_processed = @total_approved + @total_rejected
+
+      # Average decision time
+      @avg_turnaround = calc_avg_turnaround
+
+      # Leaderboard - reviewers by number of certifications reviewed
+      @leaderboard = User.joins("INNER JOIN ship_certifications ON users.id = ship_certifications.reviewer_id")
+                         .where.not(ship_certifications: { reviewer_id: nil })
+                         .group("users.id", "users.display_name", "users.email")
+                         .order("COUNT(ship_certifications.id) DESC")
+                         .limit(10)
+                         .pluck("users.display_name", "users.email", "COUNT(ship_certifications.id)")
     end
 
     private
+
+    def calc_avg_turnaround
+      pc = ShipCertification
+        .where.not(judgement: :pending)
+        .where("updated_at > created_at")
+
+      return nil if pc.empty?
+
+      total_time = pc.sum { |cert| cert.updated_at - cert.created_at }
+      avg_sec = total_time / pc.count
+
+      {
+        s: avg_sec,
+        h: (avg_sec / 3600).to_i,
+        m: ((avg_sec % 3600) / 60).to_i,
+        d: (avg_sec / 86400).to_i
+      }
+    end
 
     def authenticate_ship_certifier!
       redirect_to root_path unless current_user&.admin_or_ship_certifier?
