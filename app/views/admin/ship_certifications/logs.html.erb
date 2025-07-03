@@ -1,0 +1,98 @@
+<%= stylesheet_link_tag 'admin_dashboard' %>
+<body class="adash" style="background: var(--color-background); color: var(--color-text); min-height: 100vh; padding: 2rem;">
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+  <h1>ship cert logs</h1>
+  <div style="display: flex; gap: 1rem;">
+    <%= link_to "back", admin_ship_certifications_path, class: "pill pill-gray", style: "text-decoration: none; padding: 0.5rem 1rem;" %>
+  </div>
+</div>
+
+<div style="display: flex; gap: 2rem; margin-bottom: 2rem;">
+  <div style="background: var(--color-card); padding: 1rem; border-radius: 8px; flex: 1;">
+    <h3>the stats</h3>
+    <p><strong>total judged:</strong> <span class="pill pill-dark"><%= @total_processed %></span></p>
+    <p><strong>approved:</strong> <span class="pill pill-green"><%= @total_approved %></span></p>
+    <p><strong>rejected:</strong> <span class="pill pill-blue"><%= @total_rejected %></span></p>
+    <% if @total_processed > 0 %>
+      <p><strong>presidential approval rate:</strong> <span style="font-weight: bold;"><%= ((@total_approved.to_f / @total_processed) * 100).round(1) %>%</span></p>
+    <% end %>
+  </div>
+</div>
+
+<table class="atable">
+  <thead>
+    <tr>
+      <th>ship id</th>
+      <th>project</th>
+      <th>verdict</th>
+      <th>certifier</th>
+      <th>decision made</th>
+      <th>notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @logs.each do |ship_certification| %>
+      <tr>
+        <td><%= ship_certification.id %></td>
+        <td>
+          <div>
+            <strong><%= link_to ship_certification.project.title, project_path(ship_certification.project), target: "_blank" %></strong>
+            <br>
+            <small style="color: var(--color-text-muted);">
+              Project ID: <%= ship_certification.project.id %>
+            </small>
+            <br>
+            <small style="color: var(--color-text-muted);">
+              By: <%= ship_certification.project.user.display_name || ship_certification.project.user.email %>
+            </small>
+            <br>
+            <small style="color: var(--color-text-muted);">
+              Category: <%= ship_certification.project.category %>
+            </small>
+          </div>
+        </td>
+        <td>
+          <% if ship_certification.judgement == 'approved' %>
+            <span class="pill pill-green">Approved</span>
+          <% elsif ship_certification.judgement == 'rejected' %>
+            <span class="pill pill-blue">Rejected</span>
+          <% end %>
+        </td>
+        <td>
+          <% if ship_certification.reviewer %>
+            <%= ship_certification.reviewer.display_name || ship_certification.reviewer.email %>
+          <% else %>
+            <span style="color: var(--color-text-muted);">System</span>
+          <% end %>
+        </td>
+        <td>
+          <div>
+            <%= ship_certification.updated_at.strftime("%m/%d/%Y") %>
+            <br>
+            <small style="color: var(--color-text-muted);">
+              <%= time_ago_in_words(ship_certification.updated_at) %> ago
+            </small>
+          </div>
+        </td>
+        <td>
+          <% if ship_certification.notes.present? %>
+            <div style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;">
+              <%= truncate(ship_certification.notes, length: 100) %>
+            </div>
+          <% else %>
+            <span style="color: var(--color-text-muted);">No notes</span>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<% if @logs.count >= 500 %>
+  <div style="margin-top: 2rem; padding: 1rem; background: var(--color-card); border-radius: 8px;">
+    <p><strong>Note:</strong> Only showing the most recent 500 entries. Contact a developer if you need to see older logs.</p>
+  </div>
+<% end %>
+
+</body>
