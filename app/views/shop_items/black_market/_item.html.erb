@@ -6,7 +6,7 @@
 <% else %>
   <% regional_price = (@regionalization_enabled && @selected_region) ? item.price_for_region(@selected_region) : item.ticket_cost %>
 <% end %>
-<div style="border: 1px double white; padding: 10px; max-width: 300px">
+<div style="border: 1px double white; padding: 10px; max-width: 300px; display: inline-block">
   <!-- <div class="bg-soft-bone card-pixel bg-surface0 shadow p-6 rounded-lg h-full flex flex-col text-center w-full <%= "col-span-full" if item.is_free? %>"> -->
   <div class="flex-grow flex flex-col justify-between min-h-0 relative">
     <div class="flex-grow">

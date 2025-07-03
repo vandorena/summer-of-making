@@ -13,6 +13,9 @@
 </marquee>
 <p>you want it? it's yours, my friend.</p>
 
-<% @shop_items.each do |item| %>
-<%= render "shop_items/black_market/item", item: %>
-<% end %>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+  <% @shop_items.each do |item| %>
+    <%= render "shop_items/black_market/item", item: %>
+  <% end %>
+</div>
+
