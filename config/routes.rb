@@ -309,7 +309,11 @@ Rails.application.routes.draw do
     mount Flipper::UI.app(Flipper), at: "flipper"
     # mount_avo
     get "/", to: "static_pages#index", as: :root
-    resources :ship_certifications, only: [ :index, :edit, :update ]
+    resources :ship_certifications, only: [ :index, :edit, :update ] do
+      collection do
+        get :logs
+      end
+    end
     resources :readme_certifications, only: [ :index, :edit, :update ]
     resources :users, only: [ :index, :show ] do
       member do

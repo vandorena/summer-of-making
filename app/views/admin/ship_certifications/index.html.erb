@@ -1,16 +1,22 @@
 <%= stylesheet_link_tag 'admin_dashboard' %>
-<body class="adash" style="background: var(--color-background); color: var(--color-text); min-height: 100vh;">
-<h1>Ship Certifications
-  <span class="pill pill-<%= case @filter
-    when 'pending' then 'yellow'
-    when 'approved' then 'green'
-    when 'rejected' then 'blue'
-    when 'all' then 'dark'
-    else 'gray'
-  end %>" style="font-size: 0.6em; margin-left: 0.5rem;">
-    <%= @filter.capitalize %>
-  </span>
-</h1>
+<body class="adash" style="background: var(--color-background); color: var(--color-text); min-height: 100vh; padding: 2rem;">
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+  <h1>Ship Certifications
+    <span class="pill pill-<%= case @filter
+      when 'pending' then 'yellow'
+      when 'approved' then 'green'
+      when 'rejected' then 'blue'
+      when 'all' then 'dark'
+      else 'gray'
+    end %>" style="font-size: 0.6em; margin-left: 0.5rem;">
+      <%= @filter.capitalize %>
+    </span>
+  </h1>
+  <div style="display: flex; gap: 1rem;">
+    <%= link_to "View Logs", logs_admin_ship_certifications_path, class: "pill pill-gray", style: "text-decoration: none; padding: 0.5rem 1rem;" %>
+  </div>
+</div>
 
 <div style="display: flex; gap: 2rem; margin-bottom: 2rem;">
   <div style="background: var(--color-card); padding: 1rem; border-radius: 8px; flex: 1;">

@@ -57,6 +57,19 @@ module Admin
       end
     end
 
+    def logs
+      @logs = ShipCertification
+        .includes(:project, :reviewer)
+        .where(projects: { is_deleted: false })
+        .where.not(judgement: :pending)
+        .order(updated_at: :desc)
+        .limit(500) # this should be the limit of how much shit we need
+
+      @total_approved = ShipCertification.approved.count
+      @total_rejected = ShipCertification.rejected.count
+      @total_processed = @total_approved + @total_rejected
+    end
+
     private
 
     def authenticate_ship_certifier!
