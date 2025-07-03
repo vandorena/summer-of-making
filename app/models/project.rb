@@ -69,6 +69,8 @@ class Project < ApplicationRecord
             format: { with: /\A(?:https?:\/\/).*\z/i, message: "must be a valid HTTP or HTTPS URL" },
             allow_blank: true
 
+  before_save :convert_github_blob_urls
+
   CATEGORIES = [ "Web App", "Mobile App", "Command Line Tool", "Video Game", "Something else" ]
   validates :category, inclusion: { in: CATEGORIES, message: "%<value>s is not a valid category" }
 
@@ -360,5 +362,31 @@ class Project < ApplicationRecord
 
   def set_default_certification_type
     self.certification_type = :cert_other if certification_type.blank?
+  end
+
+  private
+
+  def convert_github_blob_urls
+    convert_github_blob_url_for(:readme_link)
+    convert_github_blob_url_for(:repo_link) if repo_link.present? && readme_link.blank?
+  end
+
+  def convert_github_blob_url_for(field)
+    url = send(field)
+    return if url.blank?
+
+    converted_url = self.class.convert_github_blob_to_raw(url)
+    send("#{field}=", converted_url) if converted_url != url
+  end
+
+  def self.convert_github_blob_to_raw(url)
+    return url if url.blank?
+
+    if match = url.match(%r{^https://github\.com/([^/]+)/([^/]+)/blob/([^/]+)/(.+)$})
+      owner, repo, branch, file_path = match.captures
+      "https://raw.githubusercontent.com/#{owner}/#{repo}/refs/heads/#{branch}/#{file_path}"
+    else
+      url
+    end
   end
 end
