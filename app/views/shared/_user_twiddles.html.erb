@@ -4,4 +4,4 @@
 <% else %>
   <%= button_to "+B", give_black_market_admin_user_path(user), form_class: "inline", style: "all: revert" %>
 <% end %>
-<%= button_to user == current_user ? "🤡" : "🥸", impersonate_admin_user_path(user), form_class: "inline", style: "all: revert", disabled: user == current_userx %>
+<%= button_to user == current_user ? "🤡" : "🥸", impersonate_admin_user_path(user), form_class: "inline", style: "all: revert", disabled: user == current_user %>
