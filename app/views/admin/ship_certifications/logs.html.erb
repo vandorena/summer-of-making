@@ -2,20 +2,57 @@
 <body class="adash" style="background: var(--color-background); color: var(--color-text); min-height: 100vh; padding: 2rem;">
 
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-  <h1>ship cert logs</h1>
+  <h1>Ship Certification Logs</h1>
   <div style="display: flex; gap: 1rem;">
-    <%= link_to "back", admin_ship_certifications_path, class: "pill pill-gray", style: "text-decoration: none; padding: 0.5rem 1rem;" %>
+    <%= link_to "Back", admin_ship_certifications_path, class: "pill pill-gray", style: "text-decoration: none; padding: 0.5rem 1rem;" %>
   </div>
 </div>
 
 <div style="display: flex; gap: 2rem; margin-bottom: 2rem;">
   <div style="background: var(--color-card); padding: 1rem; border-radius: 8px; flex: 1;">
-    <h3>the stats</h3>
-    <p><strong>total judged:</strong> <span class="pill pill-dark"><%= @total_processed %></span></p>
-    <p><strong>approved:</strong> <span class="pill pill-green"><%= @total_approved %></span></p>
-    <p><strong>rejected:</strong> <span class="pill pill-blue"><%= @total_rejected %></span></p>
+    <h3>The Stats</h3>
+    <p><strong>Total Judged:</strong> <span class="pill pill-dark"><%= @total_processed %></span></p>
+    <p><strong>Approved:</strong> <span class="pill pill-green"><%= @total_approved %></span></p>
+    <p><strong>Rejected:</strong> <span class="pill pill-blue"><%= @total_rejected %></span></p>
     <% if @total_processed > 0 %>
-      <p><strong>presidential approval rate:</strong> <span style="font-weight: bold;"><%= ((@total_approved.to_f / @total_processed) * 100).round(1) %>%</span></p>
+      <p><strong>Presidential Approval Rate:</strong> <span style="font-weight: bold;"><%= ((@total_approved.to_f / @total_processed) * 100).round(1) %>%</span></p>
+    <% end %>
+    <% if @avg_turnaround %>
+      <p><strong>Avg Decision Time:</strong>
+        <span style="font-weight: bold;">
+          <% if @avg_turnaround[:d] > 0 %>
+            <%= @avg_turnaround[:d] %>d <%= @avg_turnaround[:h] % 24 %>h
+          <% elsif @avg_turnaround[:h] > 0 %>
+            <%= @avg_turnaround[:h] %>h <%= @avg_turnaround[:m] %>m
+          <% else %>
+            <%= @avg_turnaround[:m] %>m
+          <% end %>
+        </span>
+      </p>
+    <% end %>
+  </div>
+
+  <div style="background: var(--color-card); padding: 1rem; border-radius: 8px; flex: 2;">
+    <h3>Reviewer Leaderboard</h3>
+    <% if @leaderboard.any? %>
+      <table style="width: 100%; font-size: 0.9rem;">
+        <thead>
+          <tr>
+            <th style="text-align: left;">Reviewer</th>
+            <th style="text-align: right;">Reviews</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @leaderboard.each do |name, email, count| %>
+            <tr>
+              <td><%= name || email %></td>
+              <td style="text-align: right;"><%= count %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p>No reviews yet</p>
     <% end %>
   </div>
 </div>

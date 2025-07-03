@@ -20,10 +20,27 @@
 
 <div style="display: flex; gap: 2rem; margin-bottom: 2rem;">
   <div style="background: var(--color-card); padding: 1rem; border-radius: 8px; flex: 1;">
-    <h3>Totals</h3>
+    <h3>The Stats</h3>
+    <p><strong>Total Judged:</strong> <span class="pill pill-dark"><%= @total_approved + @total_rejected %></span></p>
     <p><strong>Approved:</strong> <span class="pill pill-green"><%= @total_approved %></span></p>
     <p><strong>Rejected:</strong> <span class="pill pill-blue"><%= @total_rejected %></span></p>
     <p><strong>Pending:</strong> <span class="pill pill-yellow"><%= @total_pending %></span></p>
+    <% if @total_approved + @total_rejected > 0 %>
+      <p><strong>Presidential Approval Rate:</strong> <span style="font-weight: bold;"><%= ((@total_approved.to_f / (@total_approved + @total_rejected)) * 100).round(1) %>%</span></p>
+    <% end %>
+    <% if @avg_turnaround %>
+      <p><strong>Avg Decision Time:</strong>
+        <span style="font-weight: bold;">
+          <% if @avg_turnaround[:d] > 0 %>
+            <%= @avg_turnaround[:d] %>d <%= @avg_turnaround[:h] % 24 %>h
+          <% elsif @avg_turnaround[:h] > 0 %>
+            <%= @avg_turnaround[:h] %>h <%= @avg_turnaround[:m] %>m
+          <% else %>
+            <%= @avg_turnaround[:m] %>m
+          <% end %>
+        </span>
+      </p>
+    <% end %>
   </div>
 
   <div style="background: var(--color-card); padding: 1rem; border-radius: 8px; flex: 2;">
@@ -72,34 +89,61 @@
 <table class="atable">
   <thead>
     <tr>
-      <th>ID</th>
+      <th>Ship ID</th>
       <th>Project</th>
-      <th>Judgement</th>
+      <th>Verdict</th>
+      <th>Certifier</th>
       <th>Created At</th>
-      <th>Certification Type</th>
       <th>Dev Time</th>
     </tr>
   </thead>
   <tbody>
     <% @ship_certifications.each do |ship_certification| %>
       <tr>
-        <td><%= ship_certification.id %></td>
+        <td><%= link_to ship_certification.id, edit_admin_ship_certification_path(ship_certification), style: "color: var(--color-link); text-decoration: underline;" %></td>
         <td>
-          <%= link_to ship_certification.project.title, edit_admin_ship_certification_path(ship_certification) %>
-          <span><%= ship_certification.project.category %></span>
+          <div>
+            <strong><%= link_to ship_certification.project.title, edit_admin_ship_certification_path(ship_certification) %></strong>
+            <br>
+            <small style="color: var(--color-text-muted);">
+              Project ID: <%= ship_certification.project.id %>
+            </small>
+            <br>
+            <small style="color: var(--color-text-muted);">
+              By: <%= ship_certification.project.user.display_name || ship_certification.project.user.email %>
+            </small>
+            <br>
+            <small style="color: var(--color-text-muted);">
+              Category: <%= ship_certification.project.category %>
+            </small>
+          </div>
         </td>
         <td>
           <% case ship_certification.judgement %>
           <% when 'approved' %>
-            <span class="pill pill-green">approved</span>
+            <span class="pill pill-green">Approved</span>
           <% when 'rejected' %>
-            <span class="pill pill-blue">rejected</span>
+            <span class="pill pill-blue">Rejected</span>
           <% else %>
-            <span class="pill pill-yellow">pending</span>
+            <span class="pill pill-yellow">Pending</span>
           <% end %>
         </td>
-        <td><%= time_ago_in_words(ship_certification.created_at) %></td>
-        <td><%= ship_certification.project.certification_type || 'N/A' %></td>
+        <td>
+          <% if ship_certification.reviewer %>
+            <%= ship_certification.reviewer.display_name || ship_certification.reviewer.email %>
+          <% else %>
+            <span style="color: var(--color-text-muted);">System</span>
+          <% end %>
+        </td>
+        <td>
+          <div>
+            <%= ship_certification.created_at.strftime("%m/%d/%Y") %>
+            <br>
+            <small style="color: var(--color-text-muted);">
+              <%= time_ago_in_words(ship_certification.created_at) %> ago
+            </small>
+          </div>
+        </td>
         <td><%= format_seconds ship_certification.devlogs_seconds_total %></td>
       </tr>
     <% end %>
