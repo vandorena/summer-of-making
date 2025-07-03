@@ -98,9 +98,38 @@
             <% if devlog.file.image? %>
               <%= image_tag devlog.file, alt: "Update attachment", class: "w-full object-contain cursor-pointer hover:opacity-90 transition-opacity rounded-lg max-h-96", data: { action: "click->image-viewer#open" }, loading: "lazy" %>
             <% elsif devlog.file.video? %>
-              <div class="w-full flex items-center justify-center bg-black rounded-lg">
-                <%= video_tag url_for(devlog.file), class: "w-full object-contain rounded-lg", playsinline: true, controls: true do %>
+              <%
+                video_autoplay = context == 'explore'
+                video_classes = "w-full object-contain rounded-lg cursor-pointer video-autoplay"
+                video_attributes = {
+                  playsinline: true,
+                  preload: video_autoplay ? "metadata" : "none"
+                }
+
+                if video_autoplay
+                  video_attributes.merge!({
+                    muted: true,
+                    loop: true,
+                    autoplay: true
+                  })
+                else
+                  video_attributes[:controls] = true
+                end
+              %>
+              <div class="w-full flex items-center justify-center bg-black rounded-lg relative"
+                   data-controller="video"
+                   data-video-context-value="<%= context %>"
+                   data-video-autoplay-value="<%= video_autoplay %>">
+                <%= video_tag url_for(devlog.file),
+                    class: video_classes,
+                    data: { video_target: "video" },
+                    **video_attributes do %>
                   Your browser does not support the video tag.
+                <% end %>
+                <% if video_autoplay %>
+                  <div class="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white px-2 py-1 rounded text-xs video-sound-hint pointer-events-none">
+                    🔇 Click for sound
+                  </div>
                 <% end %>
               </div>
             <% elsif devlog.file.audio? %>
