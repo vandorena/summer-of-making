@@ -87,7 +87,7 @@ module Admin
     def calc_avg_turnaround
       pc = ShipCertification
         .where.not(judgement: :pending)
-        .where("updated_at > created_at")
+        .where("ship_certifications.updated_at > ship_certifications.created_at")
 
       return nil if pc.empty?
 
