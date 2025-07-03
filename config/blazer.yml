@@ -13,7 +13,7 @@ data_sources:
        user_id: "/admin/users/{value}"
 
     smart_columns:
-       user_id: "SELECT id, CONCAT(first_name, ' ', last_name) FROM users WHERE id IN {value}"
+       user_id: "SELECT id, CONCAT(display_name, ' (', first_name, ' ', last_name, ')') FROM users WHERE id IN {value}"
 
 # create audits
 audit: true
