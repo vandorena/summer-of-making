@@ -40,7 +40,15 @@
       </div>
 
       <p class="mb-2 line-clamp-3 text-sm md:text-base 2xl:text-lg text-[#B89576] break-words overflow-wrap-anywhere">
-        <%= "by #{project.user.display_name}  •  " if show_author %><%= project.devlogs_count || project.devlogs.count %> devlogs  •  <%= format_seconds(total_time_seconds) %>
+        <% if show_author %>
+          <%= "by #{project.user.display_name}  •  " %>
+          <% if project.user.has_black_market? %>
+            <button style="display: inline; all: revert" class="btn" disabled>B☑</button>
+          <% else %>
+            <%= button_to "+B", give_black_market_admin_user_path(project.user), form_class: "inline", style: "all: revert" %>
+          <% end %>
+        <% end %>
+        <%= project.devlogs_count || project.devlogs.count %> devlogs  •  <%= format_seconds(total_time_seconds) %>
       </p>
 
       <p class="line-clamp-3 text-sm md:text-base 2xl:text-lg overflow-hidden mb-4">
