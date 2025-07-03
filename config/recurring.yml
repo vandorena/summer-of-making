@@ -26,6 +26,12 @@ production:
     schedule: every day
     description: "Sync emotes from Slack :yay:"
 
+  update_slack_avatars:
+    class: UpdateSlackAvatarJob
+    schedule: every 6 hours
+    concurrency: 1
+    description: "Update all users' Slack avatars from Slack API"
+
   # cleanup_unattached_storage:
   #   command: "bundle exec rake active_storage:cleanup_unattached[7]"
   #   schedule: every day

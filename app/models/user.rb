@@ -98,6 +98,9 @@ class User < ApplicationRecord
           email: user.email
         }.to_json)
       end
+
+      UpdateSlackAvatarJob.perform_for_user(user)
+
       return user
     end
 

@@ -9,6 +9,10 @@ class UpdateSlackAvatarJob < ApplicationJob
     end
   end
 
+  def self.perform_for_user(user)
+    new.send(:update_avatar_if_needed, user)
+  end
+
   private
 
   def update_avatar_if_needed(user)
