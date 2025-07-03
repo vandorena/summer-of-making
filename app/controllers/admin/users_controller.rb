@@ -68,7 +68,7 @@ module Admin
     end
 
     def give_black_market
-      @user.update!(has_black_market: true)
+      @user.give_black_market!
       @user.create_activity("give_black_market")
       flash[:success] = "they're in!"
       redirect_back_or_to admin_user_path(@user)

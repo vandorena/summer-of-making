@@ -248,6 +248,15 @@ class User < ApplicationRecord
     Flipper.enable(:can_vote_2025_06_28, self)
   end
 
+  def give_black_market!
+    update!(has_black_market: true)
+    SendSlackDmJob.perform_later slack_id, <<~EOM
+      psst..... hey, kid.
+      heidi said to tell you you've just been given access to the <https://summer.hackclub.com/shop/black_market|[Black Market]>.
+      i'd be careful there if i were you, but what do i know?
+    EOM
+  end
+
   # we can add more cooler stuff, and more fine grained access controls for other parts later
   def has_permission?(permission)
     return false if permissions.nil? || permissions.empty?
