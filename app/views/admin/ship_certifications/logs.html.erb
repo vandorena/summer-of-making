@@ -34,7 +34,7 @@
   <tbody>
     <% @logs.each do |ship_certification| %>
       <tr>
-        <td><%= ship_certification.id %></td>
+        <td><%= link_to ship_certification.id, edit_admin_ship_certification_path(ship_certification), target: "_blank", style: "color: var(--color-link); text-decoration: underline;" %></td>
         <td>
           <div>
             <strong><%= link_to ship_certification.project.title, project_path(ship_certification.project), target: "_blank" %></strong>
