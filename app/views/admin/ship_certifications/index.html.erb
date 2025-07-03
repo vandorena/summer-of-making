@@ -12,6 +12,11 @@
     end %>" style="font-size: 0.6em; margin-left: 0.5rem;">
       <%= @filter.capitalize %>
     </span>
+    <% if @category_filter.present? %>
+      <span class="pill pill-green" style="font-size: 0.6em; margin-left: 0.5rem;">
+        <%= @category_filter %>
+      </span>
+    <% end %>
   </h1>
   <div style="display: flex; gap: 1rem;">
     <%= link_to "View Logs", logs_admin_ship_certifications_path, class: "pill pill-gray", style: "text-decoration: none; padding: 0.5rem 1rem;" %>
@@ -69,18 +74,33 @@
 </div>
 
 <div style="margin-bottom: 2rem;">
+  <h3>Filter by Category</h3>
+  <div style="display: flex; gap: 1rem; margin-top: 0.5rem; flex-wrap: wrap;">
+    <%= link_to admin_ship_certifications_path(filter: @filter), class: "pill #{@category_filter.blank? ? 'pill-dark' : 'pill-gray'}", style: "text-decoration: none; padding: 0.5rem 1rem;" do %>
+      All Categories (<%= @category_counts.values.sum %>)
+    <% end %>
+    <% @category_counts.sort.each do |category, count| %>
+      <% next if category.blank? %>
+      <%= link_to admin_ship_certifications_path(filter: @filter, category_filter: category), class: "pill #{@category_filter == category ? 'pill-green' : 'pill-gray'}", style: "text-decoration: none; padding: 0.5rem 1rem;" do %>
+        <%= category %> (<%= count %>)
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<div style="margin-bottom: 2rem;">
   <h3>Filter by Status</h3>
   <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
-    <%= link_to admin_ship_certifications_path(filter: 'pending'), class: "pill #{@filter == 'pending' ? 'pill-yellow' : 'pill-gray'}", style: "text-decoration: none; padding: 0.5rem 1rem;" do %>
+    <%= link_to admin_ship_certifications_path(filter: 'pending', category_filter: @category_filter), class: "pill #{@filter == 'pending' ? 'pill-yellow' : 'pill-gray'}", style: "text-decoration: none; padding: 0.5rem 1rem;" do %>
       Pending (<%= @total_pending %>)
     <% end %>
-    <%= link_to admin_ship_certifications_path(filter: 'approved'), class: "pill #{@filter == 'approved' ? 'pill-green' : 'pill-gray'}", style: "text-decoration: none; padding: 0.5rem 1rem;" do %>
+    <%= link_to admin_ship_certifications_path(filter: 'approved', category_filter: @category_filter), class: "pill #{@filter == 'approved' ? 'pill-green' : 'pill-gray'}", style: "text-decoration: none; padding: 0.5rem 1rem;" do %>
       Approved (<%= @total_approved %>)
     <% end %>
-    <%= link_to admin_ship_certifications_path(filter: 'rejected'), class: "pill #{@filter == 'rejected' ? 'pill-blue' : 'pill-gray'}", style: "text-decoration: none; padding: 0.5rem 1rem;" do %>
+    <%= link_to admin_ship_certifications_path(filter: 'rejected', category_filter: @category_filter), class: "pill #{@filter == 'rejected' ? 'pill-blue' : 'pill-gray'}", style: "text-decoration: none; padding: 0.5rem 1rem;" do %>
       Rejected (<%= @total_rejected %>)
     <% end %>
-    <%= link_to admin_ship_certifications_path(filter: 'all'), class: "pill #{@filter == 'all' ? 'pill-dark' : 'pill-gray'}", style: "text-decoration: none; padding: 0.5rem 1rem;" do %>
+    <%= link_to admin_ship_certifications_path(filter: 'all', category_filter: @category_filter), class: "pill #{@filter == 'all' ? 'pill-dark' : 'pill-gray'}", style: "text-decoration: none; padding: 0.5rem 1rem;" do %>
       All (<%= @total_approved + @total_rejected + @total_pending %>)
     <% end %>
   </div>
