@@ -195,6 +195,7 @@ Rails.application.routes.draw do
   get "/auth/slack/callback", to: "sessions#create", as: :slack_callback
   get "/auth/failure", to: "sessions#failure"
   delete "/logout", to: "sessions#destroy", as: :logout
+  delete "/stop_impersonating", to: "sessions#stop_impersonating", as: :stop_impersonating
 
   get "/magic-link", to: "sessions#magic_link", as: :magic_link # For users signing in
   post "/explorpheus/magic-link", to: "magic_link#get_secret_magic_url" # For the welcome bot to fetch the magic link.
@@ -327,6 +328,7 @@ Rails.application.routes.draw do
         post :revoke_ship_certifier
         post :give_black_market
         post :take_away_black_market
+        post :impersonate
       end
     end
     resources :shop_items

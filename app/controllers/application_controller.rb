@@ -19,10 +19,14 @@ class ApplicationController < ActionController::Base
   before_action :fetch_hackatime_data_if_needed
   after_action :track_page_view
 
-  helper_method :current_user, :user_signed_in?, :current_verification_status
+  helper_method :current_user, :user_signed_in?, :current_verification_status, :current_impersonator, :impersonating?
 
   def current_user
     @current_user ||= User.find_by(id: session[:user_id]) if session[:user_id]
+  end
+
+  def current_impersonator
+    @current_impersonator ||= User.find_by(id: session[:impersonator_user_id]) if session[:impersonator_user_id]
   end
 
   def current_verification_status
@@ -31,6 +35,10 @@ class ApplicationController < ActionController::Base
 
   def user_signed_in?
     !!current_user
+  end
+
+  def impersonating?
+    !!current_impersonator
   end
 
   def authenticate_user!

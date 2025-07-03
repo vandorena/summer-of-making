@@ -146,14 +146,22 @@
           <%= image_tag current_user.avatar, class: "h-12 w-12 rounded-full flex-shrink-0" %>
 
           <div class="flex flex-col w-full ml-3 overflow-ellipsis overflow-hidden" data-sidebar-target="collapseHide">
-            <% admin_tool do %>
+            <% admin_tool show_in_impersonate: true do %>
               <div><%= current_user.id %></div>
             <% end %>
             <div class="h-4">Hello,</div>
             <div class="text-xl whitespace-nowrap overflow-ellipsis"><%= current_user.display_name %>!</div>
             <% admin_user_visit(current_user) %>
+            <% if impersonating? %>
+              <% admin_tool show_in_impersonate: true do %>
+                <%= current_impersonator.display_name %>, i know it's really you...
+                <%= button_to "stop pretending?", :stop_impersonating, method: :delete, style: "all: revert;" %>
+              <% end %>
+            <% end %>
           </div>
         </div>
+
+
 
         <div class="ml-3 mt-2">
           <%= render "shared/link",

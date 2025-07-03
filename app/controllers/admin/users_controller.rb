@@ -103,6 +103,22 @@ module Admin
       redirect_to admin_user_path(@user)
     end
 
+    def impersonate
+      unless current_user&.is_admin?
+        Honeybadger.notify("what the h-e-double-hockey-sticks?")
+        return redirect_to root_path
+      end
+      if @user == current_user
+        flash[:notice] = "that's you, bozo!"
+        return redirect_back_or_to admin_user_path(@user)
+      end
+      session[:impersonator_user_id] ||= current_user.id
+      @user.create_activity("impersonate")
+      session[:user_id] = @user.id
+      flash[:success] = "hey #{@user.display_name}! how's it going? nice 'stache and glasses!"
+      redirect_to root_path
+    end
+
     private
 
     def set_user
