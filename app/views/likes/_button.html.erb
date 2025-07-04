@@ -6,69 +6,8 @@
           onclick: "event.stopPropagation()",
           data: { turbo_method: :post } do %>
       <% is_liked = defined?(liked) ? liked : likeable.liked_by?(current_user) %>
-      <%= inline_svg_tag "icons/star.svg", class: "w-6 h-6 mr-1 #{is_liked ? 'text-vintage-red' : ''}", data: { like_button_target: "star" } %>
+      <%= inline_svg_tag "icons/star.svg", class: "w-6 h-6 mr-1 #{is_liked ? 'text-vintage-red' : ''}" %>
       <%= likeable.likes_count %>
     <% end %>
   <% end %>
 </div>
-
-<% content_for :head do %>
-  <style>
-    @keyframes star-spin-<%= likeable.id %> {
-      0% {
-        transform: rotate(0deg) scale(1);
-      }
-      50% {
-        transform: rotate(180deg) scale(1.1);
-      }
-      100% {
-        transform: rotate(360deg) scale(1);
-      }
-    }
-
-    #like-button-<%= likeable.id %> .star-spin {
-      animation: star-spin-<%= likeable.id %> 0.7s ease-in-out;
-    }
-  </style>
-
-  <script>
-    if (!window.likeButtons) {
-      window.likeButtons = {};
-    }
-
-    if (!window.likeButtons['<%= likeable.id %>']) {
-      window.likeButtons['<%= likeable.id %>'] = true;
-      
-      document.addEventListener('DOMContentLoaded', function() {
-        const btn = document.getElementById('like-button-<%= likeable.id %>');
-        if (btn) {
-          const form = btn.querySelector('form');
-          const star = btn.querySelector('[data-like-button-target="star"]');
-          
-          if (form && star) {
-            form.addEventListener('submit', function() {
-              star.classList.add('star-spin');
-              setTimeout(() => star.classList.remove('star-spin'), 700);
-            });
-          }
-        }
-      });
-      
-      document.addEventListener('turbo:render', function() {
-        const btn = document.getElementById('like-button-<%= likeable.id %>');
-        if (btn) {
-          const form = btn.querySelector('form');
-          const star = btn.querySelector('[data-like-button-target="star"]');
-          
-          if (form && star && !form.hasAttribute('data-spin-ready')) {
-            form.setAttribute('data-spin-ready', 'true');
-            form.addEventListener('submit', function() {
-              star.classList.add('star-spin');
-              setTimeout(() => star.classList.remove('star-spin'), 700);
-            });
-          }
-        }
-      });
-    }
-  </script>
-<% end %>
