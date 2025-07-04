@@ -16,6 +16,7 @@ class FraudReportsController < ApplicationController
     end
   rescue => e
     Rails.logger.error "Fraud report creation failed: #{e.message}"
+    Honeybadger.notify(e)
     respond_to do |format|
       format.html { redirect_to request.referer || root_path, alert: "Unable to submit report. Please try again." }
       format.json { render json: { status: "error", message: "Unable to submit report. Please try again." }, status: :unprocessable_entity }
