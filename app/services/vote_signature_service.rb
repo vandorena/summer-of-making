@@ -23,9 +23,9 @@ class VoteSignatureService
     begin
       payload = verifier.verify(signature)
 
-      # signature is valid for 10 minutes
-      if payload["timestamp"] < 10.minutes.ago.to_i
-        return { valid: false, error: "Signature expired" }
+      # signature is valid for 1h
+      if payload["timestamp"] < 1.hour.ago.to_i
+        return { valid: false, error: "Voting window has expired" }
       end
 
       { valid: true, payload: payload }
