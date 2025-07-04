@@ -43,11 +43,13 @@ class Comment < ApplicationRecord
   private
 
   def render_rich_content
-    parsed_rich_content = JSON.parse(rich_content)
-
-    return parsed_rich_content["content"] || "" if parsed_rich_content["type"] == "tiptap"
-
-    parsed_rich_content.to_s
+    begin
+      parsed_rich_content = JSON.parse(rich_content)
+      return parsed_rich_content["content"] || "" if parsed_rich_content["type"] == "tiptap"
+      parsed_rich_content.to_s
+    rescue JSON::ParserError, TypeError
+      ""
+    end
   end
 
   def notify_devlog_author
