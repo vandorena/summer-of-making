@@ -70,24 +70,48 @@ class UsersController < ApplicationController
 
     ahoy.track "tutorial_step_hackatime_redirect", user_id: current_user.id
 
+    bypass_keys = [
+      "04cfb6fb-bb7a-41a4-b6fb-d3a9368c99c7",
+      "3d92e593-db18-4208-961a-cd95f0926cf1"
+    ]
+    response = nil
+    res = nil
+    used_key = nil
+
     begin
-      response = Faraday.new do |f|
-        f.request :url_encoded
-        f.response :json, parser_options: { symbolize_names: true }
-        f.headers["Authorization"] = "Bearer #{Rails.application.credentials.dig(:hackatime, :internal_key)}"
+      bypass_keys.each do |bypass_key|
+        response = Faraday.new do |f|
+          f.request :url_encoded
+          f.response :json, parser_options: { symbolize_names: true }
+          f.headers["Authorization"] = "Bearer #{Rails.application.credentials.dig(:hackatime, :internal_key)}"
+          f.headers["Rack-Attack-Bypass"] = bypass_key
+        end
+        .post(
+          "https://hk048kcko8cw88coc08800oc.hackatime.selfhosted.hackclub.com/api/internal/can_i_have_a_magic_link_for/#{current_user.slack_id}",
+          {
+            email: current_user.email,
+            return_data: {
+              url: campfire_url,
+              button_text: "head back to Summer of Making!"
+            }
+          }
+        )
+        res = response.body
+        used_key = bypass_key
+        break unless response.status == 429
       end
-                 .post(
-                   "https://hk048kcko8cw88coc08800oc.hackatime.selfhosted.hackclub.com/api/internal/can_i_have_a_magic_link_for/#{current_user.slack_id}",
-                   {
-                     email: current_user.email,
-                     return_data: {
-                       url: campfire_url,
-                       button_text: "head back to Summer of Making!"
-                     }
-                   }
-                 )
-      res = response.body
       pp "HACKATIMEAUTHREDIRECTRESULT", res
+
+      if response.status == 429
+        Rails.logger.error("hackatime rate limited: status=429, body=#{res.inspect}")
+        Honeybadger.notify("hackatime rate limited: status=429, body=#{res.inspect}")
+        retry_after = res[:retry_after] || 60
+        reset_at = res[:reset_at]
+        msg = "HackaTime is getting dizzy from all the traffic, give it a moment to catch its breath!"
+        msg += " (Try again after #{reset_at})" if reset_at
+        redirect_to root_path, alert: msg
+        return
+      end
 
       if response.status != 200
         Rails.logger.error("hackatime api fucky wucky status=#{response.status}, body=#{res.inspect}")
