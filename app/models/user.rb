@@ -84,6 +84,7 @@ class User < ApplicationRecord
 
     unless result["ok"]
       Rails.logger.error("Slack OAuth error: #{result['error']}")
+      Honeybadger.notify("Slack OAuth error: #{result['error']}")
       raise StandardError, "Failed to authenticate with Slack: #{result['error']}"
     end
 

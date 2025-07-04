@@ -38,6 +38,7 @@ class CampfireController < ApplicationController
         }
       rescue => e
         Rails.logger.error("Failed to fetch Hackatime dashboard data: #{e.message}")
+        Honeybadger.notify(e)
         @hackatime_dashboard = {
           total_time: 0,
           today_time: 0,
@@ -67,6 +68,7 @@ class CampfireController < ApplicationController
         }
       rescue => e
         Rails.logger.error("Failed to fetch Hackatime status data: #{e.message}")
+        Honeybadger.notify(e)
         dashboard_data = {
           total_time: 0,
           today_time: 0,
