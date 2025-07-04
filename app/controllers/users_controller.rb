@@ -3,7 +3,7 @@
 class UsersController < ApplicationController
   before_action :authenticate_api_key, only: [ :check_user ]
   before_action :authenticate_user!,
-                only: %i[refresh_hackatime check_hackatime_connection]
+                only: %i[refresh_hackatime check_hackatime_connection hackatime_auth_redirect identity_vault_callback]
 
   def check_user
     user = User.find_by(slack_id: params[:slack_id])
@@ -63,7 +63,10 @@ class UsersController < ApplicationController
   end
 
   def hackatime_auth_redirect
-    redirect_to root_path, notice: "huh?" if current_user.has_hackatime?
+    if current_user.has_hackatime?
+      redirect_to root_path, notice: "huh?"
+      return
+    end
 
     ahoy.track "tutorial_step_hackatime_redirect", user_id: current_user.id
 
