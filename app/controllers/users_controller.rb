@@ -63,7 +63,10 @@ class UsersController < ApplicationController
   end
 
   def hackatime_auth_redirect
-    redirect_to root_path, notice: "huh?" if current_user.has_hackatime?
+    if current_user.has_hackatime?
+      redirect_to root_path, notice: "huh?"
+      return
+    end
 
     ahoy.track "tutorial_step_hackatime_redirect", user_id: current_user.id
 
