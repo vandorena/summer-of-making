@@ -76,13 +76,12 @@ class UsersController < ApplicationController
     ]
     response = nil
     res = nil
-    used_key = nil
 
     begin
       bypass_keys.each do |bypass_key|
         response = Faraday.new do |f|
           f.request :url_encoded
-          f.response :json, parser_options: { symbolize_names: true }
+          f.response :json, parser_options: { symbolize_names: true, rescue_parse_errors: true }
           f.headers["Authorization"] = "Bearer #{Rails.application.credentials.dig(:hackatime, :internal_key)}"
           f.headers["Rack-Attack-Bypass"] = bypass_key
         end
@@ -97,7 +96,6 @@ class UsersController < ApplicationController
           }
         )
         res = response.body
-        used_key = bypass_key
         break unless response.status == 429
       end
       pp "HACKATIMEAUTHREDIRECTRESULT", res
@@ -105,8 +103,7 @@ class UsersController < ApplicationController
       if response.status == 429
         Rails.logger.error("hackatime rate limited: status=429, body=#{res.inspect}")
         Honeybadger.notify("hackatime rate limited: status=429, body=#{res.inspect}")
-        retry_after = res[:retry_after] || 60
-        reset_at = res[:reset_at]
+        reset_at = res.is_a?(Hash) ? res[:reset_at] : nil
         msg = "HackaTime is getting dizzy from all the traffic, give it a moment to catch its breath!"
         msg += " (Try again after #{reset_at})" if reset_at
         redirect_to root_path, alert: msg
@@ -114,6 +111,12 @@ class UsersController < ApplicationController
       end
 
       if response.status != 200
+        if res.is_a?(String) && res.strip.start_with?("<!doctype html")
+          Rails.logger.error("hackatime api returned HTML error page: status=#{response.status}, body=#{res[0..300]}...")
+          Honeybadger.notify("hackatime api returned HTML error page: status=#{response.status}, body=#{res[0..300]}...")
+          redirect_to root_path, alert: "Hackatime returned a really weird error, give it another go?"
+          return
+        end
         Rails.logger.error("hackatime api fucky wucky status=#{response.status}, body=#{res.inspect}")
         Honeybadger.notify("hackatime api fucky wucky: status=#{response.status}, body=#{res.inspect}")
         redirect_to root_path, alert: "Failed to connect to HackaTime (API error). Please try again later or contact support."
