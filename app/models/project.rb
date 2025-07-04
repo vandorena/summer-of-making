@@ -69,6 +69,8 @@ class Project < ApplicationRecord
             format: { with: /\A(?:https?:\/\/).*\z/i, message: "must be a valid HTTP or HTTPS URL" },
             allow_blank: true
 
+  validate :link_check
+
   before_save :convert_github_blob_urls
 
   CATEGORIES = [ "Web App", "Mobile App", "Command Line Tool", "Video Game", "Something else" ]
@@ -387,6 +389,24 @@ class Project < ApplicationRecord
       "https://raw.githubusercontent.com/#{owner}/#{repo}/refs/heads/#{branch}/#{file_path}"
     else
       url
+    end
+  end
+
+  private
+
+  def link_check
+    urls = [ readme_link, demo_link, repo_link ]
+    urls.each do |url|
+      next if url.blank?
+      begin
+        uri = URI.parse(url)
+        host = uri.host
+        if host =~ /^(localhost|127\.0\.0\.1|::1)$/i || host =~ /^(\d{1,3}\.){3}\d{1,3}$/
+          errors.add(:base, "We can not accept that type of link!")
+        end
+      rescue URI::InvalidURIError
+        # other things will handle this
+      end
     end
   end
 end
