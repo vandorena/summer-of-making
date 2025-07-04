@@ -7,10 +7,20 @@ class MagicLinkController < ApplicationController
     slack_id = params.require(:slack_id)
     email = params.require(:email)
 
-    signup = EmailSignup.find_by(email:)
+    signup = EmailSignup.find_by(email: email)
     if signup.nil?
-      Honeybadger.notify("no signup for #{email}")
-      return render json: { success: false, error: "No email sign up found. Are you URL encoding the email?" }, status: 400
+      error_info = {
+        error: "No EmailSignup found for email",
+        email: email,
+        slack_id: slack_id,
+        params: params.to_unsafe_h
+      }
+      Honeybadger.notify("No EmailSignup found for #{email}", context: error_info)
+      return render json: {
+        success: false,
+        error: "No email sign up found for #{email}. Give it another go?",
+        debug: error_info
+      }, status: 400
     end
 
     begin
@@ -28,17 +38,17 @@ class MagicLinkController < ApplicationController
       end
     rescue StandardError => e
       Honeybadger.notify(e)
-      user = User.find_by(email:)
+      user = User.find_by(email: email)
     end
 
     begin
-      link = MagicLink.find_or_create_by(user:).secret_url request.host
+      link = MagicLink.find_or_create_by(user: user).secret_url request.host
     rescue StandardError => e
       Honeybadger.notify(e)
       return render json: { success: false, error: "Failed to generate magic link." }, status: 500
     end
 
-    render json: { success: true, link:, ip: signup.ip, user_agent: signup.user_agent }
+    render json: { success: true, link: link, ip: signup.ip, user_agent: signup.user_agent }
   end
 
   private
