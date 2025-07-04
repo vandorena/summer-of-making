@@ -100,7 +100,7 @@
             <% elsif devlog.file.video? %>
               <%
                 video_autoplay = context == 'explore'
-                video_classes = "w-full object-contain rounded-lg cursor-pointer video-autoplay"
+                video_classes = "w-full object-contain rounded-lg cursor-pointer video-autoplay max-h-96"
                 video_attributes = {
                   playsinline: true,
                   preload: video_autoplay ? "metadata" : "none"
@@ -116,7 +116,7 @@
                   video_attributes[:controls] = true
                 end
               %>
-              <div class="w-full flex items-center justify-center bg-black rounded-lg relative"
+              <div class="w-full flex items-center justify-center bg-black rounded-lg relative max-h-96"
                    data-controller="video"
                    data-video-context-value="<%= context %>"
                    data-video-autoplay-value="<%= video_autoplay %>">
