@@ -19,7 +19,7 @@
   classes = local_assigns.fetch(:classes, '')
 %>
 
-<div class="card-with-gradient <%= classes %>" data-padding="<%= padding %>" data-hover="<%= hover %>" data-shadow="<%= shadow %>">
+<div class="card-with-gradient <%= classes %>" data-controller="card" data-padding="<%= padding %>" data-hover="<%= hover %>" data-shadow="<%= shadow %>">
   <% if local_assigns[:image].present? %>
     <div class="card-image">
       <%= image_tag image, class: "card-image-content" %>
@@ -114,19 +114,20 @@
   </style>
 
   <script>
-    // Only define the function once
+    // Fallback for any cards not using Stimulus (legacy support)
     if (!window.applyCardGradients) {
       window.applyCardGradients = function() {
-        document.querySelectorAll('.card-with-gradient').forEach(card => {
-          // Generate random center point between 30% and 70% of the card's dimensions
+        document.querySelectorAll('.card-with-gradient:not([data-controller*="card"])').forEach(card => {
           const centerX = Math.random() * 40 + 30;
           const centerY = Math.random() * 40 + 30;
           card.style.background = `radial-gradient(circle at ${centerX}% ${centerY}%, #F6DBBA, #E6D4BE)`;
         });
       };
 
-      // Apply gradients when DOM is loaded
       document.addEventListener('DOMContentLoaded', window.applyCardGradients);
+      document.addEventListener('turbo:morph', window.applyCardGradients);
+      document.addEventListener('turbo:render', window.applyCardGradients);
+      document.addEventListener('turbo:frame-render', window.applyCardGradients);
     }
   </script>
 <% end %>
