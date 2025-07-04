@@ -20,11 +20,11 @@ production:
   #   class: GenerateStonkReportJob
   #   schedule: every day
 
-  sync_slack_emotes:
-    class: SyncSlackEmotesJob
-    queue: default
-    schedule: every day
-    description: "Sync emotes from Slack :yay:"
+  # sync_slack_emotes:
+  #   class: SyncSlackEmotesJob
+  #   queue: default
+  #   schedule: every day
+  #   description: "Sync emotes from Slack :yay:"
 
   update_slack_avatars:
     class: UpdateSlackAvatarJob
