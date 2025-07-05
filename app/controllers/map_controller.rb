@@ -2,7 +2,6 @@ class MapController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    # Manually construct a JSON payload with all necessary data
     @projects_on_map = Project.joins(:ship_events).on_map.includes(:user, :devlogs).distinct.map do |project|
       {
         id: project.id,
@@ -24,7 +23,6 @@ class MapController < ApplicationController
   end
 
   def points
-    # Return fresh map data for AJAX requests
     projects_data = Project.joins(:ship_events).on_map.includes(:user, :devlogs).distinct.map do |project|
       {
         id: project.id,

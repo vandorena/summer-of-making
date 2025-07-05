@@ -64,7 +64,6 @@ export default class extends Controller {
                 point.classList.add("bg-green-500", "border-white", "cursor-grab")
                 point.dataset.action = "mousedown->map#startPointDrag"
 
-                // Add unplace button for owner's projects
                 const unplaceButton = document.createElement("button");
                 unplaceButton.innerHTML = "×";
                 unplaceButton.className = "absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full text-xs font-bold opacity-0 group-hover:opacity-50 transition-opacity duration-200 hover:bg-red-600 flex items-center justify-center";
@@ -86,24 +85,19 @@ export default class extends Controller {
     }
 
     showTooltip(pointWrapper, project) {
-        // Clear any existing timeout
         if (this.tooltipTimeout) {
             clearTimeout(this.tooltipTimeout);
             this.tooltipTimeout = null;
         }
 
-        // Don't show tooltip if one already exists
+        // don't show tooltip if one already exists!
         if (pointWrapper.querySelector('.absolute.bottom-full')) return;
-
-        // Clone the template
         const tooltipClone = this.tooltipTemplateTarget.content.cloneNode(true).firstElementChild;
 
-        // Populate the data
         tooltipClone.querySelector('[data-map-target="tooltipTitle"]').textContent = project.title;
         tooltipClone.querySelector('[data-map-target="tooltipInfo"]').textContent = `${project.devlogs_count} updates • ${project.total_time_spent}`;
         tooltipClone.querySelector('[data-map-target="tooltipLink"]').href = project.project_path;
 
-        // Add hover events to tooltip to keep it visible
         tooltipClone.addEventListener('mouseenter', () => {
             if (this.tooltipTimeout) {
                 clearTimeout(this.tooltipTimeout);
@@ -115,12 +109,10 @@ export default class extends Controller {
             this.hideTooltip(pointWrapper);
         });
 
-        // Append to the point wrapper
         pointWrapper.appendChild(tooltipClone);
     }
 
     hideTooltip(pointWrapper) {
-        // Add a small delay before hiding to prevent flicker
         this.tooltipTimeout = setTimeout(() => {
             const tooltip = pointWrapper.querySelector('.absolute.bottom-full');
             if (tooltip) {
@@ -129,8 +121,6 @@ export default class extends Controller {
             this.tooltipTimeout = null;
         }, 100);
     }
-
-    // --- Card Drag and Drop Logic ---
 
     startCardDrag(event) {
         event.dataTransfer.setData("text/plain", event.currentTarget.dataset.projectId);
@@ -211,10 +201,9 @@ export default class extends Controller {
 
             const data = await response.json();
 
-            // Update internal state with fresh server data
             this.projectsValue = data.projects;
 
-            // Re-render all points with confirmed server state
+            // re-render all points with confirmed server state
             this.renderPoints();
 
         } catch (error) {
@@ -388,10 +377,7 @@ export default class extends Controller {
         this.zoomOutButtonTarget.disabled = this.zoom <= this.MIN_ZOOM
     }
 
-    // --- Project Selection and Click-to-Place Logic ---
-
     setupProjectSelection() {
-        // Add click handlers to project cards for selection
         if (this.hasPlaceableProjectsTarget) {
             this.placeableProjectsTarget.addEventListener('click', (event) => {
                 const card = event.target.closest('[data-project-id]');
@@ -403,7 +389,6 @@ export default class extends Controller {
             });
         }
 
-        // Add click handler to map for placing selected projects
         this.imageTarget.addEventListener('click', (event) => {
             if (this.selectedProjectId && !this.isDragging && !this.draggedPoint) {
                 this.handleMapClick(event);
@@ -412,14 +397,11 @@ export default class extends Controller {
     }
 
     selectProject(projectId, cardElement) {
-        // Clear previous selection
         this.clearProjectSelection();
 
-        // Set new selection
         this.selectedProjectId = projectId;
         cardElement.classList.add('ring-2', 'ring-blue-500', 'bg-blue-100');
 
-        // Update cursor and instructions
         this.element.style.cursor = 'crosshair';
         this.updatePlaceableInstructions('Click anywhere on the map to place this project, or drag it directly.');
     }
@@ -439,7 +421,6 @@ export default class extends Controller {
     handleMapClick(event) {
         if (!this.selectedProjectId) return;
 
-        // Prevent placing during drag operations
         if (this.isDragging || this.draggedPoint) return;
 
         event.preventDefault();
@@ -449,10 +430,9 @@ export default class extends Controller {
         const xPercent = ((event.clientX - imageRect.left) / imageRect.width) * 100;
         const yPercent = ((event.clientY - imageRect.top) / imageRect.height) * 100;
 
-        // Ensure click is within map bounds
+        // ensure the click is within our map bounds
         if (xPercent < 0 || xPercent > 100 || yPercent < 0 || yPercent > 100) return;
 
-        // Place the selected project
         this.updateProjectPosition(this.selectedProjectId, xPercent, yPercent);
         this.clearProjectSelection();
     }
@@ -470,8 +450,6 @@ export default class extends Controller {
             this.placeableCountTarget.textContent = 'No projects available to place. Ship a project first to add it to the map.';
         }
     }
-
-    // --- Unplace Project Logic ---
 
     async unplaceProject(projectId) {
         if (!confirm('Are you sure you want to remove this project from the map?')) {
@@ -497,10 +475,8 @@ export default class extends Controller {
                 throw new Error(errorData.errors ? errorData.errors.join(', ') : 'Failed to unplace project');
             }
 
-            // After successful unplace, fetch fresh map data
             await this.fetchFreshMapData();
 
-            // Add the project back to the placeable list if it exists
             await this.refreshPlaceableProjects();
 
         } catch (error) {
@@ -510,8 +486,6 @@ export default class extends Controller {
     }
 
     async refreshPlaceableProjects() {
-        // Refresh the page to update the placeable projects list
-        // This is simpler than trying to reconstruct the project card HTML
         window.location.reload();
     }
 }
