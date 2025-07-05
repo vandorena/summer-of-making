@@ -40,28 +40,27 @@ module Admin
     def calculate_top_viewed_users
       project_views = Project.joins(:user)
                              .where("projects.views_count > 0")
-                             .group("users.id", "users.display_name", "users.username")
+                             .group("users.id", "users.display_name")
                              .sum("projects.views_count")
 
       devlog_views = Devlog.joins(:user)
                            .where("devlogs.views_count > 0")
-                           .group("users.id", "users.display_name", "users.username")
+                           .group("users.id", "users.display_name")
                            .sum("devlogs.views_count")
 
       user_views = {}
 
-      project_views.each do |(user_id, display_name, username), views|
+      project_views.each do |(user_id, display_name), views|
         user_views[user_id] = {
           id: user_id,
           display_name: display_name,
-          username: username,
           project_views: views,
           devlog_views: 0,
           total_views: views
         }
       end
 
-      devlog_views.each do |(user_id, display_name, username), views|
+      devlog_views.each do |(user_id, display_name), views|
         if user_views[user_id]
           user_views[user_id][:devlog_views] = views
           user_views[user_id][:total_views] += views
@@ -69,7 +68,6 @@ module Admin
           user_views[user_id] = {
             id: user_id,
             display_name: display_name,
-            username: username,
             project_views: 0,
             devlog_views: views,
             total_views: views
@@ -81,23 +79,24 @@ module Admin
     end
 
     def calculate_view_stats_by_date
-      thirty_days_ago = 30.days.ago
+      daily_project_views = ViewEvent.for_projects
+                                    .recent(30)
+                                    .group_by_day(:created_at)
+                                    .count
 
-      recent_projects = Project.where("created_at >= ? AND views_count > 0", thirty_days_ago)
-                               .group_by_day(:created_at)
-                               .sum(:views_count)
+      daily_devlog_views = ViewEvent.for_devlogs
+                                   .recent(30)
+                                   .group_by_day(:created_at)
+                                   .count
 
-      recent_devlogs = Devlog.where("created_at >= ? AND views_count > 0", thirty_days_ago)
-                             .group_by_day(:created_at)
-                             .sum(:views_count)
-
+      # Combine and fill missing dates
       all_dates = (30.days.ago.to_date..Date.current).to_a
       stats = {}
 
       all_dates.each do |date|
         stats[date] = {
-          project_views: recent_projects[date] || 0,
-          devlog_views: recent_devlogs[date] || 0
+          project_views: daily_project_views[date] || 0,
+          devlog_views: daily_devlog_views[date] || 0
         }
         stats[date][:total_views] = stats[date][:project_views] + stats[date][:devlog_views]
       end

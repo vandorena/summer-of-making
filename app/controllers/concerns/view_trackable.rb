@@ -11,7 +11,8 @@ module ViewTrackable
     ViewTrackingService.track_view(
       viewable,
       user_id: current_user&.id,
-      ip_address: request.remote_ip
+      ip_address: request.remote_ip,
+      user_agent: request.user_agent
     )
   end
 end
