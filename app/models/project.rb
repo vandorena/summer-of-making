@@ -29,10 +29,10 @@
 #
 # Indexes
 #
-#  index_projects_on_is_shipped  (is_shipped)
-#  index_projects_on_user_id         (user_id)
+#  index_projects_on_is_shipped   (is_shipped)
+#  index_projects_on_user_id      (user_id)
 #  index_projects_on_views_count  (views_count)
-#  index_projects_on_x_and_y     (x,y)
+#  index_projects_on_x_and_y      (x,y)
 #
 # Foreign Keys
 #
@@ -68,8 +68,6 @@ class Project < ApplicationRecord
   def shipped_once?
     ship_events.any?
   end
-  
-  private
   
   def coordinates_must_be_set_together
     if (x.present? && y.blank?) || (y.present? && x.blank?)
