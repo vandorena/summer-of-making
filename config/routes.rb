@@ -303,6 +303,8 @@ Rails.application.routes.draw do
 
   resources :ship_event_feedbacks
 
+  post "track_view", to: "view_tracking#create"
+
   namespace :admin, constraint: AdminConstraint do
     mount MissionControl::Jobs::Engine, at: "jobs"
     mount AhoyCaptain::Engine, at: "ahoy_captain"
