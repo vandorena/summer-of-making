@@ -3,7 +3,7 @@
 class TrackViewJob < ApplicationJob
   queue_as :default
 
-  def perform(viewable_type:, viewable_id:, user_id: nil, ip_address: nil)
+  def perform(viewable_type:, viewable_id:, user_id: nil, ip_address: nil, user_agent: nil)
     viewable = viewable_type.constantize.find_by(id: viewable_id)
     return unless viewable
 
@@ -14,6 +14,8 @@ class TrackViewJob < ApplicationJob
     ViewTrackingService.mark_as_viewed(viewable, user_id: user_id, ip_address: ip_address)
 
     ViewTrackingService.increment_view_count(viewable)
+
+    ViewTrackingService.create_view_event(viewable, user_id: user_id, ip_address: ip_address, user_agent: user_agent)
   rescue ActiveRecord::RecordNotFound
     Honeybadger.notify("cant find #{viewable_type} with id #{viewable_id} for views")
   rescue StandardError => e

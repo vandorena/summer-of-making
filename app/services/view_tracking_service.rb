@@ -2,13 +2,14 @@
 
 class ViewTrackingService
   class << self
-    def track_view(viewable, user_id: nil, ip_address: nil)
+    def track_view(viewable, user_id: nil, ip_address: nil, user_agent: nil)
       # async??? oh hell yeah we fancy
       TrackViewJob.perform_later(
         viewable_type: viewable.class.name,
         viewable_id: viewable.id,
         user_id: user_id,
-        ip_address: ip_address
+        ip_address: ip_address,
+        user_agent: user_agent
       )
     end
 
@@ -29,6 +30,15 @@ class ViewTrackingService
     def increment_view_count(viewable)
       # something atomic or some shit
       viewable.class.where(id: viewable.id).update_all("views_count = views_count + 1")
+    end
+
+    def create_view_event(viewable, user_id: nil, ip_address: nil, user_agent: nil)
+      ViewEvent.create!(
+        viewable: viewable,
+        user_id: user_id,
+        ip_address: ip_address,
+        user_agent: user_agent
+      )
     end
 
     private

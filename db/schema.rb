@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_05_161250) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_05_170124) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -664,6 +664,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_161250) do
     t.text "permissions", default: "[]"
   end
 
+  create_table "view_events", force: :cascade do |t|
+    t.string "viewable_type", null: false
+    t.bigint "viewable_id", null: false
+    t.bigint "user_id"
+    t.string "ip_address"
+    t.string "user_agent"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_view_events_on_created_at"
+    t.index ["user_id"], name: "index_view_events_on_user_id"
+    t.index ["viewable_type", "viewable_id", "created_at"], name: "idx_on_viewable_type_viewable_id_created_at_95fa2a7c9e"
+    t.index ["viewable_type", "viewable_id"], name: "index_view_events_on_viewable"
+  end
+
   create_table "vote_changes", force: :cascade do |t|
     t.bigint "vote_id", null: false
     t.bigint "project_id", null: false
@@ -749,6 +763,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_161250) do
   add_foreign_key "timer_sessions", "projects"
   add_foreign_key "timer_sessions", "users"
   add_foreign_key "tutorial_progresses", "users"
+  add_foreign_key "view_events", "users"
   add_foreign_key "vote_changes", "projects"
   add_foreign_key "vote_changes", "votes"
   add_foreign_key "votes", "projects", column: "project_1_id"

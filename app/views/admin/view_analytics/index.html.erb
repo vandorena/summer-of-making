@@ -103,15 +103,18 @@
           <div style="padding: 1.5em; border-bottom: <%= index < @top_viewed_users.length - 1 ? '1px solid var(--color-border)' : 'none' %>;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
               <div>
-                <strong style="color: var(--color-text); font-size: 1.1rem;"><%= user[:display_name] %></strong>
-                <span style="color: var(--color-muted); margin-left: 0.5em;">@<%= user[:username] %></span>
-                <div style="margin-top: 0.5em;">
-                  <small style="color: var(--color-muted);">
-                    <%= number_with_delimiter(user[:project_views]) %> project views •
+              <%= link_to admin_user_path(user[:id]), style: "text-decoration: none;" do %>
+                <strong style="color: var(--color-primary); font-size: 1.1rem;"><%= user[:display_name] %></strong>
+              <% end %>
+              <span style="color: var(--color-muted); margin-left: 0.5em;">@<%= user[:username] %></span>
+              <span style="color: var(--color-muted); margin-left: 0.5em; font-size: 0.9rem;">(ID: <%= user[:id] %>)</span>
+              <div style="margin-top: 0.5em;">
+              <small style="color: var(--color-muted);">
+                  <%= number_with_delimiter(user[:project_views]) %> project views •
                     <%= number_with_delimiter(user[:devlog_views]) %> devlog views
-                  </small>
-                </div>
-              </div>
+                   </small>
+                 </div>
+               </div>
               <span style="background: var(--color-accent); color: white; padding: 0.5em 1em; border-radius: 1em; font-size: 1rem; font-weight: bold;">
                 <%= number_with_delimiter(user[:total_views]) %> total views
               </span>
