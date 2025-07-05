@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_02_213656) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_05_161250) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -199,8 +199,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_02_213656) do
     t.integer "likes_count", default: 0, null: false
     t.integer "comments_count", default: 0, null: false
     t.datetime "hackatime_pulled_at"
+    t.integer "views_count", default: 0, null: false
     t.index ["project_id"], name: "index_devlogs_on_project_id"
     t.index ["user_id"], name: "index_devlogs_on_user_id"
+    t.index ["views_count"], name: "index_devlogs_on_views_count"
   end
 
   create_table "email_signups", force: :cascade do |t|
@@ -319,7 +321,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_02_213656) do
     t.string "ysws_type"
     t.integer "devlogs_count", default: 0, null: false
     t.integer "certification_type"
+    t.integer "views_count", default: 0, null: false
     t.index ["user_id"], name: "index_projects_on_user_id"
+    t.index ["views_count"], name: "index_projects_on_views_count"
   end
 
   create_table "readme_certifications", force: :cascade do |t|

@@ -2,6 +2,7 @@
 
 class ProjectsController < ApplicationController
   include ActionView::RecordIdentifier
+  include ViewTrackable
   before_action :authenticate_user!, except: %i[index show]
   skip_before_action :verify_authenticity_token, only: [ :check_link ]
   before_action :set_project,
@@ -73,6 +74,8 @@ class ProjectsController < ApplicationController
   end
 
   def show
+    track_view(@project)
+
     @devlogs = @project.devlogs.order(created_at: :desc)
     @ship_events = @project.ship_events
     @timeline = (@devlogs + @ship_events).sort_by(&:created_at).reverse
