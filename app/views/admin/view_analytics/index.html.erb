@@ -1,0 +1,130 @@
+<%= stylesheet_link_tag 'admin_dashboard' %>
+<%= javascript_importmap_tags %>
+
+<body class="adash" style="background: var(--color-background); color: var(--color-text); min-height: 100vh;">
+  <h1 style="margin: 2em 0 0.5em 1em; color: var(--color-primary); font-size: 2rem;">view analytics dashboard</h1>
+  <p style="margin: 0 0 2em 2em; color: var(--color-muted);">cant wait for clickbait</p>
+
+  <div class="agrid" style="max-width: 1200px; margin: 0 2em 2em 2em; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.2em;">
+    <div class="acard" style="padding: 1.5em; background: var(--color-elevated); border-radius: 0.5em; border: 1px solid var(--color-border);">
+      <h3 style="margin: 0 0 0.5em 0; color: var(--color-primary); font-size: 1.1rem;">total_views</h3>
+      <p style="margin: 0; font-size: 2rem; font-weight: bold; color: var(--color-accent);"><%= number_with_delimiter(@total_views) %></p>
+    </div>
+
+    <div class="acard" style="padding: 1.5em; background: var(--color-elevated); border-radius: 0.5em; border: 1px solid var(--color-border);">
+      <h3 style="margin: 0 0 0.5em 0; color: var(--color-primary); font-size: 1.1rem;">total_project_views</h3>
+      <p style="margin: 0; font-size: 2rem; font-weight: bold; color: var(--color-success);"><%= number_with_delimiter(@total_project_views) %></p>
+      <small style="color: var(--color-muted);"><%= @projects_with_views %> projects with views</small>
+    </div>
+
+    <div class="acard" style="padding: 1.5em; background: var(--color-elevated); border-radius: 0.5em; border: 1px solid var(--color-border);">
+      <h3 style="margin: 0 0 0.5em 0; color: var(--color-primary); font-size: 1.1rem;">total_devlog_views</h3>
+      <p style="margin: 0; font-size: 2rem; font-weight: bold; color: var(--color-info);"><%= number_with_delimiter(@total_devlog_views) %></p>
+      <small style="color: var(--color-muted);"><%= @devlogs_with_views %> devlogs with views</small>
+    </div>
+
+    <div class="acard" style="padding: 1.5em; background: var(--color-elevated); border-radius: 0.5em; border: 1px solid var(--color-border);">
+      <h3 style="margin: 0 0 0.5em 0; color: var(--color-primary); font-size: 1.1rem;">average_views</h3>
+      <p style="margin: 0; font-size: 1.2rem; color: var(--color-text);">
+        <%= @average_views_per_project %> / project<br>
+        <%= @average_views_per_devlog %> / devlog
+      </p>
+    </div>
+  </div>
+
+  <div style="margin: 2em; max-width: 1200px;">
+    <h2 style="color: var(--color-primary); margin-bottom: 1em;">trends (Last 30 Days)</h2>
+    <% if @view_stats_by_date.any? %>
+      <%= line_chart @view_stats_by_date.map { |date, stats| [date, stats[:total_views]] },
+          title: "total views by day",
+          xtitle: "day",
+          ytitle: "views",
+          width: "100%",
+          height: "300px",
+          colors: ["#ec4899"] %>
+    <% else %>
+      <p style="color: var(--color-muted); font-style: italic;">nuthin here bucko</p>
+    <% end %>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2em; margin: 2em; max-width: 1200px;">
+    <div>
+      <h2 style="color: var(--color-primary); margin-bottom: 1em;">most viewed projects</h2>
+      <% if @most_viewed_projects.any? %>
+        <div style="background: var(--color-elevated); border-radius: 0.5em; border: 1px solid var(--color-border); overflow: hidden;">
+          <% @most_viewed_projects.each_with_index do |project, index| %>
+            <div style="padding: 1em; border-bottom: <%= index < @most_viewed_projects.length - 1 ? '1px solid var(--color-border)' : 'none' %>;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <strong style="color: var(--color-text);"><%= project.title %></strong><br>
+                  <small style="color: var(--color-muted);">by <%= project.user.display_name %></small>
+                </div>
+                <span style="background: var(--color-success); color: white; padding: 0.25em 0.5em; border-radius: 1em; font-size: 0.875rem; font-weight: bold;">
+                  <%= number_with_delimiter(project.views_count) %> views
+                </span>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p style="color: var(--color-muted); font-style: italic;">nothing here lmaooo</p>
+      <% end %>
+    </div>
+
+    <div>
+      <h2 style="color: var(--color-primary); margin-bottom: 1em;">most viewed devlogs</h2>
+      <% if @most_viewed_devlogs.any? %>
+        <div style="background: var(--color-elevated); border-radius: 0.5em; border: 1px solid var(--color-border); overflow: hidden;">
+          <% @most_viewed_devlogs.each_with_index do |devlog, index| %>
+            <div style="padding: 1em; border-bottom: <%= index < @most_viewed_devlogs.length - 1 ? '1px solid var(--color-border)' : 'none' %>;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <strong style="color: var(--color-text);"><%= truncate(devlog.text, length: 60) %></strong><br>
+                  <small style="color: var(--color-muted);">by <%= devlog.user.display_name %> in <%= devlog.project.title %></small>
+                </div>
+                <span style="background: var(--color-info); color: white; padding: 0.25em 0.5em; border-radius: 1em; font-size: 0.875rem; font-weight: bold;">
+                  <%= number_with_delimiter(devlog.views_count) %> views
+                </span>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p style="color: var(--color-muted); font-style: italic;">nothing here lmaooo</p>
+      <% end %>
+    </div>
+  </div>
+
+  <div style="margin: 2em; max-width: 1200px;">
+    <h2 style="color: var(--color-primary); margin-bottom: 1em;">people popping off</h2>
+    <% if @top_viewed_users.any? %>
+      <div style="background: var(--color-elevated); border-radius: 0.5em; border: 1px solid var(--color-border); overflow: hidden;">
+        <% @top_viewed_users.each_with_index do |user, index| %>
+          <div style="padding: 1.5em; border-bottom: <%= index < @top_viewed_users.length - 1 ? '1px solid var(--color-border)' : 'none' %>;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <strong style="color: var(--color-text); font-size: 1.1rem;"><%= user[:display_name] %></strong>
+                <span style="color: var(--color-muted); margin-left: 0.5em;">@<%= user[:username] %></span>
+                <div style="margin-top: 0.5em;">
+                  <small style="color: var(--color-muted);">
+                    <%= number_with_delimiter(user[:project_views]) %> project views •
+                    <%= number_with_delimiter(user[:devlog_views]) %> devlog views
+                  </small>
+                </div>
+              </div>
+              <span style="background: var(--color-accent); color: white; padding: 0.5em 1em; border-radius: 1em; font-size: 1rem; font-weight: bold;">
+                <%= number_with_delimiter(user[:total_views]) %> total views
+              </span>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p style="color: var(--color-muted); font-style: italic;">nothing here lmaooo</p>
+    <% end %>
+  </div>
+
+  <div style="margin: 2em 2em 0 2em;">
+    <%= link_to "← back to admin dashboard", admin_root_path, class: 'aout' %>
+  </div>
+</body>
