@@ -53,6 +53,9 @@ class User < ApplicationRecord
   validates :slack_id, presence: true, uniqueness: true
   validates :email, :display_name, :timezone, :avatar, presence: true
   validates :email, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :display_name, presence: true, length: { maximum: 25 }, format: { with: /\A[^<>]*\z/, message: "nice try lmao" }
+  validates :first_name, length: { maximum: 25 }, format: { with: /\A[^<>]*\z/, message: "nice try lmao" }, allow_blank: true
+  validates :last_name, length: { maximum: 25 }, format: { with: /\A[^<>]*\z/, message: "nice try lmao" }, allow_blank: true
 
   serialize :permissions, type: Array, coder: JSON
 
