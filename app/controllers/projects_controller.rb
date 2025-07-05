@@ -6,7 +6,7 @@ class ProjectsController < ApplicationController
   before_action :authenticate_user!, except: %i[index show]
   skip_before_action :verify_authenticity_token, only: [ :check_link ]
   before_action :set_project,
-                only: %i[show edit update follow unfollow ship stake_stonks unstake_stonks destroy update_coordinates]
+                only: %i[show edit update follow unfollow ship stake_stonks unstake_stonks destroy update_coordinates unplace_coordinates]
   before_action :check_if_shipped, only: %i[edit update]
   before_action :authorize_user, only: [ :destroy ]
   before_action :require_hackatime, only: [ :create ]
@@ -577,6 +577,16 @@ class ProjectsController < ApplicationController
 
     if @project.update(coordinates_params)
       render json: { success: true, project: { id: @project.id, x: @project.x, y: @project.y } }
+    else
+      render json: { success: false, errors: @project.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  def unplace_coordinates
+    authorize @project, :update_coordinates?
+
+    if @project.update(x: nil, y: nil)
+      render json: { success: true, project: { id: @project.id, x: nil, y: nil } }
     else
       render json: { success: false, errors: @project.errors.full_messages }, status: :unprocessable_entity
     end

@@ -6,6 +6,8 @@ export default class extends Controller {
         projects: Array,
         userId: Number,
         updateUrl: String,
+        mapPointsUrl: String,
+        unplaceUrl: String,
     }
 
     MIN_ZOOM = 1
@@ -24,6 +26,7 @@ export default class extends Controller {
         this.updateButtonStates()
         this.draggedPoint = null
         this.selectedProjectId = null
+        this.tooltipTimeout = null
 
         this.renderPoints()
         this.setupProjectSelection()
@@ -44,7 +47,7 @@ export default class extends Controller {
             pointWrapper.style.left = `${project.x}%`;
             pointWrapper.style.top = `${project.y}%`;
             pointWrapper.dataset.projectId = project.id;
-            
+
             // Show tooltip on hover
             pointWrapper.addEventListener('mouseenter', () => this.showTooltip(pointWrapper, project));
             pointWrapper.addEventListener('mouseleave', () => this.hideTooltip(pointWrapper));
@@ -60,10 +63,21 @@ export default class extends Controller {
             if (isOwner) {
                 point.classList.add("bg-green-500", "border-white", "cursor-grab")
                 point.dataset.action = "mousedown->map#startPointDrag"
+
+                // Add unplace button for owner's projects
+                const unplaceButton = document.createElement("button");
+                unplaceButton.innerHTML = "×";
+                unplaceButton.className = "absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full text-xs font-bold opacity-0 group-hover:opacity-50 transition-opacity duration-200 hover:bg-red-600 flex items-center justify-center";
+                unplaceButton.title = "Remove from map";
+                unplaceButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.unplaceProject(project.id);
+                });
+                pointWrapper.appendChild(unplaceButton);
             } else {
                 point.classList.add("bg-red-500", "border-white")
             }
-            
+
             pointWrapper.appendChild(avatar);
             pointWrapper.appendChild(point);
 
@@ -72,6 +86,15 @@ export default class extends Controller {
     }
 
     showTooltip(pointWrapper, project) {
+        // Clear any existing timeout
+        if (this.tooltipTimeout) {
+            clearTimeout(this.tooltipTimeout);
+            this.tooltipTimeout = null;
+        }
+
+        // Don't show tooltip if one already exists
+        if (pointWrapper.querySelector('.absolute.bottom-full')) return;
+
         // Clone the template
         const tooltipClone = this.tooltipTemplateTarget.content.cloneNode(true).firstElementChild;
 
@@ -80,15 +103,31 @@ export default class extends Controller {
         tooltipClone.querySelector('[data-map-target="tooltipInfo"]').textContent = `${project.devlogs_count} updates • ${project.total_time_spent}`;
         tooltipClone.querySelector('[data-map-target="tooltipLink"]').href = project.project_path;
 
+        // Add hover events to tooltip to keep it visible
+        tooltipClone.addEventListener('mouseenter', () => {
+            if (this.tooltipTimeout) {
+                clearTimeout(this.tooltipTimeout);
+                this.tooltipTimeout = null;
+            }
+        });
+
+        tooltipClone.addEventListener('mouseleave', () => {
+            this.hideTooltip(pointWrapper);
+        });
+
         // Append to the point wrapper
         pointWrapper.appendChild(tooltipClone);
     }
-    
+
     hideTooltip(pointWrapper) {
-        const tooltip = pointWrapper.querySelector('.absolute.bottom-full');
-        if (tooltip) {
-            tooltip.remove();
-        }
+        // Add a small delay before hiding to prevent flicker
+        this.tooltipTimeout = setTimeout(() => {
+            const tooltip = pointWrapper.querySelector('.absolute.bottom-full');
+            if (tooltip) {
+                tooltip.remove();
+            }
+            this.tooltipTimeout = null;
+        }, 100);
     }
 
     // --- Card Drag and Drop Logic ---
@@ -123,6 +162,7 @@ export default class extends Controller {
         const csrfToken = csrfTokenMeta ? csrfTokenMeta.content : '';
 
         try {
+            // 1. Make API call to update coordinates
             const response = await fetch(url, {
                 method: 'PATCH',
                 headers: {
@@ -138,40 +178,10 @@ export default class extends Controller {
                 throw new Error(errorData.errors ? errorData.errors.join(', ') : 'Failed to update position');
             }
 
-            const data = await response.json();
-            
-            // Update internal state
-            const projectIndex = this.projectsValue.findIndex(p => p.id == data.project.id);
-            if (projectIndex > -1) {
-                this.projectsValue[projectIndex].x = data.project.x;
-                this.projectsValue[projectIndex].y = data.project.y;
-            } else {
-                // Find project data from the draggable cards to add it
-                const card = this.hasPlaceableProjectsTarget ? this.placeableProjectsTarget.querySelector(`[data-project-id="${projectId}"]`) : null;
-                if (card) {
-                    const project = {
-                        id: data.project.id,
-                        x: data.project.x,
-                        y: data.project.y,
-                        title: card.textContent.trim(),
-                        user_id: this.userIdValue,
-                        // Add defaults for tooltip, will be correct on next page load
-                        devlogs_count: 0, 
-                        total_time_spent: "0h 0m",
-                        project_path: `/projects/${data.project.id}`,
-                        user: {
-                            display_name: 'You',
-                            avatar: document.querySelector(".h-12.w-12.rounded-full.flex-shrink-0")?.src || ''
-                        }
-                    };
-                    this.projectsValue.push(project);
-                }
-            }
+            // 2. After successful update, fetch fresh map data
+            await this.fetchFreshMapData();
 
-            // Re-render all points
-            this.renderPoints();
-            
-            // Remove the card from the placeable list
+            // 3. Remove the card from the placeable list if it was placed from there
             if (this.hasPlaceableProjectsTarget) {
                 const cardToRemove = this.placeableProjectsTarget.querySelector(`[data-project-id="${projectId}"]`);
                 if (cardToRemove) {
@@ -185,7 +195,35 @@ export default class extends Controller {
             alert(`Error: ${error.message}`);
         }
     }
-    
+
+    async fetchFreshMapData() {
+        try {
+            const response = await fetch('/map/points', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch fresh map data');
+            }
+
+            const data = await response.json();
+
+            // Update internal state with fresh server data
+            this.projectsValue = data.projects;
+
+            // Re-render all points with confirmed server state
+            this.renderPoints();
+
+        } catch (error) {
+            console.error('Failed to fetch fresh map data:', error);
+            // Fallback: just re-render with current data
+            this.renderPoints();
+        }
+    }
+
     startDrag(event) {
         if (this.draggedPoint) return
         if (this.animationFrameId) cancelAnimationFrame(this.animationFrameId)
@@ -216,10 +254,10 @@ export default class extends Controller {
         document.addEventListener('mousemove', moveHandler);
         document.addEventListener('mouseup', upHandler);
     }
-    
+
     dragPoint(event) {
         if (!this.draggedPoint) return;
-        
+
         const imageRect = this.imageTarget.getBoundingClientRect();
         const xPercent = Math.max(0, Math.min(100, ((event.clientX - imageRect.left) / imageRect.width) * 100));
         const yPercent = Math.max(0, Math.min(100, ((event.clientY - imageRect.top) / imageRect.height) * 100));
@@ -272,7 +310,7 @@ export default class extends Controller {
         this.currentTranslate = nextTranslate
         this.lastTimestamp = now
     }
-    
+
     endDrag(event) {
         if (this.draggedPoint) return this.endPointDrag();
         if (!this.isDragging) return
@@ -376,11 +414,11 @@ export default class extends Controller {
     selectProject(projectId, cardElement) {
         // Clear previous selection
         this.clearProjectSelection();
-        
+
         // Set new selection
         this.selectedProjectId = projectId;
         cardElement.classList.add('ring-2', 'ring-blue-500', 'bg-blue-100');
-        
+
         // Update cursor and instructions
         this.element.style.cursor = 'crosshair';
         this.updatePlaceableInstructions('Click anywhere on the map to place this project, or drag it directly.');
@@ -400,10 +438,10 @@ export default class extends Controller {
 
     handleMapClick(event) {
         if (!this.selectedProjectId) return;
-        
+
         // Prevent placing during drag operations
         if (this.isDragging || this.draggedPoint) return;
-        
+
         event.preventDefault();
         event.stopPropagation();
 
@@ -421,9 +459,9 @@ export default class extends Controller {
 
     updatePlaceableInstructions(customMessage = null) {
         if (!this.hasPlaceableCountTarget) return;
-        
+
         const remaining = this.hasPlaceableProjectsTarget ? this.placeableProjectsTarget.children.length : 0;
-        
+
         if (customMessage) {
             this.placeableCountTarget.textContent = customMessage;
         } else if (remaining > 0) {
@@ -431,5 +469,49 @@ export default class extends Controller {
         } else {
             this.placeableCountTarget.textContent = 'No projects available to place. Ship a project first to add it to the map.';
         }
+    }
+
+    // --- Unplace Project Logic ---
+
+    async unplaceProject(projectId) {
+        if (!confirm('Are you sure you want to remove this project from the map?')) {
+            return;
+        }
+
+        const url = `/projects/${projectId}/unplace_coordinates`;
+        const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+        const csrfToken = csrfTokenMeta ? csrfTokenMeta.content : '';
+
+        try {
+            const response = await fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-Token': csrfToken
+                }
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.errors ? errorData.errors.join(', ') : 'Failed to unplace project');
+            }
+
+            // After successful unplace, fetch fresh map data
+            await this.fetchFreshMapData();
+
+            // Add the project back to the placeable list if it exists
+            await this.refreshPlaceableProjects();
+
+        } catch (error) {
+            console.error('Failed to unplace project:', error);
+            alert(`Error: ${error.message}`);
+        }
+    }
+
+    async refreshPlaceableProjects() {
+        // Refresh the page to update the placeable projects list
+        // This is simpler than trying to reconstruct the project card HTML
+        window.location.reload();
     }
 }
