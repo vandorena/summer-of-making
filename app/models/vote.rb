@@ -55,7 +55,7 @@ class Vote < ApplicationRecord
 
   has_many :vote_changes, dependent: :destroy
 
-  validates :explanation, presence: true, length: { minimum: 10 }
+  validates :explanation, presence: true, length: { minimum: 10, maximum: 2000 }, format: { with: /\A[^<>]*\z/, message: "nice try lmao" }
   validates :status, inclusion: { in: %w[active invalid] }
 
   validates :user_id, uniqueness: {
