@@ -662,6 +662,7 @@ DEPENDENCIES
   kamal
   lz_string (~> 0.3.0)
   memory_profiler
+  mini_magick (~> 5.2)
   mission_control-jobs
   norairrecord
   pagy
