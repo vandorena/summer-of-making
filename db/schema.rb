@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_24_205930) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_05_203521) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -292,7 +292,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_24_205930) do
     t.boolean "ysws_submission", default: false, null: false
     t.string "ysws_type"
     t.integer "devlogs_count", default: 0, null: false
+    t.float "x"
+    t.float "y"
+    t.index ["is_shipped"], name: "index_projects_on_is_shipped"
     t.index ["user_id"], name: "index_projects_on_user_id"
+    t.index ["x", "y"], name: "index_projects_on_x_and_y"
   end
 
   create_table "readme_certifications", force: :cascade do |t|

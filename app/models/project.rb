@@ -17,6 +17,8 @@
 #  repo_link              :string
 #  title                  :string
 #  used_ai                :boolean
+#  x                      :float
+#  y                      :float
 #  ysws_submission        :boolean          default(FALSE), not null
 #  ysws_type              :string
 #  created_at             :datetime         not null
@@ -25,7 +27,9 @@
 #
 # Indexes
 #
-#  index_projects_on_user_id  (user_id)
+#  index_projects_on_is_shipped  (is_shipped)
+#  index_projects_on_user_id     (user_id)
+#  index_projects_on_x_and_y     (x,y)
 #
 # Foreign Keys
 #
