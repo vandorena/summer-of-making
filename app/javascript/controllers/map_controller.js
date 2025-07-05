@@ -472,7 +472,7 @@ export default class extends Controller {
     }
 
     setupMapClickHandler() {
-        this.imageTarget.addEventListener('click', (event) => {
+        this.canvasTarget.addEventListener('click', (event) => {
             if (this.selectedProjectId && !this.isDragging && !this.draggedPoint) {
                 this.handleMapClick(event)
             }
