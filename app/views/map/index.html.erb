@@ -37,24 +37,32 @@
     </button>
   </div>
 
-  <% if @placeable_projects.any? %>
-    <div class="absolute bottom-4 left-4 z-20 bg-soft-bone p-4 card-pixel max-w-sm w-full">
-      <h3 class="text-lg font-bold mb-2">Place a Project on the Map</h3>
-      <p class="text-sm mb-2 text-saddle-taupe" data-map-target="placeableCount">
-        You can place <%= pluralize(@placeable_projects.count, "more project") %>. Drag a card onto the map.
-      </p>
+  <div class="absolute bottom-4 left-4 z-20 bg-soft-bone p-4 card-pixel max-w-sm w-full">
+    <h3 class="text-lg font-bold mb-2">Place a Project on the Map</h3>
+    <p class="text-sm mb-2 text-saddle-taupe" data-map-target="placeableCount">
+      <% if @placeable_projects.any? %>
+        You can place <%= pluralize(@placeable_projects.count, "project") %>. Click a project below to select it, then click on the map to place it, or drag it directly.
+      <% else %>
+        No projects available to place. Ship a project first to add it to the map.
+      <% end %>
+    </p>
+    <% if @placeable_projects.any? %>
       <div class="space-y-2 max-h-48 overflow-y-auto" data-map-target="placeableProjects">
         <% @placeable_projects.each do |project| %>
           <div draggable="true"
                data-action="dragstart->map#startCardDrag"
                data-project-id="<%= project.id %>"
-               class="w-full text-left p-2 bg-bread border-2 border-saddle-taupe/30 hover:bg-warm cursor-grab active:cursor-grabbing transition-colors">
+               class="w-full text-left p-2 bg-bread border-2 border-saddle-taupe/30 hover:bg-warm cursor-pointer transition-colors">
             <%= project.title %>
           </div>
         <% end %>
       </div>
-    </div>
-  <% end %>
+    <% else %>
+      <div class="text-center py-4">
+        <%= link_to "View All Projects", my_projects_path, class: "px-4 py-2 marble-button cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
 
   <!-- tooltip! -->
   <template data-map-target="tooltipTemplate">

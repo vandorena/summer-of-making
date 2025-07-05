@@ -6,7 +6,7 @@ class ProjectsController < ApplicationController
   before_action :authenticate_user!, except: %i[index show]
   skip_before_action :verify_authenticity_token, only: [ :check_link ]
   before_action :set_project,
-                only: %i[show edit update follow unfollow ship stake_stonks unstake_stonks destroy]
+                only: %i[show edit update follow unfollow ship stake_stonks unstake_stonks destroy update_coordinates]
   before_action :check_if_shipped, only: %i[edit update]
   before_action :authorize_user, only: [ :destroy ]
   before_action :require_hackatime, only: [ :create ]

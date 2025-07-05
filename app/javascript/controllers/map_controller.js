@@ -13,7 +13,6 @@ export default class extends Controller {
     DRAG_THRESHOLD = 5
 
     connect() {
-        // ... (existing connect logic)
         this.zoom = this.MIN_ZOOM
         this.isDragging = false
         this.animationFrameId = null
@@ -24,8 +23,11 @@ export default class extends Controller {
         this.element.style.cursor = 'crosshair'
         this.updateButtonStates()
         this.draggedPoint = null
+        this.selectedProjectId = null
 
         this.renderPoints()
+        this.setupProjectSelection()
+        this.updatePlaceableInstructions()
     }
 
     disconnect() {
@@ -47,7 +49,6 @@ export default class extends Controller {
             pointWrapper.addEventListener('mouseenter', () => this.showTooltip(pointWrapper, project));
             pointWrapper.addEventListener('mouseleave', () => this.hideTooltip(pointWrapper));
 
-
             const point = document.createElement("div")
             point.className = "w-3 h-3 rounded-full border-2 transition-transform duration-200 group-hover:scale-150"
             point.dataset.projectId = project.id
@@ -60,7 +61,7 @@ export default class extends Controller {
                 point.classList.add("bg-green-500", "border-white", "cursor-grab")
                 point.dataset.action = "mousedown->map#startPointDrag"
             } else {
-                point.classList.add("bg-nice-blue", "border-white")
+                point.classList.add("bg-red-500", "border-white")
             }
             
             pointWrapper.appendChild(avatar);
@@ -116,13 +117,10 @@ export default class extends Controller {
         this.updateProjectPosition(projectId, xPercent, yPercent);
     }
 
-    // ... (rest of the controller methods are the same as before)
-    // startDrag, startPointDrag, dragPoint, endPointDrag, drag, endDrag, updateProjectPosition, etc.
-    // Make sure updateProjectPosition can handle adding new points visually
-    
     async updateProjectPosition(projectId, x, y) {
         const url = this.updateUrlValue.replace(':id', projectId);
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+        const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+        const csrfToken = csrfTokenMeta ? csrfTokenMeta.content : '';
 
         try {
             const response = await fetch(url, {
@@ -137,7 +135,7 @@ export default class extends Controller {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.errors.join(', '));
+                throw new Error(errorData.errors ? errorData.errors.join(', ') : 'Failed to update position');
             }
 
             const data = await response.json();
@@ -149,7 +147,7 @@ export default class extends Controller {
                 this.projectsValue[projectIndex].y = data.project.y;
             } else {
                 // Find project data from the draggable cards to add it
-                const card = this.placeableProjectsTarget.querySelector(`[data-project-id="${projectId}"]`);
+                const card = this.hasPlaceableProjectsTarget ? this.placeableProjectsTarget.querySelector(`[data-project-id="${projectId}"]`) : null;
                 if (card) {
                     const project = {
                         id: data.project.id,
@@ -174,11 +172,12 @@ export default class extends Controller {
             this.renderPoints();
             
             // Remove the card from the placeable list
-            const cardToRemove = this.placeableProjectsTarget.querySelector(`[data-project-id="${projectId}"]`);
-            if (cardToRemove) {
-                cardToRemove.remove();
-                const remaining = this.placeableProjectsTarget.children.length;
-                this.placeableCountTarget.textContent = `You can place ${remaining} more ${remaining === 1 ? 'project' : 'projects'}. Drag a card onto the map.`;
+            if (this.hasPlaceableProjectsTarget) {
+                const cardToRemove = this.placeableProjectsTarget.querySelector(`[data-project-id="${projectId}"]`);
+                if (cardToRemove) {
+                    cardToRemove.remove();
+                    this.updatePlaceableInstructions();
+                }
             }
 
         } catch (error) {
@@ -349,5 +348,88 @@ export default class extends Controller {
     updateButtonStates() {
         this.zoomInButtonTarget.disabled = this.zoom >= this.MAX_ZOOM
         this.zoomOutButtonTarget.disabled = this.zoom <= this.MIN_ZOOM
+    }
+
+    // --- Project Selection and Click-to-Place Logic ---
+
+    setupProjectSelection() {
+        // Add click handlers to project cards for selection
+        if (this.hasPlaceableProjectsTarget) {
+            this.placeableProjectsTarget.addEventListener('click', (event) => {
+                const card = event.target.closest('[data-project-id]');
+                if (card) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.selectProject(card.dataset.projectId, card);
+                }
+            });
+        }
+
+        // Add click handler to map for placing selected projects
+        this.imageTarget.addEventListener('click', (event) => {
+            if (this.selectedProjectId && !this.isDragging && !this.draggedPoint) {
+                this.handleMapClick(event);
+            }
+        });
+    }
+
+    selectProject(projectId, cardElement) {
+        // Clear previous selection
+        this.clearProjectSelection();
+        
+        // Set new selection
+        this.selectedProjectId = projectId;
+        cardElement.classList.add('ring-2', 'ring-blue-500', 'bg-blue-100');
+        
+        // Update cursor and instructions
+        this.element.style.cursor = 'crosshair';
+        this.updatePlaceableInstructions('Click anywhere on the map to place this project, or drag it directly.');
+    }
+
+    clearProjectSelection() {
+        if (this.hasPlaceableProjectsTarget) {
+            const cards = this.placeableProjectsTarget.querySelectorAll('[data-project-id]');
+            cards.forEach(card => {
+                card.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-100');
+            });
+        }
+        this.selectedProjectId = null;
+        this.element.style.cursor = 'crosshair';
+        this.updatePlaceableInstructions();
+    }
+
+    handleMapClick(event) {
+        if (!this.selectedProjectId) return;
+        
+        // Prevent placing during drag operations
+        if (this.isDragging || this.draggedPoint) return;
+        
+        event.preventDefault();
+        event.stopPropagation();
+
+        const imageRect = this.imageTarget.getBoundingClientRect();
+        const xPercent = ((event.clientX - imageRect.left) / imageRect.width) * 100;
+        const yPercent = ((event.clientY - imageRect.top) / imageRect.height) * 100;
+
+        // Ensure click is within map bounds
+        if (xPercent < 0 || xPercent > 100 || yPercent < 0 || yPercent > 100) return;
+
+        // Place the selected project
+        this.updateProjectPosition(this.selectedProjectId, xPercent, yPercent);
+        this.clearProjectSelection();
+    }
+
+    updatePlaceableInstructions(customMessage = null) {
+        if (!this.hasPlaceableCountTarget) return;
+        
+        const remaining = this.hasPlaceableProjectsTarget ? this.placeableProjectsTarget.children.length : 0;
+        
+        if (customMessage) {
+            this.placeableCountTarget.textContent = customMessage;
+        } else if (remaining > 0) {
+            this.placeableCountTarget.textContent = `You can place ${remaining} more ${remaining === 1 ? 'project' : 'projects'}. Click a project below to select it, then click on the map to place it, or drag it directly.`;
+        } else {
+            this.placeableCountTarget.textContent = 'No projects available to place. Ship a project first to add it to the map.';
+        }
     }
 }

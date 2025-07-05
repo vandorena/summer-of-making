@@ -3,7 +3,7 @@ class MapController < ApplicationController
 
   def index
     # Manually construct a JSON payload with all necessary data
-    @projects_on_map = Project.shipped.on_map.includes(:user, :devlogs).map do |project|
+    @projects_on_map = Project.joins(:ship_events).on_map.includes(:user, :devlogs).distinct.map do |project|
       {
         id: project.id,
         x: project.x,
@@ -20,6 +20,6 @@ class MapController < ApplicationController
       }
     end.to_json
 
-    @placeable_projects = current_user.projects.shipped.not_on_map.order(created_at: :desc)
+    @placeable_projects = current_user.projects.joins(:ship_events).not_on_map.distinct.order(created_at: :desc)
   end
 end
