@@ -54,6 +54,26 @@ class Project < ApplicationRecord
 
   has_many :timer_sessions
 
+  validates :x, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }, allow_nil: true
+  validates :y, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }, allow_nil: true
+  validate :coordinates_must_be_set_together
+
+  scope :on_map, -> { where.not(x: nil, y: nil) }
+  scope :shipped, -> { where(is_shipped: true) }
+  scope :not_on_map, -> { where(x: nil, y: nil) }
+
+  def shipped_once?
+    ship_events.any?
+  end
+  
+  private
+  
+  def coordinates_must_be_set_together
+    if (x.present? && y.blank?) || (y.present? && x.blank?)
+      errors.add(:base, "Both X and Y coordinates must be set, or neither.")
+    end
+  end
+
   default_scope { where(is_deleted: false) }
 
   def self.with_deleted

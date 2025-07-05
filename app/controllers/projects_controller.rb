@@ -513,8 +513,6 @@ class ProjectsController < ApplicationController
   #     end
   # end
 
-  private
-
   def ysws_type_options
     [ [ "Select a YSWS program...", "" ] ] + Project.ysws_types.map { |key, value| [ value, value ] }
   end
@@ -558,5 +556,23 @@ class ProjectsController < ApplicationController
   def project_params
     params.expect(project: [ :title, :description, :used_ai, :readme_link, :demo_link, :repo_link,
                              :banner, :ysws_submission, :ysws_type, :category, { hackatime_project_keys: [] } ])
+  end
+
+  def update_coordinates
+    authorize @project, :update_coordinates?
+
+    unless @project.shipped_once?
+      return render json: { error: "Project must be shipped at least once to be placed on the map." }, status: :unprocessable_entity
+    end
+
+    if @project.update(coordinates_params)
+      render json: { success: true, project: { id: @project.id, x: @project.x, y: @project.y } }
+    else
+      render json: { success: false, errors: @project.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  def coordinates_params
+    params.require(:project).permit(:x, :y)
   end
 end

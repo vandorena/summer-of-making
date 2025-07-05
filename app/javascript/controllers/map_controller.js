@@ -1,13 +1,19 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-    static targets = ["canvas", "image", "pointsContainer", "zoomInButton", "zoomOutButton"]
+    static targets = ["canvas", "image", "pointsContainer", "zoomInButton", "zoomOutButton", "placeableProjects", "placeableCount", "tooltipTemplate"]
+    static values = {
+        projects: Array,
+        userId: Number,
+        updateUrl: String,
+    }
 
     MIN_ZOOM = 1
     MAX_ZOOM = 4
     DRAG_THRESHOLD = 5
 
     connect() {
+        // ... (existing connect logic)
         this.zoom = this.MIN_ZOOM
         this.isDragging = false
         this.animationFrameId = null
@@ -17,24 +23,172 @@ export default class extends Controller {
         this.startPos = { x: 0, y: 0 }
         this.element.style.cursor = 'crosshair'
         this.updateButtonStates()
+        this.draggedPoint = null
+
+        this.renderPoints()
     }
 
     disconnect() {
         if (this.animationFrameId) cancelAnimationFrame(this.animationFrameId)
     }
 
-    zoomIn() { this.setZoom(this.zoom + 0.5) }
-    zoomOut() { this.setZoom(this.zoom - 0.5) }
+    renderPoints() {
+        this.pointsContainerTarget.innerHTML = ''
+        this.projectsValue.forEach(project => {
+            const isOwner = project.user_id === this.userIdValue
 
-    setZoom(newZoom) {
-        const clampedZoom = Math.max(this.MIN_ZOOM, Math.min(newZoom, this.MAX_ZOOM))
-        if (clampedZoom === this.zoom) return
-        this.zoom = clampedZoom
-        this.currentTranslate = this.getClampedTranslate(this.currentTranslate, 0)
-        this.updateTransform(true, this.currentTranslate)
+            const pointWrapper = document.createElement("div");
+            pointWrapper.className = "absolute transform -translate-x-1/2 -translate-y-1/2 group";
+            pointWrapper.style.left = `${project.x}%`;
+            pointWrapper.style.top = `${project.y}%`;
+            pointWrapper.dataset.projectId = project.id;
+            
+            // Show tooltip on hover
+            pointWrapper.addEventListener('mouseenter', () => this.showTooltip(pointWrapper, project));
+            pointWrapper.addEventListener('mouseleave', () => this.hideTooltip(pointWrapper));
+
+
+            const point = document.createElement("div")
+            point.className = "w-3 h-3 rounded-full border-2 transition-transform duration-200 group-hover:scale-150"
+            point.dataset.projectId = project.id
+
+            const avatar = document.createElement("img");
+            avatar.src = project.user.avatar;
+            avatar.className = "w-8 h-8 rounded-full border-2 border-white absolute -top-10 left-1/2 transform -translate-x-1/2 transition-all opacity-0 group-hover:opacity-100 group-hover:-translate-y-2 pointer-events-none";
+
+            if (isOwner) {
+                point.classList.add("bg-green-500", "border-white", "cursor-grab")
+                point.dataset.action = "mousedown->map#startPointDrag"
+            } else {
+                point.classList.add("bg-nice-blue", "border-white")
+            }
+            
+            pointWrapper.appendChild(avatar);
+            pointWrapper.appendChild(point);
+
+            this.pointsContainerTarget.appendChild(pointWrapper)
+        })
     }
 
+    showTooltip(pointWrapper, project) {
+        // Clone the template
+        const tooltipClone = this.tooltipTemplateTarget.content.cloneNode(true).firstElementChild;
+
+        // Populate the data
+        tooltipClone.querySelector('[data-map-target="tooltipTitle"]').textContent = project.title;
+        tooltipClone.querySelector('[data-map-target="tooltipInfo"]').textContent = `${project.devlogs_count} updates • ${project.total_time_spent}`;
+        tooltipClone.querySelector('[data-map-target="tooltipLink"]').href = project.project_path;
+
+        // Append to the point wrapper
+        pointWrapper.appendChild(tooltipClone);
+    }
+    
+    hideTooltip(pointWrapper) {
+        const tooltip = pointWrapper.querySelector('.absolute.bottom-full');
+        if (tooltip) {
+            tooltip.remove();
+        }
+    }
+
+    // --- Card Drag and Drop Logic ---
+
+    startCardDrag(event) {
+        event.dataTransfer.setData("text/plain", event.currentTarget.dataset.projectId);
+        event.dataTransfer.effectAllowed = "move";
+    }
+
+    handleDragOver(event) {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = "move";
+    }
+
+    handleDrop(event) {
+        event.preventDefault();
+        const projectId = event.dataTransfer.getData("text/plain");
+        if (!projectId) return;
+
+        const imageRect = this.imageTarget.getBoundingClientRect()
+        const xPercent = ((event.clientX - imageRect.left) / imageRect.width) * 100
+        const yPercent = ((event.clientY - imageRect.top) / imageRect.height) * 100
+
+        if (xPercent < 0 || xPercent > 100 || yPercent < 0 || yPercent > 100) return
+
+        this.updateProjectPosition(projectId, xPercent, yPercent);
+    }
+
+    // ... (rest of the controller methods are the same as before)
+    // startDrag, startPointDrag, dragPoint, endPointDrag, drag, endDrag, updateProjectPosition, etc.
+    // Make sure updateProjectPosition can handle adding new points visually
+    
+    async updateProjectPosition(projectId, x, y) {
+        const url = this.updateUrlValue.replace(':id', projectId);
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+        try {
+            const response = await fetch(url, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-Token': csrfToken
+                },
+                body: JSON.stringify({ project: { x, y } })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.errors.join(', '));
+            }
+
+            const data = await response.json();
+            
+            // Update internal state
+            const projectIndex = this.projectsValue.findIndex(p => p.id == data.project.id);
+            if (projectIndex > -1) {
+                this.projectsValue[projectIndex].x = data.project.x;
+                this.projectsValue[projectIndex].y = data.project.y;
+            } else {
+                // Find project data from the draggable cards to add it
+                const card = this.placeableProjectsTarget.querySelector(`[data-project-id="${projectId}"]`);
+                if (card) {
+                    const project = {
+                        id: data.project.id,
+                        x: data.project.x,
+                        y: data.project.y,
+                        title: card.textContent.trim(),
+                        user_id: this.userIdValue,
+                        // Add defaults for tooltip, will be correct on next page load
+                        devlogs_count: 0, 
+                        total_time_spent: "0h 0m",
+                        project_path: `/projects/${data.project.id}`,
+                        user: {
+                            display_name: 'You',
+                            avatar: document.querySelector(".h-12.w-12.rounded-full.flex-shrink-0")?.src || ''
+                        }
+                    };
+                    this.projectsValue.push(project);
+                }
+            }
+
+            // Re-render all points
+            this.renderPoints();
+            
+            // Remove the card from the placeable list
+            const cardToRemove = this.placeableProjectsTarget.querySelector(`[data-project-id="${projectId}"]`);
+            if (cardToRemove) {
+                cardToRemove.remove();
+                const remaining = this.placeableProjectsTarget.children.length;
+                this.placeableCountTarget.textContent = `You can place ${remaining} more ${remaining === 1 ? 'project' : 'projects'}. Drag a card onto the map.`;
+            }
+
+        } catch (error) {
+            console.error('Failed to update project position:', error);
+            alert(`Error: ${error.message}`);
+        }
+    }
+    
     startDrag(event) {
+        if (this.draggedPoint) return
         if (this.animationFrameId) cancelAnimationFrame(this.animationFrameId)
         event.preventDefault()
         this.isDragging = true
@@ -46,7 +200,52 @@ export default class extends Controller {
         this.canvasTarget.style.transition = "none"
     }
 
+    startPointDrag(event) {
+        event.stopPropagation();
+        event.preventDefault();
+
+        this.draggedPoint = event.target.parentElement;
+        this.element.style.cursor = 'grabbing';
+        this.draggedPoint.classList.add("z-20");
+
+        const moveHandler = this.dragPoint.bind(this);
+        const upHandler = () => {
+            this.endPointDrag();
+            document.removeEventListener('mousemove', moveHandler);
+            document.removeEventListener('mouseup', upHandler);
+        };
+        document.addEventListener('mousemove', moveHandler);
+        document.addEventListener('mouseup', upHandler);
+    }
+    
+    dragPoint(event) {
+        if (!this.draggedPoint) return;
+        
+        const imageRect = this.imageTarget.getBoundingClientRect();
+        const xPercent = Math.max(0, Math.min(100, ((event.clientX - imageRect.left) / imageRect.width) * 100));
+        const yPercent = Math.max(0, Math.min(100, ((event.clientY - imageRect.top) / imageRect.height) * 100));
+
+        this.draggedPoint.style.left = `${xPercent}%`;
+        this.draggedPoint.style.top = `${yPercent}%`;
+    }
+
+    endPointDrag() {
+        if (!this.draggedPoint) return;
+
+        this.draggedPoint.classList.remove("z-20");
+        const point = this.draggedPoint.querySelector('[data-project-id]');
+        const x = parseFloat(this.draggedPoint.style.left);
+        const y = parseFloat(this.draggedPoint.style.top);
+        const projectId = point.dataset.projectId;
+
+        this.updateProjectPosition(projectId, x, y);
+
+        this.draggedPoint = null;
+        this.element.style.cursor = 'crosshair';
+    }
+
     drag(event) {
+        if (this.draggedPoint) return this.dragPoint(event);
         if (!this.isDragging) return
         event.preventDefault()
 
@@ -74,18 +273,24 @@ export default class extends Controller {
         this.currentTranslate = nextTranslate
         this.lastTimestamp = now
     }
-
+    
     endDrag(event) {
+        if (this.draggedPoint) return this.endPointDrag();
         if (!this.isDragging) return
         this.isDragging = false
         this.element.style.cursor = 'crosshair'
-        const totalDist = Math.hypot(event.clientX - this.startPos.x, event.clientY - this.startPos.y)
+        this.startInertia()
+    }
 
-        if (totalDist < this.DRAG_THRESHOLD) {
-            this.plot(event)
-        } else {
-            this.startInertia()
-        }
+    zoomIn() { this.setZoom(this.zoom + 0.5) }
+    zoomOut() { this.setZoom(this.zoom - 0.5) }
+
+    setZoom(newZoom) {
+        const clampedZoom = Math.max(this.MIN_ZOOM, Math.min(newZoom, this.MAX_ZOOM))
+        if (clampedZoom === this.zoom) return
+        this.zoom = clampedZoom
+        this.currentTranslate = this.getClampedTranslate(this.currentTranslate, 0)
+        this.updateTransform(true, this.currentTranslate)
     }
 
     startInertia() {
@@ -120,21 +325,6 @@ export default class extends Controller {
             this.animationFrameId = requestAnimationFrame(inertiaLoop)
         }
         this.animationFrameId = requestAnimationFrame(inertiaLoop)
-    }
-
-    plot(event) {
-        const imageRect = this.imageTarget.getBoundingClientRect()
-        const xPercent = ((event.clientX - imageRect.left) / imageRect.width) * 100
-        const yPercent = ((event.clientY - imageRect.top) / imageRect.height) * 100
-
-        if (xPercent < 0 || xPercent > 100 || yPercent < 0 || yPercent > 100) return
-        console.log({ x: xPercent.toFixed(2), y: yPercent.toFixed(2) })
-
-        const point = document.createElement("div")
-        point.className = "absolute w-3 h-3 bg-red-500 rounded-full border-2 border-white -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-        point.style.left = `${xPercent}%`
-        point.style.top = `${yPercent}%`
-        this.pointsContainerTarget.appendChild(point)
     }
 
     getClampedTranslate(translate, tolerance = 0) {

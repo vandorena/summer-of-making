@@ -48,4 +48,8 @@ class ProjectPolicy < ApplicationPolicy
   def unstake_stonks?
     update?
   end
+
+  def update_coordinates?
+    update?
+  end
 end
