@@ -42,11 +42,7 @@
   <div class="absolute bottom-4 left-4 z-20 bg-soft-bone p-4 card-pixel max-w-sm w-full">
     <h3 class="text-lg font-bold mb-2">Place a Project on the Map</h3>
     <p class="text-sm mb-2 text-saddle-taupe" data-map-target="placeableCount">
-      <% if @placeable_projects.any? %>
-        You can place <%= pluralize(@placeable_projects.count, "project") %>. Click a project below to select it, then click on the map to place it, or drag it directly.
-      <% else %>
-        No projects available to place. Ship a project first to add it to the map.
-      <% end %>
+      <%= placeable_projects_message(@placeable_projects.count) %>
     </p>
     <% if @placeable_projects.any? %>
       <div class="space-y-2 max-h-48 overflow-y-auto" data-map-target="placeableProjects">
