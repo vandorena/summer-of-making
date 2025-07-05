@@ -68,7 +68,7 @@ class Project < ApplicationRecord
   def shipped_once?
     ship_events.any?
   end
-  
+
   def coordinates_must_be_set_together
     if (x.present? && y.blank?) || (y.present? && x.blank?)
       errors.add(:base, "Both X and Y coordinates must be set, or neither.")
