@@ -21,6 +21,7 @@
     <%= link_to admin_readme_certifications_path, class: 'abtn secondary' do %>
       README certs <span class="pill"><%= ReadmeCertification.pending.size %></span>
     <% end %>
+    <%= link_to "voting dashboard", "/admin/voting_dashboard", class: 'abtn secondary' %>
   </div>
   <div style="margin: 2em; max-width: 800px;">
     <h2 style="color: var(--color-primary); margin-bottom: 1em;">Payout multiplier</h2>
