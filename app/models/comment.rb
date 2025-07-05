@@ -4,12 +4,13 @@
 #
 # Table name: comments
 #
-#  id         :bigint           not null, primary key
-#  content    :text
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  devlog_id  :bigint           not null
-#  user_id    :bigint           not null
+#  id           :bigint           not null, primary key
+#  content      :text
+#  rich_content :jsonb
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  devlog_id    :bigint           not null
+#  user_id      :bigint           not null
 #
 # Indexes
 #
