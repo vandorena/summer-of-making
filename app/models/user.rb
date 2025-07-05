@@ -75,8 +75,8 @@ class User < ApplicationRecord
                               client_secret: ENV.fetch("SLACK_CLIENT_SECRET", nil),
                               redirect_uri: redirect_uri,
                               code: code
-                            }
-    result = JSON.parse(response.body
+                            })
+    result = JSON.parse(response.body)
     unless result["ok"]
       Rails.logger.error("Slack OAuth error: #{result['error']}")
       raise StandardError, "Failed to authenticate with Slack: #{result['error']}"
