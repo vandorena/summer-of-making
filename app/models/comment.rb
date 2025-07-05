@@ -4,12 +4,12 @@
 #
 # Table name: comments
 #
-#  id           :bigint           not null, primary key
-#  rich_content :jsonb
-#  created_at   :datetime         not null
-#  updated_at   :datetime         not null
-#  devlog_id    :bigint           not null
-#  user_id      :bigint           not null
+#  id         :bigint           not null, primary key
+#  content    :text
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  devlog_id  :bigint           not null
+#  user_id    :bigint           not null
 #
 # Indexes
 #
@@ -22,35 +22,18 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class Comment < ApplicationRecord
-  include EmotesHelper
-  include ActionView::Helpers::SanitizeHelper
-
   belongs_to :user
   belongs_to :devlog, counter_cache: true
 
-  validates :rich_content, presence: true
+  validates :content, presence: true, length: { maximum: 1000 }, format: { with: /\A[^<>]*\z/, message: "must not contain HTML tags" }
 
   after_create :notify_devlog_author
 
   def display_content
-    sanitized_content = sanitize(render_rich_content,
-                                 tags: %w[a br code pre p em strong h1 h2 h3 h4 h5 h6 ul ol li blockquote span],
-                                 attributes: %w[href title class target])
-
-    parse_emotes(sanitized_content)
+    content.to_s
   end
 
   private
-
-  def render_rich_content
-    begin
-      parsed_rich_content = JSON.parse(rich_content)
-      return parsed_rich_content["content"] || "" if parsed_rich_content["type"] == "tiptap"
-      parsed_rich_content.to_s
-    rescue JSON::ParserError, TypeError
-      ""
-    end
-  end
 
   def notify_devlog_author
     return if devlog.user.slack_id.blank?
