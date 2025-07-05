@@ -4,50 +4,134 @@
 #
 # Table name: votes
 #
-#  id                   :bigint           not null, primary key
-#  explanation          :text             not null
-#  loser_demo_opened    :boolean          default(FALSE)
-#  loser_readme_opened  :boolean          default(FALSE)
-#  loser_repo_opened    :boolean          default(FALSE)
-#  music_played         :boolean
-#  time_spent_voting_ms :integer
-#  winner_demo_opened   :boolean          default(FALSE)
-#  winner_readme_opened :boolean          default(FALSE)
-#  winner_repo_opened   :boolean          default(FALSE)
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
-#  loser_id             :bigint
-#  user_id              :bigint           not null
-#  winner_id            :bigint           not null
+#  id                    :bigint           not null, primary key
+#  explanation           :text             not null
+#  invalid_reason        :text
+#  marked_invalid_at     :datetime
+#  music_played          :boolean
+#  project_1_demo_opened :boolean          default(FALSE)
+#  project_1_repo_opened :boolean          default(FALSE)
+#  project_2_demo_opened :boolean          default(FALSE)
+#  project_2_repo_opened :boolean          default(FALSE)
+#  status                :string           default("active"), not null
+#  time_spent_voting_ms  :integer
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  marked_invalid_by_id  :bigint
+#  project_1_id          :bigint
+#  project_2_id          :bigint
+#  ship_event_1_id       :bigint           not null
+#  ship_event_2_id       :bigint           not null
+#  user_id               :bigint           not null
 #
 # Indexes
 #
-#  index_votes_on_loser_id               (loser_id)
-#  index_votes_on_user_id                (user_id)
-#  index_votes_on_user_id_and_winner_id  (user_id,winner_id) UNIQUE
-#  index_votes_on_winner_id              (winner_id)
+#  index_votes_on_marked_invalid_at     (marked_invalid_at)
+#  index_votes_on_marked_invalid_by_id  (marked_invalid_by_id)
+#  index_votes_on_project_1_id          (project_1_id)
+#  index_votes_on_project_2_id          (project_2_id)
+#  index_votes_on_ship_event_1_id       (ship_event_1_id)
+#  index_votes_on_ship_event_2_id       (ship_event_2_id)
+#  index_votes_on_status                (status)
+#  index_votes_on_user_and_ship_events  (user_id,ship_event_1_id,ship_event_2_id) UNIQUE
+#  index_votes_on_user_id               (user_id)
 #
 # Foreign Keys
 #
-#  fk_rails_...  (loser_id => projects.id)
+#  fk_rails_...  (marked_invalid_by_id => users.id)
+#  fk_rails_...  (project_1_id => projects.id)
+#  fk_rails_...  (project_2_id => projects.id)
+#  fk_rails_...  (ship_event_1_id => ship_events.id)
+#  fk_rails_...  (ship_event_2_id => ship_events.id)
 #  fk_rails_...  (user_id => users.id)
-#  fk_rails_...  (winner_id => projects.id)
 #
 class Vote < ApplicationRecord
   belongs_to :user
-  belongs_to :winner, class_name: "Project"
-  belongs_to :loser, class_name: "Project"
+  belongs_to :project_1, class_name: "Project", optional: true
+  belongs_to :project_2, class_name: "Project", optional: true
+  belongs_to :ship_event_1, class_name: "ShipEvent"
+  belongs_to :ship_event_2, class_name: "ShipEvent"
+  belongs_to :marked_invalid_by, class_name: "User", optional: true
 
-  validates :explanation, presence: true, length: { minimum: 10 }
-  validates :user_id, uniqueness: { scope: :winner_id, message: "has already voted for this project" }
+  has_many :vote_changes, dependent: :destroy
 
-  attr_accessor :token
+  validates :explanation, presence: true, length: { minimum: 10, maximum: 2000 }, format: { with: /\A[^<>]*\z/, message: "nice try lmao" }
+  validates :status, inclusion: { in: %w[active invalid] }
 
-  def authorized_with_token?(token_data)
-    return false unless token_data
+  validates :user_id, uniqueness: {
+    scope: [ :ship_event_1_id, :ship_event_2_id ],
+    message: "You have already voted on this ship event pair"
+  }
 
-    token_data["user_id"] == user_id &&
-      token_data["project_id"].to_s == winner_id.to_s &&
-      Time.zone.parse(token_data["expires_at"]) > Time.current
+  attr_accessor :winning_project_id
+
+  scope :active, -> { where(status: "active") }
+  scope :invalid, -> { where(status: "invalid") }
+  scope :recent, -> { order(created_at: :desc) }
+
+  before_save :normalize_ship_event_order
+
+  after_create :process_vote_results
+
+  # Helper methods to get winner/loser/tied projects
+  def winner_project
+    winner_change = vote_changes.find_by(result: "win")
+    winner_change&.project
+  end
+
+  def loser_project
+    loser_change = vote_changes.find_by(result: "loss")
+    loser_change&.project
+  end
+
+  def tied_project_ids
+    vote_changes.where(result: "tie").pluck(:project_id)
+  end
+
+  def tied_projects
+    Project.where(id: tied_project_ids)
+  end
+
+  def is_tie?
+    vote_changes.where(result: "tie").exists?
+  end
+
+  def has_winner?
+    vote_changes.where(result: "win").exists?
+  end
+
+  def projects
+    vote_changes.includes(:project).map(&:project)
+  end
+
+  # ship event helper methods
+  def ship_events
+    [ ship_event_1, ship_event_2 ]
+  end
+
+  def ship_event_projects
+    [ ship_event_1.project, ship_event_2.project ]
+  end
+
+  private
+
+  def normalize_ship_event_order
+    # always store ship events with smaller ID first to prevent order-based replay attacks
+    if ship_event_1_id && ship_event_2_id && ship_event_1_id > ship_event_2_id
+      self.ship_event_1_id, self.ship_event_2_id = ship_event_2_id, ship_event_1_id
+    end
+  end
+
+  def mark_invalid!(reason, marked_by_user)
+    update!(
+      status: "invalid",
+      invalid_reason: reason,
+      marked_invalid_at: Time.current,
+      marked_invalid_by: marked_by_user
+    )
+  end
+
+  def process_vote_results
+    VoteProcessingService.new(self).process
   end
 end

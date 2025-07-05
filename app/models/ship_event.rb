@@ -18,6 +18,7 @@
 class ShipEvent < ApplicationRecord
   belongs_to :project
   has_one :ship_event_feedback
+  has_many :payouts, as: :payable
 
   after_create :maybe_create_ship_certification
 
@@ -38,6 +39,10 @@ class ShipEvent < ApplicationRecord
       Devlog.where(project: project)
             .where("created_at > ? AND created_at < ?", last_ship_date, created_at)
     end
+  end
+
+  def hours_covered
+    devlogs_since_last.sum(:last_hackatime_time).fdiv(3600)
   end
 
   private

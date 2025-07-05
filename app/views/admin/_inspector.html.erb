@@ -1,6 +1,12 @@
-<% if (params[:inspect] || Rails.env.development?) && current_user&.is_admin? %>
-<details style="border: 1px solid deeppink; display: inline-block">
-  <summary style="font-family: 'Comic Sans MS'"><%= record.model_name.human %> record #<%= record.id %></summary>
+<% if (params[:inspect] || Rails.env.development? || defined?(always_inspect)) && (current_user&.is_admin? || (defined?(show_in_impersonate) && current_impersonator&.is_admin?)) %>
+<details style="all: revert; border: 1px solid deeppink; display: inline-block; overflow-x: scroll; max-width: 1000px">
+  <summary style="all: revert; font-family: 'Comic Sans MS';">
+    <% if record.is_a?(ActiveRecord::Base) %>
+      <%= record.model_name.human %> record #<%= record.id %>
+    <% else %>
+    inspect <%= thing %>
+    <% end %>
+  </summary>
   <%== ap record %>
 </details>
 <% end %>

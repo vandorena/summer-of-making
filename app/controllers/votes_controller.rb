@@ -2,44 +2,71 @@
 
 class VotesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_projects, only: %i[new create]
+  before_action :set_projects, only: %i[new]
   before_action :check_identity_verification
 
-  before_action :redirect_to_locked, except: [ :locked ] # For the first week
+  before_action :redirect_to_locked, except: [ :locked ], unless: -> { current_user&.can_vote? }
 
   def new
     @vote = Vote.new
     @user_vote_count = current_user.votes.count
-
-    session[:vote_tokens] = {}
-
-    @projects.each do |project|
-      token = SecureRandom.hex(16)
-      session[:vote_tokens][token] = {
-        "project_id" => project.id,
-        "user_id" => current_user.id,
-        "expires_at" => 2.hours.from_now.iso8601
-      }
-    end
   end
 
   def create
-    token = params[:vote_token]
-    token_data = session[:vote_tokens]&.[](token)
+    ship_event_1_id = params[:vote][:ship_event_1_id]&.to_i
+    ship_event_2_id = params[:vote][:ship_event_2_id]&.to_i
+    signature = params[:vote][:signature]
 
-    @vote = current_user.votes.build(vote_params)
-
-    @vote.loser_id = @projects.find { |p| p.id != @vote.winner_id }.id if @projects.size == 2
-
-    unless @vote.authorized_with_token?(token_data)
-      redirect_to new_vote_path, alert: "Vote validation failed"
+    unless ship_event_1_id && ship_event_2_id && signature.present?
+      redirect_to new_vote_path, alert: "Missing vote information"
       return
     end
 
-    if @vote.save
-      session[:vote_tokens].delete(token)
+    # normalizing the order of the ship events because (5,10) and (10,5) are the same
+    verification_result = VoteSignatureService.verify_signature_with_ship_events(
+      signature, ship_event_1_id, ship_event_2_id, current_user.id
+    )
 
-      redirect_to new_vote_path, notice: "Vote Submitted!"
+    unless verification_result[:valid]
+      redirect_to new_vote_path, alert: "Invalid vote submission: #{verification_result[:error]}"
+      return
+    end
+
+    ship_events = ShipEvent.where(id: [ ship_event_1_id, ship_event_2_id ]).includes(:project)
+    if ship_events.size != 2
+      redirect_to new_vote_path, alert: "Invalid ship events selected"
+      return
+    end
+
+    @ship_events = ship_events.to_a
+    @projects = @ship_events.map(&:project)
+
+    @vote = current_user.votes.build(vote_params.except(:ship_event_1_id, :ship_event_2_id, :signature))
+    @vote.ship_event_1_id = ship_event_1_id
+    @vote.ship_event_2_id = ship_event_2_id
+
+    # Backward compatibility
+    @vote.project_1_id = @ship_events[0].project.id
+    @vote.project_2_id = @ship_events[1].project.id
+    # Handle tie case
+    @vote.winning_project_id = nil if @vote.winning_project_id == "tie"
+    # Validate that winning project is one of the two projects (for now, until we remove client-side selection)
+    if @vote.winning_project_id.present?
+      valid_project_ids = @projects.map(&:id)
+      unless valid_project_ids.include?(@vote.winning_project_id.to_i)
+        redirect_to new_vote_path, alert: "Invalid project selection"
+        return
+      end
+    end
+
+    if @vote.save
+      vote_result = if @vote.winning_project_id.nil?
+                     "Tie vote submitted!"
+      else
+                     "Vote submitted!"
+      end
+
+      redirect_to new_vote_path, notice: vote_result
     else
       redirect_to new_vote_path, alert: @vote.errors.full_messages.join(", ")
     end
@@ -72,37 +99,175 @@ class VotesController < ApplicationController
   end
 
   def set_projects
-    voted_winner_ids = current_user.votes.pluck(:winner_id)
-    voted_loser_ids = current_user.votes.pluck(:loser_id)
-    voted_project_ids = voted_winner_ids + voted_loser_ids
+    # Get projects that haven't been voted on by current user
+    voted_ship_event_ids = current_user.votes
+                                      .joins(vote_changes: { project: :ship_events })
+                                      .distinct
+                                      .pluck("ship_events.id")
 
-    # TODO: Make sure to check for is_shipped: true before launch
-    eligible_user_ids = Project
-                         .where.not(id: voted_project_ids)
-                         .where.not(user_id: current_user.id)
-                         .distinct
-                         .pluck(:user_id)
-                         .shuffle
-                         .first(2)
+    projects_with_latest_ship = Project
+                                  .joins(:ship_events)
+                                  .joins(:ship_certifications)
+                                  .includes(:banner_attachment, :ship_events,
+                                           user: :hackatime_stat,
+                                           devlogs: [ :user, :file_attachment ])
+                                  .where(ship_certifications: { judgement: :approved })
+                                  .where.not(user_id: current_user.id)
+                                  .where(
+                                    ship_events: {
+                                      id: ShipEvent.select("MAX(ship_events.id)")
+                                                  .where("ship_events.project_id = projects.id")
+                                                  .group("ship_events.project_id")
+                                                  .where.not(id: voted_ship_event_ids)
+                                    }
+                                  )
+                                  .distinct
 
-    if eligible_user_ids.size < 2
+    if projects_with_latest_ship.count < 2
       @projects = []
       return
     end
 
-    @projects = eligible_user_ids.map do |user_id|
-      Project
-        .where.not(id: voted_project_ids)
-        .where(user_id: user_id)
-        .order("RANDOM()")
-        .first
-    end.compact
+    eligible_projects = projects_with_latest_ship.to_a
+
+      projects_with_time = eligible_projects.map do |project|
+        latest_ship_event = project.ship_events.max_by(&:created_at)
+
+        ship_devlogs = project.devlogs.select do |devlog|
+          devlog.created_at < latest_ship_event.created_at
+        end
+
+        total_time_seconds = ship_devlogs.sum(&:last_hackatime_time)
+
+      {
+        project: project,
+        total_time: total_time_seconds,
+        ship_event: latest_ship_event,
+        is_paid: latest_ship_event.payouts.exists?,
+        ship_date: latest_ship_event.created_at
+      }
+    end
+
+    # sort by ship date – disabled until genesis
+
+    # projects_with_time.sort_by! { |p| p[:ship_date] }
+
+    unpaid_projects = projects_with_time.select { |p| !p[:is_paid] }
+    paid_projects = projects_with_time.select { |p| p[:is_paid] }
+
+    # we need at least 1 unpaid project and 1 other project (status doesn't matter)
+    if unpaid_projects.empty? || projects_with_time.size < 2
+      @projects = []
+      return
+    end
+
+    selected_projects = []
+    used_user_ids = Set.new
+    used_repo_links = Set.new
+    max_attempts = 25 # infinite loop!
+
+    attempts = 0
+    # TODO: change to weighted_sample after genesis
+    while selected_projects.size < 2 && attempts < max_attempts
+      attempts += 1
+
+      # pick a random unpaid project first
+      if selected_projects.empty?
+        available_unpaid = unpaid_projects.select { |p| !used_user_ids.include?(p[:project].user_id) && !used_repo_links.include?(p[:project].repo_link) }
+        first_project_data = available_unpaid.sample
+        next unless first_project_data
+
+        selected_projects << first_project_data[:project]
+        used_user_ids << first_project_data[:project].user_id
+        used_repo_links << first_project_data[:project].repo_link if first_project_data[:project].repo_link.present?
+        first_time = first_project_data[:total_time]
+
+        # find projects within the constraints (set to 30%)
+        min_time = first_time * 0.7
+        max_time = first_time * 1.3
+
+        compatible_projects = projects_with_time.select do |p|
+          !used_user_ids.include?(p[:project].user_id) &&
+          !used_repo_links.include?(p[:project].repo_link) &&
+          p[:total_time] >= min_time &&
+          p[:total_time] <= max_time
+        end
+
+        if compatible_projects.any?
+          second_project_data = compatible_projects.sample
+          selected_projects << second_project_data[:project]
+          used_user_ids << second_project_data[:project].user_id
+          used_repo_links << second_project_data[:project].repo_link if second_project_data[:project].repo_link.present?
+        else
+          selected_projects.clear
+          used_user_ids.clear
+          used_repo_links.clear
+        end
+      end
+    end
+
+    # js getting smtth if after 25 attemps we have nothing
+    if selected_projects.size < 2 && unpaid_projects.any?
+      first_project_data = unpaid_projects.sample
+      remaining_projects = projects_with_time.reject { |p|
+        p[:project].user_id == first_project_data[:project].user_id ||
+        (p[:project].repo_link.present? && p[:project].repo_link == first_project_data[:project].repo_link)
+      }
+
+      if remaining_projects.any?
+        second_project_data = remaining_projects.sample
+        selected_projects = [ first_project_data[:project], second_project_data[:project] ]
+      end
+    end
+
+    if selected_projects.size < 2
+      @projects = []
+      return
+    end
+
+    @projects = selected_projects
+    @ship_events = selected_projects.map do |project|
+      project.ship_events.max_by(&:created_at)
+    end
+
+    if @ship_events.size == 2
+      @vote_signature = VoteSignatureService.generate_signature(
+        @ship_events[0].id,
+        @ship_events[1].id,
+        current_user.id
+      )
+    end
   end
 
   def vote_params
-    params.expect(vote: %i[winner_id explanation
-                           winner_demo_opened winner_readme_opened winner_repo_opened
-                           loser_demo_opened loser_readme_opened loser_repo_opened
-                           time_spent_voting_ms music_played])
+    params.expect(vote: %i[winning_project_id explanation
+                           project_1_demo_opened project_1_repo_opened
+                           project_2_demo_opened project_2_repo_opened
+                           time_spent_voting_ms music_played
+                           ship_event_1_id ship_event_2_id signature])
+  end
+
+  # this function is what we used in High seas
+  def weighted_sample(projects)
+    return nil if projects.empty?
+    return projects.first if projects.size == 1
+
+    # Create weights where earlier projects (index 0) have higher weight
+    # Weight decreases exponentially: first project gets weight 1.0, second gets 0.95, third gets 0.90, etc.
+    weights = projects.map.with_index { |_, index| 0.95 ** index }
+    total_weight = weights.sum
+
+    # Generate random number between 0 and total_weight
+    random = rand * total_weight
+
+    # Find the project corresponding to this random weight
+    cumulative_weight = 0
+    projects.each_with_index do |project, index|
+      cumulative_weight += weights[index]
+      return project if random <= cumulative_weight
+    end
+
+    # Fallback (should never reach here)
+    projects.first
   end
 end

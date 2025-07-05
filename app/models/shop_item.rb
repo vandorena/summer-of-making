@@ -7,6 +7,7 @@
 #  id                         :bigint           not null, primary key
 #  agh_contents               :jsonb
 #  description                :string
+#  enabled                    :boolean
 #  enabled_au                 :boolean          default(FALSE)
 #  enabled_ca                 :boolean          default(FALSE)
 #  enabled_eu                 :boolean          default(FALSE)
@@ -30,6 +31,7 @@
 #  price_offset_xx            :decimal(6, 2)    default(0.0)
 #  requires_black_market      :boolean
 #  show_in_carousel           :boolean
+#  site_action                :integer
 #  stock                      :integer
 #  ticket_cost                :decimal(6, 2)
 #  type                       :string
@@ -40,6 +42,10 @@
 #
 class ShopItem < ApplicationRecord
   include Shop::Regionalizable
+
+  def self.fulfill_immediately?
+    false
+  end
 
   MANUAL_FULFILLMENT_TYPES = [
     ShopItem::ThirdPartyPhysical,
@@ -57,9 +63,11 @@ class ShopItem < ApplicationRecord
   scope :not_black_market, -> { where(requires_black_market: [ false, nil ]) }
   scope :shown_in_carousel, -> { where(show_in_carousel: true) }
   scope :manually_fulfilled, -> { where(type: MANUAL_FULFILLMENT_TYPES) }
+  scope :enabled, -> { where(enabled: true) }
 
   def fulfill!(shop_order)
-    shop_order.queue_for_nightly!
+    shop_order.queue_for_nightly
+    shop_order.save!
   end
 
   validates_presence_of :ticket_cost, :name, :description

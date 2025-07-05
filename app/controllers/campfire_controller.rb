@@ -29,11 +29,24 @@ class CampfireController < ApplicationController
 
     # Hackatime dashboard data
     if @account_status[:hackatime_setup] && @user.hackatime_stat.present?
-      @hackatime_dashboard = {
-        total_time: @user.hackatime_stat.total_seconds_across_all_projects,
-        today_time: @user.hackatime_stat.today_seconds_across_all_projects,
-        has_time_recorded: @user.hackatime_stat.total_seconds_across_all_projects > 0
-      }
+      begin
+        @hackatime_dashboard = {
+          total_time: @user.hackatime_stat.total_seconds_across_all_projects,
+          today_time: @user.hackatime_stat.today_seconds_across_all_projects,
+          has_time_recorded: @user.hackatime_stat.total_seconds_across_all_projects > 0,
+          error: false
+        }
+      rescue => e
+        Rails.logger.error("Failed to fetch Hackatime dashboard data: #{e.message}")
+        Honeybadger.notify(e)
+        @hackatime_dashboard = {
+          total_time: 0,
+          today_time: 0,
+          has_time_recorded: false,
+          error: true,
+          error_message: "Unable to connect to Hackatime right now"
+        }
+      end
     end
   end
 
@@ -44,13 +57,28 @@ class CampfireController < ApplicationController
     # Build dashboard data if hackatime is set up
     dashboard_data = nil
     if current_user.has_hackatime? && current_user.hackatime_stat.present?
-      dashboard_data = {
-        total_time: current_user.hackatime_stat.total_seconds_across_all_projects,
-        today_time: current_user.hackatime_stat.today_seconds_across_all_projects,
-        has_time_recorded: current_user.hackatime_stat.total_seconds_across_all_projects > 0,
-        total_time_formatted: current_user.format_seconds(current_user.hackatime_stat.total_seconds_across_all_projects),
-        today_time_formatted: current_user.format_seconds(current_user.hackatime_stat.today_seconds_across_all_projects)
-      }
+      begin
+        dashboard_data = {
+          total_time: current_user.hackatime_stat.total_seconds_across_all_projects,
+          today_time: current_user.hackatime_stat.today_seconds_across_all_projects,
+          has_time_recorded: current_user.hackatime_stat.total_seconds_across_all_projects > 0,
+          total_time_formatted: current_user.format_seconds(current_user.hackatime_stat.total_seconds_across_all_projects),
+          today_time_formatted: current_user.format_seconds(current_user.hackatime_stat.today_seconds_across_all_projects),
+          error: false
+        }
+      rescue => e
+        Rails.logger.error("Failed to fetch Hackatime status data: #{e.message}")
+        Honeybadger.notify(e)
+        dashboard_data = {
+          total_time: 0,
+          today_time: 0,
+          has_time_recorded: false,
+          total_time_formatted: "0h 0m",
+          today_time_formatted: "0h 0m",
+          error: true,
+          error_message: "Unable to connect to Hackatime right now"
+        }
+      end
     end
 
     render json: {

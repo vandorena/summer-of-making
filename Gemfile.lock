@@ -105,9 +105,11 @@ GEM
       faraday (>= 1.0, < 3.0)
       faraday-net_http_persistent
       net-http-persistent
-    annotaterb (4.15.0)
+    annotaterb (4.16.0)
+      activerecord (>= 6.0.0)
+      activesupport (>= 6.0.0)
     ast (2.4.3)
-    avo (3.21.1)
+    avo (3.22.0)
       actionview (>= 6.1)
       active_link_to
       activerecord (>= 6.1)
@@ -126,18 +128,18 @@ GEM
     avo-heroicons (0.1.1)
     awesome_print (1.9.2)
     aws-eventstream (1.4.0)
-    aws-partitions (1.1116.0)
-    aws-sdk-core (3.225.2)
+    aws-partitions (1.1125.0)
+    aws-sdk-core (3.226.2)
       aws-eventstream (~> 1, >= 1.3.0)
       aws-partitions (~> 1, >= 1.992.0)
       aws-sigv4 (~> 1.9)
       base64
       jmespath (~> 1, >= 1.6.1)
       logger
-    aws-sdk-kms (1.105.0)
+    aws-sdk-kms (1.106.0)
       aws-sdk-core (~> 3, >= 3.225.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-s3 (1.189.1)
+    aws-sdk-s3 (1.192.0)
       aws-sdk-core (~> 3, >= 3.225.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.5)
@@ -184,7 +186,7 @@ GEM
     crass (1.0.6)
     csv (3.3.5)
     date (3.4.1)
-    debug (1.10.0)
+    debug (1.11.0)
       irb (~> 1.10)
       reline (>= 0.3.8)
     device_detector (1.1.3)
@@ -214,11 +216,11 @@ GEM
     faraday-mashify (1.0.0)
       faraday (~> 2.0)
       hashie
-    faraday-multipart (1.1.0)
+    faraday-multipart (1.1.1)
       multipart-post (~> 2.0)
     faraday-net_http (3.4.1)
       net-http (>= 0.5.0)
-    faraday-net_http_persistent (2.3.0)
+    faraday-net_http_persistent (2.3.1)
       faraday (~> 2.5)
       net-http-persistent (>= 4.0.4, < 5)
     ferrum (0.17.1)
@@ -240,6 +242,9 @@ GEM
     flamegraph (0.9.5)
     flipper (1.3.4)
       concurrent-ruby (< 2)
+    flipper-active_record (1.3.4)
+      activerecord (>= 4.2, < 9)
+      flipper (~> 1.3.4)
     flipper-ui (1.3.4)
       erubi (>= 1.0.0, < 2.0.0)
       flipper (~> 1.3.4)
@@ -260,7 +265,7 @@ GEM
     groupdate (6.7.0)
       activesupport (>= 7.1)
     hashie (5.0.0)
-    honeybadger (5.28.0)
+    honeybadger (5.29.1)
       logger
       ostruct
     i18n (1.14.7)
@@ -285,7 +290,7 @@ GEM
       activesupport (>= 5.0.0)
     jmespath (1.6.2)
     json (2.12.2)
-    kamal (2.6.1)
+    kamal (2.7.0)
       activesupport (>= 7.0)
       base64 (~> 0.2)
       bcrypt_pbkdf (~> 1.0)
@@ -312,7 +317,7 @@ GEM
       net-pop
       net-smtp
     marcel (1.0.4)
-    matrix (0.4.2)
+    matrix (0.4.3)
     memory_profiler (1.1.0)
     meta-tags (2.22.1)
       actionpack (>= 6.0.0, < 8.1)
@@ -339,7 +344,7 @@ GEM
       uri
     net-http-persistent (4.0.6)
       connection_pool (~> 2.2, >= 2.2.4)
-    net-imap (0.5.8)
+    net-imap (0.5.9)
       date
       net-protocol
     net-pop (0.1.2)
@@ -372,7 +377,7 @@ GEM
       faraday (>= 1.0, < 3.0)
       faraday-net_http_persistent
       net-http-persistent
-    ostruct (0.6.1)
+    ostruct (0.6.2)
     pagy (9.3.4)
     parallel (1.27.0)
     parser (3.3.8.0)
@@ -464,7 +469,7 @@ GEM
       ffi (~> 1.0)
     rbs (3.9.4)
       logger
-    rdoc (6.14.0)
+    rdoc (6.14.2)
       erb
       psych (>= 4.0.0)
     redcarpet (3.6.1)
@@ -472,7 +477,7 @@ GEM
     reline (0.6.1)
       io-console (~> 0.5)
     rexml (3.4.1)
-    rubocop (1.76.1)
+    rubocop (1.77.0)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.1.0)
@@ -480,7 +485,7 @@ GEM
       parser (>= 3.3.0.2)
       rainbow (>= 2.2.2, < 4.0)
       regexp_parser (>= 2.9.3, < 3.0)
-      rubocop-ast (>= 1.45.0, < 2.0)
+      rubocop-ast (>= 1.45.1, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 2.4.0, < 4.0)
     rubocop-ast (1.45.1)
@@ -500,7 +505,7 @@ GEM
       rubocop (>= 1.72)
       rubocop-performance (>= 1.24)
       rubocop-rails (>= 2.30)
-    ruby-lsp (0.24.1)
+    ruby-lsp (0.24.2)
       language_server-protocol (~> 3.17.0)
       prism (>= 1.2, < 2.0)
       rbs (>= 3, < 5)
@@ -519,7 +524,7 @@ GEM
       crass (~> 1.0.2)
       nokogiri (>= 1.16.8)
     securerandom (0.4.1)
-    selenium-webdriver (4.33.0)
+    selenium-webdriver (4.34.0)
       base64 (~> 0.2)
       logger (~> 1.4)
       rexml (~> 3.2, >= 3.2.5)
@@ -535,7 +540,7 @@ GEM
       hashie
       logger
     smart_properties (1.17.0)
-    solid_cable (3.0.8)
+    solid_cable (3.0.11)
       actioncable (>= 7.2)
       activejob (>= 7.2)
       activerecord (>= 7.2)
@@ -551,7 +556,7 @@ GEM
       fugit (~> 1.11.0)
       railties (>= 7.1)
       thor (~> 1.3.1)
-    sorbet-runtime (0.5.12176)
+    sorbet-runtime (0.5.12219)
     sshkit (1.24.0)
       base64
       logger
@@ -568,17 +573,17 @@ GEM
     tailwindcss-rails (4.2.3)
       railties (>= 7.0.0)
       tailwindcss-ruby (~> 4.0)
-    tailwindcss-ruby (4.1.10)
-    tailwindcss-ruby (4.1.10-aarch64-linux-gnu)
-    tailwindcss-ruby (4.1.10-aarch64-linux-musl)
-    tailwindcss-ruby (4.1.10-arm64-darwin)
-    tailwindcss-ruby (4.1.10-x86_64-linux-gnu)
-    tailwindcss-ruby (4.1.10-x86_64-linux-musl)
+    tailwindcss-ruby (4.1.11)
+    tailwindcss-ruby (4.1.11-aarch64-linux-gnu)
+    tailwindcss-ruby (4.1.11-aarch64-linux-musl)
+    tailwindcss-ruby (4.1.11-arm64-darwin)
+    tailwindcss-ruby (4.1.11-x86_64-linux-gnu)
+    tailwindcss-ruby (4.1.11-x86_64-linux-musl)
     thor (1.3.2)
-    thruster (0.1.13)
-    thruster (0.1.13-aarch64-linux)
-    thruster (0.1.13-arm64-darwin)
-    thruster (0.1.13-x86_64-linux)
+    thruster (0.1.14)
+    thruster (0.1.14-aarch64-linux)
+    thruster (0.1.14-arm64-darwin)
+    thruster (0.1.14-x86_64-linux)
     timeout (0.4.3)
     turbo-rails (2.0.16)
       actionpack (>= 7.1.0)
@@ -644,8 +649,9 @@ DEPENDENCIES
   erb_lint
   ferrum_pdf (~> 0.3.0)
   flamegraph
-  flipper (~> 1.3)
-  flipper-ui (~> 1.3)
+  flipper (= 1.3.4)
+  flipper-active_record (= 1.3.4)
+  flipper-ui (= 1.3.4)
   geocoder
   groupdate (~> 6.6)
   honeybadger (~> 5.28)
@@ -656,6 +662,7 @@ DEPENDENCIES
   kamal
   lz_string (~> 0.3.0)
   memory_profiler
+  mini_magick (~> 5.2)
   mission_control-jobs
   norairrecord
   pagy

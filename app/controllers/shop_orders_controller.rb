@@ -11,7 +11,7 @@ class ShopOrdersController < ApplicationController
 
   def new
     @order = ShopOrder.new
-    @regionalization_enabled = Flipper.enabled?(:shop_regionalization)
+    @regionalization_enabled = true
     @selected_region = @regionalization_enabled ? determine_user_region : nil
     @regional_price = @regionalization_enabled ? @item.price_for_region(@selected_region) : @item.ticket_cost
 
@@ -31,15 +31,17 @@ class ShopOrdersController < ApplicationController
 
     # Check if user can afford this item at regional price
     if @regional_price.present? && @regional_price > 0 && current_user.balance < @regional_price
-      redirect_to shop_path, alert: "You don't have enough tickets to purchase #{@item.name}. You need #{@regional_price - current_user.balance} more tickets."
+      return redirect_to shop_path, alert: "You don't have enough tickets to purchase #{@item.name}. You need #{@regional_price - current_user.balance} more tickets."
       nil
     end
+
+    render :new_black_market, layout: "black_market" if @item.requires_black_market?
   end
 
   def create
     @order = current_user.shop_orders.build(shop_order_params)
     @order.shop_item = @item
-    @regionalization_enabled = Flipper.enabled?(:shop_regionalization)
+    @regionalization_enabled = true
     @selected_region = @regionalization_enabled ? determine_user_region : nil
     @regional_price = @regionalization_enabled ? @item.price_for_region(@selected_region) : @item.ticket_cost
     @order.frozen_item_price = @regional_price
@@ -55,6 +57,9 @@ class ShopOrdersController < ApplicationController
     end
 
     if @order.save
+      if @item.class.fulfill_immediately?
+        @item.fulfill!(@order)
+      end
       if @item.is_a? ShopItem::FreeStickers
         ahoy.track "tutorial_step_free_stickers_ordered", user_id: current_user.id, order_id: @order.id
         flash[:success] = "We'll send your stickers out when your verification is approved!"
@@ -65,6 +70,11 @@ class ShopOrdersController < ApplicationController
     else
       render :new, status: :unprocessable_entity
     end
+
+  rescue StandardError => e
+    uuid = Honeybadger.notify(e)
+    flash[:alert] = "error! #{e.message} – report #{uuid} plz"
+    redirect_to(@item.requires_black_market? ? black_market_path : shop_path)
   end
 
   private
@@ -109,7 +119,7 @@ class ShopOrdersController < ApplicationController
   end
 
   def set_shop_item
-    scope = ShopItem.all
+    scope = ShopItem.enabled
     scope = scope.not_black_market unless current_user.has_black_market?
     @item = scope.find(params[:id])
   rescue ActiveRecord::RecordNotFound

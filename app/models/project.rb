@@ -6,6 +6,7 @@
 #
 #  id                     :bigint           not null, primary key
 #  category               :string
+#  certification_type     :integer
 #  demo_link              :string
 #  description            :text
 #  devlogs_count          :integer          default(0), not null
@@ -17,6 +18,7 @@
 #  repo_link              :string
 #  title                  :string
 #  used_ai                :boolean
+#  views_count            :integer          default(0), not null
 #  x                      :float
 #  y                      :float
 #  ysws_submission        :boolean          default(FALSE), not null
@@ -28,7 +30,8 @@
 # Indexes
 #
 #  index_projects_on_is_shipped  (is_shipped)
-#  index_projects_on_user_id     (user_id)
+#  index_projects_on_user_id         (user_id)
+#  index_projects_on_views_count  (views_count)
 #  index_projects_on_x_and_y     (x,y)
 #
 # Foreign Keys
@@ -49,8 +52,8 @@ class Project < ApplicationRecord
   has_many :ship_certifications
   has_many :readme_certifications
 
-  has_many :won_votes, class_name: "Vote", foreign_key: "winner_id"
-  has_many :lost_votes, class_name: "Vote", foreign_key: "loser_id"
+  has_many :won_votes, class_name: "Vote", foreign_key: "winning_project_id"
+  has_many :vote_changes, dependent: :destroy
 
   has_many :timer_sessions
 
@@ -76,27 +79,46 @@ class Project < ApplicationRecord
 
   default_scope { where(is_deleted: false) }
 
+  scope :with_ship_event, -> { joins(:ship_events) }
+
   def self.with_deleted
     unscoped
-  end
-
-  def self.find_with_deleted(id)
-    with_deleted.find(id)
   end
 
   scope :pending_certification, -> {
     joins(:ship_certifications).where(ship_certifications: { judgement: "pending" })
   }
 
-  validates :title, :description, :category, presence: true
+  validates :title, presence: true, length: { maximum: 200 }, format: { with: /\A[^<>]*\z/, message: "nice try lmao" }
+  validates :description, presence: true, length: { maximum: 2500 }, format: { with: /\A[^<>]*\z/, message: "nice try lmao" }
+  validates :category, presence: true
 
   validates :readme_link, :demo_link, :repo_link,
-            format: { with: URI::DEFAULT_PARSER.make_regexp, message: "must be a valid URL" },
+            format: { with: /\A(?:https?:\/\/).*\z/i, message: "must be a valid HTTP or HTTPS URL" },
             allow_blank: true
 
-  validates :category,
-            inclusion: { in: [ "Web App", "Mobile App", "Command Line Tool", "Video Game", "Something else" ],
-                         message: "%<value>s is not a valid category" }
+  validate :link_check
+
+  before_save :convert_github_blob_urls
+
+  CATEGORIES = [ "Web App", "Mobile App", "Command Line Tool", "Video Game", "Something else" ]
+  validates :category, inclusion: { in: CATEGORIES, message: "%<value>s is not a valid category" }
+
+  enum :certification_type, {
+    cert_other: 0,
+    static_site: 1,
+    web_app: 2,
+    browser_extension: 3,
+    userscript: 4,
+    iphone_app: 5,
+    android_app: 6,
+    desktop_app: 7,
+    command_line_tool: 8,
+    game_mod: 9,
+    chat_bot: 10,
+    video: 11,
+    hardware_or_pcb_project: 12
+  }
 
   enum :ysws_type, {
     athena: "Athena",
@@ -117,6 +139,7 @@ class Project < ApplicationRecord
     waffles: "Waffles",
     waveband: "Waveband",
     fixit: "FIX IT!",
+    twist: "Twist",
     other: "Other"
   }
 
@@ -129,14 +152,27 @@ class Project < ApplicationRecord
   before_save :filter_hackatime_keys
 
   before_save :remove_duplicate_hackatime_keys
+  before_save :set_default_certification_type
 
   def total_votes
-    won_votes.count + lost_votes.count
+    vote_changes.count
   end
 
-  delegate :count, to: :won_votes, prefix: true
+  def wins_count
+    vote_changes.wins.count
+  end
 
-  delegate :count, to: :lost_votes, prefix: true
+  def losses_count
+    vote_changes.losses.count
+  end
+
+  def ties_count
+    vote_changes.ties.count
+  end
+
+  def current_elo_rating
+    rating
+  end
 
   def hackatime_total_time
     return 0 unless user.has_hackatime? && hackatime_project_keys.present?
@@ -207,6 +243,14 @@ class Project < ApplicationRecord
       banner: {
         met: banner.present?,
         message: "Project must have a banner image."
+      },
+      previous_payout: {
+        met: latest_ship_certification&.rejected? || unpaid_shipevents_since_last_payout.empty?,
+        message: "Previous ship event must be paid out before shipping again."
+      },
+      minimum_time: {
+        met: ship_events.empty? || devlogs_since_last_ship.sum(:seconds_coded) >= 3600,
+        message: "Project must have at least 1 hour of tracked time since last ship."
       }
     }
   end
@@ -250,6 +294,69 @@ class Project < ApplicationRecord
     false
   end
 
+  def unpaid_shipevents_since_last_payout
+    ShipEvent.where(project: self)
+             .left_joins(:payouts)
+             .where(payouts: { id: nil })
+             .order("ship_events.created_at")
+  end
+
+  def self.cumulative_elo_bounds_at_vote_count(count)
+    votes = VoteChange.where("project_vote_count <= ?", count)
+
+    col = :elo_after
+    [ votes.minimum(col), votes.maximum(col) ]
+  end
+
+  def calculate_payout
+    vote_count = VoteChange.where(project: self).maximum(:project_vote_count)
+    min, max = Project.cumulative_elo_bounds_at_vote_count vote_count
+
+    pc = unlerp(min, max, rating)
+
+    mult = Payout.calculate_multiplier pc
+
+    puts "mult", mult
+
+    hours = devlogs.sum(:seconds_coded).fdiv(3600)
+    puts "hours", hours
+
+    payout = hours * mult
+  end
+
+  def issue_payouts
+    ship_events.each_with_index do |ship, idx|
+      next_ship_created_at = ship_events[idx + 1]&.created_at || Float::INFINITY
+      changes = vote_changes.where("created_at < ?", next_ship_created_at).where("project_vote_count <= ?", Payout::VOTE_COUNT_REQUIRED)
+
+      next if changes.count < Payout::VOTE_COUNT_REQUIRED
+
+      min, max = Project.cumulative_elo_bounds_at_vote_count Payout::VOTE_COUNT_REQUIRED
+
+      rating_at_vote_count = changes.last.elo_after
+      pc = unlerp(min, max, rating_at_vote_count)
+
+      puts "FKDF", pc, min, max, rating_at_vote_count
+
+      mult = Payout.calculate_multiplier pc
+
+      hours = ship.hours_covered
+
+      amount = (mult * hours).ceil
+
+      current_payout_sum = ship.payouts.sum(:amount)
+      current_payout_difference = amount - current_payout_sum
+
+      next if current_payout_difference.zero?
+
+      reason = "Payout#{" recalculation" if ship.payouts.count > 0} for #{title}'s #{ship.created_at} ship."
+
+      payout = Payout.create!(amount: current_payout_difference, payable: ship, user:, reason:)
+
+      puts "PAYOUTCREASED(#{payout.id}) ship.id:#{ship.id} min:#{min} max:#{max} rating_at_vote_count:#{rating_at_vote_count} pc:#{pc} mult:#{mult} hours:#{hours} amount:#{amount} current_payout_sum:#{current_payout_sum} current_payout_difference:#{current_payout_difference}"
+    end
+  end
+
   private
 
   def set_default_rating
@@ -276,5 +383,58 @@ class Project < ApplicationRecord
     return if readme_certifications.exists?
 
     readme_certifications.create!
+  end
+
+  def unlerp(start, stop, value)
+    return 0.0 if start == stop
+    (value - start) / (stop - start).to_f
+  end
+
+  def set_default_certification_type
+    self.certification_type = :cert_other if certification_type.blank?
+  end
+
+  private
+
+  def convert_github_blob_urls
+    convert_github_blob_url_for(:readme_link)
+    convert_github_blob_url_for(:repo_link) if repo_link.present? && readme_link.blank?
+  end
+
+  def convert_github_blob_url_for(field)
+    url = send(field)
+    return if url.blank?
+
+    converted_url = self.class.convert_github_blob_to_raw(url)
+    send("#{field}=", converted_url) if converted_url != url
+  end
+
+  def self.convert_github_blob_to_raw(url)
+    return url if url.blank?
+
+    if match = url.match(%r{^https://github\.com/([^/]+)/([^/]+)/blob/([^/]+)/(.+)$})
+      owner, repo, branch, file_path = match.captures
+      "https://raw.githubusercontent.com/#{owner}/#{repo}/refs/heads/#{branch}/#{file_path}"
+    else
+      url
+    end
+  end
+
+  private
+
+  def link_check
+    urls = [ readme_link, demo_link, repo_link ]
+    urls.each do |url|
+      next if url.blank?
+      begin
+        uri = URI.parse(url)
+        host = uri.host
+        if host =~ /^(localhost|127\.0\.0\.1|::1)$/i || host =~ /^(\d{1,3}\.){3}\d{1,3}$/
+          errors.add(:base, "We can not accept that type of link!")
+        end
+      rescue URI::InvalidURIError
+        # other things will handle this
+      end
+    end
   end
 end

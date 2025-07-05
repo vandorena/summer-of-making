@@ -1,13 +1,4 @@
-<%= render layout: "shared/container", locals: {
-  full_height: false,
-  attr: {
-    class: "fixed bottom-0 left-0 right-0 z-10",
-    data: {
-      action: "mouseover->sidebar#handleMouseEnter mouseleave->sidebar#handleMouseExit"
-    }
-  }
-} do %>
-  <div class="flex justify-around -m-4">
+  <div class="relative flex p-4 border-t-2 border-[#d7bc9a] justify-around" style="background: radial-gradient(circle at 65% 20%, #F6DBBA, #E4DCC6 50%, #F6DBBA 100%);">
   <%= link_to campfire_path, class: "flex flex-col items-center #{"opacity-50 pointer-events-none" unless tab_unlocked?(:campfire)} #{'text-saddle-taupe' if current_page?(campfire_path)}" do %>
     <%= inline_svg "icons/campfire.svg", class: "h-8 w-8" %>
     <span class="text-xs mt-1">Campfire</span>
@@ -32,5 +23,4 @@
     <%= inline_svg "icons/shop.svg", class: "h-8 w-8" %>
     <span class="text-xs mt-1">Shop</span>
   <% end %>
-</div>
-<% end %>
+  </div>

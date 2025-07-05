@@ -3,7 +3,7 @@
 class UsersController < ApplicationController
   before_action :authenticate_api_key, only: [ :check_user ]
   before_action :authenticate_user!,
-                only: %i[refresh_hackatime check_hackatime_connection]
+                only: %i[refresh_hackatime check_hackatime_connection hackatime_auth_redirect identity_vault_callback]
 
   def check_user
     user = User.find_by(slack_id: params[:slack_id])
@@ -41,6 +41,11 @@ class UsersController < ApplicationController
   def identity_vault_callback
     begin
       current_user.link_identity_vault_callback(identity_vault_callback_url, params[:code])
+      begin
+        current_user.sync_slack_id_into_idv!
+      rescue => e
+        Honeybadger.notify(e)
+      end
       ahoy.track "tutorial_step_identity_vault_linked", user_id: current_user.id
     rescue StandardError => e
       uuid = Honeybadger.notify(e)
@@ -58,29 +63,84 @@ class UsersController < ApplicationController
   end
 
   def hackatime_auth_redirect
-    redirect_to root_path, notice: "huh?" if current_user.has_hackatime?
+    if current_user.has_hackatime?
+      redirect_to root_path, notice: "You're already connected to Hackatime!"
+      return
+    end
 
     ahoy.track "tutorial_step_hackatime_redirect", user_id: current_user.id
 
-    res = Faraday.new do |f|
-      f.request :url_encoded
-      f.response :json, parser_options: { symbolize_names: true }
-      f.headers["Authorization"] = "Bearer #{Rails.application.credentials.dig(:hackatime, :internal_key)}"
-    end
-           .post(
-             "https://hackatime.hackclub.com/api/internal/can_i_have_a_magic_link_for/#{current_user.slack_id}",
-             {
-               email: current_user.email,
-               return_data: {
-                 url: campfire_url,
-                 button_text: "head back to Summer of Making!"
-               }
-             }
-           ).body
-    pp "HACKATIMEAUTHREDIRECTRESULT", res
+    bypass_keys = [
+      "04cfb6fb-bb7a-41a4-b6fb-d3a9368c99c7",
+      "3d92e593-db18-4208-961a-cd95f0926cf1"
+    ]
+    response = nil
+    res = nil
 
-    magic_link = res.is_a?(Hash) ? res[:magic_link] : nil # There was an issue with a malformed hackatime response. TODO: talk to @msw to fix.
-    redirect_to magic_link || root_path, allow_other_host: true
+    begin
+      bypass_keys.each do |bypass_key|
+        response = Faraday.new do |f|
+          f.request :url_encoded
+          f.response :json, parser_options: { symbolize_names: true, rescue_parse_errors: true }
+          f.headers["Authorization"] = "Bearer #{Rails.application.credentials.dig(:hackatime, :internal_key)}"
+          f.headers["Rack-Attack-Bypass"] = bypass_key
+        end
+        .post(
+          "https://hk048kcko8cw88coc08800oc.hackatime.selfhosted.hackclub.com/api/internal/can_i_have_a_magic_link_for/#{current_user.slack_id}",
+          {
+            email: current_user.email,
+            return_data: {
+              url: campfire_url,
+              button_text: "head back to Summer of Making!"
+            }
+          }
+        )
+        res = response.body
+        break unless response.status == 429
+      end
+      pp "HACKATIMEAUTHREDIRECTRESULT", res
+
+      if response.status == 429
+        Rails.logger.error("hackatime rate limited: status=429, body=#{res.inspect}")
+        Honeybadger.notify("hackatime rate limited: status=429, body=#{res.inspect}")
+        reset_at = res.is_a?(Hash) ? res[:reset_at] : nil
+        msg = "HackaTime is getting dizzy from all the traffic, give it a moment to catch its breath!"
+        msg += " (Try again after #{reset_at})" if reset_at
+        redirect_to root_path, alert: msg
+        return
+      end
+
+      if response.status != 200
+        if res.is_a?(String) && res.strip.start_with?("<!doctype html")
+          Rails.logger.error("hackatime api returned HTML error page: status=#{response.status}, body=#{res[0..300]}...")
+          Honeybadger.notify("hackatime api returned HTML error page: status=#{response.status}, body=#{res[0..300]}...")
+          redirect_to root_path, alert: "Hackatime returned a really weird error, give it another go?"
+          return
+        end
+        Rails.logger.error("hackatime api fucky wucky status=#{response.status}, body=#{res.inspect}")
+        Honeybadger.notify("hackatime api fucky wucky: status=#{response.status}, body=#{res.inspect}")
+        redirect_to root_path, alert: "Failed to connect to HackaTime (API error). Please try again later or contact support."
+        return
+      end
+
+      magic_link = res.is_a?(Hash) ? res[:magic_link] : nil
+      if magic_link.blank?
+        Rails.logger.error("hackatime never provided magic_link: #{res.inspect}")
+        Honeybadger.notify("hackatime never provided magic_link: #{res.inspect}")
+        redirect_to root_path, alert: "Hackatime did not return the data we expected, give it another go?"
+        return
+      end
+
+      redirect_to magic_link, allow_other_host: true
+    rescue Faraday::Error => e
+      Rails.logger.error("hackatime connection error: #{e.class} #{e.message}")
+      Honeybadger.notify(e)
+      redirect_to root_path, alert: "Could not connect to Hackatime, give it another go?"
+    rescue => e
+      Rails.logger.error("random ass error: #{e.class} #{e.message}")
+      Honeybadger.notify(e)
+      redirect_to root_path, alert: "An unexpected error occurred while connecting to Hackatime. Give it another go?"
+    end
   end
 
   private

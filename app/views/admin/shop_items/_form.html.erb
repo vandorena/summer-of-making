@@ -120,6 +120,13 @@
 
       <div class="mb-3">
         <div class="form-check">
+          <%= form.check_box :enabled, class: "form-check-input" %>
+          <%= form.label :enabled, "Enabled", class: "form-check-label" %>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <div class="form-check">
           <%= form.check_box :limited, class: "form-check-input", id: "shop_item_limited" %>
           <%= form.label :limited, "Limited Stock", class: "form-check-label" %>
         </div>
@@ -150,6 +157,11 @@
       <div class="mb-3">
         <%= form.label :agh_contents, "AGH Contents (JSON)", class: "form-label" %>
         <%= form.text_area :agh_contents, rows: 4, class: "form-control", placeholder: "Enter valid JSON" %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :site_action, "Site Action", class: "form-label" %>
+        <%= form.select :site_action, ShopItem::SiteActionItem.site_actions.keys, { include_blank: "None" }, { class: "form-select" } %>
       </div>
     </div>
   </div>

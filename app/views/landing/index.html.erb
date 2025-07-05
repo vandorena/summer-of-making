@@ -110,7 +110,7 @@
             <div class="p-4 md:p-5 relative text-center">
               <h3 class="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-[#3a2f25] font-['DynaPuff',sans-serif]">Build Stuff</h3>
               <p class="font-['Fredoka',sans-serif] font-normal text-base md:text-lg text-[#3a2f25]">
-                Build websites, games, apps, or any other personal open-source coding projects to showcase your skills and earn precious <span class="italic">shells<img src="/shell.png" class="inline-block mx-1 mb-1 w-5 h-5" alt="shell"></span>
+                Build websites, games, apps, or any other personal open-source coding projects to showcase your skills and earn precious <span class="italic">shells<img src="/shell.png" class="inline-block mx-1 mb-1 w-5 h-5" alt="shell" loading="lazy"></span>
               </p>
             </div>
           <% end %>
@@ -119,25 +119,25 @@
             <div class="p-4 md:p-5 relative text-center">
               <h3 class="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-[#3a2f25] font-['DynaPuff',sans-serif]">Get Stuff</h3>
               <p class="font-['Fredoka',sans-serif] font-normal text-base md:text-lg text-[#3a2f25]">
-                Redeem your <span class="">shells<img src="/shell.png" class="inline-block mx-1 mb-1 w-5 h-5" alt="shell"></span> for awesome prizes like Raspberry Pis, Server hosting credits, 3D printers, and more to fuel your next creation.
+                Redeem your <span class="">shells<img src="/shell.png" class="inline-block mx-1 mb-1 w-5 h-5" alt="shell" loading="lazy"></span> for awesome prizes like Raspberry Pis, Server hosting credits, 3D printers, and more to fuel your next creation.
               </p>
             </div>
           <% end %>
 
           <div class="absolute mx-auto md:hidden block left-0">
-            <img src="/arc_arrow_top_bottom.png" class="relative max-h-40 sm:max-h-48 -left-4 sm:-left-16 aspect-auto rotate-180" alt="arrow">
+            <img src="/arc_arrow_top_bottom.png" class="relative max-h-40 sm:max-h-48 -left-4 sm:-left-16 aspect-auto rotate-180" alt="arrow" loading="lazy">
           </div>
 
           <div class="absolute mx-auto md:hidden block right-0">
-            <img src="/arc_arrow_top_bottom.png" class="relative max-h-40 sm:max-h-48 -right-4 sm:-right-16 aspect-auto" alt="arrow">
+            <img src="/arc_arrow_top_bottom.png" class="relative max-h-40 sm:max-h-48 -right-4 sm:-right-16 aspect-auto" alt="arrow" loading="lazy">
           </div>
 
           <div class="absolute mx-auto -top-8 hidden md:block">
-            <img src="/arc_arrow_left_right.png" class="max-w-48 aspect-auto" alt="arrow">
+            <img src="/arc_arrow_left_right.png" class="max-w-48 aspect-auto" alt="arrow" loading="lazy">
           </div>
 
           <div class="absolute mx-auto -bottom-8 hidden md:block">
-            <img src="/arc_arrow_left_right.png" class="max-w-48 aspect-auto rotate-180" alt="arrow">
+            <img src="/arc_arrow_left_right.png" class="max-w-48 aspect-auto rotate-180" alt="arrow" loading="lazy">
           </div>
         </div>
       </div>
@@ -187,7 +187,7 @@
                   <div class="parchment-texture"></div>
                   <div class="parchment-prize-image w-full h-full flex items-center justify-center mb-2 rounded-xl">
                     <% if prize[:image] && prize[:image] != "" %>
-                      <img src="<%= prize[:image] %>" alt="<%= prize[:name] %>" class="w-full h-full object-cover rounded-xl">
+                      <img src="<%= prize[:image] %>" alt="<%= prize[:name] %>" class="w-full h-full object-cover rounded-xl" loading="lazy">
                     <% else %>
                       <%= image_tag "clubhuman.png", alt: "Prize", class: "w-full h-full object-cover rounded-xl" %>
                     <% end %>
@@ -207,7 +207,7 @@
                 <div class="parchment-prize-card p-3 md:p-3 sm:p-2 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:scale-105" style="animation-delay: <%= (index * 0.4) %>s;">
                   <div class="parchment-prize-image w-full h-full flex items-center justify-center mb-2 rounded-xl">
                     <% if prize[:image] && prize[:image] != "" %>
-                      <img src="<%= prize[:image] %>" alt="<%= prize[:name] %>" class="w-full h-full object-cover rounded-xl">
+                      <img src="<%= prize[:image] %>" alt="<%= prize[:name] %>" class="w-full h-full object-cover rounded-xl" loading="lazy">
                     <% else %>
                       <%= image_tag "clubhuman.png", alt: "Prize", class: "w-full h-full object-cover rounded-xl" %>
                     <% end %>
@@ -365,7 +365,7 @@
                 <picture class="w-full flex items-end">
                   <source srcset="https://hc-cdn.hel1.your-objectstorage.com/s/v3/bf3c0dd5d1985c2f0579699503d2c5ad606f93b5_2025_06_17_0p1_kleki.avif" type="image/avif">
                   <source srcset="https://hc-cdn.hel1.your-objectstorage.com/s/v3/a06e71053a0174b4f70c100377e9239b90ae55f1_2025_06_17_0p1_kleki.webp" type="image/webp">
-                  <img src="https://hc-cdn.hel1.your-objectstorage.com/s/v3/b136938920ac21b36f6a9e65fe3bd5e42bdec42c_2025_06_17_0p1_kleki.jpg" alt="photo" class="object-cover object-center rounded-lg z-10 w-auto max-h-64 h-auto mx-auto transition-all duration-300">
+                  <img src="https://hc-cdn.hel1.your-objectstorage.com/s/v3/b136938920ac21b36f6a9e65fe3bd5e42bdec42c_2025_06_17_0p1_kleki.jpg" alt="photo" class="object-cover object-center rounded-lg z-10 w-auto max-h-64 h-auto mx-auto transition-all duration-300" loading="lazy">
                 </picture>
               </div>
             </div>
@@ -381,7 +381,7 @@
                 <picture class="w-full flex items-end">
                   <source srcset="https://hc-cdn.hel1.your-objectstorage.com/s/v3/4b906c9f77f3432227785e8d73cae85cff54215e_2025_06_17_0oz_kleki_1_.avif" type="image/avif">
                   <source srcset="https://hc-cdn.hel1.your-objectstorage.com/s/v3/6555019adf05d00674a4b77c3f8d9a844f3a1850_2025_06_17_0oz_kleki_1_.webp" type="image/webp">
-                  <img src="https://hc-cdn.hel1.your-objectstorage.com/s/v3/06a743252ee1d19b59d8ca932bc52d73f305db41_2025_06_17_0oz_kleki_1_.jpg" alt="photo" class="object-cover object-center rounded-lg z-10 w-auto max-h-64 h-auto mx-auto transition-all duration-300">
+                  <img src="https://hc-cdn.hel1.your-objectstorage.com/s/v3/06a743252ee1d19b59d8ca932bc52d73f305db41_2025_06_17_0oz_kleki_1_.jpg" alt="photo" class="object-cover object-center rounded-lg z-10 w-auto max-h-64 h-auto mx-auto transition-all duration-300" loading="lazy">
                 </picture>
               </div>
             </div>
@@ -397,7 +397,7 @@
                 <picture class="w-full flex items-end">
                   <source srcset="https://hc-cdn.hel1.your-objectstorage.com/s/v3/df129805eee037a2d5574b4a96a89a70e1da5226_2025_06_17_0p9_kleki.avif" type="image/avif">
                   <source srcset="https://hc-cdn.hel1.your-objectstorage.com/s/v3/582a428ae78cc8c491912630f256e6866913aea7_2025_06_17_0p9_kleki.webp" type="image/webp">
-                  <img src="https://hc-cdn.hel1.your-objectstorage.com/s/v3/7b10e8317fdfc3ac4f135e0f13e438ef52d8e004_2025_06_17_0p9_kleki.jpg" alt="photo" class="object-cover object-center rounded-lg z-10 w-auto max-h-64 h-auto mx-auto transition-all duration-300">
+                  <img src="https://hc-cdn.hel1.your-objectstorage.com/s/v3/7b10e8317fdfc3ac4f135e0f13e438ef52d8e004_2025_06_17_0p9_kleki.jpg" alt="photo" class="object-cover object-center rounded-lg z-10 w-auto max-h-64 h-auto mx-auto transition-all duration-300" loading="lazy">
                 </picture>
               </div>
             </div>
@@ -413,7 +413,7 @@
                 <picture class="w-full flex items-end">
                   <source srcset="https://hc-cdn.hel1.your-objectstorage.com/s/v3/cacf5949d529d3454a035f41cf767136df681186_2025_06_17_0p7_kleki.avif" type="image/avif">
                   <source srcset="https://hc-cdn.hel1.your-objectstorage.com/s/v3/e541eeadde968ce6cc31b2f8d653d91da5115ad1_2025_06_17_0p7_kleki.webp" type="image/webp">
-                  <img src="https://hc-cdn.hel1.your-objectstorage.com/s/v3/9121417c1658ffb775bbddbbe5c92ec5376e1752_2025_06_17_0p7_kleki.jpg" alt="photo" class="object-cover object-center rounded-lg z-10 w-auto max-h-64 h-auto mx-auto transition-all duration-300">
+                  <img src="https://hc-cdn.hel1.your-objectstorage.com/s/v3/9121417c1658ffb775bbddbbe5c92ec5376e1752_2025_06_17_0p7_kleki.jpg" alt="photo" class="object-cover object-center rounded-lg z-10 w-auto max-h-64 h-auto mx-auto transition-all duration-300" loading="lazy">
                 </picture>
               </div>
             </div>
@@ -429,7 +429,7 @@
                 <picture class="w-full flex items-end">
                   <source srcset="https://hc-cdn.hel1.your-objectstorage.com/s/v3/78d0d38d452e0d140b98ad232c2c918cc17bb480_2025_06_17_0of_kleki.avif" type="image/avif">
                   <source srcset="https://hc-cdn.hel1.your-objectstorage.com/s/v3/763b8ce6190b01cfabb4d5f46c16ec885d106eb6_2025_06_17_0of_kleki.webp" type="image/webp">
-                  <img src="https://hc-cdn.hel1.your-objectstorage.com/s/v3/463a73f3d306211702db4ef3e2d4078705aeb640_2025_06_17_0of_kleki.jpg" alt="photo" class="object-cover object-center rounded-lg z-10 w-auto max-h-64 h-auto mx-auto transition-all duration-300">
+                  <img src="https://hc-cdn.hel1.your-objectstorage.com/s/v3/463a73f3d306211702db4ef3e2d4078705aeb640_2025_06_17_0of_kleki.jpg" alt="photo" class="object-cover object-center rounded-lg z-10 w-auto max-h-64 h-auto mx-auto transition-all duration-300" loading="lazy">
                 </picture>
               </div>
             </div>
@@ -445,7 +445,7 @@
                 <picture class="w-full flex items-end">
                   <source srcset="https://hc-cdn.hel1.your-objectstorage.com/s/v3/de945ec9779d78b8504d9465ce9370db75c17251_2025_06_17_0q2_kleki.avif" type="image/avif">
                   <source srcset="https://hc-cdn.hel1.your-objectstorage.com/s/v3/f535913ca6c27862a8b1f082fb4eb500d03fb37b_2025_06_17_0q2_kleki.webp" type="image/webp">
-                  <img src="https://hc-cdn.hel1.your-objectstorage.com/s/v3/8f0b37947a7726c29a84e5da8e19f21be548104d_2025_06_17_0q2_kleki.jpg" alt="photo" class="object-cover object-center rounded-lg z-10 w-auto max-h-64 h-auto mx-auto transition-all duration-300">
+                  <img src="https://hc-cdn.hel1.your-objectstorage.com/s/v3/8f0b37947a7726c29a84e5da8e19f21be548104d_2025_06_17_0q2_kleki.jpg" alt="photo" class="object-cover object-center rounded-lg z-10 w-auto max-h-64 h-auto mx-auto transition-all duration-300" loading="lazy">
                 </picture>
               </div>
             </div>

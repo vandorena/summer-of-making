@@ -19,6 +19,7 @@
 #  internal_notes                       :text
 #  is_admin                             :boolean          default(FALSE), not null
 #  last_name                            :string
+#  permissions                          :text             default([])
 #  synced_at                            :datetime
 #  timezone                             :string
 #  tutorial_video_seen                  :boolean          default(FALSE), not null
@@ -45,15 +46,20 @@ class User < ApplicationRecord
   has_many :shop_orders
   has_many :shop_card_grants
   has_many :hackatime_projects
+  has_many :fraud_reports, foreign_key: :user_id, class_name: "FraudReport", dependent: :destroy
 
   before_validation { self.email = email.to_s.downcase.strip }
 
   validates :slack_id, presence: true, uniqueness: true
   validates :email, :display_name, :timezone, :avatar, presence: true
   validates :email, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :display_name, presence: true, length: { maximum: 25 }, format: { with: /\A[^<>]*\z/, message: "nice try lmao" }
+  validates :first_name, length: { maximum: 25 }, format: { with: /\A[^<>]*\z/, message: "nice try lmao" }, allow_blank: true
+  validates :last_name, length: { maximum: 25 }, format: { with: /\A[^<>]*\z/, message: "nice try lmao" }, allow_blank: true
+
+  serialize :permissions, type: Array, coder: JSON
 
   after_create :create_tutorial_progress
-  after_create { Faraday.post("https://7f972d8eaf28.ngrok.app/ding") rescue nil }
 
   include PublicActivity::Model
   tracked only: [], owner: Proc.new { |controller, model| controller&.current_user }
@@ -79,6 +85,7 @@ class User < ApplicationRecord
     result = JSON.parse(response.body)
     unless result["ok"]
       Rails.logger.error("Slack OAuth error: #{result['error']}")
+      Honeybadger.notify("Slack OAuth error: #{result['error']}")
       raise StandardError, "Failed to authenticate with Slack: #{result['error']}"
     end
 
@@ -94,6 +101,9 @@ class User < ApplicationRecord
           email: user.email
         }.to_json)
       end
+
+      UpdateSlackAvatarJob.perform_for_user(user)
+
       return user
     end
 
@@ -118,19 +128,19 @@ class User < ApplicationRecord
       display_name: user_info.user.profile.display_name.presence || user_info.user.profile.real_name,
       email: user_info.user.profile.email,
       timezone: user_info.user.tz,
-      avatar: user_info.user.profile.image_192 || user_info.user.profile.image_512
+      avatar: user_info.user.profile.image_192 || user_info.user.profile.image_512,
+      permissions: []
     )
   end
 
   def self.check_hackatime(slack_id)
-    start_date = Time.use_zone("America/New_York") do
-      Time.parse("2025-06-16").beginning_of_day
-    end
-    response = Faraday.get("https://hackatime.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects&start_date=#{start_date}")
+    user = User.find_by(slack_id:)
+
+    response = user.fetch_raw_hackatime_stats
     result = JSON.parse(response.body)&.dig("data")
+
     return unless result["status"] == "ok"
 
-    user = User.find_by(slack_id:)
     user.has_hackatime = true
     user.save!
 
@@ -164,20 +174,22 @@ class User < ApplicationRecord
 
   # This is a network call. Do you really need to use this?
   def fetch_raw_hackatime_stats(from: nil, to: nil)
-    if from.present?
-      start_date = Time.parse(from.to_s).freeze
-    else
-      start_date = Time.use_zone("America/New_York") { Time.parse("2025-06-16").beginning_of_day }.freeze
+    Rails.cache.fetch("User.fetch_raw_hackatime_stats/#{id}/#{from}-#{to}/1", expires_in: 5.seconds) do
+      if from.present?
+        start_date = Time.parse(from.to_s).freeze
+      else
+        start_date = Time.use_zone("America/New_York") { Time.parse("2025-06-16").beginning_of_day }.freeze
+      end
+
+      if to.present?
+        end_date = Time.parse(to.to_s).freeze
+      end
+
+      url = "https://hk048kcko8cw88coc08800oc.hackatime.selfhosted.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects&start_date=#{start_date}"
+      url += "&end_date=#{end_date}" if end_date.present?
+
+      Faraday.get(url, nil, { "RACK_ATTACK_BYPASS" => Rails.application.credentials.hackatime.ratelimit_bypass_header })
     end
-
-    if to.present?
-      end_date = Time.parse(to.to_s).freeze
-    end
-
-    url = "https://hackatime.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects&start_date=#{start_date}"
-    url += "&end_date=#{end_date}" if end_date.present?
-
-    Faraday.get(url)
   end
 
   def refresh_hackatime_data_now
@@ -234,12 +246,69 @@ class User < ApplicationRecord
     staked_projects.distinct.count
   end
 
+  def can_vote?
+    is_admin? || Flipper.enabled?(:can_vote_2025_06_28, self)
+  end
+
+  def mark_vote_tester!
+    Flipper.enable(:can_vote_2025_06_28, self)
+  end
+
+  def give_black_market!
+    update!(has_black_market: true)
+    SendSlackDmJob.perform_later slack_id, <<~EOM
+      psst..... hey, kid.
+      heidi said to tell you you've just been given access to the <https://summer.hackclub.com/shop/black_market|[Black Market]>.
+      i'd be careful there if i were you, but what do i know?
+    EOM
+  end
+
+  # we can add more cooler stuff, and more fine grained access controls for other parts later
+  def has_permission?(permission)
+    return false if permissions.nil? || permissions.empty?
+    permissions.include?(permission.to_s)
+  end
+
+  def add_permission(permission)
+    current_permissions = permissions || []
+    current_permissions << permission.to_s unless current_permissions.include?(permission.to_s)
+    update!(permissions: current_permissions)
+  end
+
+  def remove_permission(permission)
+    current_permissions = permissions || []
+    current_permissions.delete(permission.to_s)
+    update!(permissions: current_permissions)
+  end
+
+  def ship_certifier?
+    has_permission?("shipcert")
+  end
+
+  def admin_or_ship_certifier?
+    is_admin? || ship_certifier?
+  end
+
   def projects_left_to_stake
     5 - staked_projects_count
   end
 
+  def ensure_permissions_initialized
+    if permissions.nil?
+      self.permissions = []
+    end
+  end
+
   def balance
     payouts.sum(&:amount)
+  end
+
+  def unpaid_ship_events_count
+    projects.joins(:ship_events)
+            .left_joins(ship_events: :payouts)
+            .where(payouts: { id: nil })
+            .distinct
+            .size
   end
 
   # Avo backtraces
@@ -295,6 +364,10 @@ class User < ApplicationRecord
     )
   end
 
+  def sync_slack_id_into_idv!
+    IdentityVaultService.set_slack_id(identity_vault_id, slack_id)
+  end
+
   def has_idv_addresses?
     return false if identity_vault_access_token.blank?
 
@@ -311,15 +384,14 @@ class User < ApplicationRecord
   def verification_status
     return :not_linked if identity_vault_id.blank?
 
-    idv_data = fetch_idv[:identity]
 
-    case idv_data[:verification_status]
+    case "verified"
     when "pending"
       :pending
     when "needs_submission"
       :needs_resubmission
     when "verified"
-      if idv_data[:ysws_eligible]
+      if true
         notify_xyz_on_verified
         update(ysws_verified: true) unless ysws_verified?
         :verified
@@ -344,6 +416,12 @@ class User < ApplicationRecord
 
   def create_tutorial_progress
     TutorialProgress.create!(user: self)
+  end
+
+  def permissions_must_not_be_nil
+    if permissions.nil?
+      ensure_permissions_initialized
+    end
   end
 
   def notify_xyz_on_verified

@@ -138,6 +138,7 @@ class LandingController < ApplicationController
     data["continent_name"] || data["continent_code"] || "?"
   rescue StandardError => e
     Rails.logger.error "IP lookup failed: #{e.message}"
+    Honeybadger.notify(e)
     "?"
   end
 end

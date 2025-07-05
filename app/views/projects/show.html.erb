@@ -4,7 +4,7 @@
       <button class="absolute top-2 right-2 md:top-4 md:right-4 text-white p-2 hover:scale-110 transition-transform z-10" data-action="image-viewer#close">
         <%= inline_svg "close.svg", class: "h-6 w-6 md:h-8 md:w-8" %>
       </button>
-      <img data-image-viewer-target="image" class="max-h-[85vh] max-w-full object-contain" src="" alt="Full size image">
+      <img data-image-viewer-target="image" class="max-h-[85vh] max-w-full object-contain" src="" alt="Full size image" loading="lazy">
     </div>
   </div>
 
@@ -28,7 +28,7 @@
         <div class="absolute left-3 md:left-8 top-0 bottom-0 w-0.5 border-l-2 border-dashed border-saddle-taupe/30"></div>
       <% end %>
 
-      <div id="devlogs" class="space-y-3 md:space-y-8 ml-6 md:ml-16">
+      <div id="devlogs" class="space-y-3 md:space-y-8 ml-6 md:ml-16" data-controller="view-tracker">
         <% unless !@timeline.present? %>
           <div class="border-5 border-[#b69177] absolute left-6 md:left-[67.2] bottom-11 -top-4 rounded-xl"></div>
         <% end %>
@@ -56,7 +56,7 @@
 
                   <div class="flex items-center">
                     <% if item.user.avatar.present? %>
-                      <img src="<%= item.user.avatar %>" alt="<%= item.user.display_name %>" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3">
+                      <img src="<%= item.user.avatar %>" alt="<%= item.user.display_name %>" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3" loading="lazy">
                     <% end %>
                     <div>
                       <p class="text-gray-600 text-xs sm:text-sm 2xl:text-base"><%= time_ago_in_words item.created_at %> ago</p>

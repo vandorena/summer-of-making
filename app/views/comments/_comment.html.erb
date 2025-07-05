@@ -12,12 +12,8 @@
           </div>
         </div>
         <div class="space-y-2">
-          <div class="text-xs sm:text-sm md:text-base text-gray-600 break-words overflow-wrap-anywhere pr-2 <%= 'prose prose-sm max-w-none [&_p]:my-2 [&_p:first-child]:mt-0 [&_p:last-child]:mb-0 [&_strong]:text-black [&_em]:italic [&_code]:bg-gray-900 [&_code]:text-forest [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded [&_code]:font-mono [&_code]:text-sm [&_pre]:bg-gray-100 [&_pre]:p-3 [&_pre]:rounded-md [&_pre]:overflow-x-auto [&_pre]:my-4 [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:font-mono [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-2 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-2 [&_li]:my-1 [&_blockquote]:border-l-4 [&_blockquote]:border-gray-300 [&_blockquote]:pl-4 [&_blockquote]:my-4 [&_blockquote]:text-gray-600 [&_.inline-emote]:w-5 [&_.inline-emote]:h-5 [&_.inline-emote]:align-middle [&_.inline-emote]:inline-block' if comment.rich_content? %>">
-            <% if comment.rich_content? %>
-              <%= sanitize comment.display_content %>
-            <% else %>
-              <%= comment.display_content %>
-            <% end %>
+          <div class="text-xs sm:text-sm md:text-base text-gray-600 break-words overflow-wrap-anywhere pr-2">
+            <%= h(comment.content) %>
           </div>
           <% if comment.user == current_user %>
             <div class="flex justify-end">
@@ -31,4 +27,5 @@
       </div>
     </div>
   </div>
+  <%= render "admin/inspector", record: comment, always_inspect: true, show_in_impersonate: true %>
 </div>

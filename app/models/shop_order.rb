@@ -35,6 +35,8 @@
 class ShopOrder < ApplicationRecord
   include AASM
   include PublicActivity::Model
+  include HasTableSync
+
   tracked only: [ :create ], owner: Proc.new { |controller, model| controller&.current_user }
 
   belongs_to :user
@@ -47,13 +49,18 @@ class ShopOrder < ApplicationRecord
   validate :check_one_per_person_ever_limit
   validate :check_max_quantity_limit
   validate :check_black_market_access
-  validate :check_user_balance
+  validate :check_user_balance, on: :create
   validate :check_regional_availability
   after_create :create_negative_payout
   before_create :set_initial_state_for_free_stickers
 
   scope :worth_counting, -> { where.not(aasm_state: %w[rejected refunded]) }
-  scope :manually_fulfilled, -> { joins(:shop_item).where(shop_items: { type: ShopItem::MANUAL_FULFILLMENT_TYPES }) }
+  scope :manually_fulfilled, -> { joins(:shop_item).where(shop_items: { type: ShopItem::MANUAL_FULFILLMENT_TYPES.map(&:name) }) }
+  scope :with_item_type, ->(item_type) { joins(:shop_item).where(shop_items: { type: item_type.to_s }) }
+  scope :without_item_type, ->(item_type) { joins(:shop_item).where.not(shop_items: { type: item_type.to_s }) }
+
+  scope :standard_sync, -> { includes(:user).includes(:shop_item).without_item_type(ShopItem::FreeStickers) }
+  scope :free_stickers_sync, -> { includes(:user).includes(:shop_item).with_item_type(ShopItem::FreeStickers) }
 
   def full_name
     "#{user.display_name}'s order for #{quantity} #{shop_item.name.pluralize(quantity)}"
@@ -82,9 +89,12 @@ class ShopOrder < ApplicationRecord
     end
 
     event :mark_rejected do
-      transitions to: :rejected
+      transitions from: %i[pending awaiting_periodical_fulfillment in_verification_limbo], to: :rejected
       before do |rejection_reason|
         self.rejection_reason = rejection_reason
+      end
+      after do
+        create_refund_payout
       end
     end
 
@@ -110,6 +120,36 @@ class ShopOrder < ApplicationRecord
       end
     end
   end
+
+  SYNC_MAPPING = {
+    "id" => :id,
+    "status" => ->(_) { aasm_state.humanize },
+    "user.id" => :user_id,
+    "user.display_name" => ->(_) { user.display_name },
+    "user.email" => ->(_) { user.email },
+    "user.slack" => ->(_) { user.slack_id },
+    "created_at" => :created_at,
+    "updated_at" => :updated_at,
+    "awaiting_periodical_fulfillment_at" => :awaiting_periodical_fulfillment_at,
+    "fulfilled_at" => :fulfilled_at,
+    "rejected_at" => :rejected_at,
+    "rejection_reason" => :rejection_reason,
+    "on_hold_at" => :on_hold_at,
+    "external_ref" => :external_ref,
+    "internal_notes" => :internal_notes,
+    "item.id" => :shop_item_id,
+    "item.name" => ->(_) { shop_item.name },
+    "item.type" => ->(_) { shop_item.type },
+    "item.manually_fulfilled" => ->(_) { shop_item.manually_fulfilled? },
+    "frozen_item_price" => :frozen_item_price,
+    "quantity" => :quantity,
+    "total_cost" => :total_cost,
+    "addr.id" => ->(_) { frozen_address&.[]("id") },
+    "addr.country" => ->(_) { frozen_address&.[]("country") }
+  }
+
+  has_table_sync(:real_orders, "appNF8MGrk5KKcYZx", "tblrc0ByljGezp98v", SYNC_MAPPING, scope: :standard_sync)
+  has_table_sync(:free_stickers_orders, "appNF8MGrk5KKcYZx", "tbldmKzmU0N3u2R5s", SYNC_MAPPING, scope: :free_stickers_sync)
 
   def approve!
     shop_item.fulfill!(self)
@@ -175,7 +215,6 @@ class ShopOrder < ApplicationRecord
   end
 
   def check_regional_availability
-    return unless Flipper.enabled?(:shop_regionalization)
     return unless shop_item.present? && frozen_address.present?
 
     address_country = frozen_address["country"]
@@ -197,6 +236,16 @@ class ShopOrder < ApplicationRecord
       amount: -total_cost,
       payable: self,
       reason: "Shop order of #{shop_item.name.pluralize(quantity)}"
+    )
+  end
+
+  def create_refund_payout
+    return unless frozen_item_price.present? && frozen_item_price > 0 && quantity.present?
+
+    user.payouts.create!(
+      amount: total_cost,
+      payable: self,
+      reason: "Refund for rejected order of #{shop_item.name.pluralize(quantity)}"
     )
   end
 end

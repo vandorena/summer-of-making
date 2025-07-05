@@ -12,6 +12,7 @@
 #  likes_count         :integer          default(0), not null
 #  seconds_coded       :integer
 #  text                :text
+#  views_count         :integer          default(0), not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #  project_id          :bigint           not null
@@ -19,8 +20,9 @@
 #
 # Indexes
 #
-#  index_devlogs_on_project_id  (project_id)
-#  index_devlogs_on_user_id     (user_id)
+#  index_devlogs_on_project_id   (project_id)
+#  index_devlogs_on_user_id      (user_id)
+#  index_devlogs_on_views_count  (views_count)
 #
 # Foreign Keys
 #
@@ -37,7 +39,7 @@ class Devlog < ApplicationRecord
 
   attr_accessor :timer_session_id
 
-  validates :text, presence: true
+  validates :text, presence: true, length: { maximum: 2000 }, format: { with: /\A[^<>]*\z/, message: "nice try" }
   validate :file_must_be_attached, on: %i[ create ]
 
   # Validates if only MD changes are made
@@ -74,15 +76,32 @@ class Devlog < ApplicationRecord
     bounded_prev_time = [ prev_time, created_at - 24.hours ].max
 
     res = user.fetch_raw_hackatime_stats(from: bounded_prev_time, to: created_at)
-    data = JSON.parse(res.body)
-    projects = data.dig("data", "projects")
+    begin
+      data = JSON.parse(res.body)
+      projects = data.dig("data", "projects")
 
-    seconds_coded = projects
-      .filter { |p| project.hackatime_project_keys.include?(p["name"]) }
-      .reduce(0) { |acc, h| acc += h["total_seconds"] }
+      seconds_coded = projects
+        .filter { |p| project.hackatime_project_keys.include?(p["name"]) }
+        .reduce(0) { |acc, h| acc += h["total_seconds"] }
 
-    Rails.logger.info "\tDevlog #{id} seconds coded: #{seconds_coded}"
-    update!(seconds_coded:, hackatime_pulled_at: Time.now)
+      Rails.logger.info "\tDevlog #{id} seconds coded: #{seconds_coded}"
+      update!(seconds_coded:, hackatime_pulled_at: Time.now)
+    rescue JSON::ParserError => e
+      if res.body.strip.start_with?("Gateway") || res.body.strip =~ /gateway/i
+        Rails.logger.error "Hackatime API Gateway error for Devlog #{id}: #{res.body}"
+        Honeybadger.notify("Hackatime API Gateway error for Devlog #{id}: #{res.body}")
+        errors.add(:base, "Hackatime server had trouble, give it another go?")
+      else
+        Rails.logger.error "JSON parse error for Devlog #{id}: #{e.message} | Body: #{res.body}"
+        Honeybadger.notify(
+          error_class: "Hackatime JSON::ParserError",
+          error_message: e.message,
+          context: { devlog_id: id, user_id: user_id, project_id: project_id, response_body: res.body }
+        )
+        errors.add(:base, "There was a problem reading your Hackatime data. Give it another go?")
+      end
+      false
+    end
   end
 
   private

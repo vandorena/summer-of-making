@@ -125,4 +125,15 @@ class SessionsController < ApplicationController
 
     redirect_to root_path
   end
+
+  def stop_impersonating
+    unless impersonating?
+      flash[:alert] = "huh??"
+      return redirect_to root_path
+    end
+    current_user.create_activity("stop_impersonating", owner: current_impersonator)
+    session[:user_id] = session[:impersonator_user_id]
+    session[:impersonator_user_id] = nil
+    redirect_to root_path, notice: "welcome back, 007!"
+  end
 end

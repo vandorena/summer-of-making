@@ -20,27 +20,28 @@ production:
   #   class: GenerateStonkReportJob
   #   schedule: every day
 
-  sync_slack_emotes:
-    class: SyncSlackEmotesJob
-    queue: default
-    schedule: every day
-    description: "Sync emotes from Slack :yay:"
+  # sync_slack_emotes:
+  #   class: SyncSlackEmotesJob
+  #   queue: default
+  #   schedule: every day
+  #   description: "Sync emotes from Slack :yay:"
 
-  cleanup_unattached_storage:
-    command: "bundle exec rake active_storage:cleanup_unattached[7]"
-    schedule: every day
-    description: "Clean up unattached ActiveStorage blobs older than 7 days"
+  update_slack_avatars:
+    class: UpdateSlackAvatarJob
+    schedule: every 6 hours
+    concurrency: 1
+    description: "Update all users' Slack avatars from Slack API"
+
+  # cleanup_unattached_storage:
+  #   command: "bundle exec rake active_storage:cleanup_unattached[7]"
+  #   schedule: every day
+  #   description: "Clean up unattached ActiveStorage blobs older than 7 days"
 
   recalculate_devlog_times:
     class: RecalculateDevlogTimesJob
     schedule: every minute
     concurrency: 1
     description: "Recalculate devlogs' seconds_coded columns"
-
-  sync_user_idv_verification_statuses_to_airtable:
-    class: SyncUsersIdvVerificationStatusInAirtableJob
-    schedule: every hour
-    description: "Update all users' verification_status values in the Summer of Making 2025 Airtable `_users` table."
 
   sync_user_to_airtable:
     class: SyncUserToAirtableJob
@@ -53,3 +54,21 @@ production:
     schedule: every minute
     concurrency: 1
     description: "Sync email signups to Airtable every minute with single execution limit"
+
+  shop_reap_free_stickers_orders:
+    class: Shop::ReapFreeStickersOrdersJob
+    schedule: at 1am every day
+    concurrency: 1
+    description: "fulfill pending free stickers orders into theseus"
+
+  shop_table_sync_free_stickers_orders:
+    class: Shop::TableSyncFreeStickersOrdersJob
+    schedule: every hour
+    concurrency: 1
+    description: "CSV-sync free stickers orders into Airtable"
+
+  shop_table_sync_regular_orders:
+    class: Shop::TableSyncRegularOrdersJob
+    schedule: every 7 minutes
+    concurrency: 1
+    description: "CSV-sync non-free-stickers orders into Airtable"

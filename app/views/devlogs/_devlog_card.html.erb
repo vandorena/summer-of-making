@@ -10,10 +10,11 @@
   show_stonks ||= false                    # Whether to show stonks count
   container_classes ||= ''                 # Additional container classes
   content_margin ||= ''                    # Content margin/padding classes
+  no_parchment ||= false                   # Whether to disable parchment styling
 %>
 
 <% cache([devlog, devlog.user, devlog.project, current_user&.id, show_likes, show_comment_modal, context]) do %>
-  <%= render layout: "shared/container" do %>
+  <%= render layout: "shared/card" do %>
 
     <div class="ml-4 <%= context == 'explore' || context == 'project' ? '' : '' %> <%= container_classes %> <%= 'cursor-pointer' if show_project_navigation %>"
          id="<%= dom_id(devlog) %>"
@@ -21,16 +22,19 @@
          data-devlog-card-project-path-value="<%= project_path(devlog.project) if show_project_navigation %>"
          data-devlog-card-show-project-navigation-value="<%= show_project_navigation %>"
          data-devlog-card-max-length-value="200"
-         data-action="<%= 'click->devlog-card#navigateToProject' if show_project_navigation %>">
+         data-action="<%= 'click->devlog-card#navigateToProject' if show_project_navigation %>"
+         data-view-tracker-trackable
+         data-viewable-type="Devlog"
+         data-viewable-id="<%= devlog.id %>">
 
       <div class="flex items-center justify-between mb-2 sm:mb-3">
         <div class="flex items-center">
           <% if devlog.user.avatar.present? %>
-            <img src="<%= devlog.user.avatar %>" alt="<%= devlog.user.display_name %>" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3">
+            <img src="<%= devlog.user.avatar %>" alt="<%= devlog.user.display_name %>" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3" loading="lazy">
           <% end %>
           <div>
             <% if show_project_link %>
-              <span class="text-base sm:text-lg 2xl:text-xl">
+              <span class="text-base sm:text-lg 2xl:text-xl text-[#4a2d24]">
                 <%= devlog.user.display_name %><% admin_user_visit(devlog.user) %> <span class="text-[#865c39]">worked on</span>
                 <a href="<%= project_path(devlog.project) %>" class="transition-colors duration-200 hover:underline decoration-1 underline-offset-2">
                   <%= devlog.project.title %>
@@ -44,15 +48,7 @@
 
             <div class="text-[#B89576]">
               <!-- Time info -->
-              <% if devlog.timer_sessions.any? %>
-                <% timer_session = devlog.timer_sessions.first %>
-                <span>
-                  <% hours = timer_session.net_time / 3600 %>
-                  <% minutes = (timer_session.net_time % 3600) / 60 %>
-                  <%= hours > 0 ? "#{hours}h spent working" : "#{minutes}m spent working" %>
-                </span>
-                <span class=""> • </span>
-              <% elsif devlog.last_hackatime_time.present? && devlog.last_hackatime_time > 0 %>
+              <% if devlog.last_hackatime_time.present? && devlog.last_hackatime_time > 0 %>
                 <span>
                   <% hours = devlog.last_hackatime_time / 3600 %>
                   <% minutes = (devlog.last_hackatime_time % 3600) / 60 %>
@@ -95,8 +91,8 @@
 
       <div class="<%= content_margin.present? ? content_margin : '' %>">
         <!-- Update content -->
-        <div data-devlog-card-target="content" class="prose max-w-[32em] text-black mb-2 sm:mb-3 text-base sm:text-lg 2xl:text-xl break-words overflow-wrap-anywhere">
-          <%= devlog.formatted_text %>
+        <div data-devlog-card-target="content" class="prose max-w-[32em] text-[#4a2d24] mb-2 sm:mb-3 text-base sm:text-lg 2xl:text-xl break-words overflow-wrap-anywhere">
+          <%= h(devlog.text) %>
         </div>
 
         <!-- Attachments -->
@@ -105,9 +101,38 @@
             <% if devlog.file.image? %>
               <%= image_tag devlog.file, alt: "Update attachment", class: "w-full object-contain cursor-pointer hover:opacity-90 transition-opacity rounded-lg max-h-96", data: { action: "click->image-viewer#open" }, loading: "lazy" %>
             <% elsif devlog.file.video? %>
-              <div class="w-full flex items-center justify-center bg-black rounded-lg">
-                <%= video_tag url_for(devlog.file), class: "w-full object-contain rounded-lg", playsinline: true, controls: true do %>
+              <%
+                video_autoplay = context == 'explore'
+                video_classes = "w-full object-contain rounded-lg cursor-pointer video-autoplay max-h-96"
+                video_attributes = {
+                  playsinline: true,
+                  preload: video_autoplay ? "metadata" : "none"
+                }
+
+                if video_autoplay
+                  video_attributes.merge!({
+                    muted: true,
+                    loop: true,
+                    autoplay: true
+                  })
+                else
+                  video_attributes[:controls] = true
+                end
+              %>
+              <div class="w-full flex items-center justify-center bg-black rounded-lg relative max-h-96"
+                   data-controller="video"
+                   data-video-context-value="<%= context %>"
+                   data-video-autoplay-value="<%= video_autoplay %>">
+                <%= video_tag url_for(devlog.file),
+                    class: video_classes,
+                    data: { video_target: "video" },
+                    **video_attributes do %>
                   Your browser does not support the video tag.
+                <% end %>
+                <% if video_autoplay %>
+                  <div class="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white px-2 py-1 rounded text-xs video-sound-hint pointer-events-none">
+                    🔇 Click for sound
+                  </div>
                 <% end %>
               </div>
             <% elsif devlog.file.audio? %>
@@ -121,7 +146,7 @@
         <% end %>
 
         <!-- Action buttons -->
-        <div class="mt-3 sm:mt-4 flex flex-row items-center justify-left gap-x-4 max-w-prose w-full">
+        <div class="mt-3 sm:mt-4 flex flex-row items-center justify-left gap-x-4 max-w-prose w-full text-[#4a2d24]">
           <!-- Like button -->
           <% if show_likes && user_signed_in? %>
             <%= render "likes/button", likeable: devlog %>
@@ -152,6 +177,7 @@
             </div>
           <% end %>
         </div>
+        <%= render "admin/inspector", record: devlog, always_inspect: true, show_in_impersonate: true %>
       </div>
 
       <!-- Inline comments -->

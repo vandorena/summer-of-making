@@ -175,6 +175,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_203521) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.jsonb "rich_content"
+    t.text "content"
     t.index ["devlog_id"], name: "index_comments_on_devlog_id"
     t.index ["user_id"], name: "index_comments_on_user_id"
   end
@@ -199,8 +200,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_203521) do
     t.integer "likes_count", default: 0, null: false
     t.integer "comments_count", default: 0, null: false
     t.datetime "hackatime_pulled_at"
+    t.integer "views_count", default: 0, null: false
     t.index ["project_id"], name: "index_devlogs_on_project_id"
     t.index ["user_id"], name: "index_devlogs_on_user_id"
+    t.index ["views_count"], name: "index_devlogs_on_views_count"
   end
 
   create_table "email_signups", force: :cascade do |t|
@@ -212,6 +215,32 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_203521) do
     t.string "ref"
     t.datetime "synced_at"
     t.index ["email"], name: "index_email_signups_on_email", unique: true
+  end
+
+  create_table "flipper_features", force: :cascade do |t|
+    t.string "key", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["key"], name: "index_flipper_features_on_key", unique: true
+  end
+
+  create_table "flipper_gates", force: :cascade do |t|
+    t.string "feature_key", null: false
+    t.string "key", null: false
+    t.text "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["feature_key", "key", "value"], name: "index_flipper_gates_on_feature_key_and_key_and_value", unique: true
+  end
+
+  create_table "fraud_reports", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "suspect_type"
+    t.bigint "suspect_id"
+    t.string "reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_fraud_reports_on_user_id"
   end
 
   create_table "hackatime_projects", force: :cascade do |t|
@@ -295,8 +324,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_203521) do
     t.float "x"
     t.float "y"
     t.index ["is_shipped"], name: "index_projects_on_is_shipped"
+    t.integer "certification_type"
+    t.integer "views_count", default: 0, null: false
     t.index ["user_id"], name: "index_projects_on_user_id"
     t.index ["x", "y"], name: "index_projects_on_x_and_y"
+    t.index ["views_count"], name: "index_projects_on_views_count"
   end
 
   create_table "readme_certifications", force: :cascade do |t|
@@ -394,6 +426,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_203521) do
     t.decimal "price_offset_ca", precision: 6, scale: 2, default: "0.0"
     t.decimal "price_offset_au", precision: 6, scale: 2, default: "0.0"
     t.decimal "price_offset_xx", precision: 6, scale: 2, default: "0.0"
+    t.boolean "enabled"
+    t.integer "site_action"
     t.check_constraint "hacker_score >= 0 AND hacker_score <= 100", name: "hacker_score_percentage_check"
   end
 
@@ -632,27 +666,67 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_203521) do
     t.boolean "tutorial_video_seen", default: false, null: false
     t.boolean "freeze_shop_activity", default: false
     t.datetime "synced_at", precision: nil
+    t.text "permissions", default: "[]"
+  end
+
+  create_table "view_events", force: :cascade do |t|
+    t.string "viewable_type", null: false
+    t.bigint "viewable_id", null: false
+    t.bigint "user_id"
+    t.string "ip_address"
+    t.string "user_agent"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_view_events_on_created_at"
+    t.index ["user_id"], name: "index_view_events_on_user_id"
+    t.index ["viewable_type", "viewable_id", "created_at"], name: "idx_on_viewable_type_viewable_id_created_at_95fa2a7c9e"
+    t.index ["viewable_type", "viewable_id"], name: "index_view_events_on_viewable"
+  end
+
+  create_table "vote_changes", force: :cascade do |t|
+    t.bigint "vote_id", null: false
+    t.bigint "project_id", null: false
+    t.integer "elo_before", null: false
+    t.integer "elo_after", null: false
+    t.integer "elo_delta", null: false
+    t.string "result", null: false
+    t.integer "project_vote_count", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id", "created_at"], name: "index_vote_changes_on_project_id_and_created_at"
+    t.index ["project_id"], name: "index_vote_changes_on_project_id"
+    t.index ["result"], name: "index_vote_changes_on_result"
+    t.index ["vote_id"], name: "index_vote_changes_on_vote_id"
   end
 
   create_table "votes", force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.bigint "winner_id", null: false
     t.text "explanation", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "loser_id"
-    t.boolean "winner_demo_opened", default: false
-    t.boolean "winner_readme_opened", default: false
-    t.boolean "winner_repo_opened", default: false
-    t.boolean "loser_demo_opened", default: false
-    t.boolean "loser_readme_opened", default: false
-    t.boolean "loser_repo_opened", default: false
+    t.boolean "project_1_demo_opened", default: false
+    t.boolean "project_1_repo_opened", default: false
+    t.boolean "project_2_demo_opened", default: false
+    t.boolean "project_2_repo_opened", default: false
     t.integer "time_spent_voting_ms"
     t.boolean "music_played"
-    t.index ["loser_id"], name: "index_votes_on_loser_id"
-    t.index ["user_id", "winner_id"], name: "index_votes_on_user_id_and_winner_id", unique: true
+    t.string "status", default: "active", null: false
+    t.text "invalid_reason"
+    t.datetime "marked_invalid_at"
+    t.bigint "marked_invalid_by_id"
+    t.bigint "project_1_id"
+    t.bigint "project_2_id"
+    t.bigint "ship_event_1_id", null: false
+    t.bigint "ship_event_2_id", null: false
+    t.index ["marked_invalid_at"], name: "index_votes_on_marked_invalid_at"
+    t.index ["marked_invalid_by_id"], name: "index_votes_on_marked_invalid_by_id"
+    t.index ["project_1_id"], name: "index_votes_on_project_1_id"
+    t.index ["project_2_id"], name: "index_votes_on_project_2_id"
+    t.index ["ship_event_1_id"], name: "index_votes_on_ship_event_1_id"
+    t.index ["ship_event_2_id"], name: "index_votes_on_ship_event_2_id"
+    t.index ["status"], name: "index_votes_on_status"
+    t.index ["user_id", "ship_event_1_id", "ship_event_2_id"], name: "index_votes_on_user_and_ship_events", unique: true
     t.index ["user_id"], name: "index_votes_on_user_id"
-    t.index ["winner_id"], name: "index_votes_on_winner_id"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
@@ -661,6 +735,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_203521) do
   add_foreign_key "comments", "users"
   add_foreign_key "devlogs", "projects"
   add_foreign_key "devlogs", "users"
+  add_foreign_key "fraud_reports", "users"
   add_foreign_key "hackatime_projects", "users"
   add_foreign_key "hackatime_stats", "users"
   add_foreign_key "likes", "users"
@@ -693,7 +768,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_203521) do
   add_foreign_key "timer_sessions", "projects"
   add_foreign_key "timer_sessions", "users"
   add_foreign_key "tutorial_progresses", "users"
-  add_foreign_key "votes", "projects", column: "loser_id"
-  add_foreign_key "votes", "projects", column: "winner_id"
+  add_foreign_key "view_events", "users"
+  add_foreign_key "vote_changes", "projects"
+  add_foreign_key "vote_changes", "votes"
+  add_foreign_key "votes", "projects", column: "project_1_id"
+  add_foreign_key "votes", "projects", column: "project_2_id"
+  add_foreign_key "votes", "ship_events", column: "ship_event_1_id"
+  add_foreign_key "votes", "ship_events", column: "ship_event_2_id"
   add_foreign_key "votes", "users"
+  add_foreign_key "votes", "users", column: "marked_invalid_by_id"
 end

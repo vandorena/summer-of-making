@@ -19,4 +19,6 @@
 class ShipEventFeedback < ApplicationRecord
   belongs_to :ship_event
   has_one_attached :demo, dependent: :destroy
+
+  validates :comment, presence: true, length: { maximum: 1000 }, format: { with: /\A[^<>]*\z/, message: "nice try lmao" }
 end
