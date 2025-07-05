@@ -22,7 +22,10 @@
          data-devlog-card-project-path-value="<%= project_path(devlog.project) if show_project_navigation %>"
          data-devlog-card-show-project-navigation-value="<%= show_project_navigation %>"
          data-devlog-card-max-length-value="200"
-         data-action="<%= 'click->devlog-card#navigateToProject' if show_project_navigation %>">
+         data-action="<%= 'click->devlog-card#navigateToProject' if show_project_navigation %>"
+         data-view-tracker-trackable
+         data-viewable-type="Devlog"
+         data-viewable-id="<%= devlog.id %>">
 
       <div class="flex items-center justify-between mb-2 sm:mb-3">
         <div class="flex items-center">
