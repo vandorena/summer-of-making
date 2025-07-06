@@ -211,7 +211,7 @@ export default class extends Controller {
 
     async fetchFreshMapData() {
         try {
-            const response = await fetch('/map/points', {
+            const response = await fetch(this.mapPointsUrlValue, {
                 method: 'GET',
                 headers: { 'Accept': 'application/json' }
             })
