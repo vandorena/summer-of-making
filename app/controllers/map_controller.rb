@@ -1,5 +1,6 @@
 class MapController < ApplicationController
   before_action :authenticate_user!
+  before_action :check_identity_verification
   include MapHelper
 
   def index
@@ -9,5 +10,11 @@ class MapController < ApplicationController
 
   def points
     render json: { projects: project_map_data(map_projects_query) }
+  end
+
+  def check_identity_verification
+    return if current_user&.identity_vault_id.present? && current_user.verification_status != :ineligible
+
+    redirect_to campfire_path, alert: "Please verify your identity to access this page."
   end
 end

@@ -82,7 +82,9 @@ class User < ApplicationRecord
                               redirect_uri: redirect_uri,
                               code: code
                             })
+
     result = JSON.parse(response.body)
+
     unless result["ok"]
       Rails.logger.error("Slack OAuth error: #{result['error']}")
       Honeybadger.notify("Slack OAuth error: #{result['error']}")
@@ -90,7 +92,6 @@ class User < ApplicationRecord
     end
 
     slack_id = result["authed_user"]["id"]
-
     user = User.find_by(slack_id: slack_id)
     if user.present?
       Rails.logger.tagged("UserCreation") do
