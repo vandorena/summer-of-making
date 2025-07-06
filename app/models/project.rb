@@ -57,8 +57,11 @@ class Project < ApplicationRecord
 
   has_many :timer_sessions
 
-  validates :x, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }, allow_nil: true
-  validates :y, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }, allow_nil: true
+  coordinate_min = 0
+  coordinate_max = 100
+
+  validates :x, numericality: { greater_than_or_equal_to: coordinate_min, less_than_or_equal_to: coordinate_max }, allow_nil: true
+  validates :y, numericality: { greater_than_or_equal_to: coordinate_min, less_than_or_equal_to: coordinate_max }, allow_nil: true
   validate :coordinates_must_be_set_together
 
   scope :on_map, -> { where.not(x: nil, y: nil) }

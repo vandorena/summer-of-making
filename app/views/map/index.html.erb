@@ -1,9 +1,9 @@
 <div data-controller="map"
      data-map-projects-value="<%= @projects_on_map %>"
      data-map-user-id-value="<%= current_user.id %>"
-     data-map-update-url-value="/projects/:id/update_coordinates"
-     data-map-map-points-url-value="/map/points"
-     data-map-unplace-url-value="/projects/:id/unplace_coordinates"
+     data-map-update-url-value="<%= update_coordinates_project_path(':id') %>"
+     data-map-map-points-url-value="<%= map_points_path %>"
+     data-map-unplace-url-value="<%= unplace_coordinates_project_path(':id') %>"
      class="relative w-screen h-screen overflow-hidden bg-[#41A5E7]">
   <div class="absolute inset-0 bg-[url('/map_sea_background.jpg')] bg-cover bg-center opacity-28 pointer-events-none z-0"></div>
 

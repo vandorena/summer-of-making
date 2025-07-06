@@ -21,7 +21,7 @@ module MapHelper
   end
 
   def map_projects_query
-    Project.joins(:ship_events).on_map.includes(:user, :devlogs).distinct
+    Project.joins(:ship_events).on_map.includes(:user).distinct
   end
 
   def placeable_projects_message(count)
