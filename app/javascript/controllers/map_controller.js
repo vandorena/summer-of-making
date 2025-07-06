@@ -59,11 +59,6 @@ export default class extends Controller {
         pointWrapper.appendChild(avatar)
         pointWrapper.appendChild(point)
 
-        if (isOwner) {
-            const unplaceButton = this.createUnplaceButton(project)
-            pointWrapper.appendChild(unplaceButton)
-        }
-
         this.pointsContainerTarget.appendChild(pointWrapper)
     }
 
@@ -80,7 +75,7 @@ export default class extends Controller {
 
     createPoint(project, isOwner) {
         const point = document.createElement("div")
-        point.className = "w-3 h-3 rounded-full border-2 transition-transform duration-200 group-hover:scale-150"
+        point.className = "w-3 h-3 rounded-full border-2 transition-transform duration-200 group-hover:scale-200"
         point.dataset.projectId = project.id
 
         if (isOwner) {
@@ -98,18 +93,6 @@ export default class extends Controller {
         avatar.src = project.user.avatar
         avatar.className = "w-8 h-8 rounded-full border-2 border-white absolute -top-10 left-1/2 transform -translate-x-1/2 transition-all opacity-0 group-hover:opacity-100 group-hover:-translate-y-2 pointer-events-none"
         return avatar
-    }
-
-    createUnplaceButton(project) {
-        const button = document.createElement("button")
-        button.innerHTML = "×"
-        button.className = "absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full text-xs font-bold opacity-0 group-hover:opacity-50 transition-opacity duration-200 hover:bg-red-600 flex items-center justify-center"
-        button.title = "Remove from map"
-        button.addEventListener('click', (e) => {
-            e.stopPropagation()
-            this.unplaceProject(project.id)
-        })
-        return button
     }
 
     showTooltip(pointWrapper, project) {
@@ -253,7 +236,7 @@ export default class extends Controller {
 
     startDrag(event) {
         if (this.draggedPoint || this.animationFrameId) return
-        
+
         event.preventDefault()
         this.initializeDrag(event)
     }
@@ -295,7 +278,7 @@ export default class extends Controller {
 
         const coordinates = this.getCoordinatesFromEvent(event)
         const clampedCoords = this.clampCoordinates(coordinates)
-        
+
         this.draggedPoint.style.left = `${clampedCoords.x}%`
         this.draggedPoint.style.top = `${clampedCoords.y}%`
     }
@@ -324,7 +307,7 @@ export default class extends Controller {
     drag(event) {
         if (this.draggedPoint) return this.dragPoint(event)
         if (!this.isDragging) return
-        
+
         event.preventDefault()
         this.updateDragPosition(event)
     }
@@ -332,9 +315,9 @@ export default class extends Controller {
     updateDragPosition(event) {
         const dx = event.clientX - this.startPos.x
         const dy = event.clientY - this.startPos.y
-        let nextTranslate = { 
-            x: this.initialTranslate.x + dx, 
-            y: this.initialTranslate.y + dy 
+        let nextTranslate = {
+            x: this.initialTranslate.x + dx,
+            y: this.initialTranslate.y + dy
         }
 
         nextTranslate = this.applyDragResistance(nextTranslate)
@@ -349,7 +332,7 @@ export default class extends Controller {
             x: translate.x - clamped.x,
             y: translate.y - clamped.y
         }
-        
+
         const RESISTANCE = 0.6
         return {
             x: clamped.x + overshoot.x * RESISTANCE,
@@ -360,7 +343,7 @@ export default class extends Controller {
     updateVelocity(nextTranslate) {
         const now = performance.now()
         const elapsed = now - this.lastTimestamp
-        
+
         if (elapsed > 1) {
             this.velocity = {
                 x: (nextTranslate.x - this.currentTranslate.x) / elapsed,
@@ -373,7 +356,7 @@ export default class extends Controller {
     endDrag(event) {
         if (this.draggedPoint) return this.endPointDrag()
         if (!this.isDragging) return
-        
+
         this.isDragging = false
         this.element.style.cursor = 'crosshair'
         this.startInertia()
@@ -385,7 +368,7 @@ export default class extends Controller {
     setZoom(newZoom) {
         const clampedZoom = Math.max(this.MIN_ZOOM, Math.min(newZoom, this.MAX_ZOOM))
         if (clampedZoom === this.zoom) return
-        
+
         this.zoom = clampedZoom
         this.currentTranslate = this.getClampedTranslate(this.currentTranslate, 0)
         this.updateTransform(true, this.currentTranslate)
@@ -397,7 +380,7 @@ export default class extends Controller {
 
         const inertiaLoop = () => {
             this.applyInertia(FRICTION, PULL_FACTOR)
-            
+
             if (this.shouldStopInertia()) {
                 this.stopInertia()
                 return
@@ -430,10 +413,10 @@ export default class extends Controller {
 
     shouldStopInertia() {
         const clamped = this.getClampedTranslate(this.currentTranslate, 0)
-        const isOutOfBounds = Math.abs(this.currentTranslate.x - clamped.x) > 0.1 || 
-                             Math.abs(this.currentTranslate.y - clamped.y) > 0.1
+        const isOutOfBounds = Math.abs(this.currentTranslate.x - clamped.x) > 0.1 ||
+            Math.abs(this.currentTranslate.y - clamped.y) > 0.1
         const isStill = Math.hypot(this.velocity.x, this.velocity.y) < 0.05
-        
+
         return isStill && !isOutOfBounds
     }
 
