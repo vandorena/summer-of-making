@@ -9,7 +9,7 @@ module MapHelper
         y: project.y,
         title: project.title,
         user_id: project.user_id,
-        devlogs_count: project.devlogs.count,
+        devlogs_count: project.devlogs_count,
         total_time_spent: format_seconds(project.hackatime_total_time),
         project_path: project_path(project),
         user: {

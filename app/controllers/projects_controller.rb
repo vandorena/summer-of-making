@@ -592,6 +592,7 @@ class ProjectsController < ApplicationController
     end
   end
 
+private
   def coordinates_params
     params.require(:project).permit(:x, :y)
   end
