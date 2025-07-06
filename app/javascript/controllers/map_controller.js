@@ -126,6 +126,15 @@ export default class extends Controller {
         tooltip.querySelector('[data-map-target="tooltipInfo"]').textContent = `${project.devlogs_count} updates • ${project.total_time_spent}`
         tooltip.querySelector('[data-map-target="tooltipLink"]').href = project.project_path
 
+        const unplaceButton = tooltip.querySelector('[data-map-target="tooltipUnplaceButton"]')
+        if (project.user_id === this.userIdValue) {
+            unplaceButton.classList.remove('hidden')
+            unplaceButton.addEventListener('click', (e) => {
+                e.stopPropagation()
+                this.unplaceProject(project.id)
+            })
+        }
+
         tooltip.addEventListener('mouseenter', () => this.clearTooltipTimeout())
         tooltip.addEventListener('mouseleave', () => this.hideTooltip(tooltip.parentElement))
 

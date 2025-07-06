@@ -67,7 +67,10 @@
     <div class="absolute bottom-full mb-3 w-max max-w-xs bg-black text-white text-xs rounded py-2 px-3 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg -translate-x-1/2 left-1/2">
       <h4 class="font-bold text-sm" data-map-target="tooltipTitle"></h4>
       <p class="text-xs opacity-80" data-map-target="tooltipInfo"></p>
-      <a href="#" data-map-target="tooltipLink" class="mt-1 inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded text-xs pointer-events-auto">View Project</a>
+      <div class="mt-1 flex gap-1">
+        <a href="#" data-map-target="tooltipLink" class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded text-xs pointer-events-auto">View Project</a>
+        <button data-map-target="tooltipUnplaceButton" class="inline-block bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded text-xs pointer-events-auto hidden">Remove</button>
+      </div>
     </div>
   </template>
 </div>
