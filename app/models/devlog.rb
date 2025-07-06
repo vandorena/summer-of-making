@@ -39,7 +39,7 @@ class Devlog < ApplicationRecord
 
   attr_accessor :timer_session_id
 
-  validates :text, presence: true, length: { maximum: 5000 }, format: { with: /\A[^<>]*\z/, message: "nice try" }
+  validates :text, presence: true, length: { maximum: 5000 }
   validate :file_must_be_attached, on: %i[ create ]
 
   # Validates if only MD changes are made

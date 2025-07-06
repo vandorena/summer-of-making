@@ -90,8 +90,8 @@ class Project < ApplicationRecord
     joins(:ship_certifications).where(ship_certifications: { judgement: "pending" })
   }
 
-  validates :title, presence: true, length: { maximum: 200 }, format: { with: /\A[^<>]*\z/, message: "nice try lmao" }
-  validates :description, presence: true, length: { maximum: 2500 }, format: { with: /\A[^<>]*\z/, message: "nice try lmao" }
+  validates :title, presence: true, length: { maximum: 200 }
+  validates :description, presence: true, length: { maximum: 2500 }
   validates :category, presence: true
 
   validates :readme_link, :demo_link, :repo_link,
