@@ -321,10 +321,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_203521) do
     t.boolean "ysws_submission", default: false, null: false
     t.string "ysws_type"
     t.integer "devlogs_count", default: 0, null: false
-    t.float "x"
-    t.float "y"
     t.integer "certification_type"
     t.integer "views_count", default: 0, null: false
+    t.float "x"
+    t.float "y"
     t.index ["is_shipped"], name: "index_projects_on_is_shipped"
     t.index ["user_id"], name: "index_projects_on_user_id"
     t.index ["views_count"], name: "index_projects_on_views_count"
