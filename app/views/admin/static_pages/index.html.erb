@@ -9,7 +9,9 @@
     <%= link_to "Pending Acceptance", pending_admin_shop_orders_path, class: 'abtn secondary' %>
     <%= link_to "Manual Fulfillment", awaiting_fulfillment_admin_shop_orders_path, class: 'abtn secondary' %>
     <%= link_to "Shop Items", admin_shop_items_path, class: 'abtn secondary' %>
-    <%= link_to "Users", admin_users_path, class: 'abtn secondary' %>
+    <%= link_to admin_users_path, class: 'abtn secondary' do %>
+      Users <span class="pill"><%= User.count %></span>
+    <% end %>
     <%= link_to "view counters", "/admin/view_analytics", class: 'abtn secondary' %>
     <%= link_to "Blazer", admin_blazer_path, class: 'abtn secondary' %>
     <%= link_to "Flipper", "/admin/flipper", class: 'abtn secondary' %>
