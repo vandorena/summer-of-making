@@ -509,6 +509,30 @@ class ProjectsController < ApplicationController
     end
   end
 
+  def update_coordinates
+    authorize @project, :update_coordinates?
+
+    unless @project.shipped_once?
+      return render json: { error: "Project must be shipped at least once to be placed on the map." }, status: :unprocessable_entity
+    end
+
+    if @project.update(coordinates_params)
+      render json: { success: true, project: { id: @project.id, x: @project.x, y: @project.y } }
+    else
+      render json: { success: false, errors: @project.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  def unplace_coordinates
+    authorize @project, :update_coordinates?
+
+    if @project.update(x: nil, y: nil)
+      render json: { success: true, project: { id: @project.id, x: nil, y: nil } }
+    else
+      render json: { success: false, errors: @project.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
   # Admin methods
   # def recover
   #     deleted_project = Project.with_deleted.find_by(id: params[:id])
@@ -527,6 +551,8 @@ class ProjectsController < ApplicationController
     [ [ "Select a YSWS program...", "" ] ] + Project.ysws_types.map { |key, value| [ value, value ] }
   end
   helper_method :ysws_type_options
+
+  private
 
   def check_identity_verification
     return if current_user&.identity_vault_id.present? && current_user.verification_status != :ineligible
@@ -568,31 +594,6 @@ class ProjectsController < ApplicationController
                              :banner, :ysws_submission, :ysws_type, :category, :certification_type, { hackatime_project_keys: [] } ])
   end
 
-  def update_coordinates
-    authorize @project, :update_coordinates?
-
-    unless @project.shipped_once?
-      return render json: { error: "Project must be shipped at least once to be placed on the map." }, status: :unprocessable_entity
-    end
-
-    if @project.update(coordinates_params)
-      render json: { success: true, project: { id: @project.id, x: @project.x, y: @project.y } }
-    else
-      render json: { success: false, errors: @project.errors.full_messages }, status: :unprocessable_entity
-    end
-  end
-
-  def unplace_coordinates
-    authorize @project, :update_coordinates?
-
-    if @project.update(x: nil, y: nil)
-      render json: { success: true, project: { id: @project.id, x: nil, y: nil } }
-    else
-      render json: { success: false, errors: @project.errors.full_messages }, status: :unprocessable_entity
-    end
-  end
-
-private
   def coordinates_params
     params.require(:project).permit(:x, :y)
   end
