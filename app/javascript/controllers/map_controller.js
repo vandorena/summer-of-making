@@ -540,7 +540,7 @@ export default class extends Controller {
     }
 
     async sendUnplaceRequest(projectId) {
-        const url = `/projects/${projectId}/unplace_coordinates`
+        const url = this.unplaceUrlValue.replace(':id', projectId)
         const response = await fetch(url, {
             method: 'DELETE',
             headers: {
