@@ -122,6 +122,7 @@ class Project < ApplicationRecord
     athena: "Athena",
     boba_drops: "Boba Drops",
     cider: "Cider",
+    converge: "Converge",
     grub: "Grub",
     hackaccino: "Hackaccino",
     highway: "Highway",
