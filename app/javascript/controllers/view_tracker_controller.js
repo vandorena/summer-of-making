@@ -1,16 +1,13 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["trackable"]
   static values = { 
-    viewableType: String,
-    viewableId: String,
     threshold: { type: Number, default: 0.5 },
     delay: { type: Number, default: 1000 }
   }
 
   connect() {
-    console.log('views? yes')
+    console.log('ViewTracker connected')
     this.trackedItems = new Set()
     this.timeouts = new Map()
     
@@ -22,14 +19,18 @@ export default class extends Controller {
       }
     )
 
-    const elementsToObserve = this.trackableTargets.length > 0 
-      ? this.trackableTargets 
-      : [this.element]
+    this.observeTrackableElements()
+  }
+
+  observeTrackableElements() {
+    const trackableElements = this.element.querySelectorAll('[data-viewable-id][data-viewable-type]')
     
-    console.log(`found ${elementsToObserve.length} trackable elements`)
-    elementsToObserve.forEach(target => {
-      console.log(`obs id ${target.dataset.viewableId}, type: ${target.dataset.viewableType}`)
-      this.observer.observe(target)
+    console.log(`Found ${trackableElements.length} trackable elements`)
+    trackableElements.forEach(element => {
+      const id = element.dataset.viewableId
+      const type = element.dataset.viewableType
+      console.log(`Observing ${type} #${id}`)
+      this.observer.observe(element)
     })
   }
 
@@ -40,24 +41,6 @@ export default class extends Controller {
     
     this.timeouts.forEach(timeout => clearTimeout(timeout))
     this.timeouts.clear()
-  }
-
-  trackableTargetConnected(target) {
-    if (this.observer) {
-      this.observer.observe(target)
-    }
-  }
-
-  trackableTargetDisconnected(target) {
-    if (this.observer) {
-      this.observer.unobserve(target)
-    }
-    
-    const viewableId = target.dataset.viewableId
-    if (this.timeouts.has(viewableId)) {
-      clearTimeout(this.timeouts.get(viewableId))
-      this.timeouts.delete(viewableId)
-    }
   }
 
   handleIntersection(entries) {
@@ -85,7 +68,7 @@ export default class extends Controller {
   }
 
   async trackView(viewableType, viewableId) {
-    console.log(`tv on ${viewableType} ${viewableId}`)
+    console.log(`Tracking view: ${viewableType} #${viewableId}`)
     try {
       const response = await fetch('/track_view', {
         method: 'POST',
@@ -100,12 +83,12 @@ export default class extends Controller {
       })
 
       if (response.ok) {
-        console.log(`tv on ${viewableType} ${viewableId}`)
+        console.log(`✓ View tracked: ${viewableType} #${viewableId}`)
       } else {
-        console.warn(`tv failed on ${viewableType} ${viewableId}`, response.status)
+        console.warn(`✗ View tracking failed: ${viewableType} #${viewableId}`, response.status)
       }
     } catch (error) {
-      console.error('tv error:', error)
+      console.error('View tracking error:', error)
     }
   }
 }
