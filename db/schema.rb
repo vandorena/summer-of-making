@@ -196,9 +196,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_195050) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "last_hackatime_time"
+    t.integer "seconds_coded"
     t.integer "likes_count", default: 0, null: false
     t.integer "comments_count", default: 0, null: false
-    t.integer "seconds_coded"
     t.datetime "hackatime_pulled_at"
     t.integer "views_count", default: 0, null: false
     t.index ["project_id"], name: "index_devlogs_on_project_id"

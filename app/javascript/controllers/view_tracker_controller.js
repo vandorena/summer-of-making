@@ -10,6 +10,7 @@ export default class extends Controller {
   }
 
   connect() {
+    console.log('views? yes')
     this.trackedItems = new Set()
     this.timeouts = new Map()
     
@@ -21,7 +22,9 @@ export default class extends Controller {
       }
     )
 
+    console.log(`found ${this.trackableTargets.length} trackable targets`)
     this.trackableTargets.forEach(target => {
+      console.log(`obs id ${target.dataset.viewableId}, type: ${target.dataset.viewableType}`)
       this.observer.observe(target)
     })
   }
@@ -78,6 +81,7 @@ export default class extends Controller {
   }
 
   async trackView(viewableType, viewableId) {
+    console.log(`tv on ${viewableType} ${viewableId}`)
     try {
       const response = await fetch('/track_view', {
         method: 'POST',
@@ -92,12 +96,12 @@ export default class extends Controller {
       })
 
       if (response.ok) {
-        console.log(`v ${viewableType} ${viewableId}`)
+        console.log(`tv on ${viewableType} ${viewableId}`)
       } else {
-        console.warn(`fv ${viewableType} ${viewableId}`)
+        console.warn(`tv failed on ${viewableType} ${viewableId}`, response.status)
       }
     } catch (error) {
-      console.error('ev ', error)
+      console.error('tv error:', error)
     }
   }
 }
