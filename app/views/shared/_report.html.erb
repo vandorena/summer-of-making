@@ -1,10 +1,10 @@
 <%= turbo_frame_tag "my_form" do %>
-  <%= form_with url: fraud_reports_path, method: :post, class: "inline", data: { turbo_confirm: "Are you sure you want to report this project? We will have a member of our team review it and take any action if needed. Abusing the reporting system may lead to your account getting blocked." } do |f| %>
+  <%= form_with url: fraud_reports_path, method: :post, class: "inline", data: { turbo_confirm: "Are you sure you want to report this project for fraud?" } do |f| %>
     <%= f.hidden_field "fraud_report[suspect_type]", value: suspect.class.name %>
     <%= f.hidden_field "fraud_report[suspect_id]", value: suspect.id %>
     <%= f.submit "🚩",
         class: "inline-flex items-center gap-2 px-6 sm:px-8 py-3 bg-red-100 hover:bg-red-200 hover:scale-[1.05] text-red-700 transition-all duration-300 text-base sm:text-lg 2xl:text-xl rounded-lg font-medium cursor-pointer",
         onclick: "event.stopPropagation()",
-        title: "Report this project for a staff member" %>
+        title: "Report this project for suspicious activity" %>
   <% end %>
 <% end %>
