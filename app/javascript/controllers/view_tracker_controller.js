@@ -22,8 +22,12 @@ export default class extends Controller {
       }
     )
 
-    console.log(`found ${this.trackableTargets.length} trackable targets`)
-    this.trackableTargets.forEach(target => {
+    const elementsToObserve = this.trackableTargets.length > 0 
+      ? this.trackableTargets 
+      : [this.element]
+    
+    console.log(`found ${elementsToObserve.length} trackable elements`)
+    elementsToObserve.forEach(target => {
       console.log(`obs id ${target.dataset.viewableId}, type: ${target.dataset.viewableType}`)
       this.observer.observe(target)
     })
