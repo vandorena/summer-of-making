@@ -37,5 +37,12 @@ module Journey
 
     # bring in game constants from yaml
     config.game_constants = config_for(:game_constants)
+
+    # let sessions last a while >_<
+    config.session_store :cookie_store,
+                         key: "_journey_session",
+                         expire_after: 30.days,
+                         secure: Rails.env.production?,
+                         httponly: true
   end
 end
