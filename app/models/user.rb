@@ -405,7 +405,6 @@ class User < ApplicationRecord
     end
   end
 
-
   def identity_vault_linked?
     identity_vault_access_token.present?
   end
