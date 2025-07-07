@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_05_195050) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_07_183912) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -444,6 +444,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_05_195050) do
     t.datetime "on_hold_at"
     t.text "internal_notes"
     t.bigint "shop_card_grant_id"
+    t.decimal "fulfillment_cost", precision: 6, scale: 2, default: "0.0"
     t.index ["shop_card_grant_id"], name: "index_shop_orders_on_shop_card_grant_id"
     t.index ["shop_item_id"], name: "index_shop_orders_on_shop_item_id"
     t.index ["user_id"], name: "index_shop_orders_on_user_id"

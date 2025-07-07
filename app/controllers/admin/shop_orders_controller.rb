@@ -79,8 +79,9 @@ module Admin
     def mark_fulfilled
       redirect_to @shop_order, notice: "huh!?" unless @shop_order.shop_item.manually_fulfilled?
       external_ref = params[:external_ref]
+      fulfillment_cost = params[:fulfillment_cost].presence
       redirect_to @shop_order, notice: "you need to provide a reference!" unless external_ref
-      @shop_order.mark_fulfilled!(external_ref)
+      @shop_order.mark_fulfilled!(external_ref, fulfillment_cost)
       @shop_order.create_activity("mark_fulfilled", parameters: { external_ref: })
       flash[:success] = "thank you for your service o7"
       redirect_to [ :admin, @shop_order ]

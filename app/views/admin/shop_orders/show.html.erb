@@ -5,6 +5,9 @@
 <%= render "admin/shared/internal_notes", { record: @shop_order } %>
 <br>
 <b>Status:</b> <%= @shop_order.aasm_state.humanize %> <br>
+<% if @shop_order.fulfillment_cost.present? %>
+  <b>Fulfillment cost: </b> <%= number_to_currency @shop_order.fulfillment_cost %> <br/>
+<% end %>
 <% if @shop_order.rejection_reason.present? %>
   <b>Rejection reason: </b> <%= @shop_order.rejection_reason %> <br>
 <% end %>
@@ -52,6 +55,8 @@
 <% if state == :awaiting_periodical_fulfillment && @shop_order.shop_item.manually_fulfilled? %>
   <%= form_with url: url_for([:mark_fulfilled, :admin, @shop_order]) do |f| %>
     <%= f.text_area(:external_ref, placeholder: "external reference") %> <br>
+    <%= f.label :fulfillment_cost, "Fulfillment cost: $" %>
+    <%= f.number_field :fulfillment_cost, step: 0.01, value: @shop_order.shop_item.usd_cost %> <br/>
     <%= f.submit "i fulfilled it!" %>
   <% end %>
 <% end %>

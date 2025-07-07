@@ -9,6 +9,7 @@
 #  frozen_address                     :jsonb
 #  frozen_item_price                  :decimal(6, 2)
 #  fulfilled_at                       :datetime
+#  fulfillment_cost                   :decimal(6, 2)    default(0.0)
 #  internal_notes                     :text
 #  on_hold_at                         :datetime
 #  quantity                           :integer
@@ -100,8 +101,9 @@ class ShopOrder < ApplicationRecord
 
     event :mark_fulfilled do
       transitions to: :fulfilled
-      before do |external_ref = nil|
+      before do |external_ref = nil, fulfillment_cost = nil|
         self.external_ref = external_ref
+        self.fulfillment_cost = fulfillment_cost
       end
     end
 
