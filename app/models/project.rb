@@ -103,6 +103,7 @@ class Project < ApplicationRecord
     grub: "Grub",
     hackaccino: "Hackaccino",
     highway: "Highway",
+    jumpstart: "Jumpstart",
     neighborhood: "Neighborhood",
     shipwrecked: "Shipwrecked",
     solder: "Solder",
