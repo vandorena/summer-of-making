@@ -32,14 +32,16 @@ class VotesController < ApplicationController
       return
     end
 
-    ship_events = ShipEvent.where(id: [ ship_event_1_id, ship_event_2_id ]).includes(:project)
+    ship_events = ShipEvent.where(id: [ ship_event_1_id, ship_event_2_id ]).includes(project: :ship_certifications)
     if ship_events.size != 2
       redirect_to new_vote_path, alert: "Invalid ship events selected"
       return
     end
 
-    @ship_events = ship_events.to_a
-    @projects = @ship_events.map(&:project)
+    @ship_events.first.project.latest_ship_certification
+    @ship_events.last.project.latest_ship_certification
+    # @ship_events = ship_events.to_a
+    # @projects = @ship_events.map(&:project)
 
     @vote = current_user.votes.build(vote_params.except(:ship_event_1_id, :ship_event_2_id, :signature))
     @vote.ship_event_1_id = ship_event_1_id
@@ -228,6 +230,18 @@ class VotesController < ApplicationController
     @projects = selected_projects
     @ship_events = selected_projects.map do |project|
       project.ship_events.max_by(&:created_at)
+    end
+
+    @project_ai_used = {}
+    @projects.each do |project|
+      ai_used = if project.respond_to?(:ai_used?)
+        project.ai_used?
+      elsif project.respond_to?(:latest_ship_certification) && project.latest_ship_certification.respond_to?(:ai_used?)
+        project.latest_ship_certification.ai_used?
+      else
+        false
+      end
+      @project_ai_used[project.id] = ai_used
     end
 
     if @ship_events.size == 2
