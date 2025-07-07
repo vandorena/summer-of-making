@@ -55,11 +55,42 @@
   </div>
 
   <div style="margin: 2em; max-width: 1200px;">
-    <h2 style="color: var(--color-primary); margin-bottom: 1em;">trends (Last 30 Days)</h2>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1em;">
+      <h2 style="color: var(--color-primary); margin: 0;">trends</h2>
+      <div style="display: flex; gap: 0.5em; flex-wrap: wrap;">
+        <%= link_to "1m", admin_view_analytics_path(interval: "1m"),
+            class: "filter-btn #{'active' if params[:interval] == '1m'}",
+            style: "padding: 0.5em 1em; border-radius: 0.25em; text-decoration: none; font-size: 0.875rem; border: 1px solid var(--color-border); background: #{params[:interval] == '1m' ? 'var(--color-primary)' : 'var(--color-elevated)'}; color: #{params[:interval] == '1m' ? 'white' : 'var(--color-text)'};" %>
+        <%= link_to "5m", admin_view_analytics_path(interval: "5m"),
+            class: "filter-btn #{'active' if params[:interval] == '5m'}",
+            style: "padding: 0.5em 1em; border-radius: 0.25em; text-decoration: none; font-size: 0.875rem; border: 1px solid var(--color-border); background: #{params[:interval] == '5m' ? 'var(--color-primary)' : 'var(--color-elevated)'}; color: #{params[:interval] == '5m' ? 'white' : 'var(--color-text)'};" %>
+        <%= link_to "15m", admin_view_analytics_path(interval: "15m"),
+            class: "filter-btn #{'active' if params[:interval] == '15m'}",
+            style: "padding: 0.5em 1em; border-radius: 0.25em; text-decoration: none; font-size: 0.875rem; border: 1px solid var(--color-border); background: #{params[:interval] == '15m' ? 'var(--color-primary)' : 'var(--color-elevated)'}; color: #{params[:interval] == '15m' ? 'white' : 'var(--color-text)'};" %>
+        <%= link_to "30m", admin_view_analytics_path(interval: "30m"),
+            class: "filter-btn #{'active' if params[:interval] == '30m'}",
+            style: "padding: 0.5em 1em; border-radius: 0.25em; text-decoration: none; font-size: 0.875rem; border: 1px solid var(--color-border); background: #{params[:interval] == '30m' ? 'var(--color-primary)' : 'var(--color-elevated)'}; color: #{params[:interval] == '30m' ? 'white' : 'var(--color-text)'};" %>
+        <%= link_to "1h", admin_view_analytics_path(interval: "1h"),
+            class: "filter-btn #{'active' if params[:interval] == '1h'}",
+            style: "padding: 0.5em 1em; border-radius: 0.25em; text-decoration: none; font-size: 0.875rem; border: 1px solid var(--color-border); background: #{params[:interval] == '1h' ? 'var(--color-primary)' : 'var(--color-elevated)'}; color: #{params[:interval] == '1h' ? 'white' : 'var(--color-text)'};" %>
+        <%= link_to "2h", admin_view_analytics_path(interval: "2h"),
+            class: "filter-btn #{'active' if params[:interval] == '2h'}",
+            style: "padding: 0.5em 1em; border-radius: 0.25em; text-decoration: none; font-size: 0.875rem; border: 1px solid var(--color-border); background: #{params[:interval] == '2h' ? 'var(--color-primary)' : 'var(--color-elevated)'}; color: #{params[:interval] == '2h' ? 'white' : 'var(--color-text)'};" %>
+        <%= link_to "4h", admin_view_analytics_path(interval: "4h"),
+            class: "filter-btn #{'active' if params[:interval] == '4h'}",
+            style: "padding: 0.5em 1em; border-radius: 0.25em; text-decoration: none; font-size: 0.875rem; border: 1px solid var(--color-border); background: #{params[:interval] == '4h' ? 'var(--color-primary)' : 'var(--color-elevated)'}; color: #{params[:interval] == '4h' ? 'white' : 'var(--color-text)'};" %>
+        <%= link_to "6h", admin_view_analytics_path(interval: "6h"),
+            class: "filter-btn #{'active' if params[:interval] == '6h'}",
+            style: "padding: 0.5em 1em; border-radius: 0.25em; text-decoration: none; font-size: 0.875rem; border: 1px solid var(--color-border); background: #{params[:interval] == '6h' ? 'var(--color-primary)' : 'var(--color-elevated)'}; color: #{params[:interval] == '6h' ? 'white' : 'var(--color-text)'};" %>
+        <%= link_to "1d", admin_view_analytics_path(interval: "1d"),
+            class: "filter-btn #{'active' if params[:interval] == '1d' || params[:interval].blank?}",
+            style: "padding: 0.5em 1em; border-radius: 0.25em; text-decoration: none; font-size: 0.875rem; border: 1px solid var(--color-border); background: #{params[:interval] == '1d' || params[:interval].blank? ? 'var(--color-primary)' : 'var(--color-elevated)'}; color: #{params[:interval] == '1d' || params[:interval].blank? ? 'white' : 'var(--color-text)'};" %>
+      </div>
+    </div>
     <% if @view_stats_by_date.any? %>
       <%= line_chart @view_stats_by_date.map { |date, stats| [date, stats[:total_views]] },
-          title: "total views by day",
-          xtitle: "day",
+          title: @chart_title || "total views by day",
+          xtitle: "time",
           ytitle: "views",
           width: "100%",
           height: "300px",
