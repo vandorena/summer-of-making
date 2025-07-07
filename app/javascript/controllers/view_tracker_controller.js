@@ -7,7 +7,6 @@ export default class extends Controller {
   }
 
   connect() {
-    console.log('ViewTracker connected')
     this.trackedItems = new Set()
     this.timeouts = new Map()
     
@@ -25,11 +24,9 @@ export default class extends Controller {
   observeTrackableElements() {
     const trackableElements = this.element.querySelectorAll('[data-viewable-id][data-viewable-type]')
     
-    console.log(`Found ${trackableElements.length} trackable elements`)
     trackableElements.forEach(element => {
       const id = element.dataset.viewableId
       const type = element.dataset.viewableType
-      console.log(`Observing ${type} #${id}`)
       this.observer.observe(element)
     })
   }
@@ -68,7 +65,6 @@ export default class extends Controller {
   }
 
   async trackView(viewableType, viewableId) {
-    console.log(`Tracking view: ${viewableType} #${viewableId}`)
     try {
       const response = await fetch('/track_view', {
         method: 'POST',
@@ -83,12 +79,11 @@ export default class extends Controller {
       })
 
       if (response.ok) {
-        console.log(`✓ View tracked: ${viewableType} #${viewableId}`)
       } else {
-        console.warn(`✗ View tracking failed: ${viewableType} #${viewableId}`, response.status)
+        console.warn(`vte ${viewableType} id${viewableId}`, response.status)
       }
     } catch (error) {
-      console.error('View tracking error:', error)
+      console.error('vte ', error)
     }
   }
 }
