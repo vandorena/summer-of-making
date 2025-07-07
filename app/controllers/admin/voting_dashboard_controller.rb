@@ -7,6 +7,8 @@ module Admin
       counts = Vote.group(:project_1_id).count.merge(Vote.group(:project_2_id).count) { |_, a, b| a + b }
       vote_counts = counts.values
 
+      @v1 = vote_counts.count { |c| c >= 1 }
+      @v5 = vote_counts.count { |c| c >= 5 }
       @v10 = vote_counts.count { |c| c >= 10 }
       @v18 = vote_counts.count { |c| c >= 18 }
       @v24 = vote_counts.count { |c| c >= 24 }
