@@ -67,9 +67,7 @@
                   <% if project.used_ai %>
                     <div class="mt-2 flex items-center justify-center group relative">
                       <span class="inline-flex items-center bg-[#FFE8CD] text-[#4A2D24] text-xs font-semibold px-2 py-1 rounded-full border border-[#a8956b] shadow-sm">
-                        <span class="mr-1">
-                          <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' class='inline align-middle text-[#4A2D24]'><g fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' color='currentColor'><path d='M4 16.5a3 3 0 0 0 3 3a2.5 2.5 0 0 0 5 0a2.5 2.5 0 1 0 5 0a3 3 0 0 0 2.567-4.553a3.001 3.001 0 0 0 0-5.893A3 3 0 0 0 17 4.5a2.5 2.5 0 1 0-5 0a2.5 2.5 0 0 0-5 0a3 3 0 0 0-2.567 4.553a3.001 3.001 0 0 0 0 5.893A3 3 0 0 0 4 16.5' /><path d='m7.5 14.5l1.842-5.526a.694.694 0 0 1 1.316 0L12.5 14.5m3-6v6m-7-2h3' /></g></svg>
-                        </span>
+                        <%= inline_svg "icons/ai.svg", class: "w-5 h-5 sm:w-6 sm:h-6" %>
                         AI Used
                       </span>
                       <span class="absolute left-1/2 -translate-x-1/2 mt-2 w-max bg-[#4A2D24] text-[#FFE8CD] text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 whitespace-nowrap shadow-lg border border-[#a8956b]">This project had help from AI models</span>
