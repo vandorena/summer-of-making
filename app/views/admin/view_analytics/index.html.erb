@@ -30,6 +30,28 @@
         <%= @average_views_per_devlog %> / devlog
       </p>
     </div>
+      <div class="acard" style="padding: 1.5em; background: var(--color-elevated); border-radius: 0.5em; border: 1px solid var(--color-border);">
+    <h3 style="margin: 0 0 0.5em 0; color: var(--color-primary); font-size: 1.1rem;">views (last 24h)</h3>
+    <p style="margin: 0; font-size: 2rem; font-weight: bold; color: var(--color-accent);"><%= number_with_delimiter(@recent_analytics[:total_views_last_24h]) %></p>
+  </div>
+
+  <div class="acard" style="padding: 1.5em; background: var(--color-elevated); border-radius: 0.5em; border: 1px solid var(--color-border);">
+    <h3 style="margin: 0 0 0.5em 0; color: var(--color-primary); font-size: 1.1rem;">project_views (last 24h)</h3>
+    <p style="margin: 0; font-size: 2rem; font-weight: bold; color: var(--color-success);"><%= number_with_delimiter(@recent_analytics[:project_views_last_24h]) %></p>
+  </div>
+
+  <div class="acard" style="padding: 1.5em; background: var(--color-elevated); border-radius: 0.5em; border: 1px solid var(--color-border);">
+    <h3 style="margin: 0 0 0.5em 0; color: var(--color-primary); font-size: 1.1rem;">devlog_views (last 24h)</h3>
+    <p style="margin: 0; font-size: 2rem; font-weight: bold; color: var(--color-info);"><%= number_with_delimiter(@recent_analytics[:devlog_views_last_24h]) %></p>
+  </div>
+
+  <div class="acard" style="padding: 1.5em; background: var(--color-elevated); border-radius: 0.5em; border: 1px solid var(--color-border);">
+    <h3 style="margin: 0 0 0.5em 0; color: var(--color-primary); font-size: 1.1rem;">average_views (last 24h)</h3>
+    <p style="margin: 0; font-size: 1.2rem; color: var(--color-text);">
+      <%= @recent_analytics[:project_views_last_24h] %> / project<br>
+      <%= @recent_analytics[:devlog_views_last_24h] %> / devlog
+    </p>
+  </div>
   </div>
 
   <div style="margin: 2em; max-width: 1200px;">

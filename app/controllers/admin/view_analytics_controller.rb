@@ -31,7 +31,10 @@ module Admin
         projects_created_last_7_days: Project.where(created_at: 7.days.ago..Time.current).count,
         devlogs_created_last_7_days: Devlog.where(created_at: 7.days.ago..Time.current).count,
         total_projects: Project.count,
-        total_devlogs: Devlog.count
+        total_devlogs: Devlog.count,
+        project_views_last_24h: ViewEvent.for_projects.where("created_at >= ?", 24.hours.ago).count,
+        devlog_views_last_24h: ViewEvent.for_devlogs.where("created_at >= ?", 24.hours.ago).count,
+        total_views_last_24h: ViewEvent.for_projects.where("created_at >= ?", 24.hours.ago).count + ViewEvent.for_devlogs.where("created_at >= ?", 24.hours.ago).count
       }
     end
 
