@@ -66,11 +66,11 @@
                   <%= image_tag project.banner, alt: project.title, class: "w-full h-full object-cover", loading: "lazy" %>
                   <% if project.used_ai %>
                     <div class="mt-2 flex items-center justify-center group relative">
-                      <span class="inline-flex items-center bg-[#FFE8CD] text-[#4A2D24] text-xs font-semibold px-2 py-1 rounded-full border border-[#a8956b] shadow-sm">
-                        <%= inline_svg "icons/ai.svg", class: "w-5 h-5 sm:w-6 sm:h-6" %>
+                      <span style="background: #FFE8CD; color: #4A2D24; border: 1px solid #a8956b;" class="inline-flex items-center text-xs font-semibold px-2 py-1 rounded-full shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" class="w-5 h-5 sm:w-6 sm:h-6" fill="#4A2D24" viewBox="0 0 24 24" style="color: #4A2D24;"><g stroke="#4A2D24" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" color="#4A2D24" fill="#4A2D24"><path d="M4 16.5a3 3 0 0 0 3 3a2.5 2.5 0 0 0 5 0a2.5 2.5 0 1 0 5 0a3 3 0 0 0 2.567-4.553a3.001 3.001 0 0 0 0-5.893A3 3 0 0 0 17 4.5a2.5 2.5 0 1 0-5 0a2.5 2.5 0 0 0-5 0a3 3 0 0 0-2.567 4.553a3.001 3.001 0 0 0 0 5.893A3 3 0 0 0 4 16.5"></path><path d="m7.5 14.5l1.842-5.526a.694.694 0 0 1 1.316 0L12.5 14.5m3-6v6m-7-2h3"></path></g></svg>
                         AI Used
                       </span>
-                      <span class="absolute left-1/2 -translate-x-1/2 mt-2 w-max bg-[#4A2D24] text-[#FFE8CD] text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 whitespace-nowrap shadow-lg border border-[#a8956b]">This project had help from AI models</span>
+                      <span style="background: #4A2D24; color: #FFE8CD; border: 1px solid #a8956b;" class="absolute left-1/2 -translate-x-1/2 mt-2 w-max text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 whitespace-nowrap shadow-lg">This project had help from AI models</span>
                     </div>
                   <% end %>
                 </div>
