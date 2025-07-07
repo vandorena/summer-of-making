@@ -17,7 +17,7 @@ WORKDIR /rails
 # Install all packages (base + build dependencies)
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
-        curl libjemalloc2 libvips postgresql-client wget ffmpeg \
+        curl libjemalloc2 libvips postgresql-client wget ffmpeg imagemagick \
         build-essential git libpq-dev libyaml-dev pkg-config && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
