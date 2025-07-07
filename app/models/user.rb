@@ -385,14 +385,15 @@ class User < ApplicationRecord
   def verification_status
     return :not_linked if identity_vault_id.blank?
 
+    idv_data = fetch_idv[:identity]
 
-    case "verified"
+    case idv_data[:verification_status]
     when "pending"
       :pending
     when "needs_submission"
       :needs_resubmission
     when "verified"
-      if true
+      if idv_data[:ysws_eligible]
         notify_xyz_on_verified
         update(ysws_verified: true) unless ysws_verified?
         :verified
