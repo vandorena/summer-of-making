@@ -65,15 +65,22 @@ class Devlog < ApplicationRecord
 
   delegate :count, to: :likes, prefix: true
 
-  def recalculate_seconds_coded
-    prev_time = project
-                  .devlogs
-                  .where("created_at < ?", created_at)
-                  .order(created_at: :desc)
-                  .limit(1)
-                  .pick(:created_at) || project.created_at
+  # ie. Project.first.devlogs.capped_seconds_coded
+  scope :capped_seconds_coded, -> { where.not(seconds_coded: nil).sum("LEAST(seconds_coded, #{10.hours.to_i})") }
 
-    bounded_prev_time = [ prev_time, created_at - 24.hours ].max
+  def recalculate_seconds_coded
+    # find the created_at of the devlog directly before this one
+    prev_time = Devlog.where(project_id: project_id)
+                        .where("created_at < ?", created_at)
+                        .order(created_at: :desc)
+                        .first&.created_at
+
+    # alternatively, record from the beginning of the event
+    prev_time ||= begin
+      Time.use_zone("America/New_York") do
+        Time.parse("2025-06-16").beginning_of_day
+      end
+    end
 
     res = user.fetch_raw_hackatime_stats(from: bounded_prev_time, to: created_at)
     begin
