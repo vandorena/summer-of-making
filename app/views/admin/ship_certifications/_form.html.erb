@@ -14,7 +14,7 @@
   <div class="field">
     <b>Project ID:</b> <%= project.id %><br>
     <b>Project:</b> <%= link_to project.title, project %> | <%= link_to "View on Platform", project_path(project), target: "_blank" %><br>
-    <b>User:</b> <%= project.user.email %> | <%= link_to "Admin Profile", admin_user_path(project.user), target: "_blank" %><br>
+    <b>User:</b> <%= project.user.display_name %> | <%= link_to "Admin Profile", admin_user_path(project.user), target: "_blank" %><br>
     <b>Ship Events:</b> <%= project.ship_events.size %><br>
     <b>Category:</b> <%= project.category&.humanize %><br>
     <b>Certification Type:</b> <%= project.certification_type&.humanize %><br>
