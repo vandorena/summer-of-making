@@ -82,7 +82,7 @@ class Devlog < ApplicationRecord
       end
     end
 
-    res = user.fetch_raw_hackatime_stats(from: bounded_prev_time, to: created_at)
+    res = user.fetch_raw_hackatime_stats(from: prev_time, to: created_at)
     begin
       data = JSON.parse(res.body)
       projects = data.dig("data", "projects")
