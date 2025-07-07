@@ -8,6 +8,9 @@ default: &default
 development:
   <<: *default
 
+som_intr_high_seas:
+  <<: *default
+
 test:
   <<: *default
 
