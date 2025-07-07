@@ -19,8 +19,8 @@ module ApplicationHelper
     "#{hours}h #{minutes}m"
   end
 
-  def admin_tool(class_name = "", element = "div", **, &)
-    return unless current_user&.is_admin?
+  def admin_tool(class_name = "", element = "div", show_in_impersonate: false, **, &)
+    return unless current_user&.is_admin? || (show_in_impersonate && current_impersonator&.is_admin?)
 
     concat content_tag(element,
                        class: "#{"p-2" unless element == "span"} border-2 border-dashed border-orange-500 bg-orange-500/10 w-fit h-fit #{class_name}", **, &)
@@ -62,7 +62,7 @@ module ApplicationHelper
 
   def admin_user_visit(user)
     admin_tool("", "span") do
-      link_to "🔨", admin_user_path(user)
+      render "shared/user_twiddles", user:
     end
   end
 end

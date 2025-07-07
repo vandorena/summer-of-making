@@ -39,7 +39,7 @@
                 <p class="text-gray-400">To get shells, ship this project!</p>
               <% elsif project.ship_events&.last&.payouts&.any? %>
                 <p class="text-gray-400">You earned <%= pluralize(project.ship_events&.last&.payout.sum(:amount), "shells") %>!</p>
-              <% elsif current_user.votes.size < (20 * current_user.ship_events.size) %>
+              <% elsif current_user.votes.size < (20 * current_user.unpaid_ship_events_count) %>
                 <p class="text-red-400">You should go vote - hang tight!</p>
               <% else %>
                 <p class="text-red-400">This project is being voted on. Hang tight - you'll get your payout soon!</p>

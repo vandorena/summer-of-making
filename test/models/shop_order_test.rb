@@ -9,6 +9,7 @@
 #  frozen_address                     :jsonb
 #  frozen_item_price                  :decimal(6, 2)
 #  fulfilled_at                       :datetime
+#  fulfillment_cost                   :decimal(6, 2)    default(0.0)
 #  internal_notes                     :text
 #  on_hold_at                         :datetime
 #  quantity                           :integer

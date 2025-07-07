@@ -2,13 +2,18 @@
 
 class DevlogsController < ApplicationController
   include ActionView::RecordIdentifier
-  before_action :authenticate_user!
+  include ViewTrackable
+  before_action :authenticate_user!, except: [ :show ]
   before_action :set_project, only: %i[create destroy update]
-  before_action :set_devlog, only: %i[destroy update]
+  before_action :set_devlog, only: %i[show destroy update]
   before_action :check_if_shipped, only: %i[create destroy update]
   skip_before_action :authenticate_user!, only: [ :api_create ]
   before_action :authenticate_api_key, only: [ :api_create ]
   skip_before_action :verify_authenticity_token, only: [ :api_create ]
+  def show
+    track_view(@devlog)
+  end
+
   def index
     @page = [ params[:page].to_i, 1 ].max
     @per_page = 10
@@ -115,7 +120,12 @@ class DevlogsController < ApplicationController
   end
 
   def set_devlog
-    @devlog = @project.devlogs.find(params[:id])
+    if @project
+      @devlog = @project.devlogs.find(params[:id])
+    else
+      @devlog = Devlog.find(params[:id])
+      @project = @devlog.project
+    end
   end
 
   def check_if_shipped

@@ -12,6 +12,7 @@
 #  likes_count         :integer          default(0), not null
 #  seconds_coded       :integer
 #  text                :text
+#  views_count         :integer          default(0), not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #  project_id          :bigint           not null
@@ -19,8 +20,9 @@
 #
 # Indexes
 #
-#  index_devlogs_on_project_id  (project_id)
-#  index_devlogs_on_user_id     (user_id)
+#  index_devlogs_on_project_id   (project_id)
+#  index_devlogs_on_user_id      (user_id)
+#  index_devlogs_on_views_count  (views_count)
 #
 # Foreign Keys
 #
@@ -63,26 +65,50 @@ class Devlog < ApplicationRecord
 
   delegate :count, to: :likes, prefix: true
 
+  # ie. Project.first.devlogs.capped_seconds_coded
+  scope :capped_seconds_coded, -> { where.not(seconds_coded: nil).sum("LEAST(seconds_coded, #{10.hours.to_i})") }
+
   def recalculate_seconds_coded
-    prev_time = project
-                  .devlogs
-                  .where("created_at < ?", created_at)
-                  .order(created_at: :desc)
-                  .limit(1)
-                  .pick(:created_at) || project.created_at
+    # find the created_at of the devlog directly before this one
+    prev_time = Devlog.where(project_id: project_id)
+                        .where("created_at < ?", created_at)
+                        .order(created_at: :desc)
+                        .first&.created_at
 
-    bounded_prev_time = [ prev_time, created_at - 24.hours ].max
+    # alternatively, record from the beginning of the event
+    prev_time ||= begin
+      Time.use_zone("America/New_York") do
+        Time.parse("2025-06-16").beginning_of_day
+      end
+    end
 
-    res = user.fetch_raw_hackatime_stats(from: bounded_prev_time, to: created_at)
-    data = JSON.parse(res.body)
-    projects = data.dig("data", "projects")
+    res = user.fetch_raw_hackatime_stats(from: prev_time, to: created_at)
+    begin
+      data = JSON.parse(res.body)
+      projects = data.dig("data", "projects")
 
-    seconds_coded = projects
-      .filter { |p| project.hackatime_project_keys.include?(p["name"]) }
-      .reduce(0) { |acc, h| acc += h["total_seconds"] }
+      seconds_coded = projects
+        .filter { |p| project.hackatime_project_keys.include?(p["name"]) }
+        .reduce(0) { |acc, h| acc += h["total_seconds"] }
 
-    Rails.logger.info "\tDevlog #{id} seconds coded: #{seconds_coded}"
-    update!(seconds_coded:, hackatime_pulled_at: Time.now)
+      Rails.logger.info "\tDevlog #{id} seconds coded: #{seconds_coded}"
+      update!(seconds_coded:, hackatime_pulled_at: Time.now)
+    rescue JSON::ParserError => e
+      if res.body.strip.start_with?("Gateway") || res.body.strip =~ /gateway/i
+        Rails.logger.error "Hackatime API Gateway error for Devlog #{id}: #{res.body}"
+        Honeybadger.notify("Hackatime API Gateway error for Devlog #{id}: #{res.body}")
+        errors.add(:base, "Hackatime server had trouble, give it another go?")
+      else
+        Rails.logger.error "JSON parse error for Devlog #{id}: #{e.message} | Body: #{res.body}"
+        Honeybadger.notify(
+          error_class: "Hackatime JSON::ParserError",
+          error_message: e.message,
+          context: { devlog_id: id, user_id: user_id, project_id: project_id, response_body: res.body }
+        )
+        errors.add(:base, "There was a problem reading your Hackatime data. Give it another go?")
+      end
+      false
+    end
   end
 
   private

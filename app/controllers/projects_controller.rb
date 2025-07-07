@@ -2,6 +2,7 @@
 
 class ProjectsController < ApplicationController
   include ActionView::RecordIdentifier
+  include ViewTrackable
   before_action :authenticate_user!, except: %i[index show]
   skip_before_action :verify_authenticity_token, only: [ :check_link ]
   before_action :set_project,
@@ -12,6 +13,7 @@ class ProjectsController < ApplicationController
   before_action :check_identity_verification
 
   def index
+    sort_order = params[:sort] == "oldest" ? :asc : :desc
     if params[:action] == "my_projects"
       @projects = Project.includes(:user)
                          .includes(:ship_events)
@@ -30,7 +32,7 @@ class ProjectsController < ApplicationController
                               .joins("LEFT JOIN devlogs ON devlogs.project_id = projects.id")
                               .where(is_deleted: false)
                               .group("projects.id")
-                              .order(Arel.sql("COUNT(devlogs.id) DESC, projects.created_at DESC"))
+                              .order(Arel.sql("COUNT(devlogs.id) DESC, projects.created_at #{sort_order == :asc ? 'ASC' : 'DESC'}"))
 
       @pagy, @projects = pagy(projects_query, items: 12)
     elsif params[:tab] == "following"
@@ -65,16 +67,18 @@ class ProjectsController < ApplicationController
                               .joins("LEFT JOIN devlogs ON devlogs.project_id = projects.id")
                               .where(is_deleted: false)
                               .group("projects.id")
-                              .order(Arel.sql("COUNT(devlogs.id) DESC, projects.created_at DESC"))
+                              .order(Arel.sql("COUNT(devlogs.id) DESC, projects.created_at #{sort_order == :asc ? 'ASC' : 'DESC'}"))
 
       @gallery_pagy, @projects = pagy(projects_query, items: 12)
     end
   end
 
   def show
-    @devlogs = @project.devlogs
+    track_view(@project)
+
+    @devlogs = @project.devlogs.order(created_at: :desc)
     @ship_events = @project.ship_events
-    @timeline = (@devlogs + @ship_events).sort_by(&:created_at)
+    @timeline = (@devlogs + @ship_events).sort_by(&:created_at).reverse
 
     @stonks = @project.stonks.includes(:user).order(amount: :desc)
     @latest_ship_certification = @project.latest_ship_certification

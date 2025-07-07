@@ -1,7 +1,15 @@
 module Admin
   class ShipCertificationsController < ApplicationController
+    before_action :authenticate_ship_certifier!, except: []
+    skip_before_action :authenticate_admin!
+
     def index
-      @ship_certifications = ShipCertification
+      @filter = params[:filter] || "pending"
+      @category_filter = params[:category_filter]
+
+      @category_filter = nil unless @category_filter.present? && Project::CATEGORIES.include?(@category_filter)
+
+      base = ShipCertification
         .left_joins(project: :devlogs)
         .where(projects: { is_deleted: false })
         .group("ship_certifications.id", "projects.id")
@@ -9,10 +17,40 @@ module Admin
         .includes(:project)
         .order(updated_at: :asc)
 
-      # Totals
-      @total_approved = ShipCertification.approved.count
-      @total_rejected = ShipCertification.rejected.count
-      @total_pending = ShipCertification.pending.count
+      if @category_filter.present?
+        base = base.where(projects: { category: @category_filter })
+      end
+
+      case @filter
+      when "approved"
+        @ship_certifications = base.approved
+      when "rejected"
+        @ship_certifications = base.rejected
+      when "pending"
+        @ship_certifications = base.pending
+      when "all"
+        @ship_certifications = base
+      else
+        @filter = "pending"
+        @ship_certifications = base.pending
+      end
+
+      base = ShipCertification.joins(:project).where(projects: { is_deleted: false })
+      if @category_filter.present?
+        base = base.where(projects: { category: @category_filter })
+      end
+
+      @total_approved = base.approved.count
+      @total_rejected = base.rejected.count
+      @total_pending = base.pending.count
+      @avg_turnaround = calc_avg_turnaround
+
+      @category_counts = ShipCertification
+        .joins(:project)
+        .where(projects: { is_deleted: false })
+        .where.not(projects: { category: [ nil, "" ] })
+        .group("projects.category")
+        .count
 
       # Leaderboard - reviewers by number of certifications reviewed
       @leaderboard = User.joins("INNER JOIN ship_certifications ON users.id = ship_certifications.reviewer_id")
@@ -38,7 +76,53 @@ module Admin
       end
     end
 
+    def logs
+      @logs = ShipCertification
+        .includes(:project, :reviewer)
+        .where(projects: { is_deleted: false })
+        .where.not(judgement: :pending)
+        .order(updated_at: :desc)
+        .limit(500) # this should be the limit of how much shit we need
+
+      @total_approved = ShipCertification.approved.count
+      @total_rejected = ShipCertification.rejected.count
+      @total_processed = @total_approved + @total_rejected
+
+      # Average decision time
+      @avg_turnaround = calc_avg_turnaround
+
+      # Leaderboard - reviewers by number of certifications reviewed
+      @leaderboard = User.joins("INNER JOIN ship_certifications ON users.id = ship_certifications.reviewer_id")
+                         .where.not(ship_certifications: { reviewer_id: nil })
+                         .group("users.id", "users.display_name", "users.email")
+                         .order("COUNT(ship_certifications.id) DESC")
+                         .limit(10)
+                         .pluck("users.display_name", "users.email", "COUNT(ship_certifications.id)")
+    end
+
     private
+
+    def calc_avg_turnaround
+      pc = ShipCertification
+        .where.not(judgement: :pending)
+        .where("ship_certifications.updated_at > ship_certifications.created_at")
+
+      return nil if pc.empty?
+
+      total_time = pc.sum { |cert| cert.updated_at - cert.created_at }
+      avg_sec = total_time / pc.count
+
+      {
+        s: avg_sec,
+        h: (avg_sec / 3600).to_i,
+        m: ((avg_sec % 3600) / 60).to_i,
+        d: (avg_sec / 86400).to_i
+      }
+    end
+
+    def authenticate_ship_certifier!
+      redirect_to root_path unless current_user&.admin_or_ship_certifier?
+    end
 
     def ship_certification_params
       params.require(:ship_certification).permit(:judgement, :notes, :reviewer_id, :proof_video)

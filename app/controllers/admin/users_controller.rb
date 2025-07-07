@@ -67,6 +67,58 @@ module Admin
       redirect_to admin_user_path(@user)
     end
 
+    def give_black_market
+      @user.give_black_market!
+      @user.create_activity("give_black_market")
+      flash[:success] = "they're in!"
+      redirect_back_or_to admin_user_path(@user)
+    end
+
+    def take_away_black_market
+      @user.update!(has_black_market: false)
+      @user.create_activity("take_away_black_market")
+      flash[:success] = "unfortunate."
+      redirect_to admin_user_path(@user)
+    end
+
+    def grant_ship_certifier
+      if @user.ship_certifier?
+        flash[:notice] = "#{@user.email} nothing changed, they already have ship certifier permissions"
+      else
+        @user.add_permission("shipcert")
+        @user.create_activity("grant_ship_certifier")
+        flash[:success] = "gotcha, granted rights to #{@user.email}"
+      end
+      redirect_to admin_user_path(@user)
+    end
+
+    def revoke_ship_certifier
+      unless @user.ship_certifier?
+        flash[:notice] = "#{@user.email} nothing changed, they don't have ship certifier permissions"
+      else
+        @user.remove_permission("shipcert")
+        @user.create_activity("revoke_ship_certifier")
+        flash[:success] = "gotcha, revoked rights from #{@user.email}"
+      end
+      redirect_to admin_user_path(@user)
+    end
+
+    def impersonate
+      unless current_user&.is_admin?
+        Honeybadger.notify("what the h-e-double-hockey-sticks?")
+        return redirect_to root_path
+      end
+      if @user == current_user
+        flash[:notice] = "that's you, bozo!"
+        return redirect_back_or_to admin_user_path(@user)
+      end
+      session[:impersonator_user_id] ||= current_user.id
+      @user.create_activity("impersonate")
+      session[:user_id] = @user.id
+      flash[:success] = "hey #{@user.display_name}! how's it going? nice 'stache and glasses!"
+      redirect_to root_path
+    end
+
     private
 
     def set_user

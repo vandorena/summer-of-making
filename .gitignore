@@ -46,3 +46,7 @@
 public/temp/*
 
 /config/credentials/som_intr_high_seas.key
+
+*.env
+*.log
+mole/gifs/*

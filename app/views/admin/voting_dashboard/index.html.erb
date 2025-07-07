@@ -1,0 +1,57 @@
+<h1>voting status</h1>
+
+<ul>
+  <li><strong>total votes:</strong> <%= @total %></li>
+  <li><strong>projects in the pool:</strong> <%= @pool %></li>
+  <li><strong>projects with more than 1 vote:</strong> <%= @v1 %></li>
+  <li><strong>projects with more than 5 votes:</strong> <%= @v5 %></li>
+  <li><strong>projects with more than 10 votes:</strong> <%= @v10 %></li>
+  <li><strong>projects with more than 18 votes:</strong> <%= @v18 %></li>
+  <li><strong>projects with more than 24 votes:</strong> <%= @v24 %></li>
+  <li><strong>projects with more than 30 votes:</strong> <%= @v30 %></li>
+  <li><strong>projects with more than 50 votes:</strong> <%= @v50 %></li>
+</ul>
+
+<h2>top 10</h2>
+<table>
+  <thead>
+    <tr>
+      <th>rank</th>
+      <th>name</th>
+      <th>elo</th>
+      <th>votes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @top10.each_with_index do |project, i| %>
+      <tr>
+        <td><%= i + 1 %></td>
+        <td><%= link_to project.title, project_path(project) %></td>
+        <td><%= project.rating %></td>
+        <td><%= Vote.where("project_1_id = ? OR project_2_id = ?", project.id, project.id).count %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<h2>bottom 10</h2>
+<table>
+  <thead>
+    <tr>
+      <th>rank</th>
+      <th>name</th>
+      <th>elo</th>
+      <th>votes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @bottom10.each_with_index do |project, i| %>
+      <tr>
+        <td><%= i + 1 %></td>
+        <td><%= link_to project.title, project_path(project) %></td>
+        <td><%= project.rating %></td>
+        <td><%= Vote.where("project_1_id = ? OR project_2_id = ?", project.id, project.id).count %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

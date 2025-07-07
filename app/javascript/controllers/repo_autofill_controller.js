@@ -22,6 +22,15 @@ export default class extends Controller {
       return;
     }
 
+    const converted = this.convertGit(repoUrl);
+    if (converted !== repoUrl) {
+      if (converted.includes("raw.githubusercontent.com")) {
+        this.readmeInputTarget.value = converted;
+        this.showRepoInfo("Adjusted your URL for ya!");
+        return;
+      }
+    }
+
     // Check if it's a GitHub URL
     const githubMatch = repoUrl.match(/github\.com\/([^\/]+)\/([^\/]+)/);
 
@@ -64,15 +73,20 @@ export default class extends Controller {
     const url = event.target.value.trim();
     if (!url) return;
 
-    // Check if it's a GitHub blob URL (not allowed)
-    if (url.includes("github.com") && url.includes("/blob/")) {
-      this.showReadmeError("Please use the raw GitHub link, not the blob URL");
-      return;
+    const converted = this.convertGit(url);
+    if (converted !== url) {
+      event.target.value = converted;
+      this.showReadmeInfo("Auto-converted GitHub blob URL to raw URL");
     }
 
     // Check file extension for any URL
-    const urlParts = url.split("?")[0]; // Remove query params
+    const urlParts = converted.split("?")[0]; // Remove query params
     const extension = urlParts.split(".").pop().toLowerCase();
+
+    if (!["md", "txt"].includes(extension)) {
+      this.showReadmeError("README must be a .md or .txt file");
+      return;
+    }
 
     if (!["md", "txt"].includes(extension)) {
       this.showReadmeError("README must be a .md or .txt file");
@@ -82,16 +96,61 @@ export default class extends Controller {
     this.clearReadmeError();
   }
 
+  convertGit(url) {
+    const match = url.match(/^https:\/\/github\.com\/([^\/]+)\/([^\/]+)\/blob\/([^\/]+)\/(.+)$/);
+
+    if (match) {
+      const [, owner, repo, branch, path] = match;
+      return `https://raw.githubusercontent.com/${owner}/${repo}/refs/heads/${branch}/${path}`;
+    }
+
+    return url;
+  }
+
+  showReadmeInfo(message) {
+    const errorElement = document.getElementById("readmeError");
+    if (errorElement) {
+      errorElement.textContent = message;
+      errorElement.className = errorElement.className.replace("text-vintage-red", "text-forest");
+      errorElement.classList.remove("hidden");
+
+      setTimeout(() => {
+        this.clearReadmeError();
+      }, 3000);
+    }
+  }
+
   showReadmeError(message) {
     const errorElement = document.getElementById("readmeError");
     if (errorElement) {
       errorElement.textContent = message;
+      errorElement.className = errorElement.className.replace("text-forest", "text-vintage-red");
       errorElement.classList.remove("hidden");
     }
   }
 
   clearReadmeError() {
     const errorElement = document.getElementById("readmeError");
+    if (errorElement) {
+      errorElement.classList.add("hidden");
+    }
+  }
+
+  showRepoInfo(message) {
+    const errorElement = document.getElementById("repoError");
+    if (errorElement) {
+      errorElement.textContent = message;
+      errorElement.className = errorElement.className.replace("text-vintage-red", "text-forest");
+      errorElement.classList.remove("hidden");
+
+      setTimeout(() => {
+        this.clearRepoError();
+      }, 3000);
+    }
+  }
+
+  clearRepoError() {
+    const errorElement = document.getElementById("repoError");
     if (errorElement) {
       errorElement.classList.add("hidden");
     }

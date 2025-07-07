@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_30_183715) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_07_183912) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -175,6 +175,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_30_183715) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.jsonb "rich_content"
+    t.text "content"
     t.index ["devlog_id"], name: "index_comments_on_devlog_id"
     t.index ["user_id"], name: "index_comments_on_user_id"
   end
@@ -199,8 +200,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_30_183715) do
     t.integer "likes_count", default: 0, null: false
     t.integer "comments_count", default: 0, null: false
     t.datetime "hackatime_pulled_at"
+    t.integer "views_count", default: 0, null: false
     t.index ["project_id"], name: "index_devlogs_on_project_id"
     t.index ["user_id"], name: "index_devlogs_on_user_id"
+    t.index ["views_count"], name: "index_devlogs_on_views_count"
   end
 
   create_table "email_signups", force: :cascade do |t|
@@ -319,7 +322,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_30_183715) do
     t.string "ysws_type"
     t.integer "devlogs_count", default: 0, null: false
     t.integer "certification_type"
+    t.integer "views_count", default: 0, null: false
     t.index ["user_id"], name: "index_projects_on_user_id"
+    t.index ["views_count"], name: "index_projects_on_views_count"
   end
 
   create_table "readme_certifications", force: :cascade do |t|
@@ -418,6 +423,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_30_183715) do
     t.decimal "price_offset_au", precision: 6, scale: 2, default: "0.0"
     t.decimal "price_offset_xx", precision: 6, scale: 2, default: "0.0"
     t.boolean "enabled"
+    t.integer "site_action"
     t.check_constraint "hacker_score >= 0 AND hacker_score <= 100", name: "hacker_score_percentage_check"
   end
 
@@ -438,6 +444,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_30_183715) do
     t.datetime "on_hold_at"
     t.text "internal_notes"
     t.bigint "shop_card_grant_id"
+    t.decimal "fulfillment_cost", precision: 6, scale: 2, default: "0.0"
     t.index ["shop_card_grant_id"], name: "index_shop_orders_on_shop_card_grant_id"
     t.index ["shop_item_id"], name: "index_shop_orders_on_shop_item_id"
     t.index ["user_id"], name: "index_shop_orders_on_user_id"
@@ -656,6 +663,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_30_183715) do
     t.boolean "tutorial_video_seen", default: false, null: false
     t.boolean "freeze_shop_activity", default: false
     t.datetime "synced_at", precision: nil
+    t.text "permissions", default: "[]"
+  end
+
+  create_table "view_events", force: :cascade do |t|
+    t.string "viewable_type", null: false
+    t.bigint "viewable_id", null: false
+    t.bigint "user_id"
+    t.string "ip_address"
+    t.string "user_agent"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_view_events_on_created_at"
+    t.index ["user_id"], name: "index_view_events_on_user_id"
+    t.index ["viewable_type", "viewable_id", "created_at"], name: "idx_on_viewable_type_viewable_id_created_at_95fa2a7c9e"
+    t.index ["viewable_type", "viewable_id"], name: "index_view_events_on_viewable"
   end
 
   create_table "vote_changes", force: :cascade do |t|
@@ -743,6 +765,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_30_183715) do
   add_foreign_key "timer_sessions", "projects"
   add_foreign_key "timer_sessions", "users"
   add_foreign_key "tutorial_progresses", "users"
+  add_foreign_key "view_events", "users"
   add_foreign_key "vote_changes", "projects"
   add_foreign_key "vote_changes", "votes"
   add_foreign_key "votes", "projects", column: "project_1_id"

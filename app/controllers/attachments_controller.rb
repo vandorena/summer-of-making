@@ -4,6 +4,11 @@ class AttachmentsController < ApplicationController
   def upload
     file = params[:file]
 
+    if file.size > 250 * 1024 * 1024
+      render json: { error: "this file is bigger than yo mama" }, status: :unprocessable_entity
+      return
+    end
+
     ext = File.extname(file.original_filename).downcase
     unless valid_ext?(ext)
       render json: { error: "Invalid file type" }, status: :unprocessable_entity
@@ -14,8 +19,12 @@ class AttachmentsController < ApplicationController
     temp_path = Rails.root.join("tmp", "uploads", filename)
 
     FileUtils.mkdir_p(File.dirname(temp_path))
-
     File.binwrite(temp_path, file.read)
+
+    if %w[.jpg .jpeg .png .webp].include?(ext)
+      require Rails.root.join("app/services/image_sanitizer")
+      ImageSanitizer.img_opt(temp_path)
+    end
 
     temp_url = url_for(controller: "attachments", action: "download", filename: filename, only_path: false)
     Rails.logger.debug { "temp_url: #{temp_url}" }

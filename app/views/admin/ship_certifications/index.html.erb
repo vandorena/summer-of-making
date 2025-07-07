@@ -1,13 +1,51 @@
 <%= stylesheet_link_tag 'admin_dashboard' %>
-<body class="adash" style="background: var(--color-background); color: var(--color-text); min-height: 100vh;">
-<h1>Ship Certifications</h1>
+<body class="adash" style="background: var(--color-background); color: var(--color-text); min-height: 100vh; padding: 2rem;">
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+  <h1>Ship Certifications
+    <span class="pill pill-<%= case @filter
+      when 'pending' then 'yellow'
+      when 'approved' then 'green'
+      when 'rejected' then 'blue'
+      when 'all' then 'dark'
+      else 'gray'
+    end %>" style="font-size: 0.6em; margin-left: 0.5rem;">
+      <%= @filter.capitalize %>
+    </span>
+    <% if @category_filter.present? %>
+      <span class="pill pill-green" style="font-size: 0.6em; margin-left: 0.5rem;">
+        <%= @category_filter %>
+      </span>
+    <% end %>
+  </h1>
+  <div style="display: flex; gap: 1rem;">
+    <%= link_to "View Logs", logs_admin_ship_certifications_path, class: "pill pill-gray", style: "text-decoration: none; padding: 0.5rem 1rem;" %>
+  </div>
+</div>
 
 <div style="display: flex; gap: 2rem; margin-bottom: 2rem;">
   <div style="background: var(--color-card); padding: 1rem; border-radius: 8px; flex: 1;">
-    <h3>Totals</h3>
+    <h3>The Stats</h3>
+    <p><strong>Total Judged:</strong> <span class="pill pill-dark"><%= @total_approved + @total_rejected %></span></p>
     <p><strong>Approved:</strong> <span class="pill pill-green"><%= @total_approved %></span></p>
     <p><strong>Rejected:</strong> <span class="pill pill-blue"><%= @total_rejected %></span></p>
     <p><strong>Pending:</strong> <span class="pill pill-yellow"><%= @total_pending %></span></p>
+    <% if @total_approved + @total_rejected > 0 %>
+      <p><strong>Presidential Approval Rate:</strong> <span style="font-weight: bold;"><%= ((@total_approved.to_f / (@total_approved + @total_rejected)) * 100).round(1) %>%</span></p>
+    <% end %>
+    <% if @avg_turnaround %>
+      <p><strong>Avg Decision Time:</strong>
+        <span style="font-weight: bold;">
+          <% if @avg_turnaround[:d] > 0 %>
+            <%= @avg_turnaround[:d] %>d <%= @avg_turnaround[:h] % 24 %>h
+          <% elsif @avg_turnaround[:h] > 0 %>
+            <%= @avg_turnaround[:h] %>h <%= @avg_turnaround[:m] %>m
+          <% else %>
+            <%= @avg_turnaround[:m] %>m
+          <% end %>
+        </span>
+      </p>
+    <% end %>
   </div>
 
   <div style="background: var(--color-card); padding: 1rem; border-radius: 8px; flex: 2;">
@@ -34,35 +72,98 @@
     <% end %>
   </div>
 </div>
+
+<div style="margin-bottom: 2rem;">
+  <h3>Filter by Category</h3>
+  <div style="display: flex; gap: 1rem; margin-top: 0.5rem; flex-wrap: wrap;">
+    <%= link_to admin_ship_certifications_path(filter: @filter), class: "pill #{@category_filter.blank? ? 'pill-dark' : 'pill-gray'}", style: "text-decoration: none; padding: 0.5rem 1rem;" do %>
+      All Categories (<%= @category_counts.values.sum %>)
+    <% end %>
+    <% @category_counts.sort.each do |category, count| %>
+      <% next if category.blank? %>
+      <%= link_to admin_ship_certifications_path(filter: @filter, category_filter: category), class: "pill #{@category_filter == category ? 'pill-green' : 'pill-gray'}", style: "text-decoration: none; padding: 0.5rem 1rem;" do %>
+        <%= category %> (<%= count %>)
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<div style="margin-bottom: 2rem;">
+  <h3>Filter by Status</h3>
+  <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+    <%= link_to admin_ship_certifications_path(filter: 'pending', category_filter: @category_filter), class: "pill #{@filter == 'pending' ? 'pill-yellow' : 'pill-gray'}", style: "text-decoration: none; padding: 0.5rem 1rem;" do %>
+      Pending (<%= @total_pending %>)
+    <% end %>
+    <%= link_to admin_ship_certifications_path(filter: 'approved', category_filter: @category_filter), class: "pill #{@filter == 'approved' ? 'pill-green' : 'pill-gray'}", style: "text-decoration: none; padding: 0.5rem 1rem;" do %>
+      Approved (<%= @total_approved %>)
+    <% end %>
+    <%= link_to admin_ship_certifications_path(filter: 'rejected', category_filter: @category_filter), class: "pill #{@filter == 'rejected' ? 'pill-blue' : 'pill-gray'}", style: "text-decoration: none; padding: 0.5rem 1rem;" do %>
+      Rejected (<%= @total_rejected %>)
+    <% end %>
+    <%= link_to admin_ship_certifications_path(filter: 'all', category_filter: @category_filter), class: "pill #{@filter == 'all' ? 'pill-dark' : 'pill-gray'}", style: "text-decoration: none; padding: 0.5rem 1rem;" do %>
+      All (<%= @total_approved + @total_rejected + @total_pending %>)
+    <% end %>
+  </div>
+</div>
+
 <table class="atable">
   <thead>
     <tr>
-      <th>ID</th>
+      <th>Ship ID</th>
       <th>Project</th>
-      <th>Judgement</th>
+      <th>Verdict</th>
+      <th>Certifier</th>
       <th>Created At</th>
+      <th>Dev Time</th>
     </tr>
   </thead>
   <tbody>
     <% @ship_certifications.each do |ship_certification| %>
       <tr>
-        <td><%= ship_certification.id %></td>
+        <td><%= link_to ship_certification.id, edit_admin_ship_certification_path(ship_certification), style: "color: var(--color-link); text-decoration: underline;" %></td>
         <td>
-          <%= link_to ship_certification.project.title, edit_admin_ship_certification_path(ship_certification) %>
-          <span><%= ship_certification.project.category %></span>
+          <div>
+            <strong><%= link_to ship_certification.project.title, edit_admin_ship_certification_path(ship_certification) %></strong>
+            <br>
+            <small style="color: var(--color-text-muted);">
+              Project ID: <%= ship_certification.project.id %>
+            </small>
+            <br>
+            <small style="color: var(--color-text-muted);">
+              By: <%= ship_certification.project.user.display_name || ship_certification.project.user.email %>
+            </small>
+            <br>
+            <small style="color: var(--color-text-muted);">
+              Category: <%= ship_certification.project.category %>
+            </small>
+          </div>
         </td>
         <td>
           <% case ship_certification.judgement %>
           <% when 'approved' %>
-            <span class="pill pill-green">approved</span>
+            <span class="pill pill-green">Approved</span>
           <% when 'rejected' %>
-            <span class="pill pill-blue">rejected</span>
+            <span class="pill pill-blue">Rejected</span>
           <% else %>
-            <span class="pill pill-yellow">pending</span>
+            <span class="pill pill-yellow">Pending</span>
           <% end %>
         </td>
-        <td><%= time_ago_in_words(ship_certification.created_at) %></td>
-        <td><%= ship_certification.project.certification_type || 'N/A' %></td>
+        <td>
+          <% if ship_certification.reviewer %>
+            <%= ship_certification.reviewer.display_name || ship_certification.reviewer.email %>
+          <% else %>
+            <span style="color: var(--color-text-muted);">System</span>
+          <% end %>
+        </td>
+        <td>
+          <div>
+            <%= ship_certification.created_at.strftime("%m/%d/%Y") %>
+            <br>
+            <small style="color: var(--color-text-muted);">
+              <%= time_ago_in_words(ship_certification.created_at) %> ago
+            </small>
+          </div>
+        </td>
         <td><%= format_seconds ship_certification.devlogs_seconds_total %></td>
       </tr>
     <% end %>

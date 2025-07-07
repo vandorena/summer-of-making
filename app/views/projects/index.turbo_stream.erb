@@ -26,7 +26,7 @@
     <% end %>
   <% end %>
 <% else %>
-  <% if @recent_devlogs.any? %>
+  <% if @recent_devlogs&.any? %>
     <% @recent_devlogs.each do |devlog| %>
       <%= turbo_stream.append "devlogs-list" do %>
         <%= render "devlogs/devlog_card",

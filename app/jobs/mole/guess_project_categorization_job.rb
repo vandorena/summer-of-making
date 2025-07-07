@@ -23,7 +23,8 @@ class Mole::GuessProjectCategorizationJob < ApplicationJob
     task_prompt = build_classification_prompt
 
     # Call mole browser service
-    response = call_mole_service(task_prompt, urls)
+    mole_service = MoleBrowserService.new
+    response = mole_service.execute_task(task_prompt, urls)
 
     if response[:success] && response[:result]
       update_project_classification(project, response[:result])
@@ -53,6 +54,8 @@ class Mole::GuessProjectCategorizationJob < ApplicationJob
       Projects that can't be used as an app (ie. a research paper isn't runable, ipynotebook etc.) should be "cert_other".
       Projects that use a video as their demo link should be classified as video.
 
+      If it helps, you can visualize the filetree using https://githubtree.mgks.dev/ (for example, https://githubtree.mgks.dev/repo/hackclub/site/main/)
+
       Base your decision on:
       - Code in the repository (languages, frameworks, dependencies)
       - Demo/play functionality if available
@@ -72,53 +75,13 @@ class Mole::GuessProjectCategorizationJob < ApplicationJob
       Examples:
       web_app|0.85|Uses React framework with API calls and deployment to Vercel
       static_site|0.9|This is a github.io link, so it's hosted on github pages
+      cert_other|0.1|This is a repo of only markdown files so it's not clear how to test this
 
       Return ONLY this pipe-separated format. No other text.
     PROMPT
   end
 
-  def call_mole_service(task_prompt, urls)
-    uri = URI("http://host.docker.internal:5001/run")
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.read_timeout = 300  # 5 minutes
-    http.open_timeout = 30   # 30 seconds to establish connection
 
-    request = Net::HTTP::Post.new(uri)
-    request["Content-Type"] = "application/json"
-    request.body = {
-      task: task_prompt,
-      urls: urls,
-      provider: "anthropic",
-      model: "claude-3-7-sonnet-20250219",
-      api_key: ENV["ANTHROPIC_API_KEY"]
-    }.to_json
-
-    response = http.request(request)
-
-    # Debug logging
-    Rails.logger.info "Mole service response status: #{response.code}"
-    Rails.logger.info "Mole service response body: #{response.body.inspect}"
-
-    # Check if response is successful
-    unless response.is_a?(Net::HTTPSuccess)
-      return { success: false, error: "HTTP #{response.code}: #{response.body}" }
-    end
-
-    # Check if response body is empty
-    if response.body.nil? || response.body.strip.empty?
-      return { success: false, error: "Empty response from mole service" }
-    end
-
-    # Parse the response as pipe-separated format instead of JSON
-    response_data = JSON.parse(response.body).with_indifferent_access
-    response_data
-  rescue JSON::ParserError => e
-    Rails.logger.error "JSON parse error: #{e.message}, body: #{response&.body.inspect}"
-    { success: false, error: "Invalid JSON response: #{e.message}" }
-  rescue => e
-    Rails.logger.error "Mole service error: #{e.message}"
-    { success: false, error: e.message }
-  end
 
   def update_project_classification(project, result)
     # Parse pipe-separated result: CERT_TYPE|CONFIDENCE|REASONING

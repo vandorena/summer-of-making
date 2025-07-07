@@ -19,6 +19,7 @@
 #  internal_notes                       :text
 #  is_admin                             :boolean          default(FALSE), not null
 #  last_name                            :string
+#  permissions                          :text             default([])
 #  synced_at                            :datetime
 #  timezone                             :string
 #  tutorial_video_seen                  :boolean          default(FALSE), not null
@@ -52,9 +53,13 @@ class User < ApplicationRecord
   validates :slack_id, presence: true, uniqueness: true
   validates :email, :display_name, :timezone, :avatar, presence: true
   validates :email, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :display_name, presence: true, length: { maximum: 100 }
+  validates :first_name, length: { maximum: 50 }, allow_blank: true
+  validates :last_name, length: { maximum: 50 }, allow_blank: true
+
+  serialize :permissions, type: Array, coder: JSON
 
   after_create :create_tutorial_progress
-  after_create { Faraday.post("https://7f972d8eaf28.ngrok.app/ding") rescue nil }
 
   include PublicActivity::Model
   tracked only: [], owner: Proc.new { |controller, model| controller&.current_user }
@@ -82,6 +87,7 @@ class User < ApplicationRecord
 
     unless result["ok"]
       Rails.logger.error("Slack OAuth error: #{result['error']}")
+      Honeybadger.notify("Slack OAuth error: #{result['error']}")
       raise StandardError, "Failed to authenticate with Slack: #{result['error']}"
     end
 
@@ -96,6 +102,9 @@ class User < ApplicationRecord
           email: user.email
         }.to_json)
       end
+
+      UpdateSlackAvatarJob.perform_for_user(user)
+
       return user
     end
 
@@ -120,7 +129,8 @@ class User < ApplicationRecord
       display_name: user_info.user.profile.display_name.presence || user_info.user.profile.real_name,
       email: user_info.user.profile.email,
       timezone: user_info.user.tz,
-      avatar: user_info.user.profile.image_192 || user_info.user.profile.image_512
+      avatar: user_info.user.profile.image_192 || user_info.user.profile.image_512,
+      permissions: []
     )
   end
 
@@ -141,7 +151,22 @@ class User < ApplicationRecord
 
   def self.fetch_slack_user_info(slack_id)
     client = Slack::Web::Client.new(token: ENV.fetch("SLACK_BOT_TOKEN", nil))
-    client.users_info(user: slack_id)
+    r = 0
+    begin
+      client.users_info(user: slack_id)
+    rescue Slack::Web::Api::Errors::TooManyRequestsError => e
+      if r < 3
+        s = e.retry_after
+        Rails.logger.warn("slack api ratelimit, retry in #{s} count#{r + 1}")
+        sleep s
+        r += 1
+        retry
+      else
+        Rails.logger.error("slack api ratelimit, max retries on #{slack_id}.")
+        Honeybadger.notify("slack api ratelimit, max retries on #{slack_id}.")
+        raise
+      end
+    end
   end
 
   def hackatime_projects
@@ -245,12 +270,61 @@ class User < ApplicationRecord
     Flipper.enable(:can_vote_2025_06_28, self)
   end
 
+  def give_black_market!
+    update!(has_black_market: true)
+    SendSlackDmJob.perform_later slack_id, <<~EOM
+      psst..... hey, kid.
+      heidi said to tell you you've just been given access to the <https://summer.hackclub.com/shop/black_market|[Black Market]>.
+      i'd be careful there if i were you, but what do i know?
+    EOM
+  end
+
+  # we can add more cooler stuff, and more fine grained access controls for other parts later
+  def has_permission?(permission)
+    return false if permissions.nil? || permissions.empty?
+    permissions.include?(permission.to_s)
+  end
+
+  def add_permission(permission)
+    current_permissions = permissions || []
+    current_permissions << permission.to_s unless current_permissions.include?(permission.to_s)
+    update!(permissions: current_permissions)
+  end
+
+  def remove_permission(permission)
+    current_permissions = permissions || []
+    current_permissions.delete(permission.to_s)
+    update!(permissions: current_permissions)
+  end
+
+  def ship_certifier?
+    has_permission?("shipcert")
+  end
+
+  def admin_or_ship_certifier?
+    is_admin? || ship_certifier?
+  end
+
   def projects_left_to_stake
     5 - staked_projects_count
   end
 
+  def ensure_permissions_initialized
+    if permissions.nil?
+      self.permissions = []
+    end
+  end
+
   def balance
     payouts.sum(&:amount)
+  end
+
+  def unpaid_ship_events_count
+    projects.joins(:ship_events)
+            .left_joins(ship_events: :payouts)
+            .where(payouts: { id: nil })
+            .distinct
+            .size
   end
 
   # Avo backtraces
@@ -359,6 +433,12 @@ class User < ApplicationRecord
 
   def create_tutorial_progress
     TutorialProgress.create!(user: self)
+  end
+
+  def permissions_must_not_be_nil
+    if permissions.nil?
+      ensure_permissions_initialized
+    end
   end
 
   def notify_xyz_on_verified

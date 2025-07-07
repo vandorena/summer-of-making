@@ -195,6 +195,7 @@ Rails.application.routes.draw do
   get "/auth/slack/callback", to: "sessions#create", as: :slack_callback
   get "/auth/failure", to: "sessions#failure"
   delete "/logout", to: "sessions#destroy", as: :logout
+  delete "/stop_impersonating", to: "sessions#stop_impersonating", as: :stop_impersonating
 
   get "/magic-link", to: "sessions#magic_link", as: :magic_link # For users signing in
   post "/explorpheus/magic-link", to: "magic_link#get_secret_magic_url" # For the welcome bot to fetch the magic link.
@@ -246,6 +247,7 @@ Rails.application.routes.draw do
 
   scope :shop do
     get "/", to: "shop_items#index", as: :shop
+    get "/black_market", to: "shop_items#black_market", as: :black_market
     resources :shop_items, except: [ :index ], path: :items do
       member do
         get :buy, to: "shop_orders#new", as: :order
@@ -301,6 +303,8 @@ Rails.application.routes.draw do
 
   resources :ship_event_feedbacks
 
+  post "track_view", to: "view_tracking#create"
+
   namespace :admin, constraint: AdminConstraint do
     mount MissionControl::Jobs::Engine, at: "jobs"
     mount AhoyCaptain::Engine, at: "ahoy_captain"
@@ -308,7 +312,13 @@ Rails.application.routes.draw do
     mount Flipper::UI.app(Flipper), at: "flipper"
     # mount_avo
     get "/", to: "static_pages#index", as: :root
-    resources :ship_certifications, only: [ :index, :edit, :update ]
+    resources :view_analytics, only: [ :index ]
+    resources :voting_dashboard, only: [ :index ]
+    resources :ship_certifications, only: [ :index, :edit, :update ] do
+      collection do
+        get :logs
+      end
+    end
     resources :readme_certifications, only: [ :index, :edit, :update ]
     resources :users, only: [ :index, :show ] do
       member do
@@ -318,6 +328,11 @@ Rails.application.routes.draw do
         post :cancel_card_grants
         post :freeze
         post :defrost
+        post :grant_ship_certifier
+        post :revoke_ship_certifier
+        post :give_black_market
+        post :take_away_black_market
+        post :impersonate
       end
     end
     resources :shop_items

@@ -173,6 +173,7 @@
         </a>
       <% end %>
     </div>
+    <%= render "admin/inspector", record: @project, always_inspect: true, show_in_impersonate: true %>
   </div>
 </div>
 
@@ -312,8 +313,8 @@
     <div data-ship-target="page1" class="p-4 md:p-6 overflow-y-auto">
       <div class="text-center mb-8">
         <%= image_tag "orpheusyap1.png", class: "w-64 h-64 mx-auto mb-4", alt: "Orpheus Yap" %>
-        <h4 class="text-xl md:text-2xl 2xl:text-3xl mb-2">HOLD UP</h4>
-        <p class="text-base md:text-lg mb-4 text-gray-600">By shipping your project, you're marking it as complete and it'll enter matchmaking. <span class="text-vintage-red">However, you will NOT be able to edit it anymore.</span></p>
+        <h4 class="text-xl md:text-2xl 2xl:text-3xl mb-2">Get ready!</h4>
+        <p class="text-base md:text-lg mb-4 text-gray-600">Once you ship this you can't edit the description of the project, but you'll be able to add more devlogs and re-ship it as you add new features!</p>
       </div>
 
       <div class="mt-6 flex justify-center space-x-4">

@@ -18,6 +18,7 @@
 #  repo_link              :string
 #  title                  :string
 #  used_ai                :boolean
+#  views_count            :integer          default(0), not null
 #  ysws_submission        :boolean          default(FALSE), not null
 #  ysws_type              :string
 #  created_at             :datetime         not null
@@ -26,7 +27,8 @@
 #
 # Indexes
 #
-#  index_projects_on_user_id  (user_id)
+#  index_projects_on_user_id      (user_id)
+#  index_projects_on_views_count  (views_count)
 #
 # Foreign Keys
 #
@@ -63,11 +65,17 @@ class Project < ApplicationRecord
     joins(:ship_certifications).where(ship_certifications: { judgement: "pending" })
   }
 
-  validates :title, :description, :category, presence: true
+  validates :title, presence: true, length: { maximum: 200 }
+  validates :description, presence: true, length: { maximum: 2500 }
+  validates :category, presence: true
 
   validates :readme_link, :demo_link, :repo_link,
             format: { with: /\A(?:https?:\/\/).*\z/i, message: "must be a valid HTTP or HTTPS URL" },
             allow_blank: true
+
+  validate :link_check
+
+  before_save :convert_github_blob_urls
 
   CATEGORIES = [ "Web App", "Mobile App", "Command Line Tool", "Video Game", "Something else" ]
   validates :category, inclusion: { in: CATEGORIES, message: "%<value>s is not a valid category" }
@@ -92,9 +100,11 @@ class Project < ApplicationRecord
     athena: "Athena",
     boba_drops: "Boba Drops",
     cider: "Cider",
+    converge: "Converge",
     grub: "Grub",
     hackaccino: "Hackaccino",
     highway: "Highway",
+    jumpstart: "Jumpstart",
     neighborhood: "Neighborhood",
     shipwrecked: "Shipwrecked",
     solder: "Solder",
@@ -215,6 +225,10 @@ class Project < ApplicationRecord
       previous_payout: {
         met: latest_ship_certification&.rejected? || unpaid_shipevents_since_last_payout.empty?,
         message: "Previous ship event must be paid out before shipping again."
+      },
+      minimum_time: {
+        met: ship_events.empty? || devlogs_since_last_ship.sum(:seconds_coded) >= 3600,
+        message: "Project must have at least 1 hour of tracked time since last ship."
       }
     }
   end
@@ -356,5 +370,49 @@ class Project < ApplicationRecord
 
   def set_default_certification_type
     self.certification_type = :cert_other if certification_type.blank?
+  end
+
+  private
+
+  def convert_github_blob_urls
+    convert_github_blob_url_for(:readme_link)
+    convert_github_blob_url_for(:repo_link) if repo_link.present? && readme_link.blank?
+  end
+
+  def convert_github_blob_url_for(field)
+    url = send(field)
+    return if url.blank?
+
+    converted_url = self.class.convert_github_blob_to_raw(url)
+    send("#{field}=", converted_url) if converted_url != url
+  end
+
+  def self.convert_github_blob_to_raw(url)
+    return url if url.blank?
+
+    if match = url.match(%r{^https://github\.com/([^/]+)/([^/]+)/blob/([^/]+)/(.+)$})
+      owner, repo, branch, file_path = match.captures
+      "https://raw.githubusercontent.com/#{owner}/#{repo}/refs/heads/#{branch}/#{file_path}"
+    else
+      url
+    end
+  end
+
+  private
+
+  def link_check
+    urls = [ readme_link, demo_link, repo_link ]
+    urls.each do |url|
+      next if url.blank?
+      begin
+        uri = URI.parse(url)
+        host = uri.host
+        if host =~ /^(localhost|127\.0\.0\.1|::1)$/i || host =~ /^(\d{1,3}\.){3}\d{1,3}$/
+          errors.add(:base, "We can not accept that type of link!")
+        end
+      rescue URI::InvalidURIError
+        # other things will handle this
+      end
+    end
   end
 end
