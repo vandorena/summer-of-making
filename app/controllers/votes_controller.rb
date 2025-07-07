@@ -38,8 +38,8 @@ class VotesController < ApplicationController
       return
     end
 
-    @ship_events.first.project.latest_ship_certification
-    @ship_events.last.project.latest_ship_certification
+    # @ship_events.first.project.latest_ship_certification
+    # @ship_events.last.project.latest_ship_certification
     # @ship_events = ship_events.to_a
     # @projects = @ship_events.map(&:project)
 
