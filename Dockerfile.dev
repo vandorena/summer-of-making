@@ -15,7 +15,8 @@ RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
     pkg-config \
     curl \
     vim \
-    ffmpeg
+    ffmpeg \
+    imagemagick
 
 # Set working directory
 WORKDIR /app
