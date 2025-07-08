@@ -1,0 +1,42 @@
+<h1>FRAUD</h1>
+
+<div style="margin-bottom: 2rem;">
+  <h2>reports!</h2>
+  <ul>
+    <li><strong>total:</strong> <%= @total_reports %></li>
+    <li><strong>unique projects:</strong> <%= @unique_projects %></li>
+    <li><strong>last 24h:</strong> <%= @recent_reports %></li>
+  </ul>
+</div>
+
+<div>
+  <h2>log</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>id</th>
+        <th>time</th>
+        <th>project</th>
+        <th>reporter</th>
+        <th>reason</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @fraud_reports.each do |report| %>
+        <tr>
+          <td><%= report.id %></td>
+          <td><%= report.created_at.strftime('%Y-%m-%d %H:%M') %></td>
+          <td>
+            <% if report.suspect_type == 'Project' && report.suspect %>
+              <%= link_to report.suspect.title, project_path(report.suspect) %> (ID: <%= report.suspect_id %>)
+            <% else %>
+              <%= report.suspect_type %> (ID: <%= report.suspect_id %>)
+            <% end %>
+          </td>
+          <td><%= report.reporter.try(:display_name) || report.reporter.try(:email) %></td>
+          <td><%= report.reason.presence || '-' %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

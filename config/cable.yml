@@ -5,6 +5,9 @@
 development:
   adapter: async
 
+som_intr_high_seas:
+  adapter: async
+
 test:
   adapter: test
 

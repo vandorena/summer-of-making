@@ -230,6 +230,18 @@ class VotesController < ApplicationController
       project.ship_events.max_by(&:created_at)
     end
 
+    @project_ai_used = {}
+    @projects.each do |project|
+      ai_used = if project.respond_to?(:ai_used?)
+        project.ai_used?
+      elsif project.respond_to?(:latest_ship_certification) && project.latest_ship_certification.respond_to?(:ai_used?)
+        project.latest_ship_certification.ai_used?
+      else
+        false
+      end
+      @project_ai_used[project.id] = ai_used
+    end
+
     if @ship_events.size == 2
       @vote_signature = VoteSignatureService.generate_signature(
         @ship_events[0].id,

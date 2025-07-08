@@ -62,8 +62,17 @@
           <div class="px-4 py-8 sm:py-4 bg-[#F6DBBA] sm:rounded-xl" data-project-index="<%= index %>">
             <div class="space-y-6 sm:space-y-8">
               <div class="flex items-start gap-3 sm:gap-4">
-                <div class="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 overflow-hidden rounded-lg">
-                  <%= image_tag project.banner, alt: project.title, class: "w-full h-full object-cover", loading: "lazy" %>
+                <div class="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0">
+                  <%= image_tag project.banner, alt: project.title, class: "w-full h-full object-cover rounded-lg", loading: "lazy" %>
+                  <% if project.used_ai %>
+                    <div class="mt-2 flex items-center justify-center group relative">
+                      <span class="inline-flex items-center bg-[#FFE8CD] text-[#4A2D24] text-xs font-semibold px-2 py-1 rounded-full border border-[#a8956b] shadow-sm">
+                        Used
+                        <%= inline_svg "icons/ai.svg", class: "w-5 h-5 sm:w-6 sm:h-6 ml-1" %>
+                      </span>
+                      <span class="absolute left-1/2 -translate-x-1/2 mt-2 w-max bg-[#4A2D24] text-[#FFE8CD] text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 whitespace-nowrap shadow-lg border border-[#a8956b]">Built with help from AI models</span>
+                    </div>
+                  <% end %>
                 </div>
                 <div class="flex-grow min-w-0">
                   <h3 class="text-xl sm:text-3xl mb-1 sm:mb-2 truncate"><%= project.title %></h3>

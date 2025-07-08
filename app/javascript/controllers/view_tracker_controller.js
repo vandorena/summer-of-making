@@ -1,10 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["trackable"]
   static values = { 
-    viewableType: String,
-    viewableId: String,
     threshold: { type: Number, default: 0.5 },
     delay: { type: Number, default: 1000 }
   }
@@ -21,8 +18,16 @@ export default class extends Controller {
       }
     )
 
-    this.trackableTargets.forEach(target => {
-      this.observer.observe(target)
+    this.observeTrackableElements()
+  }
+
+  observeTrackableElements() {
+    const trackableElements = this.element.querySelectorAll('[data-viewable-id][data-viewable-type]')
+    
+    trackableElements.forEach(element => {
+      const id = element.dataset.viewableId
+      const type = element.dataset.viewableType
+      this.observer.observe(element)
     })
   }
 
@@ -33,24 +38,6 @@ export default class extends Controller {
     
     this.timeouts.forEach(timeout => clearTimeout(timeout))
     this.timeouts.clear()
-  }
-
-  trackableTargetConnected(target) {
-    if (this.observer) {
-      this.observer.observe(target)
-    }
-  }
-
-  trackableTargetDisconnected(target) {
-    if (this.observer) {
-      this.observer.unobserve(target)
-    }
-    
-    const viewableId = target.dataset.viewableId
-    if (this.timeouts.has(viewableId)) {
-      clearTimeout(this.timeouts.get(viewableId))
-      this.timeouts.delete(viewableId)
-    }
   }
 
   handleIntersection(entries) {
@@ -92,12 +79,11 @@ export default class extends Controller {
       })
 
       if (response.ok) {
-        console.log(`v ${viewableType} ${viewableId}`)
       } else {
-        console.warn(`fv ${viewableType} ${viewableId}`)
+        console.warn(`vte ${viewableType} id${viewableId}`, response.status)
       }
     } catch (error) {
-      console.error('ev ', error)
+      console.error('vte ', error)
     }
   }
 }

@@ -27,6 +27,6 @@ class FraudReportsController < ApplicationController
   private
 
   def fraud_report_params
-    params.require(:fraud_report).permit(:suspect_type, :suspect_id)
+    params.require(:fraud_report).permit(:suspect_type, :suspect_id, :reason)
   end
 end

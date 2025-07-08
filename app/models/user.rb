@@ -151,7 +151,22 @@ class User < ApplicationRecord
 
   def self.fetch_slack_user_info(slack_id)
     client = Slack::Web::Client.new(token: ENV.fetch("SLACK_BOT_TOKEN", nil))
-    client.users_info(user: slack_id)
+    r = 0
+    begin
+      client.users_info(user: slack_id)
+    rescue Slack::Web::Api::Errors::TooManyRequestsError => e
+      if r < 3
+        s = e.retry_after
+        Rails.logger.warn("slack api ratelimit, retry in #{s} count#{r + 1}")
+        sleep s
+        r += 1
+        retry
+      else
+        Rails.logger.error("slack api ratelimit, max retries on #{slack_id}.")
+        Honeybadger.notify("slack api ratelimit, max retries on #{slack_id}.")
+        raise
+      end
+    end
   end
 
   def hackatime_projects
@@ -385,14 +400,15 @@ class User < ApplicationRecord
   def verification_status
     return :not_linked if identity_vault_id.blank?
 
+    idv_data = fetch_idv[:identity]
 
-    case "verified"
+    case idv_data[:verification_status]
     when "pending"
       :pending
     when "needs_submission"
       :needs_resubmission
     when "verified"
-      if true
+      if idv_data[:ysws_eligible]
         notify_xyz_on_verified
         update(ysws_verified: true) unless ysws_verified?
         :verified
