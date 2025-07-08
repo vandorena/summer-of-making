@@ -318,6 +318,8 @@ Rails.application.routes.draw do
     resources :voting_dashboard, only: [ :index ]
     resources :fraud_reports, only: [ :index, :show ] do
       member do
+        get :resolve
+        get :unresolve
         patch :resolve
         patch :unresolve
       end
