@@ -7,7 +7,7 @@ module Admin
       @filter = params[:filter] || "pending"
       @category_filter = params[:category_filter]
 
-      @category_filter = nil unless @category_filter.present? && Project::CATEGORIES.include?(@category_filter)
+      @category_filter = nil unless @category_filter.present? && Project.certification_types.keys.include?(@category_filter)
 
       base = ShipCertification
         .left_joins(project: :devlogs)
@@ -18,7 +18,7 @@ module Admin
         .order(updated_at: :asc)
 
       if @category_filter.present?
-        base = base.where(projects: { category: @category_filter })
+        base = base.where(projects: { certification_type: @category_filter })
       end
 
       case @filter
@@ -37,7 +37,7 @@ module Admin
 
       base = ShipCertification.joins(:project).where(projects: { is_deleted: false })
       if @category_filter.present?
-        base = base.where(projects: { category: @category_filter })
+        base = base.where(projects: { certification_type: @category_filter })
       end
 
       @total_approved = base.approved.count
@@ -48,8 +48,8 @@ module Admin
       @category_counts = ShipCertification
         .joins(:project)
         .where(projects: { is_deleted: false })
-        .where.not(projects: { category: [ nil, "" ] })
-        .group("projects.category")
+        .where.not(projects: { certification_type: [ nil, "" ] })
+        .group("projects.certification_type")
         .count
 
       # Leaderboard - reviewers by number of certifications reviewed
