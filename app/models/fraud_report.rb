@@ -21,4 +21,15 @@
 class FraudReport < ApplicationRecord
   belongs_to :suspect, polymorphic: true
   belongs_to :reporter, class_name: "User", foreign_key: "user_id"
+
+  scope :resolved, -> { where(resolved: true) }
+  scope :unresolved, -> { where(resolved: false) }
+
+  def resolve!
+    update!(resolved: true)
+  end
+
+  def unresolve!
+    update!(resolved: false)
+  end
 end
