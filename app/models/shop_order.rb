@@ -102,9 +102,10 @@ class ShopOrder < ApplicationRecord
 
     event :mark_fulfilled do
       transitions to: :fulfilled
-      before do |external_ref = nil, fulfillment_cost = nil|
+      before do |external_ref = nil, fulfillment_cost = nil, fulfilled_by = nil|
         self.external_ref = external_ref
         self.fulfillment_cost = fulfillment_cost
+        self.fulfilled_by = fulfilled_by
       end
     end
 
