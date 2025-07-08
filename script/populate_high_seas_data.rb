@@ -41,6 +41,7 @@ class HighSeasDataPopulator
     ship_events = []
     projects_csv.each_with_index do |row, idx|
       next if row["ship_status"] == "deleted"
+      next if row["duplicate_project_repo_url"] == "checked"
 
       u = User.find_by(display_name: row["entrant"])
       next if u.nil?
