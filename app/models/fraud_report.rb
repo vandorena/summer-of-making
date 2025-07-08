@@ -23,8 +23,18 @@ class FraudReport < ApplicationRecord
   belongs_to :suspect, polymorphic: true
   belongs_to :reporter, class_name: "User", foreign_key: "user_id"
 
+  validates :user_id, uniqueness: { scope: [ :suspect_type, :suspect_id ], message: "You have already reported this project" }
+
   scope :resolved, -> { where(resolved: true) }
   scope :unresolved, -> { where(resolved: false) }
+
+  def self.already_reported_by?(user, suspect)
+    exists?(
+      user_id: user.id,
+      suspect_type: suspect.class.name,
+      suspect_id: suspect.id
+    )
+  end
 
   def resolve!
     update!(resolved: true)
