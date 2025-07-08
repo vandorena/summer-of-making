@@ -1,14 +1,15 @@
 <%= turbo_frame_tag "my_form" do %>
   <button
     type="button"
-    class="inline-flex items-center gap-2 px-6 sm:px-8 py-3 bg-red-100 hover:bg-red-200 hover:scale-[1.05] text-red-700 transition-all duration-300 text-base sm:text-lg 2xl:text-xl rounded-lg font-medium cursor-pointer"
+    class="inline-flex items-center gap-2 px-6 sm:px-8 py-3 text-base sm:text-lg 2xl:text-xl rounded-lg font-medium cursor-pointer bg-red-300 hover:bg-red-400 active:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
     onclick='event.stopPropagation(); document.getElementById(<%= "report-modal-#{suspect.class.name.downcase}-#{suspect.id}".to_json %>).showModal();'
     title="Report this project for suspicious activity">
-    🚩
+    <%= inline_svg "icons/flag.svg", class: "w-5 h-5 sm:w-6 sm:h-6 mr-1" %>
+    Report
   </button>
 
-  <dialog id="report-modal-<%= suspect.class.name.downcase %>-<%= suspect.id %>" class="modal p-0 rounded-lg backdrop:bg-black backdrop:bg-opacity-50">
-    <div class="modal-box bg-white p-6 rounded-lg max-w-md w-full">
+<dialog id="report-modal-<%= suspect.class.name.downcase %>-<%= suspect.id %>" class="modal p-0 rounded-lg" style="background: none;">
+    <div class="report-card-modal" style="border-radius: 0.5rem; border: 2px solid rgba(124, 74, 51, 0.1); background: radial-gradient(circle at 50% 50%, #F6DBBA, #E6D4BE); padding: 1.5rem; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); max-width: 28rem; width: 100%; margin: 2rem auto;">
       <h3 class="font-bold text-lg mb-4">Report <%= suspect.class.name.downcase %></h3>
       <p class="text-sm text-gray-600 mb-6">Help us keep the voting pool clean by reporting projects that </p>
       <%= form_with url: fraud_reports_path, method: :post, class: "space-y-4" do |f| %>
@@ -37,13 +38,29 @@
           </label>
         </div>
 
-        <div class="modal-action pt-4">
-          <button type="button" class="btn btn-ghost" onclick="document.getElementById(<%= "report-modal-#{suspect.class.name.downcase}-#{suspect.id}".to_json %>).close()">
+        <div class="modal-action pt-4 flex gap-2 justify-end">
+          <button type="button" class="marble-button btn-error text-black" onclick='document.getElementById(<%= "report-modal-#{suspect.class.name.downcase}-#{suspect.id}".to_json %>).close()'>
             Cancel
           </button>
-          <%= f.submit "Submit", class: "btn btn-error text-black" %>
+          <%= f.submit "Submit", class: "marble-button btn-error text-black" %>
         </div>
       <% end %>
     </div>
+    <style>
+      .report-card-modal label span {
+        color: rgb(55, 65, 81);
+      }
+      .report-card-modal h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+      .report-card-modal {
+        animation: fadeInCard 0.2s;
+      }
+      @keyframes fadeInCard {
+        from { opacity: 0; transform: translateY(16px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+    </style>
   </dialog>
 <% end %>
