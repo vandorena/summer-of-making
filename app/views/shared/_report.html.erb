@@ -1,5 +1,5 @@
 <%= turbo_frame_tag "my_form" do %>
-  <%= form_with url: fraud_reports_path, method: :post, class: "inline", data: { turbo_confirm: "Are you sure you want to report this project for fraud?" } do |f| %>
+  <%= form_with url: fraud_reports_path, method: :post, class: "inline", data: { turbo_confirm: "Are you sure you want to flag this project? One of our team members will take a look at it. Abusing this system could lead to less fun times." } do |f| %>
     <%= f.hidden_field "fraud_report[suspect_type]", value: suspect.class.name %>
     <%= f.hidden_field "fraud_report[suspect_id]", value: suspect.id %>
     <%= f.submit "🚩",
