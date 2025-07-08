@@ -9,6 +9,7 @@
 #  frozen_address                     :jsonb
 #  frozen_item_price                  :decimal(6, 2)
 #  fulfilled_at                       :datetime
+#  fulfilled_by                       :string
 #  fulfillment_cost                   :decimal(6, 2)    default(0.0)
 #  internal_notes                     :text
 #  on_hold_at                         :datetime
@@ -101,9 +102,10 @@ class ShopOrder < ApplicationRecord
 
     event :mark_fulfilled do
       transitions to: :fulfilled
-      before do |external_ref = nil, fulfillment_cost = nil|
+      before do |external_ref = nil, fulfillment_cost = nil, fulfilled_by = nil|
         self.external_ref = external_ref
         self.fulfillment_cost = fulfillment_cost
+        self.fulfilled_by = fulfilled_by
       end
     end
 
@@ -147,7 +149,8 @@ class ShopOrder < ApplicationRecord
     "quantity" => :quantity,
     "total_cost" => :total_cost,
     "addr.id" => ->(_) { frozen_address&.[]("id") },
-    "addr.country" => ->(_) { frozen_address&.[]("country") }
+    "addr.country" => ->(_) { frozen_address&.[]("country") },
+    "fulfilled_by" => :fulfilled_by
   }
 
   has_table_sync(:real_orders, "appNF8MGrk5KKcYZx", "tblrc0ByljGezp98v", SYNC_MAPPING, scope: :standard_sync)

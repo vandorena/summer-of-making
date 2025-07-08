@@ -4,6 +4,7 @@
 #
 #  id           :bigint           not null, primary key
 #  reason       :string
+#  resolved     :boolean          default(FALSE), not null
 #  suspect_type :string
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null

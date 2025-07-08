@@ -64,6 +64,6 @@ class ShopItem::SiteActionItem < ShopItem
       raise "unknown site action: #{site_action.inspect}"
     end
 
-    shop_order.mark_fulfilled!("it is done.")
+    shop_order.mark_fulfilled!("it is done.", nil, "System")
   end
 end
