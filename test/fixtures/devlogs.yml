@@ -12,6 +12,7 @@
 #  likes_count         :integer          default(0), not null
 #  seconds_coded       :integer
 #  text                :text
+#  time_worked         :integer          default(0), not null
 #  views_count         :integer          default(0), not null
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
