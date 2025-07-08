@@ -91,6 +91,7 @@
 
             <% if user_signed_in? && current_user != @project.user %>
               <%= render "projects/follow_button", project: @project %>
+              <%= render "projects/report_button", project: @project %>
             <% end %>
 
             <% if current_user == @project.user %>
