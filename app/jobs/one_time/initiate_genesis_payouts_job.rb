@@ -4,6 +4,6 @@ class OneTime::InitiateGenesisPayoutsJob < ApplicationJob
   def perform(*args)
     return if Payout.where(payable_type: "ShipEvent").any? # Protect from running twice
 
-    Project.find_each(&:issue_payouts)
+    Project.find_each { |p| p.issue_payouts(all_time: true) }
   end
 end
