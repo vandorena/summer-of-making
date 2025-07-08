@@ -1,5 +1,4 @@
-<button data-controller="modal" data-action="click->modal#open" data-modal-id="report-<%= project.id %>" class="bg-vintage-red hover:bg-vintage-red/80 text-white btn-pixel px-3 py-2 flex items-center hover:scale-[1.05] transition-transform">
-  <%= inline_svg "flag.svg", class: "w-4 h-4 mr-1" %>
+<button data-controller="modal" data-action="click->modal#open" data-modal-id="<%= project.id %>" data-modal-type="report" class="bg-vintage-red hover:bg-vintage-red/80 text-white btn-pixel px-3 py-2 flex items-center hover:scale-[1.05] transition-transform">
   <span class="text-white text-sm md:text-base 2xl:text-xl">Report</span>
 </button>
 
