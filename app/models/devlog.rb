@@ -61,8 +61,8 @@ class Devlog < ApplicationRecord
 
   delegate :count, to: :likes, prefix: true
 
-  # ie. Project.first.devlogs.capped_seconds_coded
-  scope :capped_seconds_coded, -> { where.not(seconds_coded: nil).sum("LEAST(seconds_coded, #{10.hours.to_i})") }
+  # ie. Project.first.devlogs.capped_time_worked
+  scope :capped_time_worked, -> { where.not(time_worked: nil).sum("LEAST(time_worked, #{10.hours.to_i})") }
 
   def recalculate_seconds_coded
     # find the created_at of the devlog directly before this one
@@ -83,12 +83,18 @@ class Devlog < ApplicationRecord
       data = JSON.parse(res.body)
       projects = data.dig("data", "projects")
 
+      # legacy
       seconds_coded = projects
         .filter { |p| project.hackatime_project_keys.include?(p["name"]) }
         .reduce(0) { |acc, h| acc += h["total_seconds"] }
 
-      Rails.logger.info "\tDevlog #{id} seconds coded: #{seconds_coded}"
-      update!(seconds_coded:, hackatime_pulled_at: Time.now)
+      # new
+      time_worked = projects
+          .filter { |p| hackatime_projects_key_snapshot.include?(p["name"]) }
+          .reduce(0) { |acc, h| acc += h["total_seconds"] }
+
+      Rails.logger.info "\tDevlog #{id} seconds coded: #{seconds_coded}, time worked: #{time_worked}"
+      update!(seconds_coded: seconds_coded, time_worked: time_worked, hackatime_pulled_at: Time.now)
     rescue JSON::ParserError => e
       if res.body.strip.start_with?("Gateway") || res.body.strip =~ /gateway/i
         Rails.logger.error "Hackatime API Gateway error for Devlog #{id}: #{res.body}"

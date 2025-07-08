@@ -35,7 +35,7 @@ class DevlogsController < ApplicationController
     # check time reqs
     if @project.hackatime_keys.present?
       current_user.refresh_hackatime_data_now
-      
+
       unless current_user.hackatime_stat.has_enough_time_since_last_update?(@project)
         seconds_needed = current_user.hackatime_stat.seconds_needed_since_last_update(@project)
         redirect_to project_path(@project),
@@ -51,12 +51,15 @@ class DevlogsController < ApplicationController
     if @project.hackatime_keys.present?
       @devlog.hackatime_projects_key_snapshot = @project.hackatime_keys
       @devlog.hackatime_pulled_at = Time.current
-      @devlog.time_worked = current_user.hackatime_stat.time_since_last_update_for_project(@project)
-      # keep depercated field for sanity check – remove before PROD
-      @devlog.last_hackatime_time = @devlog.time_worked
     end
 
     if @devlog.save
+      if @project.hackatime_keys.present?
+        time_worked = @devlog.recalculate_seconds_coded
+        # keep depercated field for sanity check – remove before PROD
+        @devlog.update_column(:last_hackatime_time, time_worked)
+      end
+
       redirect_to @devlog.project, notice: "Devlog was successfully posted."
     else
       redirect_to @devlog.project, alert: "Failed to post devlog."
