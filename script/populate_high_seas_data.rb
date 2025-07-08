@@ -84,7 +84,7 @@ class HighSeasDataPopulator
         ship_events << {
           id: idx,
           project_id: root_ship_id,
-          created_at:,
+          created_at:
         }
       end
     end
