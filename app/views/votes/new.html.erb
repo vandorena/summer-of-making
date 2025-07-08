@@ -45,7 +45,7 @@
   <% if @projects.size < 2 %>
     <div class="h-full text-center mt-8">
       <p class="mb-6 sm:mb-8 text-black text-large sm:text-xl 2xl:text-2xl">There aren't enough projects in the pool to vote on. Check back later for more projects!</p>
-      <%= link_to explore_path, class: "marble-button btn-pixel" do %>
+      <%= link_to explore_path, class: "px-4 sm:px-6 py-2 sm:py-3 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 text-base sm:text-lg 2xl:text-xl btn-pixel" do %>
         Explore Projects
       <% end %>
     </div>
@@ -59,18 +59,18 @@
           <% ship_event = @ship_events[index] %>
           <% ship_devlogs = project.devlogs.where("created_at < ?", ship_event.created_at).order(created_at: :asc) %>
           <% ship_time_seconds = ship_devlogs.sum(:last_hackatime_time) %>
-          <div class="organic-card px-4 py-8 sm:py-4 sm:rounded-xl" data-project-index="<%= index %>">
+          <div class="px-4 py-8 sm:py-4 bg-[#F6DBBA] sm:rounded-xl" data-project-index="<%= index %>">
             <div class="space-y-6 sm:space-y-8">
               <div class="flex items-start gap-3 sm:gap-4">
                 <div class="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0">
                   <%= image_tag project.banner, alt: project.title, class: "w-full h-full object-cover rounded-lg", loading: "lazy" %>
                   <% if project.used_ai %>
                     <div class="mt-2 flex items-center justify-center group relative">
-                      <span class="inline-flex items-center marble-button text-xs font-semibold px-2 py-1 rounded-full border border-[#a8956b] shadow-sm">
+                      <span class="inline-flex items-center bg-[#FFE8CD] text-[#4A2D24] text-xs font-semibold px-2 py-1 rounded-full border border-[#a8956b] shadow-sm">
                         Used
                         <%= inline_svg "icons/ai.svg", class: "w-5 h-5 sm:w-6 sm:h-6 ml-2" %>
                       </span>
-                      <span class="absolute left-1/2 -translate-x-1/2 mt-2 w-max marble-button text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 whitespace-nowrap shadow-lg border border-[#a8956b]">Build with help from AI models</span>
+                      <span class="absolute left-1/2 -translate-x-1/2 mt-2 w-max bg-[#4A2D24] text-[#FFE8CD] text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 whitespace-nowrap shadow-lg border border-[#a8956b]">Build with help from AI models</span>
                     </div>
                   <% end %>
                 </div>
@@ -108,7 +108,7 @@
                 <div class="grid grid-cols-1 sm:flex sm:flex-wrap justify-center gap-3 sm:gap-4">
                   <% if project.demo_link.present? %>
                     <a href="<%= project.demo_link %>" target="_blank"
-                       class="marble-button"
+                       class="inline-flex items-center gap-2 px-6 sm:px-8 py-3 bg-[#FFE8CD] hover:scale-[1.05] text-[#4A2D24] transition-transform duration-300 text-base sm:text-lg 2xl:text-xl rounded-lg font-medium"
                        onclick="event.stopPropagation()"
                        data-analytics-link="demo"
                        data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
@@ -118,7 +118,7 @@
                   <% end %>
                   <% if project.repo_link.present? %>
                     <a href="<%= project.repo_link %>" target="_blank"
-                       class="marble-button"
+                       class="inline-flex items-center gap-2 px-6 sm:px-8 py-3 bg-[#FFE8CD] hover:scale-[1.05] text-[#4A2D24] transition-transform duration-300 text-base sm:text-lg 2xl:text-xl rounded-lg font-medium"
                        onclick="event.stopPropagation()"
                        data-analytics-link="repo"
                        data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
@@ -160,8 +160,8 @@
 </div>
 
 <div data-controller="music" class="fixed -bottom-28 sm:-bottom-32 -right-12 max-sm:mb-[140px]">
-  <div data-music-target="speechBubble" class="absolute -top-12 -left-10 2xl:-top-16 2xl:-left-12 p-3 marble-button max-w-[150px] opacity-50">
-    <div class="text-sm font-medium">Click me, please!</div>
+  <div data-music-target="speechBubble" class="absolute -top-12 -left-10 2xl:-top-16 2xl:-left-12 p-3 bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] max-w-[150px] opacity-50">
+    <div class="text-sm text-forest font-medium">Click me, please!</div>
   </div>
   <button
     data-music-target="toggle"
@@ -183,7 +183,7 @@
 <div data-controller="image-viewer">
   <div data-image-viewer-target="modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-75" data-action="click->image-viewer#closeBackground">
     <div class="relative max-w-7xl max-h-[90vh] w-full flex items-center justify-center">
-      <button class="absolute top-2 right-2 md:top-4 md:right-4 marble-button p-2 hover:scale-110 transition-transform z-10" data-action="image-viewer#close">
+      <button class="absolute top-2 right-2 md:top-4 md:right-4 text-white p-2 hover:scale-110 transition-transform z-10" data-action="image-viewer#close">
         <%= inline_svg "close.svg", class: "h-6 w-6 md:h-8 md:w-8" %>
       </button>
       <img data-image-viewer-target="image" class="max-h-[85vh] max-w-full object-contain" src="" alt="Full size image">
