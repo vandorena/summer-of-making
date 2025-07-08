@@ -13,11 +13,9 @@
   <div style="margin-top: 1rem;">
     <% if @fraud_report.resolved? %>
       <%= link_to "nvm this not done", unresolve_admin_fraud_report_path(@fraud_report),
-                  method: :patch,
                   style: "background: #ff4444; color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 4px;" %>
     <% else %>
       <%= link_to "ye this delt with", resolve_admin_fraud_report_path(@fraud_report),
-                  method: :patch,
                   style: "background: #44aa44; color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 4px;" %>
     <% end %>
   </div>

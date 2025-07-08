@@ -547,7 +547,7 @@ class ProjectsController < ApplicationController
   rescue ActiveRecord::RecordNotFound
     deleted_project = Project.with_deleted.find_by(id: params[:id])
     if deleted_project&.is_deleted?
-      redirect_to projects_path, alert: "This project has been deleted by its owner."
+      redirect_to projects_path, alert: "This project has been deleted."
     else
       redirect_to projects_path, alert: "Project not found."
     end
