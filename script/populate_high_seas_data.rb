@@ -109,6 +109,11 @@ class HighSeasDataPopulator
     puts "Inserting #{projects.length} projects..."
     Project.insert_all(projects)
     puts "Successfully inserted #{Project.count} projects"
+
+
+    puts "Inserting #{ship_events.length} ship events..."
+    ShipEvent.insert_all(ship_events)
+    puts "Successfully inserted #{ShipEvent.count} ship events"
   end
 
   private
