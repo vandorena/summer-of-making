@@ -9,6 +9,8 @@
     <button
       type="button"
       class="inline-flex items-center gap-2 px-6 sm:px-8 py-3 text-base sm:text-lg 2xl:text-xl rounded-lg font-medium cursor-pointer bg-red-300 hover:bg-red-400 active:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+      data-turbo-method="get"
+      data-turbo-frame="my_form"
       onclick='event.stopPropagation(); document.getElementById(<%= "report-modal-#{suspect.class.name.downcase}-#{suspect.id}".to_json %>).showModal();'
       title="Report this project for suspicious activity">
       <%= inline_svg "icons/flag.svg", class: "w-5 h-5 sm:w-6 sm:h-6 mr-1" %>
@@ -18,29 +20,29 @@
     <dialog id="report-modal-<%= suspect.class.name.downcase %>-<%= suspect.id %>" class="modal p-0 rounded-lg" style="background: none;">
         <div class="report-card-modal" style="border-radius: 0.5rem; border: 2px solid rgba(124, 74, 51, 0.1); background: radial-gradient(circle at 50% 50%, #F6DBBA, #E6D4BE); padding: 1.5rem; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); max-width: 28rem; width: 100%; margin: 2rem auto;">
           <h3 class="font-bold text-lg mb-4">Report <%= suspect.class.name.downcase %></h3>
-          <p class="text-sm text-gray-600 mb-6">Help us keep the voting pool clean by reporting projects that </p>
-          <%= form_with url: fraud_reports_path, method: :post, class: "space-y-4" do |f| %>
-            <%= f.hidden_field "fraud_report[suspect_type]", value: suspect.class.name %>
-            <%= f.hidden_field "fraud_report[suspect_id]", value: suspect.id %>
+          <p class="text-sm text-gray-600 mb-6">Help us keep the voting pool clean by reporting projects that violate our community guidelines.</p>
+          <%= form_with model: FraudReport.new, url: fraud_reports_path, method: :post, data: { turbo_frame: "my_form" }, class: "space-y-4" do |form| %>
+            <%= form.hidden_field :suspect_type, value: suspect.class.name %>
+            <%= form.hidden_field :suspect_id, value: suspect.id %>
             <div class="space-y-3">
               <label class="flex items-center space-x-3 cursor-pointer">
-                <%= f.radio_button "fraud_report[reason]", "inappropriate_content", class: "radio radio-sm radio-error" %>
+                <%= form.radio_button :reason, "Did not declare AI help", class: "radio radio-sm radio-error" %>
                 <span class="text-sm">Did not declare AI help</span>
               </label>
               <label class="flex items-center space-x-3 cursor-pointer">
-                <%= f.radio_button "fraud_report[reason]", "spam", class: "radio radio-sm radio-error" %>
+                <%= form.radio_button :reason, "Spam or promotional content", class: "radio radio-sm radio-error" %>
                 <span class="text-sm">Spam or promotional content</span>
               </label>
               <label class="flex items-center space-x-3 cursor-pointer">
-                <%= f.radio_button "fraud_report[reason]", "fake_project", class: "radio radio-sm radio-error" %>
+                <%= form.radio_button :reason, "Fake or misleading project", class: "radio radio-sm radio-error" %>
                 <span class="text-sm">Fake or misleading project</span>
               </label>
               <label class="flex items-center space-x-3 cursor-pointer">
-                <%= f.radio_button "fraud_report[reason]", "plagiarism", class: "radio radio-sm radio-error" %>
+                <%= form.radio_button :reason, "Plagiarism or stolen content", class: "radio radio-sm radio-error" %>
                 <span class="text-sm">Plagiarism or stolen content</span>
               </label>
               <label class="flex items-center space-x-3 cursor-pointer">
-                <%= f.radio_button "fraud_report[reason]", "other", class: "radio radio-sm radio-error" %>
+                <%= form.radio_button :reason, "Other", class: "radio radio-sm radio-error" %>
                 <span class="text-sm">Other</span>
               </label>
             </div>
@@ -49,7 +51,7 @@
               <button type="button" class="marble-button btn-error text-black" onclick='document.getElementById(<%= "report-modal-#{suspect.class.name.downcase}-#{suspect.id}".to_json %>).close()'>
                 Cancel
               </button>
-              <%= f.submit "Submit", class: "marble-button btn-error text-black" %>
+              <%= form.submit "Submit", class: "marble-button btn-error text-black" %>
             </div>
           <% end %>
         </div>
