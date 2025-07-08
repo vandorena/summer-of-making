@@ -70,16 +70,32 @@ class HighSeasDataPopulator
       else
         root_ship_id = nil
         curr_ident = row["﻿identifier"]
-        while root_ship_id.nil?
+        corrupted_chain = false
+
+        while root_ship_id.nil? && !corrupted_chain
           found_index = projects_csv.find_index { |p| p["reshipped_to"] == curr_ident }
-          found = projects_csv[found_index]
-          begin
-          root_ship_id = found_index if found["reshipped_from"].nil? # Assumes there are no circuluar chains. Which AFAIK there are not.
-          rescue => e
-            puts "POOP", e, found, row["﻿identifier"]
+
+          if found_index.nil?
+            puts "Corrupted ship chain detected for #{row["﻿identifier"]}, skipping..."
+            corrupted_chain = true
+            break
           end
+
+          found = projects_csv[found_index]
+
+          begin
+            root_ship_id = found_index if found["reshipped_from"].to_s.strip.empty?
+          rescue => e
+            puts "Error processing ship chain: #{e}"
+            corrupted_chain = true
+            break
+          end
+
           curr_ident = found["﻿identifier"]
         end
+
+        next if corrupted_chain
+
         puts "okay. found root_ship_id (#{root_ship_id}) for rowident #{row["﻿identifier"]}"
 
         ship_events << {
