@@ -72,7 +72,11 @@ class HighSeasDataPopulator
         while root_ship_id.nil?
           found_index = projects_csv.find_index { |p| p["reshipped_to"] == curr_ident }
           found = projects_csv[found_index]
+          begin
           root_ship_id = found_index if found["reshipped_from"].nil? # Assumes there are no circuluar chains. Which AFAIK there are not.
+          rescue => e
+            puts "POOP", e, found, row["﻿identifier"]
+          end
           curr_ident = found["﻿identifier"]
         end
         puts "okay. found root_ship_id (#{root_ship_id}) for rowident #{row["﻿identifier"]}"
