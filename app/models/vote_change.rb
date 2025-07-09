@@ -53,6 +53,6 @@ class VoteChange < ApplicationRecord
 
   def try_payout
     genesis_has_run = Payout.where(payable_type: "ShipEvent").any?
-    project.issue_payouts if genesis_has_run
+    project.issue_payouts if genesis_has_run && !project.is_deleted?
   end
 end
