@@ -222,9 +222,10 @@ class User < ApplicationRecord
     trust_value = result.dig("trust_factor", "trust_value")
     should_ban = trust_value == 1
 
-    if should_ban != is_banned
-      update!(is_banned: should_ban)
-      Rails.logger.info("user #{id} (#{slack_id}) banned due to hackatime ban")
+    if should_ban && !is_banned
+      ban_user!("hackatime_ban")
+    elsif !should_ban && is_banned
+      unban_user!
     end
 
     if projects.empty?
@@ -453,6 +454,21 @@ class User < ApplicationRecord
   # DO NOT DO THIS
   def nuke_idv_data!
     update!(identity_vault_access_token: nil, identity_vault_id: nil)
+  end
+
+  def ban_user!(reason = "admin_ban")
+    return if is_banned?
+    update!(is_banned: true)
+    projects.with_deleted.update_all(is_deleted: true)
+    create_activity("ban_user", params: { reason: reason })
+    Rails.logger.info("user #{id} (#{slack_id}) ratioed thanks to #{reason}")
+  end
+
+  def unban_user!
+    return unless is_banned?
+    update!(is_banned: false)
+    create_activity("unban_user")
+    Rails.logger.info("user #{id} (#{slack_id}) is back")
   end
 
   private

@@ -104,15 +104,13 @@ module Admin
     end
 
     def ban_user
-      @user.update!(is_banned: true)
-      @user.create_activity("ban_user")
+      @user.ban_user!("admin_ban")
       flash[:success] = "get rekt"
       redirect_to admin_user_path(@user)
     end
 
     def unban_user
-      @user.update!(is_banned: false)
-      @user.create_activity("unban_user")
+      @user.unban_user!
       flash[:success] = "//undoing"
       redirect_to admin_user_path(@user)
     end
