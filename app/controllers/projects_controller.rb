@@ -34,7 +34,11 @@ class ProjectsController < ApplicationController
                               .group("projects.id")
                               .order(Arel.sql("COUNT(devlogs.id) DESC, projects.created_at #{sort_order == :asc ? 'ASC' : 'DESC'}"))
 
-      @pagy, @projects = pagy(projects_query, items: 12)
+      begin
+        @pagy, @projects = pagy(projects_query, items: 12)
+      rescue Pagy::OverflowError
+        redirect_to projects_path(tab: "gallery", sort: params[:sort]) and return
+      end
     elsif params[:tab] == "following"
       @followed_projects = current_user.followed_projects.includes(:user)
       @recent_devlogs = Devlog.joins(:project)
@@ -43,7 +47,11 @@ class ProjectsController < ApplicationController
                               .where(projects: { is_deleted: false })
                               .order(created_at: :desc)
 
-      @pagy, @recent_devlogs = pagy(@recent_devlogs, items: 8)
+      begin
+        @pagy, @recent_devlogs = pagy(@recent_devlogs, items: 8)
+      rescue Pagy::OverflowError
+        redirect_to projects_path(tab: "following") and return
+      end
     elsif params[:tab] == "stonked"
       @stonked_projects = current_user.staked_projects.includes(:user)
       @recent_devlogs = Devlog.joins(:project)
@@ -52,7 +60,11 @@ class ProjectsController < ApplicationController
                               .where(projects: { is_deleted: false })
                               .order(created_at: :desc)
 
-      @pagy, @recent_devlogs = pagy(@recent_devlogs, items: 8)
+      begin
+        @pagy, @recent_devlogs = pagy(@recent_devlogs, items: 8)
+      rescue Pagy::OverflowError
+        redirect_to projects_path(tab: "stonked") and return
+      end
     else
       # Optimize main devlogs query
       devlogs_query = Devlog.joins(:project)
@@ -60,7 +72,11 @@ class ProjectsController < ApplicationController
                             .where(projects: { is_deleted: false })
                             .order(created_at: :desc)
 
-      @pagy, @recent_devlogs = pagy(devlogs_query, items: 8)
+      begin
+        @pagy, @recent_devlogs = pagy(devlogs_query, items: 8)
+      rescue Pagy::OverflowError
+        redirect_to projects_path and return
+      end
 
       # we can just load stuff for the gallery here too!!
       projects_query = Project.includes(:user, :banner_attachment)
@@ -69,7 +85,11 @@ class ProjectsController < ApplicationController
                               .group("projects.id")
                               .order(Arel.sql("COUNT(devlogs.id) DESC, projects.created_at #{sort_order == :asc ? 'ASC' : 'DESC'}"))
 
-      @gallery_pagy, @projects = pagy(projects_query, items: 12)
+      begin
+        @gallery_pagy, @projects = pagy(projects_query, items: 12)
+      rescue Pagy::OverflowError
+        @gallery_pagy, @projects = pagy(projects_query, items: 12, page: 1)
+      end
     end
   end
 
