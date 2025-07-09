@@ -24,7 +24,7 @@ class Payout < ApplicationRecord
 
   before_validation :set_user_id
 
-  VOTE_COUNT_REQUIRED = 20
+  VOTE_COUNT_REQUIRED = 18
 
   # x = ELO percentile (0-1)
   def self.calculate_multiplier(x)
