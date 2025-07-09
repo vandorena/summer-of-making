@@ -3,8 +3,12 @@
 module Api
   module V1
     class ProjectsController < ApplicationController
+      include Pagy::Backend
+
       def index
-        @projects = Project.page(params[:page]).per(20).map do |project|
+        pagy, projects = pagy(Project.all, items: 20)
+
+        @projects = projects.map do |project|
           {
             id: project.id,
             title: project.title,
@@ -18,7 +22,16 @@ module Api
             updated_at: project.updated_at
           }
         end
-        render json: @projects
+
+        render json: {
+          projects: @projects,
+          pagination: {
+            page: pagy.page,
+            pages: pagy.pages,
+            count: pagy.count,
+            items: pagy.items
+          }
+        }
       end
 
       def show
