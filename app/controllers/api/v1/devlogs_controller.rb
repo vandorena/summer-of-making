@@ -4,7 +4,7 @@ module Api
   module V1
     class DevlogsController < ApplicationController
       def index
-        @devlogs = Devlog.all.map do |devlog|
+        @devlogs = Devlog.page(params[:page]).per(20).map do |devlog|
           {
             text: devlog.text,
             id: devlog.id,
