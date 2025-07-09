@@ -227,7 +227,7 @@ class Project < ApplicationRecord
         message: "Previous ship event must be paid out before shipping again."
       },
       minimum_time: {
-        met: ship_events.empty? || devlogs_since_last_ship.sum(:seconds_coded) >= 3600,
+        met: ship_events.empty? || devlogs_since_last_ship.sum(:total_time_coded) >= 3600,
         message: "Project must have at least 1 hour of tracked time since last ship."
       }
     }
@@ -296,7 +296,7 @@ class Project < ApplicationRecord
 
     puts "mult", mult
 
-    hours = devlogs.sum(:seconds_coded).fdiv(3600)
+    hours = devlogs.sum(:total_time_coded).fdiv(3600)
     puts "hours", hours
 
     payout = hours * mult

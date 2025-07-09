@@ -70,12 +70,7 @@
           <p class="text-sm text-gray-600">Supports images, audio, video, and GIFs (Required)</p>
         </div>
 
-        <%= f.hidden_field :timer_session_id if !@unlinked_timer_sessions || @unlinked_timer_sessions.empty? %>
-
         <div class="flex justify-end space-x-4 pt-6">
-          <%# <button type="button" data-controller="modal" data-action="modal#open" data-modal-id="<%= @project.id >" data-modal-type="timer" class="px-4 md:px-6 py-2 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-xl btn-pixel cursor-pointer">
-            <%= TimerSession.where(user_id: current_user.id, project_id: @project.id, status: ['running', 'paused']).exists? ? "View Timer" : "Start Timer" >
-          </button>%>
           <%= f.submit "Post Devlog", class: "px-4 md:px-6 py-2 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-xl btn-pixel cursor-pointer", data: { form_target: "submitButton" } %>
         </div>
       </div>

@@ -32,35 +32,32 @@ class DevlogsController < ApplicationController
   def create
     @project = Project.find(params[:project_id])
 
-    if @project.hackatime_keys.present? && current_user.has_hackatime? && params[:devlog][:timer_session_id].blank?
-      current_user.refresh_hackatime_data_now
-    end
-
-    # Skip time verification if user is linking a timer session
-    if params[:devlog][:timer_session_id].blank? &&
-       @project.hackatime_keys.present? && current_user.has_hackatime? &&
-       current_user.hackatime_stat.present? &&
-       !current_user.hackatime_stat.has_enough_time_since_last_update?(@project)
+    # check time reqs
+    unless current_user.hackatime_stat.has_enough_time_since_last_update?(@project)
       seconds_needed = current_user.hackatime_stat.seconds_needed_since_last_update(@project)
       redirect_to project_path(@project),
                   alert: "You need to spend more time on this project before posting a devlog. #{helpers.format_seconds(seconds_needed)} more needed since your last update."
       return
     end
 
-    if ENV["UPDATES_STATUS"] == "locked"
-      redirect_to @project,
-                  alert: "Posting devlogs is currently locked. Please check back later when devlogs are unlocked."
-      return
-    end
-
     @devlog = @project.devlogs.build(devlog_params)
     @devlog.user = current_user
 
-    if @project.hackatime_keys.present? && @project.user.has_hackatime? && params[:devlog][:timer_session_id].blank?
-      @devlog.last_hackatime_time = @project.user.hackatime_stat.time_since_last_update_for_project(@project)
+    # set hackatime data
+    if @project.hackatime_keys.present?
+      @devlog.hackatime_projects_key_snapshot = @project.hackatime_keys
+      @devlog.hackatime_pulled_at = Time.current
     end
 
     if @devlog.save
+      if @project.hackatime_keys.present?
+        @devlog.recalculate_seconds_coded
+
+        # legacy
+        time_since_last = current_user.hackatime_stat.time_since_last_update_for_project(@project)
+        @devlog.update_column(:last_hackatime_time, time_since_last)
+      end
+
       redirect_to @devlog.project, notice: "Devlog was successfully posted."
     else
       redirect_to @devlog.project, alert: "Failed to post devlog."
@@ -142,6 +139,6 @@ class DevlogsController < ApplicationController
   end
 
   def devlog_params
-    params.expect(devlog: %i[text file timer_session_id])
+    params.expect(devlog: %i[text file])
   end
 end
