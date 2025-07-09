@@ -683,6 +683,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_09_114903) do
     t.datetime "synced_at", precision: nil
     t.text "permissions", default: "[]"
     t.jsonb "shenanigans_state", default: {}
+    t.boolean "is_banned", default: false
   end
 
   create_table "view_events", force: :cascade do |t|

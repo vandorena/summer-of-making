@@ -18,6 +18,7 @@
 #  identity_vault_access_token          :string
 #  internal_notes                       :text
 #  is_admin                             :boolean          default(FALSE), not null
+#  is_banned                            :boolean
 #  last_name                            :string
 #  permissions                          :text             default([])
 #  shenanigans_state                    :jsonb
@@ -131,7 +132,8 @@ class User < ApplicationRecord
       email: user_info.user.profile.email,
       timezone: user_info.user.tz,
       avatar: user_info.user.profile.image_192 || user_info.user.profile.image_512,
-      permissions: []
+      permissions: [],
+      is_banned: false
     )
   end
 
@@ -216,6 +218,14 @@ class User < ApplicationRecord
     result = JSON.parse(response.body)
     projects = result.dig("data", "projects")
     has_hackatime_account = result.dig("data", "status") == "ok"
+
+    trust_value = result.dig("trust_factor", "trust_value")
+    should_ban = trust_value == 1
+
+    if should_ban != is_banned
+      update!(is_banned: should_ban)
+      Rails.logger.info("user #{id} (#{slack_id}) banned due to hackatime ban")
+    end
 
     if projects.empty?
       update!(has_hackatime_account:)

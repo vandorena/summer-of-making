@@ -342,6 +342,8 @@ Rails.application.routes.draw do
         post :revoke_ship_certifier
         post :give_black_market
         post :take_away_black_market
+        post :ban_user
+        post :unban_user
         post :impersonate
       end
     end

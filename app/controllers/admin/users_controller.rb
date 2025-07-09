@@ -103,6 +103,20 @@ module Admin
       redirect_to admin_user_path(@user)
     end
 
+    def ban_user
+      @user.update!(is_banned: true)
+      @user.create_activity("ban_user")
+      flash[:success] = "get rekt"
+      redirect_to admin_user_path(@user)
+    end
+
+    def unban_user
+      @user.update!(is_banned: false)
+      @user.create_activity("unban_user")
+      flash[:success] = "//undoing"
+      redirect_to admin_user_path(@user)
+    end
+
     def impersonate
       unless current_user&.is_admin?
         Honeybadger.notify("what the h-e-double-hockey-sticks?")
