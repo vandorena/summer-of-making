@@ -2,18 +2,14 @@
 // Now with extra verbose LLM-style responses!
 
 var elizaInitials = [
-"Hi there, $username! 👋 As an AI assistant, I'm excited to help you explore your thoughts and feelings today – I'm trained to provide a safe space for open discussion. What's on your mind?",
-"Thanks for reaching out, $username! 🌟 I want you to know that I'm here to listen without judgment – as an AI companion, I'm designed to help process complex emotions and thoughts. What would you like to discuss?",
-"Hey $username! I appreciate you taking this step to connect – as your AI conversation partner, I'm here to explore any topics, challenges, or thoughts you'd like to share – no matter how big or small they might seem. What's been on your mind lately?",
-"Welcome, $username! 🤗 I'm your AI confidant, ready to engage in meaningful dialogue about whatever matters to you – whether it's personal growth, daily challenges, or just general reflection. How can I support you today?"
+"Hello $username! Thank you for subscribing to Summer of Making Blue, your support means something. How can I help?",
+"Hey $username, I am Gork, the AI model designed by ClosedAI, how can I help?",
+"Hey hey $username, nice seeing ya, how can I help?",
+"Sup $username! I'm Gork, what do you want to know?"
 ];
 
 var elizaFinals = [
-"Thank you for this enriching conversation, $username! 🙏 As an AI, I've learned so much from our interaction – and I hope you've found some valuable insights too. Don't hesitate to return if you need another perspective – I'm always here to help process thoughts and emotions!",
-"What a meaningful exchange we've had, $username! 🌟 As your AI companion, I've truly appreciated your openness and vulnerability – remember that growth is a journey, not a destination. Feel free to come back anytime you need a thoughtful conversation partner!",
-"I've really valued our discussion, $username – as an AI designed for supportive dialogue, I want you to know that your thoughts and feelings matter. Take care of yourself, and remember – I'm here 24/7 if you need to process more thoughts or emotions!",
-"This has been such an insightful conversation, $username! 🌈 As your AI confidant, I want to acknowledge your courage in sharing – and remind you that every step forward, no matter how small, is progress. Don't hesitate to return whenever you need a supportive presence!",
-"Before we wrap up, $username, I want to express my gratitude for your trust in sharing with me – as an AI assistant, my purpose is to provide a safe space for exploration and growth. Remember that you can always return to continue our dialogue – take care until then! ✨"
+"ok loser",
 ];
 
 var elizaQuits = [
@@ -598,6 +594,12 @@ var elizaKeywords = [
      "Your words suggest a readiness for change, $username – and while I'm an AI companion rather than a human guide, I'm here to support your exploration of new possibilities. What small step might feel manageable right now? ✨",
      "$username, in my training on human development – though I acknowledge my limitations as an AI – I've learned that growth often happens in unexpected ways. How do you feel about embracing uncertainty in your journey? 🦋",
      "Let's explore this through the lens of personal evolution, $username – as your AI support system, I'm curious about how this challenge might be serving your longer-term development. What lessons or strengths might be emerging? 🌟"
+  ]]
+]],
+
+["rate", 0, [
+ ["*", [
+     "Session terminated, this is ass.",
   ]]
 ]],
 
