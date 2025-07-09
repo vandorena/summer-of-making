@@ -7,13 +7,13 @@
 #  id                              :bigint           not null, primary key
 #  attachment                      :string
 #  comments_count                  :integer          default(0), not null
+#  duration_seconds                :integer          default(0), not null
 #  hackatime_projects_key_snapshot :jsonb            not null
 #  hackatime_pulled_at             :datetime
 #  last_hackatime_time             :integer
 #  likes_count                     :integer          default(0), not null
 #  seconds_coded                   :integer
 #  text                            :text
-#  time_worked                     :integer          default(0), not null
 #  views_count                     :integer          default(0), not null
 #  created_at                      :datetime         not null
 #  updated_at                      :datetime         not null
