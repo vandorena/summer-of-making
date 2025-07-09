@@ -286,6 +286,11 @@ class Project < ApplicationRecord
     [ votes.minimum(col), votes.maximum(col) ]
   end
 
+  def self.cumulative_elo_bounds(changes)
+    col = :elo_after
+    [ changes.minimum(col), changes.maximum(col) ]
+  end
+
   def calculate_payout
     vote_count = VoteChange.where(project: self).maximum(:project_vote_count)
     min, max = Project.cumulative_elo_bounds_at_vote_count vote_count
@@ -311,7 +316,11 @@ class Project < ApplicationRecord
 
       next if changes.count < Payout::VOTE_COUNT_REQUIRED
 
-      min, max = Project.cumulative_elo_bounds_at_vote_count Payout::VOTE_COUNT_REQUIRED
+      if all_time
+        min, max = Project.cumulative_elo_bounds changes
+      else
+        min, max = Project.cumulative_elo_bounds_at_vote_count Payout::VOTE_COUNT_REQUIRED
+      end
 
       rating_at_vote_count = changes.last.elo_after
       pc = unlerp(min, max, rating_at_vote_count)
