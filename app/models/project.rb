@@ -58,7 +58,7 @@ class Project < ApplicationRecord
   scope :with_ship_event, -> { joins(:ship_events) }
 
   def self.with_deleted
-    unscoped
+    unscope(where: :is_deleted)
   end
 
   scope :pending_certification, -> {
