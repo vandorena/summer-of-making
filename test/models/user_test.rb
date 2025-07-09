@@ -18,6 +18,7 @@
 #  identity_vault_access_token          :string
 #  internal_notes                       :text
 #  is_admin                             :boolean          default(FALSE), not null
+#  is_banned                            :boolean
 #  last_name                            :string
 #  permissions                          :text             default([])
 #  shenanigans_state                    :jsonb

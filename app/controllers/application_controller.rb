@@ -16,6 +16,7 @@ class ApplicationController < ActionController::Base
   end
 
   before_action :authenticate_user!
+  before_action :check_if_banned
   before_action :fetch_hackatime_data_if_needed
   after_action :track_page_view
 
@@ -43,6 +44,16 @@ class ApplicationController < ActionController::Base
 
   def authenticate_user!
     redirect_to root_path, alert: "Please sign in to access this page" unless user_signed_in?
+  end
+
+  def check_if_banned
+    return unless user_signed_in?
+    return false if current_user.is_banned?.nil?
+    return unless current_user.is_banned?
+
+    unless controller_name == "campfire"
+      redirect_to campfire_path, alert: "You can not access this!"
+    end
   end
 
   def require_admin!

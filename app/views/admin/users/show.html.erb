@@ -11,6 +11,13 @@
   <span style="color: #666;">✗ No</span>
 <% end %>
 <br>
+<b>banned:</b>
+<% if @user.is_banned? %>
+  <span style="color: red; font-weight: bold;">yurp</span>
+<% else %>
+  <span style="color: green; font-weight: bold;">nah</span>
+<% end %>
+<br>
 
 <%= button_to "🥸 impersonate?", impersonate_admin_user_path(@user) %>
 
@@ -40,6 +47,17 @@
       class: "abtn secondary" %>
 <% else %>
   <%= button_to "grant ship certifier permissions", grant_ship_certifier_admin_user_path(@user),
+      class: "abtn primary" %>
+<% end %>
+<br><br>
+
+<% if @user.is_banned? %>
+  <%= button_to "unban user", unban_user_admin_user_path(@user),
+      confirm: "ya sure?",
+      class: "abtn secondary" %>
+<% else %>
+  <%= button_to "ban user", ban_user_admin_user_path(@user),
+      confirm: "ya sure? this is quite the decision!",
       class: "abtn primary" %>
 <% end %>
 <br><br>

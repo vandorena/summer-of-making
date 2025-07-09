@@ -1,5 +1,5 @@
 <div class="px-4 md:px-8">
-  <div class="flex justify-between items-start mb-6" id="fxb">
+  <div class="flex justify-between items-start" id="fxb">
     <div>
       <%= render "shared/page_title",
           title: "Campfire",
@@ -7,10 +7,28 @@
     </div>
   </div>
 
+  <% if current_user.is_banned? %>
+    <%= render "shared/card", classes: "bg-red-50/80 border-red-400 mb-8" do %>
+      <div class="flex items-start gap-3">
+        <div class="flex-shrink-0">
+          <div class="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24"><path fill="white" d="M12 0a12 12 0 0 1 12 12a12 12 0 0 1-12 12A12 12 0 0 1 0 12A12 12 0 0 1 12 0m0 2A10 10 0 0 0 2 12c0 2.4.85 4.6 2.26 6.33L18.33 4.26A10 10 0 0 0 12 2m0 20a10 10 0 0 0 10-10c0-2.4-.85-4.6-2.26-6.33L5.67 19.74A10 10 0 0 0 12 22" /></svg>
+          </div>
+        </div>
+        <div class="flex-1">
+          <h4 class="text-xl font-bold text-red-500 mb-1">Hold up!</h4>
+          <p class="text-md text-red-500 font-medium leading-relaxed">
+            Your account has been banned from Summer of Making. You are unable to create projects, post devlogs, or earn prizes. If you believe this was an error, please DM <a href="https://hackclub.slack.com/team/U080A3QP42C" target="_blank" class="underline">Rowan</a> on Slack.
+          </p>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+
   <!-- Hackatime Dashboard Section -->
   <% if @account_status[:hackatime_setup] %>
     <div class="mb-8">
-      <h2 class="text-xl text-gray-900 mb-4">Hackatime Dashboard</h2>
+      <h2 class="text-xl mb-4">Hackatime Dashboard</h2>
       <%= render "shared/card", data: { controller: "hackatime-dashboard" } do %>
         <div class="">
           <div class="flex items-center gap-3 mb-6">
@@ -20,7 +38,7 @@
               </div>
             </div>
             <div class="flex-1">
-              <h3 class="text-xl font-bold text-gray-900">
+              <h3 class="text-xl font-bold">
                 <a href="https://hackatime.hackclub.com/" target="_blank" class="hover:text-blue-600 transition-all duration-200 flex items-center gap-2">
                   Hackatime
                   <%= inline_svg "icons/external_link_line.svg", class: "w-4 h-4 text-gray-400" %>
