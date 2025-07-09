@@ -13,7 +13,8 @@
 #
 # Indexes
 #
-#  index_fraud_reports_on_user_id  (user_id)
+#  index_fraud_reports_on_user_and_suspect  (user_id,suspect_type,suspect_id) UNIQUE
+#  index_fraud_reports_on_user_id           (user_id)
 #
 # Foreign Keys
 #

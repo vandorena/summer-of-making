@@ -80,6 +80,8 @@ class Project < ApplicationRecord
   CATEGORIES = [ "Web App", "Mobile App", "Command Line Tool", "Video Game", "Something else" ]
   validates :category, inclusion: { in: CATEGORIES, message: "%<value>s is not a valid category" }, allow_blank: true
 
+  attribute :certification_type, :integer
+
   enum :certification_type, {
     cert_other: 0,
     static_site: 1,
@@ -95,6 +97,8 @@ class Project < ApplicationRecord
     video: 11,
     hardware_or_pcb_project: 12
   }
+
+  attribute :ysws_type, :string
 
   enum :ysws_type, {
     athena: "Athena",
