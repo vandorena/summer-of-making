@@ -26,7 +26,7 @@ module Api
             page: pagy.page,
             pages: pagy.pages,
             count: pagy.count,
-            items: pagy.items
+            items: pagy.limit
           }
         }
       end
