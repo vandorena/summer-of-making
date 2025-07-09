@@ -42,7 +42,7 @@ class ShipEvent < ApplicationRecord
   end
 
   def seconds_covered
-    devlogs_since_last.sum(:total_time_coded)
+    devlogs_since_last.sum(:duration_seconds)
   end
   # this is the hours covered by the ship event, not the total hours up to the ship event
   def hours_covered
@@ -53,7 +53,7 @@ class ShipEvent < ApplicationRecord
   def total_hours_up_to_ship
     Devlog.where(project: project)
           .where("created_at <= ?", created_at)
-          .sum(:total_time_coded)
+          .sum(:duration_seconds)
           .fdiv(3600)
   end
 
