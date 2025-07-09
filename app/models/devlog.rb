@@ -91,14 +91,12 @@ class Devlog < ApplicationRecord
       # new
       if hackatime_projects_key_snapshot.present?
         project_keys = hackatime_projects_key_snapshot.join(",")
-        # this is untested
-        direct_url = "https://hackatime.hackclub.com/api/v1/users/#{user.slack_id}/stats?filter_by_project=#{project_keys}&start_date=#{prev_time.to_i}&end_date=#{created_at.to_i}&features=projects"
+        direct_url = "https://hackatime.hackclub.com/api/v1/users/#{user.slack_id}/stats?filter_by_project=#{project_keys}&start_date=#{prev_time.iso8601}&end_date=#{created_at.iso8601}&features=projects"
         direct_res = Faraday.get(direct_url)
-        
+
         if direct_res.success?
           direct_data = JSON.parse(direct_res.body)
-          direct_projects = direct_data.dig("data", "projects")
-          time_worked = direct_projects.sum { |p| p["total_seconds"] }
+          time_worked = direct_data.dig("data", "total_seconds")
         else
           # Fallback to old method if new API fails
           time_worked = projects
