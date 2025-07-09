@@ -67,7 +67,7 @@ class Project < ApplicationRecord
 
   validates :title, presence: true, length: { maximum: 200 }
   validates :description, presence: true, length: { maximum: 2500 }
-  validates :category, presence: true
+
 
   validates :readme_link, :demo_link, :repo_link,
             format: { with: /\A(?:https?:\/\/).*\z/i, message: "must be a valid HTTP or HTTPS URL" },
@@ -78,7 +78,7 @@ class Project < ApplicationRecord
   before_save :convert_github_blob_urls
 
   CATEGORIES = [ "Web App", "Mobile App", "Command Line Tool", "Video Game", "Something else" ]
-  validates :category, inclusion: { in: CATEGORIES, message: "%<value>s is not a valid category" }
+  validates :category, inclusion: { in: CATEGORIES, message: "%<value>s is not a valid category" }, allow_blank: true
 
   enum :certification_type, {
     cert_other: 0,

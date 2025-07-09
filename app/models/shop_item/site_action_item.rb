@@ -44,7 +44,9 @@ class ShopItem::SiteActionItem < ShopItem
   end
 
   enum :site_action, {
-    taco_bell_bong: 2
+    taco_bell_bong: 2,
+    blue_check: 3,
+    neon_flair: 4
   }
 
   def fulfill!(shop_order)
@@ -52,10 +54,16 @@ class ShopItem::SiteActionItem < ShopItem
     when "taco_bell_bong"
       puts "bonging..."
       ActionCable.server.broadcast("shenanigans", { type: "bong", responsible_individual: shop_order.user.display_name })
+    when "blue_check"
+      shop_order.user.shenanigans_state["blue_check"] = true
+      shop_order.user.save!
+    when "neon_flair"
+      shop_order.user.shenanigans_state["neon_flair"] = true
+      shop_order.user.save!
     else
       raise "unknown site action: #{site_action.inspect}"
     end
 
-    shop_order.mark_fulfilled!("it is done.")
+    shop_order.mark_fulfilled!("it is done.", nil, "System")
   end
 end

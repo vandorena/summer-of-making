@@ -20,7 +20,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_09_114903) do
   create_schema "realtime"
   create_schema "storage"
   create_schema "vault"
-
+  
   # These are extensions that must be enabled in order to support this database
   enable_extension "extensions.pg_stat_statements"
   enable_extension "extensions.pgcrypto"
@@ -255,6 +255,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_09_114903) do
     t.string "reason"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "resolved", default: false, null: false
     t.index ["user_id"], name: "index_fraud_reports_on_user_id"
   end
 
@@ -460,6 +461,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_09_114903) do
     t.text "internal_notes"
     t.bigint "shop_card_grant_id"
     t.decimal "fulfillment_cost", precision: 6, scale: 2, default: "0.0"
+    t.string "fulfilled_by"
     t.index ["shop_card_grant_id"], name: "index_shop_orders_on_shop_card_grant_id"
     t.index ["shop_item_id"], name: "index_shop_orders_on_shop_item_id"
     t.index ["user_id"], name: "index_shop_orders_on_user_id"
@@ -679,6 +681,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_09_114903) do
     t.boolean "freeze_shop_activity", default: false
     t.datetime "synced_at", precision: nil
     t.text "permissions", default: "[]"
+    t.jsonb "shenanigans_state", default: {}
   end
 
   create_table "view_events", force: :cascade do |t|

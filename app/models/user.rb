@@ -20,6 +20,7 @@
 #  is_admin                             :boolean          default(FALSE), not null
 #  last_name                            :string
 #  permissions                          :text             default([])
+#  shenanigans_state                    :jsonb
 #  synced_at                            :datetime
 #  timezone                             :string
 #  tutorial_video_seen                  :boolean          default(FALSE), not null
@@ -305,6 +306,14 @@ class User < ApplicationRecord
     is_admin? || ship_certifier?
   end
 
+  def blue_check?
+    !!shenanigans_state["blue_check"]
+  end
+
+  def neon_flair?
+    !!shenanigans_state["neon_flair"]
+  end
+
   def projects_left_to_stake
     5 - staked_projects_count
   end
@@ -399,6 +408,13 @@ class User < ApplicationRecord
 
   def verification_status
     return :not_linked if identity_vault_id.blank?
+
+    # rapid identify theft
+    if Rails.env.development? && ENV["BYPASS_IDV"] == "true"
+      notify_xyz_on_verified
+      update(ysws_verified: true) unless ysws_verified?
+      return :verified
+    end
 
     idv_data = fetch_idv[:identity]
 

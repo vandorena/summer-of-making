@@ -97,6 +97,23 @@
             underline_attr: { data: { sidebar_target: "underline" } }
           } %>
         </li>
+        <% if current_user&.blue_check? %>
+        <li class="flex justify-start">
+            <%= render partial: "shared/link", locals: {
+              target: gork_path,
+              text: "gork",
+              icon: "ai",
+              large: true,
+              highlight: current_page?(gork_path),
+              text_attr: {
+                data: { sidebar_target: "collapseFade", turbo: false },
+                class: "text-3xl",
+                style: "font-family: serif"
+              },
+              underline_attr: { data: { sidebar_target: "underline" } }
+            } %>
+        </li>
+        <% end %>
 
         <% if current_user&.is_admin? %>
           <li class="flex justify-start border-2 border-dashed border-orange-500 bg-orange-500/10" style="margin-right: 10px; border-radius: 10px;">
@@ -150,7 +167,7 @@
               <div><%= current_user.id %></div>
             <% end %>
             <div class="h-4">Hello,</div>
-            <div class="text-xl whitespace-nowrap overflow-ellipsis"><%= current_user.display_name %>!</div>
+            <div class="text-xl whitespace-nowrap overflow-ellipsis"><%= render "shared/user_display_name", user: current_user %>!</div>
             <% admin_user_visit(current_user) %>
             <% if impersonating? %>
               <% admin_tool show_in_impersonate: true do %>

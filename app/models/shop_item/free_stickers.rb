@@ -49,6 +49,6 @@ class ShopItem::FreeStickers < ShopItem
         idempotency_key: "som25_free_stickers_order_#{Rails.env}_#{shop_order.id}"
       }
     )
-    shop_order.mark_fulfilled!(response[:id])
+    shop_order.mark_fulfilled!(response[:id], nil, "System")
   end
 end

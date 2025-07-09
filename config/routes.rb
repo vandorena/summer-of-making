@@ -305,6 +305,8 @@ Rails.application.routes.draw do
 
   post "track_view", to: "view_tracking#create"
 
+  get "/gork", to: "static_pages#gork"
+
   namespace :admin, constraint: AdminConstraint do
     mount MissionControl::Jobs::Engine, at: "jobs"
     mount AhoyCaptain::Engine, at: "ahoy_captain"
@@ -314,7 +316,14 @@ Rails.application.routes.draw do
     get "/", to: "static_pages#index", as: :root
     resources :view_analytics, only: [ :index ]
     resources :voting_dashboard, only: [ :index ]
-    resources :fraud_reports, only: [ :index ]
+    resources :fraud_reports, only: [ :index, :show ] do
+      member do
+        get :resolve
+        get :unresolve
+        patch :resolve
+        patch :unresolve
+      end
+    end
     resources :ship_certifications, only: [ :index, :edit, :update ] do
       collection do
         get :logs

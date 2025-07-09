@@ -4,6 +4,8 @@
   <h2>reports!</h2>
   <ul>
     <li><strong>total:</strong> <%= @total_reports %></li>
+    <li><strong>resolved:</strong> <%= @resolved_reports %></li>
+    <li><strong>unresolved:</strong> <%= @unresolved_reports %></li>
     <li><strong>unique projects:</strong> <%= @unique_projects %></li>
     <li><strong>last 24h:</strong> <%= @recent_reports %></li>
   </ul>
@@ -19,6 +21,8 @@
         <th>project</th>
         <th>reporter</th>
         <th>reason</th>
+        <th>status</th>
+        <th>act</th>
       </tr>
     </thead>
     <tbody>
@@ -35,6 +39,12 @@
           </td>
           <td><%= report.reporter.try(:display_name) || report.reporter.try(:email) %></td>
           <td><%= report.reason.presence || '-' %></td>
+          <td style="color: <%= report.resolved? ? 'green' : 'red' %>; font-weight: bold;">
+            <%= report.resolved? ? 'delt with' : 'not delt' %>
+          </td>
+          <td>
+            <%= link_to 'the deets', admin_fraud_report_path(report), style: 'color: blue;' %>
+          </td>
         </tr>
       <% end %>
     </tbody>

@@ -4,13 +4,11 @@ export default class extends Controller {
   static targets = [
     "title",
     "description",
-    "category",
     "readme",
     "demo",
     "repo",
     "titleError",
     "descriptionError",
-    "categoryError",
     "readmeError",
     "demoError",
     "repoError",
@@ -52,10 +50,7 @@ export default class extends Controller {
       isValid = false;
     }
 
-    if (!this.categoryTarget.value) {
-      this.showError(this.categoryErrorTarget, "Please select a category");
-      isValid = false;
-    }
+
 
     if (this.hasYswsSubmissionCheckboxRealTarget && this.yswsSubmissionCheckboxRealTarget.checked) {
       if (this.hasYswsTypeTarget && !this.yswsTypeTarget.value) {
@@ -122,7 +117,6 @@ export default class extends Controller {
     const errorTargets = [
       this.titleErrorTarget,
       this.descriptionErrorTarget,
-      this.categoryErrorTarget,
       this.readmeErrorTarget,
       this.demoErrorTarget,
       this.repoErrorTarget,
@@ -195,7 +189,7 @@ export default class extends Controller {
   toggleUsedAiCheck() {
     const checked = this.usedAiCheckboxRealTarget.checked;
     const checkboxContainer = this.usedAiCheckboxFakeTarget.parentElement;
-    
+
     console.log("Checkbox checked:", checked);
     console.log("Checkbox value:", this.usedAiCheckboxRealTarget.value);
 
@@ -213,12 +207,12 @@ export default class extends Controller {
   toggleYswsSubmission() {
     const checked = this.yswsSubmissionCheckboxRealTarget.checked;
     const checkboxContainer = this.yswsSubmissionCheckboxFakeTarget.parentElement;
-    
+
     if (checked) {
       this.yswsSubmissionCheckboxFakeTarget.classList.remove("hidden");
       checkboxContainer.classList.add("bg-forest", "border-forest");
       checkboxContainer.classList.remove("bg-bread");
-      
+
       // Show the YSWS type dropdown
       if (this.hasYswsTypeContainerTarget) {
         this.yswsTypeContainerTarget.classList.remove("hidden");

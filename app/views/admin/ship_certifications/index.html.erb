@@ -74,15 +74,15 @@
 </div>
 
 <div style="margin-bottom: 2rem;">
-  <h3>Filter by Category</h3>
+  <h3>Filter by type</h3>
   <div style="display: flex; gap: 1rem; margin-top: 0.5rem; flex-wrap: wrap;">
     <%= link_to admin_ship_certifications_path(filter: @filter), class: "pill #{@category_filter.blank? ? 'pill-dark' : 'pill-gray'}", style: "text-decoration: none; padding: 0.5rem 1rem;" do %>
-      All Categories (<%= @category_counts.values.sum %>)
+      All types (<%= @category_counts.values.sum %>)
     <% end %>
-    <% @category_counts.sort.each do |category, count| %>
-      <% next if category.blank? %>
-      <%= link_to admin_ship_certifications_path(filter: @filter, category_filter: category), class: "pill #{@category_filter == category ? 'pill-green' : 'pill-gray'}", style: "text-decoration: none; padding: 0.5rem 1rem;" do %>
-        <%= category %> (<%= count %>)
+    <% @category_counts.sort.each do |cert_type, count| %>
+      <% next if cert_type.blank? %>
+      <%= link_to admin_ship_certifications_path(filter: @filter, category_filter: cert_type), class: "pill #{@category_filter == cert_type ? 'pill-green' : 'pill-gray'}", style: "text-decoration: none; padding: 0.5rem 1rem;" do %>
+        <%= cert_type.humanize %> (<%= count %>)
       <% end %>
     <% end %>
   </div>
@@ -134,7 +134,7 @@
             </small>
             <br>
             <small style="color: var(--color-text-muted);">
-              Category: <%= ship_certification.project.category %>
+              Type: <%= ship_certification.project.certification_type&.humanize %>
             </small>
           </div>
         </td>
