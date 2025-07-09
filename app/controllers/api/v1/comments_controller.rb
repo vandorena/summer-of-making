@@ -4,7 +4,7 @@ module Api
   module V1
     class CommentsController < ApplicationController
       def index
-        @comments = Comment.all.map do |comment|
+        @comments = Comment.page(params[:page]).per(20).map do |comment|
           {
             text: comment.content,
             devlog_id: comment.devlog_id,

@@ -4,7 +4,7 @@ module Api
   module V1
     class ProjectsController < ApplicationController
       def index
-        @projects = Project.all.map do |project|
+        @projects = Project.page(params[:page]).per(20).map do |project|
           {
             id: project.id,
             title: project.title,
