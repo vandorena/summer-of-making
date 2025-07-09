@@ -52,7 +52,10 @@ class DevlogsController < ApplicationController
     if @devlog.save
       if @project.hackatime_keys.present?
         @devlog.recalculate_seconds_coded
-        @devlog.last_hackatime_time = @project.user.hackatime_stat.time_since_last_update_for_project(@project)
+        
+        # legacy
+        time_since_last = current_user.hackatime_stat.time_since_last_update_for_project(@project)
+        @devlog.update_column(:last_hackatime_time, time_since_last)
       end
 
       redirect_to @devlog.project, notice: "Devlog was successfully posted."
