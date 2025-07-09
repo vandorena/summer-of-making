@@ -133,7 +133,7 @@ class VotesController < ApplicationController
       projects_with_time = eligible_projects.map do |project|
         latest_ship_event = project.ship_events.max_by(&:created_at)
 
-        total_time_seconds = latest_ship_event.seconds_covered
+        total_time_seconds = latest_ship_event.total_time_up_to_ship
 
       {
         project: project,
