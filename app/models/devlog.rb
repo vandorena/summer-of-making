@@ -89,9 +89,25 @@ class Devlog < ApplicationRecord
         .reduce(0) { |acc, h| acc += h["total_seconds"] }
 
       # new
-      time_worked = projects
-          .filter { |p| hackatime_projects_key_snapshot.include?(p["name"]) }
-          .reduce(0) { |acc, h| acc += h["total_seconds"] }
+      if hackatime_projects_key_snapshot.present?
+        project_keys = hackatime_projects_key_snapshot.join(",")
+        # this is untested
+        direct_url = "https://hackatime.hackclub.com/api/v1/users/#{user.slack_id}/stats?filter_by_project=#{project_keys}&start_date=#{prev_time.to_i}&end_date=#{created_at.to_i}&features=projects"
+        direct_res = Faraday.get(direct_url)
+        
+        if direct_res.success?
+          direct_data = JSON.parse(direct_res.body)
+          direct_projects = direct_data.dig("data", "projects")
+          time_worked = direct_projects.sum { |p| p["total_seconds"] }
+        else
+          # Fallback to old method if new API fails
+          time_worked = projects
+              .filter { |p| hackatime_projects_key_snapshot.include?(p["name"]) }
+              .reduce(0) { |acc, h| acc += h["total_seconds"] }
+        end
+      else
+        time_worked = 0
+      end
 
       Rails.logger.info "\tDevlog #{id} seconds coded: #{seconds_coded}, time worked: #{time_worked}"
       update!(seconds_coded: seconds_coded, time_worked: time_worked, hackatime_pulled_at: Time.now)
