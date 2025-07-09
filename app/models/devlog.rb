@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "cgi"
+
 # == Schema Information
 #
 # Table name: devlogs
@@ -91,7 +93,8 @@ class Devlog < ApplicationRecord
       # new
       if hackatime_projects_key_snapshot.present?
         project_keys = hackatime_projects_key_snapshot.join(",")
-        direct_url = "https://hackatime.hackclub.com/api/v1/users/#{user.slack_id}/stats?filter_by_project=#{project_keys}&start_date=#{prev_time.iso8601}&end_date=#{created_at.iso8601}&features=projects"
+        encoded_project_keys = CGI.escape(project_keys)
+        direct_url = "https://hackatime.hackclub.com/api/v1/users/#{user.slack_id}/stats?filter_by_project=#{encoded_project_keys}&start_date=#{prev_time.iso8601}&end_date=#{created_at.iso8601}&features=projects"
         direct_res = Faraday.get(direct_url)
 
         if direct_res.success?
