@@ -195,7 +195,7 @@ class Project < ApplicationRecord
     last_ship_event_time = ship_events.order(:created_at).last&.created_at
     last_ship_event_time.nil? ? devlogs : devlogs.where("created_at > ?", last_ship_event_time)
   end
-  
+
   def shipping_requirements
     {
       devlogs: {
