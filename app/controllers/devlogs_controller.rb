@@ -33,15 +33,11 @@ class DevlogsController < ApplicationController
     @project = Project.find(params[:project_id])
 
     # check time reqs
-    if @project.hackatime_keys.present?
-      current_user.refresh_hackatime_data_now
-
-      unless current_user.hackatime_stat.has_enough_time_since_last_update?(@project)
-        seconds_needed = current_user.hackatime_stat.seconds_needed_since_last_update(@project)
-        redirect_to project_path(@project),
-                    alert: "You need to spend more time on this project before posting a devlog. #{helpers.format_seconds(seconds_needed)} more needed since your last update."
-        return
-      end
+    unless current_user.hackatime_stat.has_enough_time_since_last_update?(@project)
+      seconds_needed = current_user.hackatime_stat.seconds_needed_since_last_update(@project)
+      redirect_to project_path(@project),
+                  alert: "You need to spend more time on this project before posting a devlog. #{helpers.format_seconds(seconds_needed)} more needed since your last update."
+      return
     end
 
     @devlog = @project.devlogs.build(devlog_params)
@@ -55,9 +51,8 @@ class DevlogsController < ApplicationController
 
     if @devlog.save
       if @project.hackatime_keys.present?
-        time_worked = @devlog.recalculate_seconds_coded
-        # keep depercated field for sanity check – remove before PROD
-        @devlog.update_column(:last_hackatime_time, time_worked)
+        @devlog.recalculate_seconds_coded
+        @devlog.last_hackatime_time = @project.user.hackatime_stat.time_since_last_update_for_project(@project)
       end
 
       redirect_to @devlog.project, notice: "Devlog was successfully posted."
