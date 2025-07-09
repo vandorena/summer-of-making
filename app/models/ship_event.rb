@@ -50,11 +50,10 @@ class ShipEvent < ApplicationRecord
   end
 
   # this is the total hours up to the ship event
-  def total_hours_up_to_ship
+  def total_time_up_to_ship
     Devlog.where(project: project)
           .where("created_at <= ?", created_at)
           .sum(:duration_seconds)
-          .fdiv(3600)
   end
 
   private
