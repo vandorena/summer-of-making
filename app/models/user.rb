@@ -459,7 +459,7 @@ class User < ApplicationRecord
   def ban_user!(reason = "admin_ban")
     return if is_banned?
     update!(is_banned: true)
-    projects.with_deleted.update_all(is_deleted: true)
+    projects.with_deleted.where(user_id: id).update_all(is_deleted: true)
     create_activity("ban_user", params: { reason: reason })
     Rails.logger.info("user #{id} (#{slack_id}) ratioed thanks to #{reason}")
   end
