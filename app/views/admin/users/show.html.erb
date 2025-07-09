@@ -25,6 +25,15 @@
   <b style="color: red;">DON'T DO THIS:</b>
   <%= button_to "nuke IDV data", nuke_idv_data_admin_user_path(@user) %>
   <%= button_to "cancel all card grants (only do this if you're banning somebody)", cancel_card_grants_admin_user_path(@user) %>
+<% if @user.is_banned? %>
+  <%= button_to "unban user", unban_user_admin_user_path(@user),
+      confirm: "ya sure?",
+      class: "abtn secondary" %>
+<% else %>
+  <%= button_to "ban user", ban_user_admin_user_path(@user),
+      confirm: "ya sure? this is quite the decision!",
+      class: "abtn primary" %>
+<% end %>
 </div>
 <br><br>
 <% if @user.freeze_shop_activity? %>
@@ -47,17 +56,6 @@
       class: "abtn secondary" %>
 <% else %>
   <%= button_to "grant ship certifier permissions", grant_ship_certifier_admin_user_path(@user),
-      class: "abtn primary" %>
-<% end %>
-<br><br>
-
-<% if @user.is_banned? %>
-  <%= button_to "unban user", unban_user_admin_user_path(@user),
-      confirm: "ya sure?",
-      class: "abtn secondary" %>
-<% else %>
-  <%= button_to "ban user", ban_user_admin_user_path(@user),
-      confirm: "ya sure? this is quite the decision!",
       class: "abtn primary" %>
 <% end %>
 <br><br>
