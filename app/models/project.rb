@@ -306,10 +306,12 @@ class Project < ApplicationRecord
     payout = hours * mult
   end
 
-  def issue_payouts
+  def issue_payouts(all_time: false)
     ship_events.each_with_index do |ship, idx|
       next_ship_created_at = ship_events[idx + 1]&.created_at || Float::INFINITY
-      changes = vote_changes.where("created_at < ?", next_ship_created_at).where("project_vote_count <= ?", Payout::VOTE_COUNT_REQUIRED)
+
+      changes = vote_changes.where("project_vote_count <= ?", Payout::VOTE_COUNT_REQUIRED)
+      changes = changes.where("created_at < ?", next_ship_created_at) unless all_time
 
       next if changes.count < Payout::VOTE_COUNT_REQUIRED
 
