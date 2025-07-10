@@ -1,13 +1,16 @@
 class Mole::BatchGuessProjectCategorizationJob < ApplicationJob
   queue_as :literally_whenever
 
-  def perform(project_ids)
-    Rails.logger.info "Starting batch categorization for #{project_ids.length} projects"
+  BATCH_SIZE = 10
+
+  def perform(project_ids = nil, recurring = false)
+    @project_ids = project_ids || get_default_project_ids
+    Rails.logger.info "Starting batch categorization for #{@project_ids.length} projects"
 
     mole_service = MoleBrowserService.new(timeout: 600) # 10 minutes timeout for batch
 
     # Prepare tasks for batch processing
-    tasks = prepare_tasks(project_ids)
+    tasks = prepare_tasks(@project_ids)
     return if tasks.empty?
 
     # Submit all jobs to mole service
@@ -18,10 +21,27 @@ class Mole::BatchGuessProjectCategorizationJob < ApplicationJob
       handle_job_result(submission, job_data, status)
     end
 
-    Rails.logger.info "Completed batch categorization for #{project_ids.length} projects"
+    Rails.logger.info "Completed batch categorization for #{@project_ids.length} projects"
+
+    if recurring && @project_ids.length == BATCH_SIZE
+      perform(nil, true)
+    end
   end
 
   private
+
+  def get_default_project_ids
+    # Find projects with ship events, prioritizing nil cert_type then "other"
+    # Only include projects with at least one URL available
+    Project.joins(:ship_events)
+           .where(certification_type: [ nil, "other" ])
+           .where.not(demo_link: "")
+           .where.not(repo_link: "")
+           .where.not(readme_link: "")
+           .order("certification_type NULLS FIRST")
+           .limit(BATCH_SIZE)
+           .pluck(:id)
+  end
 
   def prepare_tasks(project_ids)
     tasks = []
@@ -30,7 +50,7 @@ class Mole::BatchGuessProjectCategorizationJob < ApplicationJob
       project = Project.find(project_id)
 
       # Skip if already categorized
-      if project.certification_type.present? && project.category.present?
+      if project.certification_type.present? && !project.cert_other? && project.category.present?
         Rails.logger.info "Skipping project #{project_id} - already categorized"
         next
       end
