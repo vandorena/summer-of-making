@@ -14,19 +14,7 @@ class ProjectsController < ApplicationController
 
   def index
     sort_order = params[:sort] == "oldest" ? :asc : :desc
-    if params[:action] == "my_projects"
-      @projects = Project.includes(:user)
-                         .includes(:ship_events)
-                         .where.not(user_id: current_user.id)
-                         .order(rating: :asc)
-
-      # @projects = @projects.sort_by do |project|
-      #     weight = rand + (project.updates.count > 0 ? 1.5 : 0)
-      #     -weight
-      # end
-
-      @show_create_project = true if @projects.empty?
-    elsif params[:tab] == "gallery"
+    if params[:tab] == "gallery"
       # Optimize gallery with pagination and DB-level ordering
       projects_query = Project.includes(:user)
                               .joins("LEFT JOIN devlogs ON devlogs.project_id = projects.id")
