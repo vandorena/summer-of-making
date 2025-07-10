@@ -6,7 +6,7 @@
     elsif (devlog_with_image = @project.devlogs.find { |u| u.file.attached? && u.file.image? })
       project_image = url_for(devlog_with_image.file)
     else
-      project_image = "https://hc-cdn.hel1.your-objectstorage.com/s/v3/41e9de19cfa4e099cf25410ac38542776693b54e_t.png"
+      project_image = "https://summer.hackclub.com/social-splash.jpg"
     end
 
     project_title = "#{@project.title} by #{@project.user.display_name}"
