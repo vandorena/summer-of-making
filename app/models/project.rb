@@ -313,16 +313,20 @@ class Project < ApplicationRecord
 
   def issue_payouts(all_time: false)
     ship_events.each_with_index do |ship, idx|
-      ship_event_vote_count = ship_event.votes.size
-      project_vote_count = project.votes.size
+      # Get project vote count for this ship event
+      project_vote_count = VoteChange.where(project: self).maximum(:project_vote_count) || 0
 
-      next unless ship_event_vote_count == 18
+      next if project_vote_count < 18
 
-      prev_vc = VoteChange.where("project_vote_count < ?", project_vote_count).where("created_at < ?" created_at)
+      # Get vote changes up to this point
+      previous_changes = VoteChange.where(project: self).where("project_vote_count <= ?", project_vote_count)
+      previous_changes = previous_changes.where("created_at <= ?", ship.created_at) if all_time
 
-      min, max = calc_min_and_max_elo_for_vote_changes prev_vc
+      next if previous_changes.empty?
 
-      rating_at_vote_count = changes.last.elo_after
+      min, max = Project.cumulative_elo_bounds(previous_changes)
+
+      rating_at_vote_count = previous_changes.last.elo_after
       pc = unlerp(min, max, rating_at_vote_count)
 
       puts "FKDF", pc, min, max, rating_at_vote_count
