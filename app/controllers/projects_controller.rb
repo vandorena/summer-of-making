@@ -94,6 +94,7 @@ class ProjectsController < ApplicationController
   end
 
   def show
+    authorize @project, :show?
     track_view(@project)
 
     @devlogs = @project.devlogs.order(created_at: :desc)
