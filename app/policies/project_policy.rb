@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ProjectPolicy < ApplicationPolicy
   def index?
     true
@@ -12,7 +14,7 @@ class ProjectPolicy < ApplicationPolicy
   end
 
   def create?
-    user.has_hackatime?
+    user&.has_hackatime?
   end
 
   def edit?
@@ -20,7 +22,7 @@ class ProjectPolicy < ApplicationPolicy
   end
 
   def update?
-    user.is_admin? || user == record.user
+    user&.is_admin? || user == record.user
   end
 
   def destroy?
@@ -32,12 +34,12 @@ class ProjectPolicy < ApplicationPolicy
   end
 
   def follow?
-    record.user != user &&
+    user && record.user != user &&
       !user.project_follows.exists?(project: record)
   end
 
   def unfollow?
-    record.user != user &&
+    user && record.user != user &&
       user.project_follows.exists?(project: record)
   end
 
@@ -47,5 +49,21 @@ class ProjectPolicy < ApplicationPolicy
 
   def unstake_stonks?
     update?
+  end
+
+  def can_edit_banner?
+    user&.is_admin? || user == record.user
+  end
+
+  def can_see_certification_details?
+    user && (user == record.user || user.is_admin?)
+  end
+
+  def can_see_actions?
+    user == record.user
+  end
+
+  def can_follow_or_report?
+    user && user != record.user
   end
 end
