@@ -1,3 +1,41 @@
+<% content_for :title, @project.title %>
+<% content_for :head do %>
+  <%
+    if @project.banner.attached?
+      project_image = url_for(@project.banner)
+    elsif (devlog_with_image = @project.devlogs.find { |u| u.file.attached? && u.file.image? })
+      project_image = url_for(devlog_with_image.file)
+    else
+      project_image = "https://hc-cdn.hel1.your-objectstorage.com/s/v3/41e9de19cfa4e099cf25410ac38542776693b54e_t.png"
+    end
+
+    project_title = "#{@project.title} by #{@project.user.display_name}"
+    project_description = strip_tags(@project.description).truncate(300)
+  %>
+
+  <meta property="og:title" content="<%= html_escape(project_title) %>">
+  <meta property="og:description" content="<%= html_escape(project_description) %>">
+  <meta property="og:image" content="<%= html_escape(project_image) %>">
+  <meta property="og:url" content="<%= project_url(@project) %>">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Summer of Making by Hack Club">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<%= html_escape(project_title) %>">
+  <meta name="twitter:description" content="<%= html_escape(project_description) %>">
+  <meta name="twitter:image" content="<%= html_escape(project_image) %>">
+
+  <meta property="article:author" content="<%= html_escape(@project.user.display_name) %>">
+  <meta property="article:published_time" content="<%= @project.created_at.iso8601 %>">
+  <% if @project.updated_at != @project.created_at %>
+    <meta property="article:modified_time" content="<%= @project.updated_at.iso8601 %>">
+  <% end %>
+
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:image:alt" content="<%= html_escape(@project.title) %> project banner">
+<% end %>
+
 <div data-controller="image-viewer">
   <div data-image-viewer-target="modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-75" data-action="click->image-viewer#closeBackground">
     <div class="relative max-w-7xl max-h-[90vh] w-full flex items-center justify-center">
