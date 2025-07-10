@@ -320,7 +320,7 @@ class Project < ApplicationRecord
 
       # Get vote changes up to this point
       previous_changes = VoteChange.where(project: self).where("project_vote_count <= ?", project_vote_count)
-      previous_changes = previous_changes.where("created_at <= ?", ship.created_at) if all_time
+      previous_changes = previous_changes.where("created_at <= ?", ship.created_at) unless all_time
 
       next if previous_changes.empty?
 
