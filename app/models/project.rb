@@ -313,18 +313,14 @@ class Project < ApplicationRecord
 
   def issue_payouts(all_time: false)
     ship_events.each_with_index do |ship, idx|
-      next_ship_created_at = ship_events[idx + 1]&.created_at || Float::INFINITY
+      ship_event_vote_count = ship_event.votes.size
+      project_vote_count = project.votes.size
 
-      changes = vote_changes.where("project_vote_count <= ?", Payout::VOTE_COUNT_REQUIRED)
-      changes = changes.where("created_at < ?", next_ship_created_at) unless all_time
+      next unless ship_event_vote_count == 18
 
-      next if changes.count != Payout::VOTE_COUNT_REQUIRED * (idx + 1)
+      prev_vc = VoteChange.where("project_vote_count < ?", project_vote_count).where("created_at < ?" created_at)
 
-      if all_time
-        min, max = Project.cumulative_elo_bounds changes
-      else
-        min, max = Project.cumulative_elo_bounds_at_vote_count Payout::VOTE_COUNT_REQUIRED
-      end
+      min, max = calc_min_and_max_elo_for_vote_changes prev_vc
 
       rating_at_vote_count = changes.last.elo_after
       pc = unlerp(min, max, rating_at_vote_count)
