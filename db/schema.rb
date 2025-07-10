@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_09_114903) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_09_163831) do
   create_schema "auth"
   create_schema "extensions"
   create_schema "graphql"
@@ -20,7 +20,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_09_114903) do
   create_schema "realtime"
   create_schema "storage"
   create_schema "vault"
-  
+
   # These are extensions that must be enabled in order to support this database
   enable_extension "extensions.pg_stat_statements"
   enable_extension "extensions.pgcrypto"
@@ -209,9 +209,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_09_114903) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "last_hackatime_time"
-    t.integer "seconds_coded"
     t.integer "likes_count", default: 0, null: false
     t.integer "comments_count", default: 0, null: false
+    t.integer "seconds_coded"
     t.datetime "hackatime_pulled_at"
     t.integer "views_count", default: 0, null: false
     t.integer "duration_seconds", default: 0, null: false
