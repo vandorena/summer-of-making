@@ -318,7 +318,7 @@ class Project < ApplicationRecord
       changes = vote_changes.where("project_vote_count <= ?", Payout::VOTE_COUNT_REQUIRED)
       changes = changes.where("created_at < ?", next_ship_created_at) unless all_time
 
-      next if changes.count != Payout::VOTE_COUNT_REQUIRED
+      next if changes.count != Payout::VOTE_COUNT_REQUIRED * (idx + 1)
 
       if all_time
         min, max = Project.cumulative_elo_bounds changes
