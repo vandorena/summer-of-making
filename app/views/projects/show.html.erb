@@ -11,7 +11,7 @@
   <div class="container mx-auto px-4 py-4 md:py-8 max-w-4xl">
     <%= render "projects/project_card" %>
 
-    <% if user_signed_in? && current_user == @project.user %>
+    <% if policy(@project).can_see_actions? %>
       <div id="devlog-form" class="mb-4 md:mb-6">
         <%= render "devlogs/devlog_form" %>
       </div>
