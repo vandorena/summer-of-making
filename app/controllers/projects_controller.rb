@@ -30,7 +30,7 @@ class ProjectsController < ApplicationController
     elsif params[:tab] == "following"
       @followed_projects = current_user.followed_projects.includes(:user)
       @recent_devlogs = Devlog.joins(:project)
-                              .includes(:project, :user, :timer_sessions, :file_attachment, comments: :user)
+                              .includes(:project, :user, :file_attachment, comments: :user)
                               .where(project_id: @followed_projects.pluck(:id))
                               .where(projects: { is_deleted: false })
                               .order(created_at: :desc)
@@ -43,7 +43,7 @@ class ProjectsController < ApplicationController
     elsif params[:tab] == "stonked"
       @stonked_projects = current_user.staked_projects.includes(:user)
       @recent_devlogs = Devlog.joins(:project)
-                              .includes(:project, :user, :timer_sessions, :file_attachment, comments: :user)
+                              .includes(:project, :user, :file_attachment, comments: :user)
                               .where(project_id: @stonked_projects.pluck(:id))
                               .where(projects: { is_deleted: false })
                               .order(created_at: :desc)
@@ -56,7 +56,7 @@ class ProjectsController < ApplicationController
     else
       # Optimize main devlogs query
       devlogs_query = Devlog.joins(:project)
-                            .includes(:project, :user, :timer_sessions, :file_attachment, comments: :user)
+                            .includes(:project, :user, :file_attachment, comments: :user)
                             .where(projects: { is_deleted: false })
                             .order(created_at: :desc)
 
@@ -502,9 +502,6 @@ class ProjectsController < ApplicationController
 
   def destroy
     Project.transaction do
-      # delete all active timer sessions for this project (otherwise it bricks and you can't start new timers)
-      @project.timer_sessions.where(status: %i[running paused]).destroy_all
-
       @project.stonks.destroy_all
       @project.project_follows.destroy_all
 
@@ -552,7 +549,7 @@ class ProjectsController < ApplicationController
   end
 
   def set_project
-    @project = Project.includes(:user, devlogs: [ :user, :timer_sessions, :likes, :comments, :file_attachment ]).find(params[:id])
+    @project = Project.includes(:user, devlogs: [ :user, :likes, :comments, :file_attachment ]).find(params[:id])
   rescue ActiveRecord::RecordNotFound
     deleted_project = Project.with_deleted.find_by(id: params[:id])
     if deleted_project&.is_deleted?
