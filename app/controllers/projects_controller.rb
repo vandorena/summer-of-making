@@ -139,7 +139,7 @@ class ProjectsController < ApplicationController
   end
 
   def my_projects
-    @projects = current_user.projects.order(created_at: :desc)
+    @projects = current_user.projects.includes(:banner_attachment, :ship_events, :devlogs, :devlogs => [:file_attachment]).order(created_at: :desc)
 
     current_user.refresh_hackatime_data if current_user.has_hackatime?
   end
