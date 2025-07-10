@@ -16,7 +16,7 @@
   <meta property="og:title" content="<%= html_escape(project_title) %>">
   <meta property="og:description" content="<%= html_escape(project_description) %>">
   <meta property="og:image" content="<%= html_escape(project_image) %>">
-  <meta property="og:url" content="<%= project_url(@project) %>">
+  <meta property="og:url" content="<%= html_escape(project_url(@project)) %>">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Summer of Making by Hack Club">
 
