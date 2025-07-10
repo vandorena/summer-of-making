@@ -9,7 +9,8 @@ class ProjectsController < ApplicationController
   before_action :check_if_shipped, only: %i[edit update]
   before_action :authorize_user, only: [ :destroy ]
   before_action :require_hackatime, only: [ :create ]
-  before_action :check_identity_verification
+  before_action :check_identity_verification, except: %i[show]
+  skip_before_action :authenticate_user!, only: %i[show]
 
   def index
     sort_order = params[:sort] == "oldest" ? :asc : :desc
