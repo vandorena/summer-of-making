@@ -312,24 +312,32 @@ class Project < ApplicationRecord
   end
 
   def issue_payouts(all_time: false)
+    project_vote_count = VoteChange.where(project: self).count
+
     ship_events.each_with_index do |ship, idx|
-      # Get project vote count for this ship event
-      project_vote_count = VoteChange.where(project: self).maximum(:project_vote_count) || 0
+      ship_event_vote_count = VoteChange.where(project: self).where("created_at > ?", ship.created_at).count
 
-      next if project_vote_count < 18
+      # Only process ship events that have 18 or more votes
+      next unless ship_event_vote_count >= 18
 
-      # Get vote changes up to this point
-      previous_changes = VoteChange.where(project: self).where("project_vote_count <= ?", project_vote_count)
-      previous_changes = previous_changes.where("created_at <= ?", ship.created_at) if all_time
+      # Get vote changes based on all_time flag
+      if all_time
+        # Genesis: get all vote changes with project_vote_count <= current project's total votes
+        previous_changes = VoteChange.where("project_vote_count <= ?", project_vote_count)
+      else
+        # Normal: get vote changes with project_vote_count <= current project's total votes AND created before ship event
+        previous_changes = VoteChange.where("project_vote_count <= ?", project_vote_count).where("created_at < ?", ship.created_at)
+      end
 
       next if previous_changes.empty?
 
       min, max = Project.cumulative_elo_bounds(previous_changes)
 
-      rating_at_vote_count = previous_changes.last.elo_after
-      pc = unlerp(min, max, rating_at_vote_count)
+      # Get the current project's ELO rating
+      current_rating = VoteChange.where(project: self).order(:id).last&.elo_after || 1000
+      pc = unlerp(min, max, current_rating)
 
-      puts "FKDF", pc, min, max, rating_at_vote_count
+      puts "FKDF", pc, min, max, current_rating
 
       mult = Payout.calculate_multiplier pc
 
@@ -346,7 +354,7 @@ class Project < ApplicationRecord
 
       payout = Payout.create!(amount: current_payout_difference, payable: ship, user:, reason:)
 
-      puts "PAYOUTCREASED(#{payout.id}) ship.id:#{ship.id} min:#{min} max:#{max} rating_at_vote_count:#{rating_at_vote_count} pc:#{pc} mult:#{mult} hours:#{hours} amount:#{amount} current_payout_sum:#{current_payout_sum} current_payout_difference:#{current_payout_difference}"
+      puts "PAYOUTCREASED(#{payout.id}) ship.id:#{ship.id} min:#{min} max:#{max} rating_at_vote_count:#{current_rating} pc:#{pc} mult:#{mult} hours:#{hours} amount:#{amount} current_payout_sum:#{current_payout_sum} current_payout_difference:#{current_payout_difference}"
     end
   end
 
