@@ -16,7 +16,7 @@ class ProjectsController < ApplicationController
     sort_order = params[:sort] == "oldest" ? :asc : :desc
     if params[:tab] == "gallery"
       # Optimize gallery with pagination and DB-level ordering
-      projects_query = Project.includes(:user)
+      projects_query = Project.includes(user: :hackatime_stat, :devlogs => [:file_attachment])
                               .joins("LEFT JOIN devlogs ON devlogs.project_id = projects.id")
                               .where(is_deleted: false)
                               .group("projects.id")
@@ -28,9 +28,9 @@ class ProjectsController < ApplicationController
         redirect_to projects_path(tab: "gallery", sort: params[:sort]) and return
       end
     elsif params[:tab] == "following"
-      @followed_projects = current_user.followed_projects.includes(:user)
+      @followed_projects = current_user.followed_projects.includes(user: :hackatime_stat)
       @recent_devlogs = Devlog.joins(:project)
-                              .includes(:project, :user, :file_attachment, comments: :user)
+                              .includes(:project, :file_attachment, user: :hackatime_stat, comments: :user, likes: :user)
                               .where(project_id: @followed_projects.pluck(:id))
                               .where(projects: { is_deleted: false })
                               .order(created_at: :desc)
@@ -41,9 +41,9 @@ class ProjectsController < ApplicationController
         redirect_to projects_path(tab: "following") and return
       end
     elsif params[:tab] == "stonked"
-      @stonked_projects = current_user.staked_projects.includes(:user)
+      @stonked_projects = current_user.staked_projects.includes(user: :hackatime_stat)
       @recent_devlogs = Devlog.joins(:project)
-                              .includes(:project, :user, :file_attachment, comments: :user)
+                              .includes(:project, :file_attachment, user: :hackatime_stat, comments: :user, likes: :user)
                               .where(project_id: @stonked_projects.pluck(:id))
                               .where(projects: { is_deleted: false })
                               .order(created_at: :desc)
@@ -56,7 +56,7 @@ class ProjectsController < ApplicationController
     else
       # Optimize main devlogs query
       devlogs_query = Devlog.joins(:project)
-                            .includes(:project, :user, :file_attachment, comments: :user)
+                            .includes(:project, :file_attachment, user: :hackatime_stat, comments: :user, likes: :user)
                             .where(projects: { is_deleted: false })
                             .order(created_at: :desc)
 
@@ -67,7 +67,7 @@ class ProjectsController < ApplicationController
       end
 
       # we can just load stuff for the gallery here too!!
-      projects_query = Project.includes(:user, :banner_attachment)
+      projects_query = Project.includes(:banner_attachment, user: :hackatime_stat, :devlogs => [:file_attachment])
                               .joins("LEFT JOIN devlogs ON devlogs.project_id = projects.id")
                               .where(is_deleted: false)
                               .group("projects.id")
