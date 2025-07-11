@@ -1,26 +1,29 @@
-  <div class="relative flex p-4 border-t-2 border-[#d7bc9a] justify-around" style="background: radial-gradient(circle at 65% 20%, #F6DBBA, #E4DCC6 50%, #F6DBBA 100%);">
-  <%= link_to campfire_path, class: "flex flex-col items-center #{"opacity-50 pointer-events-none" unless tab_unlocked?(:campfire)} #{'text-saddle-taupe' if current_page?(campfire_path)}" do %>
+<%
+  standard_tabs_unlocked = tab_unlocked?(:explore)
+%>
+<div class="relative flex p-4 border-t-2 border-[#d7bc9a] justify-around" style="background: radial-gradient(circle at 65% 20%, #F6DBBA, #E4DCC6 50%, #F6DBBA 100%);">
+  <%= link_to campfire_path, class: "flex flex-col items-center #{'text-saddle-taupe' if current_page?(campfire_path)}" do %>
     <%= inline_svg "icons/campfire.svg", class: "h-8 w-8" %>
     <span class="text-xs mt-1">Campfire</span>
   <% end %>
 
-  <%= link_to explore_path, class: "flex flex-col items-center #{"opacity-50 pointer-events-none" unless tab_unlocked?(:explore)} #{'text-saddle-taupe' if current_page?(explore_path)}" do %>
+  <%= link_to explore_path, class: "flex flex-col items-center #{"opacity-50 pointer-events-none" unless standard_tabs_unlocked} #{'text-saddle-taupe' if current_page?(explore_path)}" do %>
     <%= inline_svg "icons/compass.svg", class: "h-8 w-8" %>
     <span class="text-xs mt-1">Explore</span>
   <% end %>
 
-  <%= link_to my_projects_path, class: "flex flex-col items-center #{"opacity-50 pointer-events-none" unless tab_unlocked?(:my_projects)} #{'text-saddle-taupe' if current_page?(my_projects_path) || (controller_name == 'projects' && action_name == 'show' && @project&.user == current_user)}" do %>
+  <%= link_to my_projects_path, class: "flex flex-col items-center #{"opacity-50 pointer-events-none" unless standard_tabs_unlocked} #{'text-saddle-taupe' if current_page?(my_projects_path) || (controller_name == 'projects' && action_name == 'show' && @project&.user == current_user)}" do %>
     <%= inline_svg "icons/user.svg", class: "h-8 w-8" %>
     <span class="text-xs mt-1">Projects</span>
   <% end %>
 
-  <%= link_to new_vote_path, class: "flex flex-col items-center #{"opacity-50 pointer-events-none" unless tab_unlocked?(:vote)} #{'text-saddle-taupe' if current_page?(new_vote_path)}" do %>
+  <%= link_to new_vote_path, class: "flex flex-col items-center #{"opacity-50 pointer-events-none" unless standard_tabs_unlocked} #{'text-saddle-taupe' if current_page?(new_vote_path)}" do %>
     <%= inline_svg "icons/vote.svg", class: "h-8 w-8" %>
     <span class="text-xs mt-1">Vote</span>
   <% end %>
 
-  <%= link_to shop_path, class: "flex flex-col items-center #{"opacity-50 pointer-events-none" unless tab_unlocked?(:shop)} #{'text-saddle-taupe' if current_page?(shop_path)}" do %>
+  <%= link_to shop_path, class: "flex flex-col items-center #{'text-saddle-taupe' if current_page?(shop_path)}" do %>
     <%= inline_svg "icons/shop.svg", class: "h-8 w-8" %>
     <span class="text-xs mt-1">Shop</span>
   <% end %>
-  </div>
+</div>
