@@ -2,9 +2,11 @@ class OneTime::InitiateGenesisPayoutsJob < ApplicationJob
   queue_as :default
 
   def perform(dry_run: false)
-    return if Payout.where(payable_type: "ShipEvent").any? # Protect from running twice
+    # return if Payout.where(payable_type: "ShipEvent").any? # Protect from running twice
 
     ActiveRecord::Base.transaction do
+      Payout.where(payable_type: "ShipEvent").delete_all
+      
       # Find projects that have ship events and enough votes
       qualifying_projects = Project.joins(:ship_events, :vote_changes)
       .where(vote_changes: { project_vote_count: 18.. })
