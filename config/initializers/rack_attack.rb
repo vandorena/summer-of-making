@@ -72,44 +72,11 @@ class Rack::Attack
     cool.any? { |pattern| user_agent.match?(pattern) }
   end
 
-  throttle("requests by IP", limit: 50, period: 1.second) do |req|
-    req.ip
-  end
-
-  throttle("requests by IP per minute", limit: 3000, period: 1.minute) do |req|
-    req.ip
-  end
-
-  throttle("login attempts by IP", limit: 10, period: 1.minute) do |req|
-    if req.path.match?(/\A\/auth(\/.*)?\z/i) && req.post?
-      req.ip
-    end
-  end
-
-  throttle("api requests by IP", limit: 100, period: 1.minute) do |req|
-    if req.path.start_with?("/api/")
-      req.ip
-    end
-  end
-
   self.blocklisted_responder = lambda do |env|
     [
       403,
-      { "Content-Type" => "text/plain" },
-      [ "stinky butt\n" ]
-    ]
-  end
-
-  self.throttled_responder = lambda do |env|
-    match_data = env["rack.attack.match_data"]
-    retry_after = match_data.is_a?(Hash) ? match_data[:period] : 60
-    [
-      429,
-      {
-        "Content-Type" => "text/plain",
-        "Retry-After" => retry_after.to_s
-      },
-      [ "ur going too fast, slow down bucko\n" ]
+      { "Content-Type" => "application/json" },
+      [ { ok: false, message: "get blocked nerd" }.to_json ]
     ]
   end
 
