@@ -1,7 +1,3 @@
-<%
-  user_is_banned = current_user.is_banned?
-  standard_tabs_unlocked = tab_unlocked?(:explore)
-%>
 <%= render layout: "shared/container", locals: {
   full_height: true,
   attr: {
@@ -43,7 +39,7 @@
           <%= render partial: "shared/link", locals: {
             target: explore_path,
             text: "Explore",
-            icon: (user_is_banned || !standard_tabs_unlocked) ? "lock" : "compass",
+            icon: (current_user.is_banned? || !tab_unlocked?(:explore)) ? "lock" : "compass",
             large: true,
             highlight: current_page?(explore_path),
             text_attr: {
@@ -51,7 +47,7 @@
               class: "text-3xl"
             },
             underline_attr: { data: { sidebar_target: "underline" } },
-            class: (user_is_banned || !standard_tabs_unlocked) ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+            class: (current_user.is_banned? || !tab_unlocked?(:explore)) ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
           } %>
         </li>
 
@@ -59,7 +55,7 @@
           <%= render partial: "shared/link", locals: {
             target: my_projects_path,
             text: "Projects",
-            icon: (user_is_banned || !standard_tabs_unlocked) ? "lock" : "user",
+            icon: (current_user.is_banned? || !tab_unlocked?(:my_projects)) ? "lock" : "user",
             large: true,
             highlight: current_page?(my_projects_path),
             text_attr: {
@@ -67,7 +63,7 @@
               class: "text-3xl"
             },
             underline_attr: { data: { sidebar_target: "underline" } },
-            class: (user_is_banned || !standard_tabs_unlocked) ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+            class: (current_user.is_banned? || !tab_unlocked?(:my_projects)) ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
           } %>
         </li>
 
@@ -75,7 +71,7 @@
           <%= render partial: "shared/link", locals: {
             target: new_vote_path,
             text: "Vote",
-            icon: (user_is_banned || !standard_tabs_unlocked) ? "lock" : "vote",
+            icon: (current_user.is_banned? || !tab_unlocked?(:vote)) ? "lock" : "vote",
             large: true,
             highlight: current_page?(new_vote_path),
             text_attr: {
@@ -83,7 +79,7 @@
               class: "text-3xl"
             },
             underline_attr: { data: { sidebar_target: "underline" } },
-            class: (user_is_banned || !standard_tabs_unlocked) ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+            class: (current_user.is_banned? || !tab_unlocked?(:vote)) ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
           } %>
         </li>
 
@@ -91,7 +87,7 @@
           <%= render partial: "shared/link", locals: {
             target: shop_path,
             text: "Shop",
-            icon: user_is_banned ? "lock" : "shop",
+            icon: current_user.is_banned? ? "lock" : "shop",
             large: true,
             highlight: current_page?(shop_path),
             text_attr: {
@@ -99,7 +95,7 @@
               class: "text-3xl"
             },
             underline_attr: { data: { sidebar_target: "underline" } },
-            class: user_is_banned ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+            class: current_user.is_banned? ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
           } %>
         </li>
         <% if current_user&.blue_check? %>
