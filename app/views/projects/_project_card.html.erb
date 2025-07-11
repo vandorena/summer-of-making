@@ -114,10 +114,10 @@
         <span class="text-gray-800"><%= @project.followers.count %> </span> <%= "follower".pluralize(@project.followers.count) %>
       </button>
       •&nbsp;
-      <span class="text-gray-800"><%= @project.devlogs.count %> </span> <%= "devlog".pluralize(@project.devlogs.count) %>
+      <span class="text-gray-800"><%= @project.devlogs_count %> </span> <%= "devlog".pluralize(@project.devlogs_count) %>
       •&nbsp;
       <%
-        total_time_seconds = @project.hackatime_total_time
+        total_time_seconds = @project.total_seconds_coded
       %>
       <span class="text-gray-800"><%= format_seconds(total_time_seconds) %></span>
       <% if @project.certification_visible_to?(current_user) %>

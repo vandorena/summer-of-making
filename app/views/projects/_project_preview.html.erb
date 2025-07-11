@@ -45,7 +45,7 @@
                 <% end %>
               <% end %>
             <% end %>
-            <%= project.devlogs_count || project.devlogs.count %> devlogs  •  <%= format_seconds(project.hackatime_total_time) %>
+            <%= project.devlogs_count || project.devlogs.count %> devlogs  •  <%= format_seconds(project.total_seconds_coded) %>
           </p>
 
           <p class="line-clamp-3 text-sm md:text-base 2xl:text-lg overflow-hidden mb-4">

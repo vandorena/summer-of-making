@@ -110,8 +110,8 @@
                         # start_time = previous_ship&.created_at || @project.created_at
                         # devlogs_in_period = @project.devlogs.where("created_at > ? AND created_at <= ?", start_time, item.created_at)
 
-                        # # Get hackatime data for this period (simplified - getting project total)
-                        # time = @project.hackatime_total_time / 3600.0
+                        #                         # Get time data for this period (simplified - getting project total)
+                        # time = @project.total_seconds_coded / 3600.0
 
                         # devlog_count = devlogs_in_period.count
 
