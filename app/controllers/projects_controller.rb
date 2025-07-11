@@ -16,7 +16,7 @@ class ProjectsController < ApplicationController
     sort_order = params[:sort] == "oldest" ? :asc : :desc
     if params[:tab] == "gallery"
       # Optimize gallery with pagination and DB-level ordering
-      projects_query = Project.includes(user: :hackatime_stat, devlogs: [ :file_attachment ])
+      projects_query = Project.includes(:user, devlogs: [ :file_attachment ])
                               .joins("LEFT JOIN devlogs ON devlogs.project_id = projects.id")
                               .where(is_deleted: false)
                               .group("projects.id")
@@ -28,10 +28,11 @@ class ProjectsController < ApplicationController
         redirect_to projects_path(tab: "gallery", sort: params[:sort]) and return
       end
     elsif params[:tab] == "following"
-      @followed_projects = current_user.followed_projects.includes(user: :hackatime_stat)
+      @followed_projects = current_user.followed_projects.includes(:user)
       @recent_devlogs = Devlog.joins(:project)
-                              .includes(:project, :file_attachment, user: :hackatime_stat, comments: :user)
-                              .where(project_id: @followed_projects.pluck(:id))
+                              .joins("INNER JOIN project_follows ON project_follows.project_id = projects.id")
+                              .includes(:project, :file_attachment, :user, comments: :user)
+                              .where(project_follows: { user_id: current_user.id })
                               .where(projects: { is_deleted: false })
                               .order(created_at: :desc)
 
@@ -41,10 +42,11 @@ class ProjectsController < ApplicationController
         redirect_to projects_path(tab: "following") and return
       end
     elsif params[:tab] == "stonked"
-      @stonked_projects = current_user.staked_projects.includes(user: :hackatime_stat)
+      @stonked_projects = current_user.staked_projects.includes(:user)
       @recent_devlogs = Devlog.joins(:project)
-                              .includes(:project, :file_attachment, user: :hackatime_stat, comments: :user)
-                              .where(project_id: @stonked_projects.pluck(:id))
+                              .joins("INNER JOIN stonks ON stonks.project_id = projects.id")
+                              .includes(:project, :file_attachment, :user, comments: :user)
+                              .where(stonks: { user_id: current_user.id })
                               .where(projects: { is_deleted: false })
                               .order(created_at: :desc)
 
@@ -56,7 +58,7 @@ class ProjectsController < ApplicationController
     else
       # Optimize main devlogs query
       devlogs_query = Devlog.joins(:project)
-                            .includes(:project, :file_attachment, user: :hackatime_stat, comments: :user)
+                            .includes(:project, :file_attachment, :user, comments: :user)
                             .where(projects: { is_deleted: false })
                             .order(created_at: :desc)
 
@@ -67,7 +69,7 @@ class ProjectsController < ApplicationController
       end
 
       # we can just load stuff for the gallery here too!!
-      projects_query = Project.includes(:banner_attachment, user: :hackatime_stat, devlogs: [ :file_attachment ])
+      projects_query = Project.includes(:banner_attachment, :user, devlogs: [ :file_attachment ])
                               .joins("LEFT JOIN devlogs ON devlogs.project_id = projects.id")
                               .where(is_deleted: false)
                               .group("projects.id")
@@ -144,8 +146,6 @@ class ProjectsController < ApplicationController
 
   def my_projects
     @projects = current_user.projects.includes(:banner_attachment, :ship_events, :devlogs, devlogs: [ :file_attachment ]).order(created_at: :desc)
-
-    current_user.refresh_hackatime_data if current_user.has_hackatime?
   end
 
   # Gotta say I love turbo frames and turbo streams and flashes in general
@@ -599,7 +599,6 @@ class ProjectsController < ApplicationController
       :user,
       :banner_attachment,
       :ship_certifications,
-      followers: :projects,
       devlogs: [
         :user,
         :comments,
