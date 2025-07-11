@@ -1,0 +1,175 @@
+<% content_for :title, "rac attac" %>
+
+<div class="space-y-6">
+  <div class="border-b border-gray-200 pb-5">
+    <h3 class="text-lg leading-6 font-medium text-gray-900">rac attac</h3>
+    <p class="mt-2 max-w-4xl text-sm text-gray-500">
+      heidi blocking those darn goobers and bots
+    </p>
+  </div>
+
+  <div class="bg-white shadow overflow-hidden sm:rounded-md">
+    <div class="px-4 py-5 sm:p-6">
+      <h4 class="text-lg font-medium text-gray-900 mb-4">cash</h4>
+
+      <% if @cache_stats[:error] %>
+        <div class="bg-red-50 border border-red-200 rounded-md p-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-red-800">error!</h3>
+              <div class="mt-2 text-sm text-red-700">
+                <p><%= @cache_stats[:error] %></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% else %>
+        <dl class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div class="bg-gray-50 overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+              <div class="flex items-center">
+                <div class="flex-shrink-0">
+                  <svg class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt class="text-sm font-medium text-gray-500 truncate">total keys</dt>
+                    <dd class="text-lg font-medium text-gray-900"><%= @cache_stats[:total_keys] %></dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-blue-50 overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+              <div class="flex items-center">
+                <div class="flex-shrink-0">
+                  <svg class="h-6 w-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt class="text-sm font-medium text-gray-500 truncate">rate limited ips</dt>
+                    <dd class="text-lg font-medium text-gray-900"><%= @cache_stats[:throttle_keys] %></dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-yellow-50 overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+              <div class="flex items-center">
+                <div class="flex-shrink-0">
+                  <svg class="h-6 w-6 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                  </svg>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt class="text-sm font-medium text-gray-500 truncate">login holds</dt>
+                    <dd class="text-lg font-medium text-gray-900"><%= @cache_stats[:login_throttle_keys] %></dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-purple-50 overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+              <div class="flex items-center">
+                <div class="flex-shrink-0">
+                  <svg class="h-6 w-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt class="text-sm font-medium text-gray-500 truncate">api holds</dt>
+                    <dd class="text-lg font-medium text-gray-900"><%= @cache_stats[:api_throttle_keys] %></dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+        </dl>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="bg-white shadow overflow-hidden sm:rounded-md">
+    <div class="px-4 py-5 sm:p-6">
+      <h4 class="text-lg font-medium text-gray-900 mb-4">do shit</h4>
+
+      <div class="space-y-4">
+        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+          <div>
+            <h5 class="text-sm font-medium text-gray-900">purge all</h5>
+            <p class="text-sm text-gray-500">purge all rate limits</p>
+          </div>
+          <%= link_to "do it",
+                      admin_rack_attack_clear_cache_path,
+                      method: :delete,
+                      data: { confirm: "ya sure you wanna do that?" },
+                      class: "inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" %>
+        </div>
+
+        <!-- Unblock IP -->
+        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+          <div>
+            <h5 class="text-sm font-medium text-gray-900">unblock ip</h5>
+            <p class="text-sm text-gray-500">remove rate limiting for a specific ip address</p>
+          </div>
+          <%= form_with url: admin_rack_attack_unblock_ip_path, method: :delete, local: true, class: "flex space-x-2" do |form| %>
+            <%= form.text_field :ip,
+                                placeholder: "192.168.1.1",
+                                class: "border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm",
+                                required: true %>
+            <%= form.submit "Unblock IP",
+                            class: "inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white shadow overflow-hidden sm:rounded-md">
+    <div class="px-4 py-5 sm:p-6">
+      <h4 class="text-lg font-medium text-gray-900 mb-4">config</h4>
+
+      <div class="bg-gray-50 rounded-lg p-4">
+        <dl class="space-y-3">
+            <div>
+            <dt class="text-sm font-medium text-gray-500">rate limit (per second)</dt>
+            <dd class="text-sm text-gray-900">50 requests per ip</dd>
+            </div>
+            <div>
+            <dt class="text-sm font-medium text-gray-500">rate limit (per minute)</dt>
+            <dd class="text-sm text-gray-900">3000 requests per ip</dd>
+            </div>
+            <div>
+            <dt class="text-sm font-medium text-gray-500">login attempts</dt>
+            <dd class="text-sm text-gray-900">10 attempts per minute per ip</dd>
+            </div>
+            <div>
+            <dt class="text-sm font-medium text-gray-500">api rate limit</dt>
+            <dd class="text-sm text-gray-900">100 requests per minute per ip</dd>
+            </div>
+            <div>
+            <dt class="text-sm font-medium text-gray-500">bot blocking</dt>
+            <dd class="text-sm text-gray-900">blocks the baddies</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </div>
+</div>
