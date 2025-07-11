@@ -11,7 +11,7 @@
   <div class="bg-white shadow overflow-hidden sm:rounded-md">
     <div class="px-4 py-5 sm:p-6">
       <h4 class="text-lg font-medium text-gray-900 mb-4">cash</h4>
-      
+
       <% if @cache_stats[:error] %>
         <div class="bg-red-50 border border-red-200 rounded-md p-4">
           <div class="flex">
@@ -109,15 +109,15 @@
   <div class="bg-white shadow overflow-hidden sm:rounded-md">
     <div class="px-4 py-5 sm:p-6">
       <h4 class="text-lg font-medium text-gray-900 mb-4">do shit</h4>
-      
+
       <div class="space-y-4">
         <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
           <div>
             <h5 class="text-sm font-medium text-gray-900">purge all</h5>
             <p class="text-sm text-gray-500">purge all rate limits</p>
           </div>
-          <%= link_to "do it", 
-                      admin_rack_attack_clear_cache_path, 
+          <%= link_to "do it",
+                      admin_rack_attack_clear_cache_path,
                       method: :delete,
                       data: { confirm: "ya sure you wanna do that?" },
                       class: "inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" %>
@@ -130,11 +130,11 @@
             <p class="text-sm text-gray-500">remove rate limiting for a specific ip address</p>
           </div>
           <%= form_with url: admin_rack_attack_unblock_ip_path, method: :delete, local: true, class: "flex space-x-2" do |form| %>
-            <%= form.text_field :ip, 
-                                placeholder: "192.168.1.1", 
+            <%= form.text_field :ip,
+                                placeholder: "192.168.1.1",
                                 class: "border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm",
                                 required: true %>
-            <%= form.submit "Unblock IP", 
+            <%= form.submit "Unblock IP",
                             class: "inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
           <% end %>
         </div>
@@ -145,7 +145,7 @@
   <div class="bg-white shadow overflow-hidden sm:rounded-md">
     <div class="px-4 py-5 sm:p-6">
       <h4 class="text-lg font-medium text-gray-900 mb-4">config</h4>
-      
+
       <div class="bg-gray-50 rounded-lg p-4">
         <dl class="space-y-3">
             <div>
