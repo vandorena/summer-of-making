@@ -146,7 +146,7 @@ class VotesController < ApplicationController
     end
 
     # sort by ship date – disabled until genesis
-    # projects_with_time.sort_by! { |p| p[:ship_date] }
+    projects_with_time.sort_by! { |p| p[:ship_date] }
 
     unpaid_projects = projects_with_time.select { |p| !p[:is_paid] }
     paid_projects = projects_with_time.select { |p| p[:is_paid] }
@@ -171,7 +171,7 @@ class VotesController < ApplicationController
       # pick a random unpaid project first
       if selected_projects.empty?
         available_unpaid = unpaid_projects.select { |p| !used_user_ids.include?(p[:project].user_id) && !used_repo_links.include?(p[:project].repo_link) }
-        first_project_data = available_unpaid.sample
+        first_project_data = weighted_sample(available_unpaid)
         next unless first_project_data
 
         selected_projects << first_project_data[:project]
@@ -192,7 +192,7 @@ class VotesController < ApplicationController
         end
 
         if compatible_projects.any?
-          second_project_data = compatible_projects.sample
+          second_project_data = weighted_sample(compatible_projects)
           selected_projects << second_project_data[:project]
           selected_project_data << second_project_data
           used_user_ids << second_project_data[:project].user_id
@@ -208,14 +208,14 @@ class VotesController < ApplicationController
 
     # js getting smtth if after 25 attemps we have nothing
     if selected_projects.size < 2 && unpaid_projects.any?
-      first_project_data = unpaid_projects.sample
+      first_project_data = weighted_sample(unpaid_projects)
       remaining_projects = projects_with_time.reject { |p|
         p[:project].user_id == first_project_data[:project].user_id ||
         (p[:project].repo_link.present? && p[:project].repo_link == first_project_data[:project].repo_link)
       }
 
       if remaining_projects.any?
-        second_project_data = remaining_projects.sample
+        second_project_data = weighted_sample(remaining_projects)
         selected_projects = [ first_project_data[:project], second_project_data[:project] ]
         selected_project_data = [ first_project_data, second_project_data ]
       end
