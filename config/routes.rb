@@ -316,6 +316,7 @@ Rails.application.routes.draw do
     get "/", to: "static_pages#index", as: :root
     resources :view_analytics, only: [ :index ]
     resources :voting_dashboard, only: [ :index ]
+    resources :payouts_dashboard, only: [ :index ]
     resources :fraud_reports, only: [ :index, :show ] do
       member do
         get :resolve

@@ -1,0 +1,80 @@
+<%= link_to "← back", admin_root_path %>
+
+<h1>when can we rugpull?</h1>
+
+<h3>market cap <%= number_with_delimiter(@cap) %></h3>
+
+<h3>+<%= number_with_delimiter(@created) %> inflows (24h)</h3>
+
+<h3>-<%= number_with_delimiter(@destroyed) %> outflows (24h)</h3>
+
+<h3><%= number_with_delimiter(@txns) %> txns (24h) </h3>
+
+<h3><%= number_with_delimiter(@volume) %> volume (24h) </h3>
+
+<h2>whos the richest</h2>
+<% if @holders.any? %>
+  <ul>
+    <% @holders.each_with_index do |(user_data, balance), index| %>
+      <li>
+        #<%= index + 1 %>
+        <% user_id, display_name, avatar = user_data %>
+        <img src="<%= avatar %>" alt="<%= display_name %>" width="32" height="32">
+        <strong><%= display_name %></strong>
+        <%= number_with_delimiter(balance) %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>nuthing here bucko</p>
+<% end %>
+
+<h2>whos spending the most</h2>
+<% if @spenders.any? %>
+  <ul>
+    <% @spenders.each_with_index do |(user_data, amount), index| %>
+      <li>
+        #<%= index + 1 %>
+        <% user_id, display_name, avatar = user_data %>
+        <img src="<%= avatar %>" alt="<%= display_name %>" width="32" height="32">
+        <strong><%= display_name %></strong>
+        <%= number_with_delimiter(amount) %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>nuthing here bucko</p>
+<% end %>
+
+<h2>maker/takers (24h)</h2>
+<table>
+  <thead>
+    <tr>
+      <th>source</th>
+      <th>type</th>
+      <th>amt</th>
+      <th>impact</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @sources.each do |(payable_type, is_positive), amount| %>
+      <tr>
+        <td>
+          <%= payable_type %>
+        </td>
+        <td>
+          <%= is_positive ? 'maker' : 'taker' %>
+        </td>
+        <td><%= number_with_delimiter(amount.abs) %></td>
+        <td>
+          <%= amount > 0 ? '+' : '' %><%= number_with_delimiter(amount) %>
+        </td>
+      </tr>
+    <% end %>
+    <% if @sources.empty? %>
+      <tr>
+        <td colspan="4">no txns in the past 24 hours, somethings wrong</td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
