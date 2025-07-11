@@ -148,7 +148,7 @@ class ProjectsController < ApplicationController
     @projects = current_user.projects.includes(
       :banner_attachment,
       ship_events: :payouts,
-      devlogs: [:file_attachment]
+      devlogs: [ :file_attachment ]
     ).order(created_at: :desc)
   end
 
