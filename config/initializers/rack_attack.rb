@@ -6,12 +6,9 @@ class Rack::Attack
   safelist_ip("127.0.0.1")
   safelist_ip("::1")
 
-  blocklist("block bad user agents") do |req|
+  blocklist("block ai and node bots") do |req|
     bad_agents = [
-      /bot/i,
-      /crawler/i,
-      /spider/i,
-      /scraper/i,
+      # AI bots
       /openai/i,
       /gpt/i,
       /claude/i,
@@ -21,7 +18,6 @@ class Rack::Attack
       /gemini/i,
       /perplexity/i,
       /llm/i,
-      /ai/i,
       /node-fetch/i,
       /axios/i,
       /undici/i,
@@ -30,23 +26,6 @@ class Rack::Attack
       /node/i,
       /curl/i,
       /wget/i,
-      /python-requests/i,
-      /python-urllib/i,
-      /go-http-client/i,
-      /java/i,
-      /okhttp/i,
-      /apache-httpclient/i,
-      /postman/i,
-      /insomnia/i,
-      /facebookexternalhit/i,
-      /twitterbot/i,
-      /linkedinbot/i,
-      /ahrefsbot/i,
-      /semrushbot/i,
-      /mj12bot/i,
-      /dotbot/i,
-      /rogerbot/i,
-      # Generic patterns
       /headless/i,
       /phantom/i,
       /selenium/i,
@@ -83,8 +62,6 @@ class Rack::Attack
   ActiveSupport::Notifications.subscribe("rack.attack") do |name, start, finish, request_id, payload|
     req = payload[:request]
     case req.env["rack.attack.match_type"]
-    when :throttle
-      Rails.logger.warn "[Rack::Attack] Throttled #{req.env['rack.attack.matched']} #{req.ip} #{req.request_method} #{req.fullpath}"
     when :blocklist
       Rails.logger.warn "[Rack::Attack] Blocked #{req.env['rack.attack.matched']} #{req.ip} #{req.request_method} #{req.fullpath} User-Agent: #{req.user_agent}"
     when :safelist
