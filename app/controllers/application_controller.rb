@@ -19,7 +19,6 @@ class ApplicationController < ActionController::Base
   before_action :check_if_banned
   before_action :fetch_hackatime_data_if_needed
   after_action :track_page_view
-  after_action :verify_authorized, except: %i[index new create], unless: :skip_authorization?
 
   helper_method :current_user, :user_signed_in?, :current_verification_status, :current_impersonator, :impersonating?
 
@@ -59,19 +58,6 @@ class ApplicationController < ActionController::Base
 
   def require_admin!
     redirect_to "/" unless current_user && current_user.is_admin?
-  end
-
-  def skip_authorization?
-    devise_controller? ||
-    controller_name == "sessions" ||
-    controller_name == "landing" ||
-    controller_name == "errors" ||
-    controller_name == "static_pages" ||
-    controller_name == "dashboard" ||
-    controller_name == "campfire" ||
-    action_name == "index" ||
-    action_name == "new" ||
-    action_name == "create"
   end
 
   private
