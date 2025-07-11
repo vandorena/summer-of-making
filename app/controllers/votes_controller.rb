@@ -108,10 +108,7 @@ class VotesController < ApplicationController
     projects_with_latest_ship = Project
                                   .joins(:ship_events)
                                   .joins(:ship_certifications)
-                                  .includes(:banner_attachment,
-                                           devlogs: [ :user, :file_attachment ],
-                                           ship_events: :payouts,
-                                           ship_certifications: [])
+                                  .includes(ship_events: :payouts)
                                   .where(ship_certifications: { judgement: :approved })
                                   .where.not(user_id: current_user.id)
                                   .where(
@@ -131,9 +128,20 @@ class VotesController < ApplicationController
 
     eligible_projects = projects_with_latest_ship.to_a
 
+    latest_ship_event_ids = eligible_projects.map { |project|
+      project.ship_events.max_by(&:created_at).id
+    }
+
+    total_times_by_ship_event = Devlog
+      .joins("INNER JOIN ship_events ON devlogs.project_id = ship_events.project_id")
+      .where(ship_events: { id: latest_ship_event_ids })
+      .where("devlogs.created_at <= ship_events.created_at")
+      .group("ship_events.id")
+      .sum(:duration_seconds)
+
     projects_with_time = eligible_projects.map do |project|
       latest_ship_event = project.ship_events.max_by(&:created_at)
-      total_time_seconds = latest_ship_event.total_time_up_to_ship
+      total_time_seconds = total_times_by_ship_event[latest_ship_event.id] || 0
       is_paid = latest_ship_event.payouts.any?
 
       {
@@ -226,7 +234,17 @@ class VotesController < ApplicationController
       return
     end
 
-    @projects = selected_projects
+    # load what we need
+    selected_project_ids = selected_projects.map(&:id)
+    @projects = Project
+                .includes(:banner_attachment,
+                          :ship_certifications,
+                          ship_events: :payouts,
+                          devlogs: [ :user, :file_attachment ])
+                .where(id: selected_project_ids)
+                .index_by(&:id)
+                .values_at(*selected_project_ids)
+
     @ship_events = selected_project_data.map { |data| data[:ship_event] }
 
     @project_ai_used = {}
