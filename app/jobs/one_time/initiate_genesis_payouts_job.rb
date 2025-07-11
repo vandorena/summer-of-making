@@ -1,7 +1,7 @@
 class OneTime::InitiateGenesisPayoutsJob < ApplicationJob
   queue_as :default
 
-  def perform
+  def perform(dry_run: false)
     return if Payout.where(payable_type: "ShipEvent").any? # Protect from running twice
 
     ActiveRecord::Base.transaction do
@@ -23,9 +23,8 @@ class OneTime::InitiateGenesisPayoutsJob < ApplicationJob
       total_payouts = Payout.where(payable_type: "ShipEvent").count
       puts "Total payouts created: #{total_payouts}"
 
-      export_in_csv
-
-      raise ActiveRecord::Rollback
+      export_in_csv if dry_run
+      raise ActiveRecord::Rollback if dry_run
     end
   end
 
