@@ -158,12 +158,8 @@ class Project < ApplicationRecord
     rating
   end
 
-  def hackatime_total_time
-    return 0 unless user.has_hackatime? && hackatime_project_keys.present?
-
-    hackatime_project_keys.sum do |project_key|
-      user.project_time_from_hackatime(project_key)
-    end
+  def total_seconds_coded
+    devlogs.sum(:duration_seconds)
   end
 
   has_many :readme_checks, dependent: :destroy

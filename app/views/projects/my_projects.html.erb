@@ -25,9 +25,9 @@
               <p class="mb-4 md:mb-6 line-clamp-3 text-sm md:text-base 2xl:text-lg text-gray-600 break-words overflow-wrap-anywhere"><%= project.description %></p>
 
               <p class="text-gray-400">
-                <%= format_seconds(project.hackatime_total_time) %>
+                <%= format_seconds(project.total_seconds_coded) %>
                 <br>
-                <%= project.devlogs.count %> devlogs
+                <%= project.devlogs_count %> devlogs
               </p>
 
               <% if project.ship_events.empty? %>

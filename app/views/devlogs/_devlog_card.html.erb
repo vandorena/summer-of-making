@@ -47,10 +47,10 @@
 
             <div class="text-[#B89576]">
               <!-- Time info -->
-              <% if devlog.last_hackatime_time.present? && devlog.last_hackatime_time > 0 %>
+              <% if devlog.duration_seconds.present? && devlog.duration_seconds > 0 %>
                 <span>
-                  <% hours = devlog.last_hackatime_time / 3600 %>
-                  <% minutes = (devlog.last_hackatime_time % 3600) / 60 %>
+                  <% hours = devlog.duration_seconds / 3600 %>
+                  <% minutes = (devlog.duration_seconds % 3600) / 60 %>
                   <%= hours > 0 ? "#{hours}h spent working" : "#{minutes}m spent working" %>
                 </span>
                 <span> • </span>

@@ -39,11 +39,11 @@
             <label class="block text-base md:text-lg 2xl:text-xl mb-2">Time tracked with Hackatime</label>
             <div class="p-3 border border-saddle-taupe">
               <div class="text-base md:text-lg">
-                <% hackatime_time = @project.hackatime_total_time %>
-                <% hackatime_hours = hackatime_time / 3600 %>
-                <% hackatime_minutes = (hackatime_time % 3600) / 60 %>
-                <% hackatime_seconds = hackatime_time % 60 %>
-                <div>Total Duration: <%= "#{hackatime_hours}h #{hackatime_minutes}m #{hackatime_seconds}s" %></div>
+                <% total_time = @project.total_seconds_coded %>
+                <% total_hours = total_time / 3600 %>
+                <% total_minutes = (total_time % 3600) / 60 %>
+                <% total_seconds = total_time % 60 %>
+                <div>Total Duration: <%= "#{total_hours}h #{total_minutes}m #{total_seconds}s" %></div>
 
                 <% time_since_last = @project.user.hackatime_stat.time_since_last_update_for_project(@project) %>
                 <% since_last_hours = time_since_last / 3600 %>
