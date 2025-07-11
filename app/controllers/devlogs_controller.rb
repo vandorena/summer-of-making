@@ -32,6 +32,11 @@ class DevlogsController < ApplicationController
   def create
     @project = Project.find(params[:project_id])
 
+    unless current_user == @project.user
+      redirect_to project_path(@project), alert: "wuh"
+      return
+    end
+
     # check time reqs
     unless current_user.hackatime_stat.has_enough_time_since_last_update?(@project)
       seconds_needed = current_user.hackatime_stat.seconds_needed_since_last_update(@project)
@@ -98,6 +103,11 @@ class DevlogsController < ApplicationController
 
     project = Project.find_by(id: params[:project_id])
     return render json: { error: "Project not found" }, status: :not_found unless project
+
+    # Check if the user owns the project
+    unless user == project.user
+      return render json: { error: "You can only post devlogs to your own projects" }, status: :forbidden
+    end
 
     devlog = project.devlogs.build(devlog_params)
     devlog.user = user
