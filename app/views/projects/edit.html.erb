@@ -70,42 +70,59 @@
           <div id="hackatime-projects" data-project-form-target="hackatimeProjects" class="space-y-2">
             <% hackatime_projects = current_user.hackatime_projects %>
             <% if hackatime_projects.present? %>
+              <% globally_locked_keys = Project.globally_locked_hackatime_keys %>
               <div class="hackatime-project-field mb-2">
                 <select name="__temp_hackatime_select" class="w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm md:text-base" data-project-form-target="hackatimeSelect">
                   <option value="">Select a project...</option>
                   <% hackatime_projects.each do |project| %>
-                    <option value="<%= project[:key] %>" <%= @project.hackatime_project_keys&.include?(project[:key]) ? 'disabled' : '' %>>
-                      <%= project[:name] %> (<%= project[:formatted_time] %>)
+                    <% is_globally_locked = globally_locked_keys.include?(project[:key]) %>
+                    <% is_already_assigned = @project.hackatime_project_keys&.include?(project[:key]) %>
+                    <option value="<%= project[:key] %>" <%= (is_already_assigned || is_globally_locked) ? 'disabled' : '' %> <%= is_globally_locked && !is_already_assigned ? 'style="color: #B91C1C;"' : '' %>>
+                      <%= project[:name] %> (<%= project[:formatted_time] %>)<%= is_globally_locked && !is_already_assigned ? ' - 🔒 Already in use' : '' %>
                     </option>
                   <% end %>
                 </select>
               </div>
 
-              <div class="selected-hackatime-projects space-y-2" data-project-form-target="selectedProjects">
+              <div class="selected-hackatime-projects space-y-3" data-project-form-target="selectedProjects">
                 <% if @project.hackatime_project_keys.present? %>
+                  <% locked_keys = @project.locked_hackatime_keys %>
                   <% @project.hackatime_project_keys.each do |key| %>
                     <% project = hackatime_projects.find { |p| p[:key] == key } %>
+                    <% is_locked = locked_keys.include?(key) %>
                     <% if project %>
-                      <div class="flex items-center p-2" data-project-key="<%= key %>">
+                      <div class="flex items-center p-2 <%= is_locked ? 'bg-[#F3ECD8] border-2 border-[#E4DCC6] rounded-lg' : 'bg-bread border border-saddle-taupe border-opacity-50 rounded' %>" data-project-key="<%= key %>">
                         <input type="hidden" name="project[hackatime_project_keys][]" value="<%= key %>">
                         <div class="flex-grow">
                           <p class="font-medium"><%= project[:name] %></p>
                           <p class="text-xs text-gray-600">Time tracked: <%= project[:formatted_time] %></p>
                         </div>
-                        <button type="button" class="ml-2 text-vintage-red hover:text-red-700" data-action="click->project-form#removeSelectedProject">
-                          <%= inline_svg_tag "close.svg", class: "h-5 w-5" %>
-                        </button>
+                        <% if is_locked %>
+                          <div class="ml-2 text-vintage-red opacity-60" title="This key cannot be removed because it has been used in devlogs">
+                            <%= inline_svg_tag "icons/lock.svg", class: "h-5 w-5" %>
+                          </div>
+                        <% else %>
+                          <button type="button" class="ml-2 text-vintage-red hover:text-red-700 hover:scale-110 transition-all" data-action="click->project-form#removeSelectedProject">
+                            <%= inline_svg_tag "close.svg", class: "h-5 w-5" %>
+                          </button>
+                        <% end %>
                       </div>
                     <% else %>
-                      <div class="flex items-center p-2" data-project-key="<%= key %>">
+                      <div class="flex items-center p-2 <%= is_locked ? 'bg-[#F3ECD8] border-2 border-[#E4DCC6] rounded-lg' : 'bg-bread border border-saddle-taupe border-opacity-50 rounded' %>" data-project-key="<%= key %>">
                         <input type="hidden" name="project[hackatime_project_keys][]" value="<%= key %>">
                         <div class="flex-grow">
                           <p class="font-medium"><%= key %></p>
                           <p class="text-xs text-gray-600">Project data not available</p>
                         </div>
-                        <button type="button" class="ml-2 text-vintage-red hover:text-red-700" data-action="click->project-form#removeSelectedProject">
-                          <%= inline_svg_tag "close.svg", class: "h-5 w-5" %>
-                        </button>
+                        <% if is_locked %>
+                          <div class="ml-2 text-vintage-red opacity-60" title="This key cannot be removed because it has been used in devlogs">
+                            <%= inline_svg_tag "icons/lock.svg", class: "h-5 w-5" %>
+                          </div>
+                        <% else %>
+                          <button type="button" class="ml-2 text-vintage-red hover:text-red-700 hover:scale-110 transition-all" data-action="click->project-form#removeSelectedProject">
+                            <%= inline_svg_tag "close.svg", class: "h-5 w-5" %>
+                          </button>
+                        <% end %>
                       </div>
                     <% end %>
                   <% end %>
