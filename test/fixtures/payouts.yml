@@ -15,8 +15,12 @@
 #
 # Indexes
 #
-#  index_payouts_on_payable  (payable_type,payable_id)
-#  index_payouts_on_user_id  (user_id)
+#  index_payouts_on_created_at             (created_at)
+#  index_payouts_on_created_at_and_amount  (created_at,amount)
+#  index_payouts_on_date_type_amount       (created_at,payable_type,amount)
+#  index_payouts_on_payable                (payable_type,payable_id)
+#  index_payouts_on_payable_type           (payable_type)
+#  index_payouts_on_user_id                (user_id)
 #
 one:
   amount: 9.99

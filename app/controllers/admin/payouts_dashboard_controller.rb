@@ -10,6 +10,8 @@ module Admin
 
       @created = recent.where("amount > 0").sum(:amount)
       @destroyed = recent.where("amount < 0").sum(:amount).abs
+      @txns = recent.count
+      @volume = recent.sum("ABS(amount)")
 
       spenders = Payout.joins(:user)
                       .where(created_at: yesterday.., amount: ...0, payable_type: "ShopOrder")
@@ -20,42 +22,49 @@ module Admin
                          .sort_by { |_, amount| -amount }
                          .first(10)
 
-      balances = {}
-      User.joins(:payouts).includes(:payouts).each do |user|
-        balance = user.payouts.sum(:amount)
-        if balance > 0
-          balances[[ user.id, user.display_name, user.avatar ]] = balance
-        end
-      end
+      holder_balances = Payout.joins(:user)
+                             .group("users.id", "users.display_name", "users.avatar")
+                             .sum(:amount)
+                             .select { |_, balance| balance > 0 }
+                             .sort_by { |_, balance| -balance }
+                             .first(10)
 
-      @holders = balances.sort_by { |_, balance| -balance }.first(10)
-
-      @txns = recent.count
-      @volume = recent.sum("ABS(amount)")
+      @holders = holder_balances
 
       @sources = {}
       recent.group(:payable_type).group("amount > 0").sum(:amount).each do |key, amount|
         @sources[key] = amount
       end
 
+      thirty_days_ago = 30.days.ago.beginning_of_day
+      daily_data = Payout.where(created_at: thirty_days_ago..)
+                         .group("DATE(created_at)")
+                         .group("CASE WHEN amount >= 0 THEN 'created' ELSE 'destroyed' END")
+                         .sum("ABS(amount)")
+
       @creation = {}
       @destruction = {}
 
       30.times do |i|
         date = i.days.ago.to_date
-        created = Payout.where(created_at: date.all_day, amount: 0..).sum(:amount)
-        destroyed = Payout.where(created_at: date.all_day, amount: ...0).sum(:amount).abs
-
-        @creation[date] = created
-        @destruction[date] = destroyed
+        date_str = date.to_s
+        @creation[date] = daily_data[[ date_str, "created" ]] || 0
+        @destruction[date] = daily_data[[ date_str, "destroyed" ]] || 0
       end
 
+      circulation_data = Payout.where("created_at < ?", 31.days.ago.beginning_of_day)
+                              .sum(:amount)
+
+      daily_changes = Payout.where(created_at: thirty_days_ago..)
+                           .group("DATE(created_at)")
+                           .sum(:amount)
+
       @circulation = {}
-      total = Payout.where("created_at < ?", 30.days.ago).sum(:amount)
+      total = circulation_data
 
       30.times do |i|
         date = i.days.ago.to_date
-        change = Payout.where(created_at: date.all_day).sum(:amount)
+        change = daily_changes[date.to_s] || 0
         total += change
         @circulation[date] = total
       end

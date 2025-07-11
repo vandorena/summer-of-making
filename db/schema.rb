@@ -209,9 +209,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_09_163831) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "last_hackatime_time"
+    t.integer "seconds_coded"
     t.integer "likes_count", default: 0, null: false
     t.integer "comments_count", default: 0, null: false
-    t.integer "seconds_coded"
     t.datetime "hackatime_pulled_at"
     t.integer "views_count", default: 0, null: false
     t.integer "duration_seconds", default: 0, null: false
@@ -306,7 +306,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_09_163831) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "reason"
+    t.index ["created_at", "amount"], name: "index_payouts_on_created_at_and_amount"
+    t.index ["created_at", "payable_type", "amount"], name: "index_payouts_on_date_type_amount"
+    t.index ["created_at"], name: "index_payouts_on_created_at"
     t.index ["payable_type", "payable_id"], name: "index_payouts_on_payable"
+    t.index ["payable_type"], name: "index_payouts_on_payable_type"
     t.index ["user_id"], name: "index_payouts_on_user_id"
   end
 
