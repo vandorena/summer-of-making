@@ -101,7 +101,8 @@ class Rack::Attack
   end
 
   self.throttled_responder = lambda do |env|
-    retry_after = (env["rack.attack.match_data"] || {})[:period]
+    match_data = env["rack.attack.match_data"]
+    retry_after = match_data.is_a?(Hash) ? match_data[:period] : 60
     [
       429,
       {
