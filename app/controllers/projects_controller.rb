@@ -596,20 +596,23 @@ class ProjectsController < ApplicationController
 
   def set_project
     @project = Project.includes(
-      user: :hackatime_stat,
+      {
+        user: [ :hackatime_stat, :projects ],
+        followers: :projects,
+        devlogs: [
+          :user,
+          { comments: :user },
+          :file_attachment
+        ],
+        ship_events: [
+          :payouts
+        ],
+        stonks: [
+          :user
+        ]
+      },
       :banner_attachment,
-      :ship_certifications,
-      devlogs: [
-        :user,
-        :comments,
-        :file_attachment
-      ],
-      ship_events: [
-        :payouts
-      ],
-      stonks: [
-        :user
-      ]
+      :ship_certifications
     ).find(params[:id])
   rescue ActiveRecord::RecordNotFound
     deleted_project = Project.with_deleted.find_by(id: params[:id])
