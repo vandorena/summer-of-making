@@ -363,11 +363,5 @@ Rails.application.routes.draw do
       end
     end
     resources :shop_card_grants, only: [ :index, :show ]
-    resources :rack_attack, only: [ :index ] do
-      collection do
-        delete :clear_cache
-        delete :unblock_ip
-      end
-    end
   end
 end
