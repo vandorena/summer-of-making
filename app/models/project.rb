@@ -194,7 +194,7 @@ class Project < ApplicationRecord
 
     hackatime_keys & keys_in_devlogs
   end
-  
+
   def self.globally_locked_hackatime_keys
     Devlog.where.not(hackatime_projects_key_snapshot: [])
          .pluck(:hackatime_projects_key_snapshot)
