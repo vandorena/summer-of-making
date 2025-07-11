@@ -8,6 +8,10 @@ class PayoutsController < ApplicationController
 
         return render json: { error: "User not found" }, status: :not_found unless user
 
+        if current_user != user && !current_user&.is_admin?
+          return render json: { error: "wuh" }, status: :forbidden
+        end
+
         render json: {
           balance: user.balance,
           payouts: user.payouts

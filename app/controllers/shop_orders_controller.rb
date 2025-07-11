@@ -31,8 +31,8 @@ class ShopOrdersController < ApplicationController
 
     # Check if user can afford this item at regional price
     if @regional_price.present? && @regional_price > 0 && current_user.balance < @regional_price
-      return redirect_to shop_path, alert: "You don't have enough tickets to purchase #{@item.name}. You need #{@regional_price - current_user.balance} more tickets."
-      nil
+      redirect_to shop_path, alert: "You don't have enough tickets to purchase #{@item.name}. You need #{@regional_price - current_user.balance} more tickets."
+      return
     end
 
     render :new_black_market, layout: "black_market" if @item.requires_black_market?
@@ -116,6 +116,8 @@ class ShopOrdersController < ApplicationController
 
   def set_shop_order
     @order = current_user.shop_orders.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    redirect_to shop_path, alert: "wuh"
   end
 
   def set_shop_item
