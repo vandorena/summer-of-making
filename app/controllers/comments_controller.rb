@@ -5,6 +5,7 @@ class CommentsController < ApplicationController
   before_action :set_devlog
 
   def create
+    authorize Comment
     @comment = @devlog.comments.build(comment_params)
     @comment.user = current_user
 
@@ -18,6 +19,7 @@ class CommentsController < ApplicationController
 
   def destroy
     @comment = @devlog.comments.find(params[:id])
+    authorize @comment
     unless @comment.user == current_user || current_user.is_admin?
       redirect_to @devlog.project, alert: "You can only delete your own comments."
       return

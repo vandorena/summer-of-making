@@ -70,6 +70,7 @@ class DevlogsController < ApplicationController
   end
 
   def update
+    authorize @devlog
     if @devlog.user != current_user
       flash.now[:alert] = "You can only edit your own devlogs."
       redirect_to @devlog.project, alert: "You can only edit your own devlogs."

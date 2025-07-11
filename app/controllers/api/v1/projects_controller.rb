@@ -4,9 +4,10 @@ module Api
   module V1
     class ProjectsController < ApplicationController
       include Pagy::Backend
+      before_action :authenticate_user! # fucking over the api clients
 
       def index
-        pagy, projects = pagy(Project.all, items: 20)
+        pagy, projects = pagy(Project.where(is_deleted: false), items: 20)
 
         @projects = projects.map do |project|
           {
