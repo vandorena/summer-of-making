@@ -154,3 +154,5 @@ gem "flipper-ui", "1.3.4"
 gem "mini_magick", "~> 5.2"
 
 gem "redis", "~> 5.4"
+
+gem "rack-attack", "~> 6.7"

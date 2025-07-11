@@ -82,4 +82,7 @@ Rails.application.configure do
 
   # Makes things work in Codespaces
   config.action_controller.allow_forgery_protection = false
+
+  # dev disable it, we dont need it (hopefully)
+  config.middleware.delete Rack::Attack unless ENV["ENABLE_RACK_ATTACK"] == "true"
 end
