@@ -128,6 +128,8 @@ class Project < ApplicationRecord
   validates :ysws_type, presence: true, if: :ysws_submission?
 
   validate :user_must_have_hackatime, on: :create
+  validate :cannot_remove_locked_hackatime_keys, on: :update
+  validate :cannot_assign_globally_locked_hackatime_keys
 
   after_initialize :set_default_rating, if: :new_record?
   after_update :maybe_create_readme_certification
@@ -180,6 +182,28 @@ class Project < ApplicationRecord
 
   def hackatime_keys
     hackatime_project_keys || []
+  end
+
+  def locked_hackatime_keys
+    return [] unless persisted?
+
+    keys_in_devlogs = devlogs.where.not(hackatime_projects_key_snapshot: [])
+                             .pluck(:hackatime_projects_key_snapshot)
+                             .flatten
+                             .uniq
+
+    hackatime_keys & keys_in_devlogs
+  end
+  
+  def self.globally_locked_hackatime_keys
+    Devlog.where.not(hackatime_projects_key_snapshot: [])
+         .pluck(:hackatime_projects_key_snapshot)
+         .flatten
+         .uniq
+  end
+
+  def self.hackatime_key_locked_globally?(key)
+    globally_locked_hackatime_keys.include?(key)
   end
 
   def cumulative_stonk_dollars
@@ -385,6 +409,36 @@ class Project < ApplicationRecord
     return if user&.has_hackatime?
 
     errors.add(:base, "You must link your HackaTime account before creating a project")
+  end
+
+  def cannot_remove_locked_hackatime_keys
+    return unless hackatime_project_keys_changed?
+
+    original_keys = hackatime_project_keys_was || []
+    new_keys = hackatime_project_keys || []
+    removed_keys = original_keys - new_keys
+
+    locked_keys = locked_hackatime_keys
+    locked_removed_keys = removed_keys & locked_keys
+
+    if locked_removed_keys.any?
+      errors.add(:hackatime_project_keys, "Cannot remove keys that have been used in devlogs: #{locked_removed_keys.join(', ')}")
+    end
+  end
+
+  def cannot_assign_globally_locked_hackatime_keys
+    return unless hackatime_project_keys.present?
+
+    new_keys = hackatime_project_keys || []
+
+    new_keys.each do |key|
+      if self.class.hackatime_key_locked_globally?(key)
+        original_keys = persisted? ? (hackatime_project_keys_was || []) : []
+        next if original_keys.include?(key)
+
+        errors.add(:hackatime_project_keys, "Key '#{key}' is already being used by another project and cannot be assigned")
+      end
+    end
   end
 
   def filter_hackatime_keys
