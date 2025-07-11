@@ -145,7 +145,11 @@ class ProjectsController < ApplicationController
   end
 
   def my_projects
-    @projects = current_user.projects.includes(:banner_attachment, :ship_events, :devlogs, devlogs: [ :file_attachment ]).order(created_at: :desc)
+    @projects = current_user.projects.includes(
+      :banner_attachment,
+      ship_events: :payouts,
+      devlogs: [ :file_attachment ]
+    ).order(created_at: :desc)
   end
 
   # Gotta say I love turbo frames and turbo streams and flashes in general
