@@ -13,7 +13,6 @@
   no_parchment ||= false                   # Whether to disable parchment styling
 %>
 
-<% cache([devlog, devlog.user, devlog.project, current_user&.id, show_likes, show_comment_modal, context]) do %>
   <%= render layout: "shared/card" do %>
 
     <div class="ml-4 <%= context == 'explore' || context == 'project' ? '' : '' %> <%= container_classes %> <%= 'cursor-pointer' if show_project_navigation %>"
@@ -187,7 +186,6 @@
       <% end %>
     </div>
   <% end %>
-<% end %>
 
 <!-- Render comment modal based on context -->
 <% if show_comment_modal || context == 'project' %>
