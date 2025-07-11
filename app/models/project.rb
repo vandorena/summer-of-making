@@ -159,7 +159,11 @@ class Project < ApplicationRecord
   end
 
   def total_seconds_coded
-    devlogs.sum(:duration_seconds)
+    if devlogs.loaded?
+      devlogs.sum(&:duration_seconds)
+    else
+      devlogs.sum(:duration_seconds)
+    end
   end
 
   has_many :readme_checks, dependent: :destroy
