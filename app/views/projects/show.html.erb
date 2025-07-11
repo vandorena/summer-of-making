@@ -90,7 +90,15 @@
                   <p class="font-medium text-base sm:text-lg 2xl:text-xl mb-2 sm:mb-3">Ship <%= position %></p>
 
                   <% payout_count = Payout.where(payable: item).count %>
-                  <p><%= pluralize(payout_count, "payout") %> totaling $<%= Payout.where(payable: item).sum(&:amount) %></p>
+                  <p>
+                    <%= pluralize(payout_count, "payout") %> of
+                    <picture class="inline-block w-6 h-6 flex-shrink-0">
+                      <source srcset="/shell.avif" type="image/avif">
+                      <source srcset="/shell.webp" type="image/webp">
+                      <img src="/shell.png" class="inline-block w-6 h-6" alt="shell" loading="lazy">
+                    </picture>
+                    <%= Payout.where(payable: item).sum(&:amount).to_i %> shells
+                  </p>
 
                   <div class="flex items-center">
                     <% if item.user.avatar.present? %>
