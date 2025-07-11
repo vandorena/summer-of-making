@@ -2,6 +2,8 @@ class ShopOrdersController < ApplicationController
   before_action :set_shop_order, only: [ :show ]
   before_action :set_shop_item, only: [ :new, :create ]
   before_action :check_freeze, except: [ :index, :show ]
+  before_action :check_circuit_breaker, only: [ :new, :create ]
+
   def index
     @orders = current_user.shop_orders.includes(:shop_item).order(created_at: :desc)
   end
@@ -131,6 +133,12 @@ class ShopOrdersController < ApplicationController
   def check_freeze
     if current_user&.freeze_shop_activity?
       redirect_to shop_path, alert: "You can't make purchases right now."
+    end
+  end
+
+  def check_circuit_breaker
+    if Flipper.enabled?(:block_shop_ordering, current_user)
+      redirect_to shop_path, alert: "Shop orders are temporarily unavailable."
     end
   end
 
