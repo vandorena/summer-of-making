@@ -85,16 +85,20 @@ class ProjectsController < ApplicationController
     authorize @project, :show?
     track_view(@project)
 
-    @devlogs = @project.devlogs.order(created_at: :desc)
-    @ship_events = @project.ship_events
+    @devlogs = @project.devlogs.sort_by(&:created_at).reverse
+    @ship_events = @project.ship_events.sort_by(&:created_at).reverse
     @timeline = (@devlogs + @ship_events).sort_by(&:created_at).reverse
 
-    @stonks = @project.stonks.includes(:user).order(amount: :desc)
-    @latest_ship_certification = @project.latest_ship_certification
+    @stonks = @project.stonks.sort_by(&:amount).reverse
+    @latest_ship_certification = @project.ship_certifications.max_by(&:created_at)
+
+    @ship_event_data = compute_ship_event_data
+
+    @project_image = pj_image
 
     return unless current_user
 
-    @user_stonk = @project.stonks.find_by(user: current_user)
+    @user_stonk = @project.stonks.find { |stonk| stonk.user_id == current_user.id }
   end
 
   def edit
@@ -531,6 +535,48 @@ class ProjectsController < ApplicationController
 
   private
 
+  def compute_ship_event_data
+    ship_event_data = {}
+    ship_events_by_date = @ship_events.sort_by(&:created_at)
+    devlogs_by_date = @devlogs.sort_by(&:created_at)
+
+    ship_events_by_date.each_with_index do |ship_event, index|
+      position = index + 1
+      payouts = ship_event.payouts.to_a
+      payout_count = payouts.size
+      payout_sum = payouts.sum(&:amount)
+
+      previous_ship = index > 0 ? ship_events_by_date[index - 1] : nil
+      start_time = previous_ship&.created_at || @project.created_at
+
+      devlogs_count = devlogs_by_date.count do |devlog|
+        devlog.created_at > start_time && devlog.created_at <= ship_event.created_at
+      end
+
+      ship_event_data[ship_event.id] = {
+        position: position,
+        payout_count: payout_count,
+        payout_sum: payout_sum,
+        devlogs_since_last_count: devlogs_count
+      }
+    end
+
+    ship_event_data
+  end
+
+  def pj_image
+    if @project.banner.attached?
+      url_for(@project.banner)
+    else
+      devlog_with_image = @devlogs.find { |devlog| devlog.file.attached? && devlog.file.image? }
+      if devlog_with_image
+        url_for(devlog_with_image.file)
+      else
+        "https://summer.hackclub.com/social-splash.jpg"
+      end
+    end
+  end
+
   def ysws_type_options
     [ [ "Select a YSWS program...", "" ] ] + Project.ysws_types.map { |key, value| [ value, value ] }
   end
@@ -549,7 +595,23 @@ class ProjectsController < ApplicationController
   end
 
   def set_project
-    @project = Project.includes(:user, devlogs: [ :user, :comments, :file_attachment ]).find(params[:id])
+    @project = Project.includes(
+      :user,
+      :banner_attachment,
+      :ship_certifications,
+      followers: :projects,
+      devlogs: [
+        :user,
+        :comments,
+        :file_attachment
+      ],
+      ship_events: [
+        :payouts
+      ],
+      stonks: [
+        :user
+      ]
+    ).find(params[:id])
   rescue ActiveRecord::RecordNotFound
     deleted_project = Project.with_deleted.find_by(id: params[:id])
     if deleted_project&.is_deleted?
