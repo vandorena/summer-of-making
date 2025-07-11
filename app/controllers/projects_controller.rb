@@ -14,21 +14,9 @@ class ProjectsController < ApplicationController
 
   def index
     sort_order = params[:sort] == "oldest" ? :asc : :desc
-    if params[:action] == "my_projects"
-      @projects = Project.includes(:user)
-                         .includes(:ship_events)
-                         .where.not(user_id: current_user.id)
-                         .order(rating: :asc)
-
-      # @projects = @projects.sort_by do |project|
-      #     weight = rand + (project.updates.count > 0 ? 1.5 : 0)
-      #     -weight
-      # end
-
-      @show_create_project = true if @projects.empty?
-    elsif params[:tab] == "gallery"
+    if params[:tab] == "gallery"
       # Optimize gallery with pagination and DB-level ordering
-      projects_query = Project.includes(:user)
+      projects_query = Project.includes(user: :hackatime_stat, devlogs: [ :file_attachment ])
                               .joins("LEFT JOIN devlogs ON devlogs.project_id = projects.id")
                               .where(is_deleted: false)
                               .group("projects.id")
@@ -40,9 +28,9 @@ class ProjectsController < ApplicationController
         redirect_to projects_path(tab: "gallery", sort: params[:sort]) and return
       end
     elsif params[:tab] == "following"
-      @followed_projects = current_user.followed_projects.includes(:user)
+      @followed_projects = current_user.followed_projects.includes(user: :hackatime_stat)
       @recent_devlogs = Devlog.joins(:project)
-                              .includes(:project, :user, :timer_sessions, :file_attachment, comments: :user)
+                              .includes(:project, :file_attachment, user: :hackatime_stat, comments: :user)
                               .where(project_id: @followed_projects.pluck(:id))
                               .where(projects: { is_deleted: false })
                               .order(created_at: :desc)
@@ -53,9 +41,9 @@ class ProjectsController < ApplicationController
         redirect_to projects_path(tab: "following") and return
       end
     elsif params[:tab] == "stonked"
-      @stonked_projects = current_user.staked_projects.includes(:user)
+      @stonked_projects = current_user.staked_projects.includes(user: :hackatime_stat)
       @recent_devlogs = Devlog.joins(:project)
-                              .includes(:project, :user, :timer_sessions, :file_attachment, comments: :user)
+                              .includes(:project, :file_attachment, user: :hackatime_stat, comments: :user)
                               .where(project_id: @stonked_projects.pluck(:id))
                               .where(projects: { is_deleted: false })
                               .order(created_at: :desc)
@@ -68,7 +56,7 @@ class ProjectsController < ApplicationController
     else
       # Optimize main devlogs query
       devlogs_query = Devlog.joins(:project)
-                            .includes(:project, :user, :timer_sessions, :file_attachment, comments: :user)
+                            .includes(:project, :file_attachment, user: :hackatime_stat, comments: :user)
                             .where(projects: { is_deleted: false })
                             .order(created_at: :desc)
 
@@ -79,7 +67,7 @@ class ProjectsController < ApplicationController
       end
 
       # we can just load stuff for the gallery here too!!
-      projects_query = Project.includes(:user, :banner_attachment)
+      projects_query = Project.includes(:banner_attachment, user: :hackatime_stat, devlogs: [ :file_attachment ])
                               .joins("LEFT JOIN devlogs ON devlogs.project_id = projects.id")
                               .where(is_deleted: false)
                               .group("projects.id")
@@ -151,7 +139,7 @@ class ProjectsController < ApplicationController
   end
 
   def my_projects
-    @projects = current_user.projects.order(created_at: :desc)
+    @projects = current_user.projects.includes(:banner_attachment, :ship_events, :devlogs, devlogs: [ :file_attachment ]).order(created_at: :desc)
 
     current_user.refresh_hackatime_data if current_user.has_hackatime?
   end
@@ -514,9 +502,6 @@ class ProjectsController < ApplicationController
 
   def destroy
     Project.transaction do
-      # delete all active timer sessions for this project (otherwise it bricks and you can't start new timers)
-      @project.timer_sessions.where(status: %i[running paused]).destroy_all
-
       @project.stonks.destroy_all
       @project.project_follows.destroy_all
 
@@ -564,7 +549,7 @@ class ProjectsController < ApplicationController
   end
 
   def set_project
-    @project = Project.includes(:user, devlogs: [ :user, :timer_sessions, :likes, :comments, :file_attachment ]).find(params[:id])
+    @project = Project.includes(:user, devlogs: [ :user, :comments, :file_attachment ]).find(params[:id])
   rescue ActiveRecord::RecordNotFound
     deleted_project = Project.with_deleted.find_by(id: params[:id])
     if deleted_project&.is_deleted?

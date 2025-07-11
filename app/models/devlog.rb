@@ -61,8 +61,6 @@ class Devlog < ApplicationRecord
     likes.exists?(user: user)
   end
 
-  delegate :count, to: :likes, prefix: true
-
   # ie. Project.first.devlogs.capped_duration_seconds
   scope :capped_duration_seconds, -> { where.not(duration_seconds: nil).sum("LEAST(duration_seconds, #{10.hours.to_i})") }
 

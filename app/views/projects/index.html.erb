@@ -59,95 +59,59 @@
   </div>
 
   <div>
-    <% if params[:action] == 'my_projects' %>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 px-4 md:px-8 max-w-6xl mx-auto">
-        <% if @projects.any? %>
-          <% @projects.each do |project| %>
-            <%= render partial: "project_preview", locals: { project: project, show_author: false } %>
-          <% end %>
-
-          <%= render layout: "shared/container", locals: { full_height: true } do %>
-            <div class="transform hover:scale-[1.02] transition-transform duration-300 flex flex-col h-full items-center justify-center p-6">
-              <%=
-                render "shared/link",
-                  text: "Create Project",
-                  icon: "add",
-                  class: "cursor-pointer",
-                  href: new_project_path
-              %>
-            </div>
-          <% end %>
-        <% else %>
-          <div class="col-span-full flex flex-col items-center justify-center bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] p-6 md:p-8 mt-2 md:mt-0">
-            <div class="flex justify-center items-center">
-              <%= image_tag 'orpheustimer.png', class: 'w-32 h-32 sm:w-48 sm:h-48 2xl:w-64 2xl:h-64 transform scale-x-[-1] mb-4 sm:mb-6' %>
-            </div>
-            <% if current_user&.has_hackatime %>
-              <p class="mb-6 sm:mb-8 text-black text-large sm:text-xl 2xl:text-2xl text-center">You don't have a project yet. Create one to start your journey!</p>
-              <button data-action="click->modal#open" data-modal-type="create-project" class="px-4 md:px-6 py-1 md:py-2 marble-button cursor-pointer">
-                Create Project
-              </button>
-            <% else %>
-              <p class="mb-6 sm:mb-8 text-black text-large sm:text-xl 2xl:text-2xl text-center">Link your HackaTime account to start creating projects!</p>
-            <% end %>
-          </div>
+    <!-- Explore and Following tabs - show devlogs -->
+    <div class="px-4 md:px-8 max-w-6xl mx-auto" data-tabs-target="content" id="devlogs-list-container" data-tab-content="explore">
+      <div class="space-y-4 sm:space-y-6" id="devlogs-list" data-controller="view-tracker">
+        <% @recent_devlogs&.each do |devlog| %>
+          <%= render "devlogs/devlog_card",
+            devlog: devlog,
+            context: 'explore',
+            show_project_title: true,
+            show_project_navigation: true,
+            show_likes: true,
+            show_project_link: true,
+            show_comment_modal: true,
+            show_stonks: false %>
         <% end %>
       </div>
-    <% else %>
-      <!-- Explore and Following tabs - show devlogs -->
-      <div class="px-4 md:px-8 max-w-6xl mx-auto" data-tabs-target="content" id="devlogs-list-container" data-tab-content="explore">
-        <div class="space-y-4 sm:space-y-6" id="devlogs-list" data-controller="view-tracker">
-          <% @recent_devlogs&.each do |devlog| %>
-            <%= render "devlogs/devlog_card",
-              devlog: devlog,
-              context: 'explore',
-              show_project_title: true,
-              show_project_navigation: true,
-              show_likes: true,
-              show_project_link: true,
-              show_comment_modal: true,
-              show_stonks: false %>
-          <% end %>
-        </div>
 
-        <!-- Dear Lord Pagy life saver, but it is infinite scroll trigger -->
-        <div id="load-more-devlogs">
-          <% if @pagy&.next %>
-            <%= turbo_frame_tag "load-more-devlogs",
-              src: explore_path(page: @pagy.next, format: :turbo_stream),
-              loading: "lazy",
-              class: "block" do %>
-              <div class="flex flex-col items-center justify-center">
-                <%= image_tag 'lollipop.svg', class: 'w-8 h-8 sm:w-16 sm:h-16 animate-spin' %>
-              </div>
-            <% end %>
+      <!-- Dear Lord Pagy life saver, but it is infinite scroll trigger -->
+      <div id="load-more-devlogs">
+        <% if @pagy&.next %>
+          <%= turbo_frame_tag "load-more-devlogs",
+            src: explore_path(page: @pagy.next, format: :turbo_stream),
+            loading: "lazy",
+            class: "block" do %>
+            <div class="flex flex-col items-center justify-center">
+              <%= image_tag 'lollipop.svg', class: 'w-8 h-8 sm:w-16 sm:h-16 animate-spin' %>
+            </div>
           <% end %>
-        </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Gallery tab - show projects -->
+    <div class="px-4 md:px-8 hidden max-w-7xl mx-auto" data-tabs-target="content" data-tab-content="gallery">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8" id="projects-grid">
+        <% if @projects&.any? %>
+          <% @projects.each do |project| %>
+            <%= render partial: "project_preview", locals: { project: project } %>
+          <% end %>
+        <% end %>
       </div>
 
-      <!-- Gallery tab - show projects -->
-      <div class="px-4 md:px-8 hidden max-w-7xl mx-auto" data-tabs-target="content" data-tab-content="gallery">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8" id="projects-grid">
-          <% if @projects&.any? %>
-            <% @projects.each do |project| %>
-              <%= render partial: "project_preview", locals: { project: project } %>
-            <% end %>
+      <div id="load-more-projects">
+        <% if @gallery_pagy&.next %>
+          <%= turbo_frame_tag "load-more-projects",
+            src: explore_path(tab: 'gallery', page: @gallery_pagy.next, format: :turbo_stream),
+            loading: "lazy",
+            class: "block" do %>
+            <div class="flex flex-col items-center justify-center py-6">
+              <%= image_tag 'lollipop.svg', class: 'w-8 h-8 sm:w-16 sm:h-16 animate-spin' %>
+            </div>
           <% end %>
-        </div>
-
-        <div id="load-more-projects">
-          <% if @gallery_pagy&.next %>
-            <%= turbo_frame_tag "load-more-projects",
-              src: explore_path(tab: 'gallery', page: @gallery_pagy.next, format: :turbo_stream),
-              loading: "lazy",
-              class: "block" do %>
-              <div class="flex flex-col items-center justify-center py-6">
-                <%= image_tag 'lollipop.svg', class: 'w-8 h-8 sm:w-16 sm:h-16 animate-spin' %>
-              </div>
-            <% end %>
-          <% end %>
-        </div>
+        <% end %>
       </div>
-    <% end %>
+    </div>
   </div>
 </div>
