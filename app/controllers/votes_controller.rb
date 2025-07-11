@@ -108,10 +108,7 @@ class VotesController < ApplicationController
     projects_with_latest_ship = Project
                                   .joins(:ship_events)
                                   .joins(:ship_certifications)
-                                  .includes(:banner_attachment,
-                                           devlogs: [ :user, :file_attachment ],
-                                           ship_events: :payouts,
-                                           ship_certifications: [])
+                                  .includes(ship_events: :payouts)
                                   .where(ship_certifications: { judgement: :approved })
                                   .where.not(user_id: current_user.id)
                                   .where(
@@ -226,7 +223,17 @@ class VotesController < ApplicationController
       return
     end
 
-    @projects = selected_projects
+    # load what we need
+    selected_project_ids = selected_projects.map(&:id)
+    @projects = Project
+                .includes(:banner_attachment,
+                          :ship_certifications,
+                          ship_events: :payouts,
+                          devlogs: [:user, :file_attachment])
+                .where(id: selected_project_ids)
+                .index_by(&:id)
+                .values_at(*selected_project_ids)
+
     @ship_events = selected_project_data.map { |data| data[:ship_event] }
 
     @project_ai_used = {}
