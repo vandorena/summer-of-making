@@ -596,7 +596,7 @@ class ProjectsController < ApplicationController
 
   def set_project
     @project = Project.includes(
-      :user,
+      user: :hackatime_stat,
       :banner_attachment,
       :ship_certifications,
       devlogs: [
