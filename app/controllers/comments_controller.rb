@@ -18,6 +18,10 @@ class CommentsController < ApplicationController
 
   def destroy
     @comment = @devlog.comments.find(params[:id])
+    unless @comment.user == current_user || current_user.is_admin?
+      redirect_to @devlog.project, alert: "You can only delete your own comments."
+      return
+    end
 
     if @comment.destroy
       redirect_to @devlog.project, notice: "Comment deleted successfully!"
