@@ -283,21 +283,11 @@ class Project < ApplicationRecord
              .order("ship_events.created_at")
   end
 
-  def self.cumulative_elo_bounds_at_vote_count(count)
-    votes = VoteChange.where("project_vote_count <= ?", count)
 
-    col = :elo_after
-    [ votes.minimum(col), votes.maximum(col) ]
-  end
-
-  def self.cumulative_elo_bounds(changes)
-    col = :elo_after
-    [ changes.minimum(col), changes.maximum(col) ]
-  end
 
   def calculate_payout
     vote_count = VoteChange.where(project: self).maximum(:project_vote_count)
-    min, max = Project.cumulative_elo_bounds_at_vote_count vote_count
+    min, max = VoteChange.cumulative_elo_range_for_vote_count(vote_count)
 
     pc = unlerp(min, max, rating)
 
@@ -320,22 +310,49 @@ class Project < ApplicationRecord
       # Only process ship events that have 18 or more votes
       next unless ship_event_vote_count >= 18
 
-      # Get vote changes based on all_time flag
+      # Calculate cumulative vote count for this ship event payout
+      votes_before_ship = VoteChange.where(project: self).where("created_at <= ?", ship.created_at).count
+      cumulative_vote_count_at_payout = votes_before_ship + 18
+
+      puts "Ship #{ship.id} created at #{ship.created_at}: votes_before=#{votes_before_ship}, cumulative=#{cumulative_vote_count_at_payout}"
+
+      # Get cumulative ELO bounds for this vote count
       if all_time
-        # Genesis: get all vote changes with project_vote_count <= current project's total votes
-        previous_changes = VoteChange.where("project_vote_count <= ?", project_vote_count)
+        # Genesis: use cumulative range up to this vote count (no time filtering)
+        min, max = VoteChange.cumulative_elo_range_for_vote_count(cumulative_vote_count_at_payout)
       else
-        # Normal: get vote changes with project_vote_count <= current project's total votes AND created before ship event
-        previous_changes = VoteChange.where("project_vote_count <= ?", project_vote_count).where("created_at < ?", ship.created_at)
+        # Normal: use cumulative range up to this vote count AND created before ship event
+        min, max = VoteChange.cumulative_elo_range_for_vote_count(cumulative_vote_count_at_payout, ship.created_at)
       end
 
-      next if previous_changes.empty?
+      next if min.nil? || max.nil?
 
-      min, max = Project.cumulative_elo_bounds(previous_changes)
+      # Find when this ship event got its 18th vote
+      # This is when votes_before_ship + votes after ship creation = cumulative_vote_count_at_payout
+      ship_votes_needed = 18
+      target_vote_count = votes_before_ship + ship_votes_needed
 
-      # Get the current project's ELO rating
-      current_rating = VoteChange.where(project: self).order(:id).last&.elo_after || 1000
+      # Get the project's ELO rating when it reached this target vote count
+      vote_change_at_target = VoteChange.where(project: self, project_vote_count: target_vote_count).first
+
+      if vote_change_at_target
+        current_rating = vote_change_at_target.elo_after
+
+        # Check if this project's ELO at this vote count is included in the cumulative range
+        all_elos_at_count = VoteChange.where("project_vote_count <= ?", cumulative_vote_count_at_payout).pluck(:elo_after)
+        project_vote_changes_in_range = VoteChange.where(project: self).where("project_vote_count <= ?", cumulative_vote_count_at_payout).pluck(:elo_after)
+      else
+        puts "ERROR: No VoteChange found for project #{id} at vote count #{target_vote_count}!"
+        puts "Available vote counts for this project: #{VoteChange.where(project: self).pluck(:project_vote_count).sort}"
+        # This should never happen!
+        raise "ERROR: No VoteChange found for project #{id} at vote count #{target_vote_count}!"
+      end
+
       pc = unlerp(min, max, current_rating)
+
+      if pc < 0 || pc > 1
+        raise "ERROR: Invalid percentile #{pc} for project #{id}. min=#{min}, max=#{max}, current_rating=#{current_rating}"
+      end
 
       puts "FKDF", pc, min, max, current_rating
 
