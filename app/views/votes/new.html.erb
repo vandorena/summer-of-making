@@ -58,7 +58,7 @@
         <% @projects.each_with_index do |project, index| %>
           <% ship_event = @ship_events[index] %>
           <% ship_devlogs = project.devlogs.where("created_at < ?", ship_event.created_at).order(created_at: :asc) %>
-          <% ship_time_seconds = ship_devlogs.sum(:last_hackatime_time) %>
+          <% ship_time_seconds = ship_devlogs.sum(:duration_seconds) %>
           <div class="px-4 py-8 sm:py-4 bg-[#F6DBBA] sm:rounded-xl" data-project-index="<%= index %>">
             <div class="space-y-6 sm:space-y-8">
               <div class="flex items-start gap-3 sm:gap-4">
