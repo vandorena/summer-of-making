@@ -44,7 +44,7 @@ module ApplicationHelper
   def tab_unlocked?(tab)
     # memoize
     @_tab_verification_check ||= current_user.identity_vault_id.present? && current_user.verification_status != :ineligible
-    
+
     unlocked = @_tab_verification_check
 
     case tab
