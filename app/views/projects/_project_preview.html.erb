@@ -6,7 +6,7 @@
 
 <% show_author = local_assigns.fetch(:show_author, true) %>
 
-<% cache_unless(current_user&.admin? || impersonating?, [project, project.user, project.devlogs.maximum(:updated_at), current_user&.id, show_author]) do %>
+<% cache_unless(current_user&.is_admin? || impersonating?, [project, project.user, project.devlogs.maximum(:updated_at), current_user&.id, show_author]) do %>
   <%= link_to project_path(project) do %>
     <%=
       render layout: "shared/container", locals: {
