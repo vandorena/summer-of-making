@@ -42,15 +42,16 @@ module ApplicationHelper
   end
 
   def tab_unlocked?(tab)
-    # memoize
-    @_tab_verification_check ||= current_user.identity_vault_id.present? && current_user.verification_status != :ineligible
-
-    unlocked = @_tab_verification_check
+    unlocked = current_user.identity_vault_id.present? && current_user.verification_status != :ineligible
 
     case tab
     when :campfire
       true
     when :explore
+      unlocked
+    when :my_projects
+      unlocked
+    when :vote
       unlocked
     when :shop
       true
