@@ -251,7 +251,7 @@ class Project < ApplicationRecord
         message: "Project must have a banner image."
       },
       previous_payout: {
-        met: latest_ship_certification&.rejected? || unpaid_shipevents_since_last_payout.empty?,
+        met: latest_ship_certification&.rejected? || unpaid_ship_events_since_last_payout.empty?,
         message: "Previous ship event must be paid out before shipping again."
       },
       minimum_time: {
@@ -300,14 +300,11 @@ class Project < ApplicationRecord
     false
   end
 
-  def unpaid_shipevents_since_last_payout
-    ShipEvent.where(project: self)
-             .left_joins(:payouts)
-             .where(payouts: { id: nil })
-             .order("ship_events.created_at")
+  def unpaid_ship_events_since_last_payout
+    @unpaid_ship_events_since_last_payout ||= ShipEvent.where(project: self)
+                                                      .left_joins(:payouts)
+                                                      .where(payouts: { id: nil })
   end
-
-
 
   def calculate_payout
     vote_count = VoteChange.where(project: self).maximum(:project_vote_count)
@@ -325,13 +322,83 @@ class Project < ApplicationRecord
     payout = hours * mult
   end
 
-  def issue_payouts(all_time: false)
+  def issue_genesis_payouts
     project_vote_count = VoteChange.where(project: self).count
 
     ship_events.each_with_index do |ship, idx|
       ship_event_vote_count = VoteChange.where(project: self).where("created_at > ?", ship.created_at).count
 
       # Only process ship events that have 18 or more votes
+      next unless ship_event_vote_count >= 18
+
+      # Calculate cumulative vote count for this ship event payout
+      votes_before_ship = VoteChange.where(project: self).where("created_at <= ?", ship.created_at).count
+      cumulative_vote_count_at_payout = votes_before_ship + 18
+
+      puts "Ship #{ship.id} created at #{ship.created_at}: votes_before=#{votes_before_ship}, cumulative=#{cumulative_vote_count_at_payout}"
+
+      # Find when this ship event got its 18th vote
+      # This is when votes_before_ship + votes after ship creation = cumulative_vote_count_at_payout
+      ship_votes_needed = 18
+      target_vote_count = votes_before_ship + ship_votes_needed
+
+      # Get the project's ELO rating when it reached this target vote count
+      vote_change_at_target = VoteChange.where(project: self, project_vote_count: target_vote_count).first
+
+      if vote_change_at_target
+        current_rating = vote_change_at_target.elo_after
+
+        # Genesis: use cumulative range up to this vote count (no time filtering)
+        min, max = VoteChange.cumulative_elo_range_for_vote_count(cumulative_vote_count_at_payout)
+
+        next if min.nil? || max.nil?
+
+        # Check if this project's ELO at this vote count is included in the cumulative range
+        all_elos_at_count = VoteChange.where("project_vote_count <= ?", cumulative_vote_count_at_payout).pluck(:elo_after)
+        project_vote_changes_in_range = VoteChange.where(project: self).where("project_vote_count <= ?", cumulative_vote_count_at_payout).pluck(:elo_after)
+      else
+        puts "ERROR: No VoteChange found for project #{id} at vote count #{target_vote_count}!"
+        puts "Available vote counts for this project: #{VoteChange.where(project: self).pluck(:project_vote_count).sort}"
+        # This should never happen!
+        raise "ERROR: No VoteChange found for project #{id} at vote count #{target_vote_count}!"
+      end
+
+      pc = unlerp(min, max, current_rating)
+
+      if pc < 0 || pc > 1
+        raise "ERROR: Invalid percentile #{pc} for project #{id}. min=#{min}, max=#{max}, current_rating=#{current_rating}"
+      end
+
+      puts "FKDF", pc, min, max, current_rating
+
+      mult = Payout.calculate_multiplier pc
+
+      hours = ship.hours_covered
+
+      amount = (mult * hours).ceil
+
+      current_payout_sum = ship.payouts.sum(:amount)
+      current_payout_difference = amount - current_payout_sum
+
+      next if current_payout_difference.zero?
+
+      reason = "Payout#{" recalculation" if ship.payouts.count > 0} for #{title}'s #{ship.created_at} ship."
+
+      payout = Payout.create!(amount: current_payout_difference, payable: ship, user:, reason:)
+
+      puts "PAYOUTCREASED(#{payout.id}) ship.id:#{ship.id} min:#{min} max:#{max} rating_at_vote_count:#{current_rating} pc:#{pc} mult:#{mult} hours:#{hours} amount:#{amount} current_payout_sum:#{current_payout_sum} current_payout_difference:#{current_payout_difference}"
+    end
+  end
+
+  def issue_payouts
+    return unless unpaid_ship_events_since_last_payout.any?
+
+    project_vote_count = VoteChange.where(project: self).count
+
+    unpaid_ship_events_since_last_payout.each_with_index do |ship, idx|
+      ship_event_vote_count = VoteChange.where(project: self).where("created_at > ?", ship.created_at).count
+
+      # Only process ship events that have exactly 18 votes
       next unless ship_event_vote_count == 18
 
       # Calculate cumulative vote count for this ship event payout
@@ -351,14 +418,8 @@ class Project < ApplicationRecord
       if vote_change_at_target
         current_rating = vote_change_at_target.elo_after
 
-        # Get cumulative ELO bounds for this vote count
-        if all_time
-          # Genesis: use cumulative range up to this vote count (no time filtering)
-          min, max = VoteChange.cumulative_elo_range_for_vote_count(cumulative_vote_count_at_payout)
-        else
-          # Normal: use cumulative range up to this vote count AND created before the vote that triggered payout
-          min, max = VoteChange.cumulative_elo_range_for_vote_count(cumulative_vote_count_at_payout, vote_change_at_target.created_at)
-        end
+        # Normal: use cumulative range up to this vote count AND created before the vote that triggered payout
+        min, max = VoteChange.cumulative_elo_range_for_vote_count(cumulative_vote_count_at_payout, vote_change_at_target.created_at)
 
         next if min.nil? || max.nil?
 

@@ -1,15 +1,19 @@
 class OneTime::InitiateGenesisPayoutsJob < ApplicationJob
   queue_as :default
 
-  def perform(dry_run: false)
-    return if Payout.where(payable_type: "ShipEvent").any? # Protect from running twice
+  def perform(dry_run: true)
+    # return if Payout.where(payable_type: "ShipEvent").any? # Protect from running twice
+
+
 
     ActiveRecord::Base.transaction do
+      Payout.where(payable_type: "ShipEvent").delete_all
+
       # Find projects that have ship events and enough votes
       qualifying_projects = Project.joins(:ship_events, :vote_changes)
-      .where(vote_changes: { project_vote_count: 18.. })
-      .distinct
-      # .limit(200)
+                                   .where(vote_changes: { project_vote_count: 18.. })
+                                   .distinct
+                                   .limit(200)
 
       puts "Found #{qualifying_projects.count} qualifying projects"
 
@@ -17,7 +21,7 @@ class OneTime::InitiateGenesisPayoutsJob < ApplicationJob
         puts "Processing project #{p.id}: #{p.title}"
         puts "  Ship events: #{p.ship_events.count}"
 
-        p.issue_payouts(all_time: true)
+        p.issue_genesis_payouts
       end
 
       total_payouts = Payout.where(payable_type: "ShipEvent").count
@@ -29,6 +33,8 @@ class OneTime::InitiateGenesisPayoutsJob < ApplicationJob
   end
 
   private
+
+
 
   def export_in_csv
     require "csv"
