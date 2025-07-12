@@ -195,15 +195,16 @@ class Project < ApplicationRecord
     hackatime_keys & keys_in_devlogs
   end
 
-  def self.globally_locked_hackatime_keys
-    Devlog.where.not(hackatime_projects_key_snapshot: [])
-         .pluck(:hackatime_projects_key_snapshot)
+  def self.globally_locked_hackatime_keys(user_id = nil)
+    query = Devlog.where.not(hackatime_projects_key_snapshot: [])
+    query = query.joins(:user).where(user_id: user_id) if user_id
+    query.pluck(:hackatime_projects_key_snapshot)
          .flatten
          .uniq
   end
 
-  def self.hackatime_key_locked_globally?(key)
-    globally_locked_hackatime_keys.include?(key)
+  def self.hackatime_key_locked_globally?(key, user_id = nil)
+    globally_locked_hackatime_keys(user_id).include?(key)
   end
 
   def cumulative_stonk_dollars
@@ -493,7 +494,7 @@ class Project < ApplicationRecord
     new_keys = hackatime_project_keys || []
 
     new_keys.each do |key|
-      if self.class.hackatime_key_locked_globally?(key)
+      if self.class.hackatime_key_locked_globally?(key, user_id)
         original_keys = persisted? ? (hackatime_project_keys_was || []) : []
         next if original_keys.include?(key)
 
