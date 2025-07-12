@@ -77,6 +77,10 @@ module Admin
       Payout.where(created_at: 7.days.ago..).group(:payable_type).sum("ABS(amount)").each do |type, volume|
         @types[type&.humanize || "Unknown"] = volume
       end
+
+      @recent = Payout.includes(:user, :payable)
+                             .order(created_at: :desc)
+                             .limit(100)
     end
 
     private

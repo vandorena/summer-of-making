@@ -78,3 +78,68 @@
     <% end %>
   </tbody>
 </table>
+
+<h2>recent payouts</h2>
+<% if @recent.any? %>
+  <table>
+    <thead>
+      <tr>
+        <th>time</th>
+        <th>user</th>
+        <th>amount</th>
+        <th>type</th>
+        <th>related to</th>
+        <th>reason</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @recent.each do |payout| %>
+        <tr>
+          <td><%= time_ago_in_words(payout.created_at) %> ago</td>
+          <td>
+            <% if payout.user %>
+              <img src="<%= payout.user.avatar %>" alt="<%= payout.user.display_name %>" width="24" height="24" style="border-radius: 50%; display: inline;">
+              <strong><%= payout.user.display_name %></strong> (<%= payout.user.id %>)
+            <% else %>
+              <em>No user</em>
+            <% end %>
+          </td>
+          <td class="<%= payout.amount >= 0 ? 'p' : 'n' %>">
+            <%= payout.amount >= 0 ? '+' : '' %><%= number_with_delimiter(payout.amount) %>
+          </td>
+          <td><%= payout.payable_type&.humanize || 'Unknown' %></td>
+          <td>
+            <% if payout.payable %>
+              <% case payout.payable %>
+              <% when User %>
+                👤 <%= link_to payout.payable.display_name, admin_user_path(payout.payable) %>
+              <% when ShopOrder %>
+                🛒 <%= link_to "ShopOrder ##{payout.payable.id}", admin_shop_order_path(payout.payable) %>
+              <% when ShipEvent %>
+                🚢 <%= link_to "ShipEvent ##{payout.payable.id}", project_path(payout.payable.project) %>
+                (<%= payout.payable.project.title %>)
+              <% else %>
+                <%= payout.payable.class.name %> #<%= payout.payable.id %>
+              <% end %>
+            <% else %>
+              <em>nil</em>
+            <% end %>
+          </td>
+          <td>
+            <% if payout.reason.present? %>
+              <%= truncate(payout.reason, length: 50) %>
+            <% else %>
+              <em>nil</em>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <style>
+    .p { color: green; }
+    .n { color: red; }
+  </style>
+<% else %>
+  <p>nuthing, ruh ro raggy</p>
+<% end %>
