@@ -62,7 +62,7 @@
     <meta name="twitter:title" content="Hack Club Summer of Making">
     <meta name="twitter:description" content="Build stuff, Get stuff, Repeat! Win awesome prizes for building personal coding projects, from June 16 - August 31, 2025">
     <meta name="twitter:image" content="<%= asset_url('social_card.png') %>">
-    <% if current_user.has_badge?(:spider) %>
+    <% if current_user&.has_badge?(:spider) %>
     <%= javascript_include_tag "vendor/bug" %>
       <script>
           new SpiderController({
