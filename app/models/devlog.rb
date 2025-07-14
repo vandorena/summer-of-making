@@ -94,8 +94,8 @@ class Devlog < ApplicationRecord
         duration_seconds = 0
       end
 
-      Rails.logger.info "\tDevlog #{id} duration_seconds: #{duration_seconds}"
-      update!(duration_seconds: duration_seconds)
+      Rails.logger.info "\tDevlog #{id} seconds coded: #{seconds_coded}, duration_seconds: #{duration_seconds}"
+      update!(seconds_coded: seconds_coded, duration_seconds: duration_seconds, hackatime_pulled_at: Time.now)
     rescue JSON::ParserError => e
       if res.body.strip.start_with?("Gateway") || res.body.strip =~ /gateway/i
         Rails.logger.error "Hackatime API Gateway error for Devlog #{id}: #{res.body}"
