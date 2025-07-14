@@ -20,6 +20,7 @@
 class User::Profile < ApplicationRecord
   belongs_to :user
 
+  validates :bio, length: { maximum: 1000 }, allow_blank: true
   validates :custom_css, length: { maximum: 10_000 }, allow_blank: true
   validate :custom_css_requires_badge
 
