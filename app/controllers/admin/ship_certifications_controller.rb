@@ -15,7 +15,8 @@ module Admin
         .group("ship_certifications.id", "projects.id")
         .select("ship_certifications.*, projects.id as project_id, projects.title, projects.category, projects.certification_type, COALESCE(SUM(devlogs.duration_seconds), 0) as devlogs_seconds_total")
         .includes(:project)
-        .order(updated_at: :asc)
+
+      @vote_counts = User.joins(:votes).where(votes: { status: "active" }).group(:id).count
 
       if @category_filter.present?
         base = base.where(projects: { certification_type: @category_filter })
@@ -33,6 +34,11 @@ module Admin
       else
         @filter = "pending"
         @ship_certifications = base.pending
+      end
+
+      @ship_certifications = @ship_certifications.sort_by do |cert|
+        vote_count = @vote_counts[cert.project.user_id] || 0
+        [ -vote_count, cert.created_at ]
       end
 
       base = ShipCertification.joins(:project).where(projects: { is_deleted: false })

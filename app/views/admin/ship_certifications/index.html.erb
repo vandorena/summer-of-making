@@ -115,6 +115,7 @@
       <th>Certifier</th>
       <th>Created At</th>
       <th>Dev Time</th>
+      <th>User Votes</th>
     </tr>
   </thead>
   <tbody>
@@ -165,6 +166,7 @@
           </div>
         </td>
         <td><%= format_seconds ship_certification.devlogs_seconds_total %></td>
+        <td><%= @vote_counts[ship_certification.project.user_id] || 0 %></td>
       </tr>
     <% end %>
   </tbody>
