@@ -61,19 +61,19 @@ class UserHackatimeData < ApplicationRecord
   def fetch_combined_project_time(project_keys)
     project_keys_string = project_keys.join(",")
     encoded_project_keys = URI.encode_www_form_component(project_keys_string)
-    
+
     # use utc
     start_time = begin
       Time.use_zone("America/New_York") do
         Time.parse("2025-06-16").beginning_of_day
       end
     end.utc
-    
+
     direct_url = "https://hackatime.hackclub.com/api/v1/users/#{user.slack_id}/stats?filter_by_project=#{encoded_project_keys}&start_date=#{start_time.iso8601}&features=projects"
-    
+
     begin
       direct_res = Faraday.get(direct_url, nil, { "RACK_ATTACK_BYPASS" => Rails.application.credentials.hackatime.ratelimit_bypass_header })
-      
+
       if direct_res.success?
         direct_data = JSON.parse(direct_res.body)
         direct_data.dig("data", "total_seconds") || 0
