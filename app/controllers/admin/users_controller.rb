@@ -32,40 +32,6 @@ module Admin
       @hackatime_id = fetch_hackatime(@user.email)
     end
 
-    private
-
-    def fetch_hackatime(email)
-      return nil if email.blank?
-
-      begin
-        headers = {
-          "Authorization" => ENV.fetch("HACKATIME_AUTH_TOKEN"),
-          "RACK_ATTACK_BYPASS" => Rails.application.credentials.hackatime.ratelimit_bypass_header
-        }
-        res = Faraday.get(
-          "https://hackatime.hackclub.com/api/v1/users/lookup_email/#{email}",
-          nil,
-          headers
-        )
-
-        if res.success?
-          data = JSON.parse(res.body)
-          data["user_id"]
-        else
-          Rails.logger.warn("Hackatime lookup failed for #{email}")
-          Honeybadger.notify("Hackatime lookup failed", context: { email: email, status: res.status })
-          nil
-        end
-      rescue JSON::ParserError => e
-        Rails.logger.error("Hackatime JSON parse error")
-        Honeybadger.notify(e, context: { email: email })
-        nil
-      rescue => e
-        Rails.logger.error("Hackatime lookup error")
-        Honeybadger.notify(e, context: { email: email })
-        nil
-      end
-    end
     def internal_notes
       @user.internal_notes = params[:internal_notes]
       @user.create_activity("edit_internal_notes", params: { note: params[:internal_notes] })
@@ -182,6 +148,39 @@ module Admin
     end
 
     private
+
+    def fetch_hackatime(email)
+      return nil if email.blank?
+
+      begin
+        headers = {
+          "Authorization" => ENV.fetch("HACKATIME_AUTH_TOKEN"),
+          "RACK_ATTACK_BYPASS" => Rails.application.credentials.hackatime.ratelimit_bypass_header
+        }
+        res = Faraday.get(
+          "https://hackatime.hackclub.com/api/v1/users/lookup_email/#{email}",
+          nil,
+          headers
+        )
+
+        if res.success?
+          data = JSON.parse(res.body)
+          data["user_id"]
+        else
+          Rails.logger.warn("Hackatime lookup failed for #{email}")
+          Honeybadger.notify("Hackatime lookup failed", context: { email: email, status: res.status })
+          nil
+        end
+      rescue JSON::ParserError => e
+        Rails.logger.error("Hackatime JSON parse error")
+        Honeybadger.notify(e, context: { email: email })
+        nil
+      rescue => e
+        Rails.logger.error("Hackatime lookup error")
+        Honeybadger.notify(e, context: { email: email })
+        nil
+      end
+    end
 
     def set_user
       @user = User.find(params[:id])
