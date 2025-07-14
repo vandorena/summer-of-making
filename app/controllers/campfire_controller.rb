@@ -31,9 +31,9 @@ class CampfireController < ApplicationController
     if @account_status[:hackatime_setup] && @user.user_hackatime_data.present?
       begin
         @hackatime_dashboard = {
-          total_time: @user.user_hackatime_data.total_seconds_across_all_projects,
-          today_time: @user.user_hackatime_data.today_seconds_across_all_projects,
-          has_time_recorded: @user.user_hackatime_data.total_seconds_across_all_projects > 0,
+        total_time: @user.all_time_coding_seconds,
+        today_time: @user.daily_coding_seconds,
+        has_time_recorded: @user.all_time_coding_seconds > 0,
           error: false
         }
       rescue => e
@@ -59,11 +59,11 @@ class CampfireController < ApplicationController
     if current_user.has_hackatime? && current_user.user_hackatime_data.present?
       begin
         dashboard_data = {
-          total_time: current_user.user_hackatime_data.total_seconds_across_all_projects,
-          today_time: current_user.user_hackatime_data.today_seconds_across_all_projects,
-          has_time_recorded: current_user.user_hackatime_data.total_seconds_across_all_projects > 0,
-          total_time_formatted: current_user.format_seconds(current_user.user_hackatime_data.total_seconds_across_all_projects),
-          today_time_formatted: current_user.format_seconds(current_user.user_hackatime_data.today_seconds_across_all_projects),
+        total_time: current_user.all_time_coding_seconds,
+        today_time: current_user.daily_coding_seconds,
+        has_time_recorded: current_user.all_time_coding_seconds > 0,
+        total_time_formatted: current_user.format_seconds(current_user.all_time_coding_seconds),
+        today_time_formatted: current_user.format_seconds(current_user.daily_coding_seconds),
           error: false
         }
       rescue => e
