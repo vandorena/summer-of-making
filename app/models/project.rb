@@ -218,7 +218,9 @@ class Project < ApplicationRecord
   end
 
   def self.globally_locked_hackatime_keys(user_id = nil)
-    query = Devlog.where.not(hackatime_projects_key_snapshot: [])
+    query = Devlog.joins(:project)
+                  .where(projects: { is_deleted: false })
+                  .where.not(hackatime_projects_key_snapshot: [])
     query = query.joins(:user).where(user_id: user_id) if user_id
     query.pluck(:hackatime_projects_key_snapshot)
          .flatten
