@@ -193,13 +193,17 @@ class Project < ApplicationRecord
   def can_post_devlog?(required_seconds = 300)
     return false unless user.has_hackatime? && hackatime_keys.present?
     
-    coding_time >= required_seconds
+    unlogged_time >= required_seconds
   end
 
   def time_needed(required_seconds = 300)
     return required_seconds unless user.has_hackatime?
     
-    [required_seconds - coding_time, 0].max
+    [required_seconds - unlogged_time, 0].max
+  end
+
+  def unlogged_time
+    [coding_time - total_seconds_coded, 0].max
   end
 
   def locked_hackatime_keys
