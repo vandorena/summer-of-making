@@ -49,6 +49,13 @@ class Badge
       icon: "sunglasses.png",
       color: "border-gray-500 bg-gray-500/10 text-gray-800",
       criteria: ->(user) { false } # Badge must be granted manually
+    },
+    spider: {
+      name: "Spider",
+      flavor_text: "this user has a pet!",
+      icon: "🕷️",
+      color: "black",
+      criteria: ->(user) { false } # Badge must be granted manually
     }
   }.freeze
 
