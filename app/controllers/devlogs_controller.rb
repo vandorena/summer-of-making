@@ -59,9 +59,17 @@ class DevlogsController < ApplicationController
         @devlog.recalculate_seconds_coded
       end
 
-      redirect_to @devlog.project, notice: "Devlog was successfully posted."
+      if @devlog.project
+        redirect_to @devlog.project, notice: "Devlog was successfully posted."
+      else
+        redirect_to campfire_path, notice: "Devlog was successfully posted."
+      end
     else
-      redirect_to @devlog.project, alert: "Failed to post devlog."
+      if @devlog.project
+        redirect_to @devlog.project, alert: "Failed to post devlog."
+      else
+        redirect_to campfire_path, alert: "Failed to post devlog."
+      end
     end
   end
 
@@ -69,24 +77,44 @@ class DevlogsController < ApplicationController
     authorize @devlog
     if @devlog.user != current_user
       flash.now[:alert] = "You can only edit your own devlogs."
-      redirect_to @devlog.project, alert: "You can only edit your own devlogs."
+      if @devlog.project
+        redirect_to @devlog.project, alert: "You can only edit your own devlogs."
+      else
+        redirect_to campfire_path, alert: "You can only edit your own devlogs."
+      end
       return
     end
 
     # Only allow editing the text field
     if @devlog.update(devlog_params.slice(:text))
-      redirect_to @devlog.project, notice: "Devlog was successfully edited."
+      if @devlog.project
+        redirect_to @devlog.project, notice: "Devlog was successfully edited."
+      else
+        redirect_to campfire_path, notice: "Devlog was successfully edited."
+      end
     else
-      redirect_to @devlog.project, alert: "Failed to edit devlog."
+      if @devlog.project
+        redirect_to @devlog.project, alert: "Failed to edit devlog."
+      else
+        redirect_to campfire_path, alert: "Failed to edit devlog."
+      end
     end
   end
 
   def destroy
     if @devlog.user == current_user
       @devlog.destroy
-      redirect_to @devlog.project, notice: "Devlog was successfully deleted."
+      if @devlog.project
+        redirect_to @devlog.project, notice: "Devlog was successfully deleted."
+      else
+        redirect_to campfire_path, notice: "Devlog was successfully deleted."
+      end
     else
-      redirect_to @devlog.project, alert: "You can only delete your own devlogs."
+      if @devlog.project
+        redirect_to @devlog.project, alert: "You can only delete your own devlogs."
+      else
+        redirect_to campfire_path, alert: "You can only delete your own devlogs."
+      end
     end
   end
 
@@ -120,7 +148,7 @@ class DevlogsController < ApplicationController
   private
 
   def set_project
-    @project = Project.find(params[:project_id])
+    @project = Project.find(params[:project_id]) if params[:project_id]
   end
 
   def set_devlog
@@ -133,7 +161,7 @@ class DevlogsController < ApplicationController
   end
 
   def check_if_shipped
-    return unless @project.is_shipped?
+    return unless @project&.is_shipped?
 
     redirect_to @project, alert: "This project has been shipped and cannot be modified."
   end

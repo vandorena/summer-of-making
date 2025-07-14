@@ -133,7 +133,7 @@
               <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
                   <strong style="color: var(--color-text);"><%= truncate(devlog.text, length: 60) %></strong><br>
-                  <small style="color: var(--color-muted);">by <%= devlog.user.display_name %> in <%= devlog.project.title %></small>
+                  <small style="color: var(--color-muted);">by <%= devlog.user.display_name %> in <%= devlog.project ? devlog.project.title : 'deleted project' %></small>
                 </div>
                 <span style="background: var(--color-info); color: white; padding: 0.25em 0.5em; border-radius: 1em; font-size: 0.875rem; font-weight: bold;">
                   <%= number_with_delimiter(devlog.views_count) %> views

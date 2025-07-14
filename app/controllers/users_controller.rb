@@ -149,6 +149,7 @@ class UsersController < ApplicationController
 
     Rails.cache.fetch(cache_key, expires_in: 1.hour) do
       # Get user's devlogs and projects with includes
+      # Include devlogs even if project is nil to allow proper handling in view
       devlogs = @user.devlogs.includes(:project, :user, :comments, :likes, :file_attachment)
                             .order(created_at: :desc)
 
@@ -158,7 +159,7 @@ class UsersController < ApplicationController
       # Combine and sort chronologically
       combined_activities = []
 
-      # Add devlogs with type marker
+      # Add devlogs with type marker (including orphaned ones)
       devlogs.each { |devlog| combined_activities << { type: :devlog, item: devlog, created_at: devlog.created_at } }
 
       # Add projects with type marker

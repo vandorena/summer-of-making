@@ -11,9 +11,17 @@ class CommentsController < ApplicationController
 
     if @comment.save
       current_user.update(has_commented: true) unless current_user.has_commented
-      redirect_to @devlog.project, notice: "Comment was successfully created."
+      if @devlog.project
+        redirect_to @devlog.project, notice: "Comment was successfully created."
+      else
+        redirect_to campfire_path, notice: "Comment was successfully created."
+      end
     else
-      redirect_to @devlog.project, alert: "Failed to add comment."
+      if @devlog.project
+        redirect_to @devlog.project, alert: "Failed to add comment."
+      else
+        redirect_to campfire_path, alert: "Failed to add comment."
+      end
     end
   end
 
@@ -21,14 +29,26 @@ class CommentsController < ApplicationController
     @comment = @devlog.comments.find(params[:id])
     authorize @comment
     unless @comment.user == current_user || current_user.is_admin?
-      redirect_to @devlog.project, alert: "You can only delete your own comments."
+      if @devlog.project
+        redirect_to @devlog.project, alert: "You can only delete your own comments."
+      else
+        redirect_to campfire_path, alert: "You can only delete your own comments."
+      end
       return
     end
 
     if @comment.destroy
-      redirect_to @devlog.project, notice: "Comment deleted successfully!"
+      if @devlog.project
+        redirect_to @devlog.project, notice: "Comment deleted successfully!"
+      else
+        redirect_to campfire_path, notice: "Comment deleted successfully!"
+      end
     else
-      redirect_to @devlog.project, alert: "Failed to delete comment."
+      if @devlog.project
+        redirect_to @devlog.project, alert: "Failed to delete comment."
+      else
+        redirect_to campfire_path, alert: "Failed to delete comment."
+      end
     end
   end
 

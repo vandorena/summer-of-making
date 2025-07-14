@@ -8,6 +8,8 @@ class NotifyProjectDevlogJob < ApplicationJob
     return unless devlog
 
     project = devlog.project
+    return unless project # Skip if project is nil
+
     devlog.user
 
     follower_slack_ids = project.project_follows.joins(:user).pluck("users.slack_id").compact
