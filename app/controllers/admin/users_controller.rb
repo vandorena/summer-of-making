@@ -15,6 +15,52 @@ module Admin
     def show
       @activities = @user.activities.order(created_at: :desc).includes(:owner)
       @payouts = @user.payouts.order(created_at: :desc).includes(:payable)
+
+      @user = User.includes(
+        :user_hackatime_data,
+        :tutorial_progress,
+        :projects,
+        :devlogs,
+        :votes,
+        :followed_projects,
+        :staked_projects,
+        :shop_orders,
+        :shop_card_grants,
+        :hackatime_projects
+      ).find(params[:id])
+
+      @hackatime_id = fetch_hackatime(@user.email)
+    end
+
+    private
+
+    def fetch_hackatime(email)
+      return nil if email.blank?
+
+      begin
+        res = Faraday.get(
+          "https://hackatime.hackclub.com/api/v1/users/lookup_email/#{email}",
+          nil,
+          { "Authorization" => ENV.fetch("HACKATIME_AUTH_TOKEN") }
+        )
+
+        if res.success?
+          data = JSON.parse(res.body)
+          data["user_id"]
+        else
+          Rails.logger.warn("Hackatime lookup failed for #{email}")
+          Honeybadger.notify("Hackatime lookup failed", context: { email: email, status: res.status })
+          nil
+        end
+      rescue JSON::ParserError => e
+        Rails.logger.error("Hackatime JSON parse error")
+        Honeybadger.notify(e, context: { email: email })
+        nil
+      rescue => e
+        Rails.logger.error("Hackatime lookup error")
+        Honeybadger.notify(e, context: { email: email })
+        nil
+      end
     end
     def internal_notes
       @user.internal_notes = params[:internal_notes]
