@@ -79,7 +79,7 @@ class VotesController < ApplicationController
     @full_projects_count = Project.joins(:ship_certifications, :devlogs)
                                   .where(ship_certifications: { judgement: :approved })
                                   .group("projects.id")
-                                  .having("SUM(COALESCE(devlogs.seconds_coded, 0)) > ?", 10 * 3600)
+                                  .having("SUM(COALESCE(devlogs.duration_seconds, 0)) > ?", 10 * 3600)
                                   .count
                                   .keys
                                   .size
