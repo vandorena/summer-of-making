@@ -63,6 +63,14 @@ class Badge
       icon: "bong.png",
       color: "border-purple-500 bg-purple-500/10",
       criteria: ->(user) { user.shop_orders.joins(:shop_item).where(shop_item: {type: "ShopItem::SiteActionItem", site_action: 2}).exists? }
+    },
+    preferred_customer: {
+      name: "Preferred Customer",
+      flavor_text: "you'll never know what this does...",
+      icon: "cool.png",
+      full_size_icon: true,
+      color: "border-green-500 bg-green-500/10 text-gray-800",
+      criteria: ->(user) { false }
     }
   }.freeze
 
