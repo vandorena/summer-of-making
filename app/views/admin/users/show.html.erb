@@ -24,14 +24,14 @@
 
 <hr style="margin: 10px 0;">
 <h3>hackatime deets</h3>
-<b>hackatime id:</b> 
+<b>hackatime id:</b>
 <% if @hackatime_id %>
   <%= @hackatime_id %> <%= link_to "timeline", "https://hackatime.hackclub.com/admin/timeline?user_ids=#{@hackatime_id}", target: "_blank" %>
 <% else %>
   <span style="color: #999;">cant find it cuh</span>
 <% end %>
 <br>
-<b>got hackatime?</b> 
+<b>got hackatime?</b>
 <% if @user.has_hackatime? %>
   <span style="color: green; font-weight: bold;">yuh</span>
 <% else %>
@@ -39,14 +39,14 @@
 <% end %>
 <br>
 <% if @user.user_hackatime_data.present? %>
-  <b>total time:</b> 
+  <b>total time:</b>
   <% begin %>
     <%= @user.format_seconds(@user.all_time_coding_seconds) %>
   <% rescue => e %>
     fucky wucky
   <% end %>
   <br>
-  <b>time today:</b> 
+  <b>time today:</b>
   <% begin %>
     <%= @user.format_seconds(@user.daily_coding_seconds) %>
   <% rescue => e %>
@@ -54,7 +54,7 @@
   <% end %>
   <br>
   <b>last updated at:</b> <%= @user.user_hackatime_data.last_updated_at&.strftime("%B %d, %Y at %I:%M %p") || "Never" %><br>
-  <b>hackatime projects:</b> 
+  <b>hackatime projects:</b>
   <% begin %>
     <%= @user.hackatime_projects.count %>
   <% rescue => e %>
@@ -88,7 +88,7 @@
           <% end %>
           <br>
           <small>
-            views: <%= project.views_count %> | 
+            views: <%= project.views_count %> |
             devlogs: <%= project.devlogs_count %>
             <% if project.repo_link.present? %>
               | <%= link_to "Repo", project.repo_link, target: "_blank" %>
@@ -113,7 +113,7 @@
 <h3>google, show me this persons amazon account</h3>
 <b>total orders:</b> <%= @user.shop_orders.count %><br>
 <b>card grants:</b> <%= @user.shop_card_grants.count %><br>
-<b>shop banned?</b> 
+<b>shop banned?</b>
 <% if @user.freeze_shop_activity? %>
   <span style="color: red; font-weight: bold;">lmao yes</span>
 <% else %>
