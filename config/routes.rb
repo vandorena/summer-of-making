@@ -296,11 +296,6 @@ Rails.application.routes.draw do
   get "api/check_user", to: "users#check_user"
   post "api/devlogs", to: "devlogs#api_create"
 
-  # User Hackatime routes
-  post "users/update_hackatime_confirmation", to: "users#update_hackatime_confirmation"
-  post "users/refresh_hackatime", to: "users#refresh_hackatime"
-  post "users/check_hackatime_connection", to: "users#check_hackatime_connection"
-
   resources :ship_event_feedbacks
 
   post "track_view", to: "view_tracking#create"
