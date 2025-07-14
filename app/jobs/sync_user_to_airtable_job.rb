@@ -26,7 +26,7 @@ class SyncUserToAirtableJob < ApplicationJob
         "avatar_url" => user.avatar,
         "has_commented" => user.has_commented,
         "is_admin" => user.is_admin,
-        "hours" => user.hackatime_stat&.total_seconds_across_all_projects&.fdiv(3600),
+        "hours" => user.all_time_coding_seconds&.fdiv(3600),
         "verification_status" => user.verification_status.to_s,
         "created_at" => user.created_at,
         "synced_at" => Time.now,
@@ -42,6 +42,6 @@ class SyncUserToAirtableJob < ApplicationJob
   private
 
   def users_to_sync
-    @users_to_sync ||= User.includes(:hackatime_stat).order("synced_at ASC NULLS FIRST").limit(10)
+    @users_to_sync ||= User.includes(:user_hackatime_data).order("synced_at ASC NULLS FIRST").limit(10)
   end
 end

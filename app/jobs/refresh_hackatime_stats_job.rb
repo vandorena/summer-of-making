@@ -12,7 +12,7 @@ class RefreshHackatimeStatsJob < ApplicationJob
 
     result = JSON.parse(response.body)
 
-    stats = user.hackatime_stat || user.build_hackatime_stat
+    stats = user.user_hackatime_data || user.build_user_hackatime_data
     stats.update(data: result, last_updated_at: Time.current)
   end
 end
