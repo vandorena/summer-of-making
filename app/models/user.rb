@@ -184,6 +184,28 @@ class User < ApplicationRecord
 
     "#{hours}h #{minutes}m"
   end
+  # all time
+  def all_time_coding_seconds
+    user_hackatime_data&.projects&.sum { |p| p[:total_seconds] } || 0
+  end
+
+  # 24 hrs
+  def daily_coding_seconds
+    return 0 unless has_hackatime?
+
+    # get user's tz
+    user_timezone = timezone.present? ? timezone : "UTC"
+    today_start = Time.use_zone(user_timezone) { Time.current.beginning_of_day }
+
+    response = fetch_raw_hackatime_stats(from: today_start)
+    result = JSON.parse(response.body)
+
+    return 0 unless result&.dig("data", "status") == "ok"
+    result.dig("data", "total_seconds") || 0
+  rescue => e
+    Rails.logger.error("Failed to fetch today's hackatime data: #{e.message}")
+    0
+  end
 
   def refresh_hackatime_data
     from = "2025-05-16"
