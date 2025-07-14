@@ -211,13 +211,17 @@ class User < ApplicationRecord
   def fetch_raw_hackatime_stats(from: nil, to: nil)
     Rails.cache.fetch("User.fetch_raw_hackatime_stats/#{id}/#{from}-#{to}/1", expires_in: 5.seconds) do
       if from.present?
-        start_date = Time.parse(from.to_s).freeze
+        start_date = Time.parse(from.to_s).utc.freeze
       else
-        start_date = Time.use_zone("America/New_York") { Time.parse("2025-06-16").beginning_of_day }.freeze
+        start_date = begin
+          Time.use_zone("America/New_York") do
+            Time.parse("2025-06-16").beginning_of_day
+          end
+        end.utc.freeze
       end
 
       if to.present?
-        end_date = Time.parse(to.to_s).freeze
+        end_date = Time.parse(to.to_s).utc.freeze
       end
 
       url = "https://hackatime.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects&start_date=#{start_date}"
