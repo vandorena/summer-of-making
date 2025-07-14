@@ -38,10 +38,10 @@ class DevlogsController < ApplicationController
     end
 
     # check time reqs
-    unless @project.can_post_devlog?
-      seconds_needed = @project.time_needed
+    unless current_user.hackatime_stat.has_enough_time_since_last_update?(@project)
+      seconds_needed = current_user.hackatime_stat.seconds_needed_since_last_update(@project)
       redirect_to project_path(@project),
-                  alert: "You need to spend more time on this project before posting a devlog. #{helpers.format_seconds(seconds_needed)} more needed."
+                  alert: "You need to spend more time on this project before posting a devlog. #{helpers.format_seconds(seconds_needed)} more needed since your last update."
       return
     end
 
@@ -57,6 +57,10 @@ class DevlogsController < ApplicationController
     if @devlog.save
       if @project.hackatime_keys.present?
         @devlog.recalculate_seconds_coded
+
+        # legacy
+        time_since_last = current_user.hackatime_stat.time_since_last_update_for_project(@project)
+        @devlog.update_column(:last_hackatime_time, time_since_last)
       end
 
       redirect_to @devlog.project, notice: "Devlog was successfully posted."

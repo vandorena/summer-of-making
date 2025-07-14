@@ -30,7 +30,7 @@ module Avo
         field :timer_sessions, as: :has_many
         field :stonks, as: :has_many
         field :staked_projects, as: :has_many, through: :stonks
-        field :user_hackatime_data, as: :has_one
+        field :hackatime_stat, as: :has_one
       end
     end
   end
