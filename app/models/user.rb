@@ -207,12 +207,6 @@ class User < ApplicationRecord
     0
   end
 
-  def refresh_hackatime_data
-    from = "2025-05-16"
-    to = Time.zone.today.strftime("%Y-%m-%d")
-    RefreshHackatimeStatsJob.perform_later(id, from: from, to: to)
-  end
-
   # This is a network call. Do you really need to use this?
   def fetch_raw_hackatime_stats(from: nil, to: nil)
     Rails.cache.fetch("User.fetch_raw_hackatime_stats/#{id}/#{from}-#{to}/1", expires_in: 5.seconds) do
@@ -226,7 +220,7 @@ class User < ApplicationRecord
         end_date = Time.parse(to.to_s).freeze
       end
 
-      url = "https://hk048kcko8cw88coc08800oc.hackatime.selfhosted.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects&start_date=#{start_date}"
+      url = "https://hackatime.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects&start_date=#{start_date}"
       url += "&end_date=#{end_date}" if end_date.present?
 
       Faraday.get(url, nil, { "RACK_ATTACK_BYPASS" => Rails.application.credentials.hackatime.ratelimit_bypass_header })
@@ -276,12 +270,6 @@ class User < ApplicationRecord
 
     stats = user_hackatime_data || build_user_hackatime_data
     stats.update(data: result, last_updated_at: Time.current)
-  end
-
-  def project_time_from_hackatime(project_key)
-    data = user_hackatime_data&.data
-    project_stats = data&.dig("data", "projects")&.find { |p| p["name"] == project_key }
-    project_stats&.dig("total_seconds") || 0
   end
 
   def has_hackatime?
