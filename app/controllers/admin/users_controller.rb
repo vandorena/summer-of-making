@@ -38,10 +38,14 @@ module Admin
       return nil if email.blank?
 
       begin
+        headers = {
+          "Authorization" => ENV.fetch("HACKATIME_AUTH_TOKEN"),
+          "RACK_ATTACK_BYPASS" => Rails.application.credentials.hackatime.ratelimit_bypass_header
+        }
         res = Faraday.get(
           "https://hackatime.hackclub.com/api/v1/users/lookup_email/#{email}",
           nil,
-          { "Authorization" => ENV.fetch("HACKATIME_AUTH_TOKEN") }
+          headers
         )
 
         if res.success?
