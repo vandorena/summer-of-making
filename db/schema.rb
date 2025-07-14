@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_14_085834) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_09_163831) do
   create_schema "auth"
   create_schema "extensions"
   create_schema "graphql"
@@ -209,9 +209,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_14_085834) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "last_hackatime_time"
+    t.integer "seconds_coded"
     t.integer "likes_count", default: 0, null: false
     t.integer "comments_count", default: 0, null: false
-    t.integer "seconds_coded"
     t.datetime "hackatime_pulled_at"
     t.integer "views_count", default: 0, null: false
     t.integer "duration_seconds", default: 0, null: false
@@ -268,6 +268,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_14_085834) do
     t.datetime "updated_at", null: false
     t.index ["user_id", "name"], name: "index_hackatime_projects_on_user_id_and_name", unique: true
     t.index ["user_id"], name: "index_hackatime_projects_on_user_id"
+  end
+
+  create_table "hackatime_stats", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.jsonb "data", default: {}
+    t.datetime "last_updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_hackatime_stats_on_user_id"
   end
 
   create_table "likes", force: :cascade do |t|
@@ -387,8 +396,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_14_085834) do
     t.bigint "project_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "shells_earned", default: 0, null: false
-    t.decimal "hours_at_payout", precision: 10, scale: 4, default: "0.0", null: false
     t.index ["project_id"], name: "index_ship_events_on_project_id"
   end
 
@@ -655,15 +662,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_14_085834) do
     t.index ["user_id"], name: "index_tutorial_progresses_on_user_id"
   end
 
-  create_table "user_hackatime_data", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.jsonb "data", default: {}
-    t.datetime "last_updated_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_user_hackatime_data_on_user_id"
-  end
-
   create_table "users", force: :cascade do |t|
     t.string "slack_id"
     t.string "email"
@@ -760,6 +758,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_14_085834) do
   add_foreign_key "devlogs", "users"
   add_foreign_key "fraud_reports", "users"
   add_foreign_key "hackatime_projects", "users"
+  add_foreign_key "hackatime_stats", "users"
   add_foreign_key "likes", "users"
   add_foreign_key "magic_links", "users"
   add_foreign_key "project_follows", "projects"
@@ -790,7 +789,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_14_085834) do
   add_foreign_key "timer_sessions", "projects"
   add_foreign_key "timer_sessions", "users"
   add_foreign_key "tutorial_progresses", "users"
-  add_foreign_key "user_hackatime_data", "users"
   add_foreign_key "view_events", "users"
   add_foreign_key "vote_changes", "projects"
   add_foreign_key "vote_changes", "votes"

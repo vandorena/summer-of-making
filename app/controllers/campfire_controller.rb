@@ -28,12 +28,12 @@ class CampfireController < ApplicationController
     @tutorial_progress = get_tutorial_progress
 
     # Hackatime dashboard data
-    if @account_status[:hackatime_setup] && @user.user_hackatime_data.present?
+    if @account_status[:hackatime_setup] && @user.hackatime_stat.present?
       begin
         @hackatime_dashboard = {
-        total_time: @user.all_time_coding_seconds,
-        today_time: @user.daily_coding_seconds,
-        has_time_recorded: @user.all_time_coding_seconds > 0,
+          total_time: @user.hackatime_stat.total_seconds_across_all_projects,
+          today_time: @user.hackatime_stat.today_seconds_across_all_projects,
+          has_time_recorded: @user.hackatime_stat.total_seconds_across_all_projects > 0,
           error: false
         }
       rescue => e
@@ -56,14 +56,14 @@ class CampfireController < ApplicationController
   def hackatime_status
     # Build dashboard data if hackatime is set up
     dashboard_data = nil
-    if current_user.has_hackatime? && current_user.user_hackatime_data.present?
+    if current_user.has_hackatime? && current_user.hackatime_stat.present?
       begin
         dashboard_data = {
-        total_time: current_user.all_time_coding_seconds,
-        today_time: current_user.daily_coding_seconds,
-        has_time_recorded: current_user.all_time_coding_seconds > 0,
-        total_time_formatted: current_user.format_seconds(current_user.all_time_coding_seconds),
-        today_time_formatted: current_user.format_seconds(current_user.daily_coding_seconds),
+          total_time: current_user.hackatime_stat.total_seconds_across_all_projects,
+          today_time: current_user.hackatime_stat.today_seconds_across_all_projects,
+          has_time_recorded: current_user.hackatime_stat.total_seconds_across_all_projects > 0,
+          total_time_formatted: current_user.format_seconds(current_user.hackatime_stat.total_seconds_across_all_projects),
+          today_time_formatted: current_user.format_seconds(current_user.hackatime_stat.today_seconds_across_all_projects),
           error: false
         }
       rescue => e

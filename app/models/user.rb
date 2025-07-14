@@ -42,7 +42,7 @@ class User < ApplicationRecord
   has_many :staked_projects, through: :stonks, source: :project
   has_many :ship_events, through: :projects
   has_many :payouts
-  has_one :user_hackatime_data, dependent: :destroy
+  has_one :hackatime_stat, dependent: :destroy
   has_one :tutorial_progress, dependent: :destroy
   has_one :magic_link, dependent: :destroy
   has_many :shop_orders
@@ -148,7 +148,7 @@ class User < ApplicationRecord
     user.has_hackatime = true
     user.save!
 
-    stats = user.user_hackatime_data || user.build_user_hackatime_data
+    stats = user.hackatime_stat || user.build_hackatime_stat
     stats.update(data: result, last_updated_at: Time.current)
   end
 
@@ -173,7 +173,7 @@ class User < ApplicationRecord
   end
 
   def hackatime_projects
-    user_hackatime_data&.projects || []
+    hackatime_stat&.projects || []
   end
 
   def format_seconds(seconds)
@@ -184,47 +184,27 @@ class User < ApplicationRecord
 
     "#{hours}h #{minutes}m"
   end
-  # all time
-  def all_time_coding_seconds
-    user_hackatime_data&.projects&.sum { |p| p[:total_seconds] } || 0
-  end
 
-  # 24 hrs
-  def daily_coding_seconds
-    return 0 unless has_hackatime?
-
-    # get user's tz
-    user_timezone = timezone.present? ? timezone : "UTC"
-    today_start = Time.use_zone(user_timezone) { Time.current.beginning_of_day }
-
-    response = fetch_raw_hackatime_stats(from: today_start)
-    result = JSON.parse(response.body)
-
-    return 0 unless result&.dig("data", "status") == "ok"
-    result.dig("data", "total_seconds") || 0
-  rescue => e
-    Rails.logger.error("Failed to fetch today's hackatime data: #{e.message}")
-    0
+  def refresh_hackatime_data
+    from = "2025-05-16"
+    to = Time.zone.today.strftime("%Y-%m-%d")
+    RefreshHackatimeStatsJob.perform_later(id, from: from, to: to)
   end
 
   # This is a network call. Do you really need to use this?
   def fetch_raw_hackatime_stats(from: nil, to: nil)
     Rails.cache.fetch("User.fetch_raw_hackatime_stats/#{id}/#{from}-#{to}/1", expires_in: 5.seconds) do
       if from.present?
-        start_date = Time.parse(from.to_s).utc.freeze
+        start_date = Time.parse(from.to_s).freeze
       else
-        start_date = begin
-          Time.use_zone("America/New_York") do
-            Time.parse("2025-06-16").beginning_of_day
-          end
-        end.utc.freeze
+        start_date = Time.use_zone("America/New_York") { Time.parse("2025-06-16").beginning_of_day }.freeze
       end
 
       if to.present?
-        end_date = Time.parse(to.to_s).utc.freeze
+        end_date = Time.parse(to.to_s).freeze
       end
 
-      url = "https://hackatime.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects&start_date=#{start_date}"
+      url = "https://hk048kcko8cw88coc08800oc.hackatime.selfhosted.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects&start_date=#{start_date}"
       url += "&end_date=#{end_date}" if end_date.present?
 
       Faraday.get(url, nil, { "RACK_ATTACK_BYPASS" => Rails.application.credentials.hackatime.ratelimit_bypass_header })
@@ -272,8 +252,14 @@ class User < ApplicationRecord
       record_timestamps: true
     )
 
-    stats = user_hackatime_data || build_user_hackatime_data
+    stats = hackatime_stat || build_hackatime_stat
     stats.update(data: result, last_updated_at: Time.current)
+  end
+
+  def project_time_from_hackatime(project_key)
+    data = hackatime_stat&.data
+    project_stats = data&.dig("data", "projects")&.find { |p| p["name"] == project_key }
+    project_stats&.dig("total_seconds") || 0
   end
 
   def has_hackatime?

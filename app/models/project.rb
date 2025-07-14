@@ -184,28 +184,6 @@ class Project < ApplicationRecord
     hackatime_project_keys || []
   end
 
-  def coding_time
-    return 0 unless user.has_hackatime? && hackatime_keys.present?
-
-    user.user_hackatime_data&.total_seconds_for_project(self) || 0
-  end
-
-  def can_post_devlog?(required_seconds = 300)
-    return false unless user.has_hackatime? && hackatime_keys.present?
-
-    unlogged_time >= required_seconds
-  end
-
-  def time_needed(required_seconds = 300)
-    return required_seconds unless user.has_hackatime?
-
-    [ required_seconds - unlogged_time, 0 ].max
-  end
-
-  def unlogged_time
-    [ coding_time - total_seconds_coded, 0 ].max
-  end
-
   def locked_hackatime_keys
     return [] unless persisted?
 
