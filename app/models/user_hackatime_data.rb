@@ -2,7 +2,7 @@
 
 # == Schema Information
 #
-# Table name: hackatime_stats
+# Table name: user_hackatime_data
 #
 #  id              :bigint           not null, primary key
 #  data            :jsonb
@@ -13,13 +13,13 @@
 #
 # Indexes
 #
-#  index_hackatime_stats_on_user_id  (user_id)
+#  index_user_hackatime_data_on_user_id  (user_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (user_id => users.id)
 #
-class HackatimeStat < ApplicationRecord
+class UserHackatimeData < ApplicationRecord
   belongs_to :user
 
   def total_seconds_for_project(project)

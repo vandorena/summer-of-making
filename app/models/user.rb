@@ -42,7 +42,7 @@ class User < ApplicationRecord
   has_many :staked_projects, through: :stonks, source: :project
   has_many :ship_events, through: :projects
   has_many :payouts
-  has_one :hackatime_stat, dependent: :destroy
+  has_one :user_hackatime_data, dependent: :destroy
   has_one :tutorial_progress, dependent: :destroy
   has_one :magic_link, dependent: :destroy
   has_many :shop_orders
@@ -148,7 +148,7 @@ class User < ApplicationRecord
     user.has_hackatime = true
     user.save!
 
-    stats = user.hackatime_stat || user.build_hackatime_stat
+    stats = user.user_hackatime_data || user.build_user_hackatime_data
     stats.update(data: result, last_updated_at: Time.current)
   end
 
@@ -173,7 +173,7 @@ class User < ApplicationRecord
   end
 
   def hackatime_projects
-    hackatime_stat&.projects || []
+    user_hackatime_data&.projects || []
   end
 
   def format_seconds(seconds)
@@ -252,12 +252,12 @@ class User < ApplicationRecord
       record_timestamps: true
     )
 
-    stats = hackatime_stat || build_hackatime_stat
+    stats = user_hackatime_data || build_user_hackatime_data
     stats.update(data: result, last_updated_at: Time.current)
   end
 
   def project_time_from_hackatime(project_key)
-    data = hackatime_stat&.data
+    data = user_hackatime_data&.data
     project_stats = data&.dig("data", "projects")&.find { |p| p["name"] == project_key }
     project_stats&.dig("total_seconds") || 0
   end

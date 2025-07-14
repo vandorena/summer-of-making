@@ -42,8 +42,8 @@ namespace :export do
           begin
             # Calculate total hours from hackatime
             total_hours = 0
-            if user.hackatime_stat&.total_seconds_across_all_projects
-              total_hours = (user.hackatime_stat.total_seconds_across_all_projects / 3600.0).round(2)
+            if user.user_hackatime_data&.total_seconds_across_all_projects
+              total_hours = (user.user_hackatime_data.total_seconds_across_all_projects / 3600.0).round(2)
             end
 
             # Get verification status safely

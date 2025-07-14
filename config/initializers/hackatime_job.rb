@@ -2,6 +2,6 @@
 
 Rails.application.config.after_initialize do
   if defined?(Rails::Server) && Rails.env.production?
-    HackatimeStatRefreshJob.perform_later
+    UserHackatimeDataRefreshJob.perform_later
   end
 end
