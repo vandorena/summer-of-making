@@ -47,9 +47,9 @@
       <div class="text-sm text-gray-600">
         <span class="font-medium"><%= @devlog.comments_count %></span> comments
       </div>
-      <% if @devlog.seconds_coded %>
+      <% if @devlog.duration_seconds && @devlog.duration_seconds > 0 %>
         <div class="text-sm text-gray-600">
-          <span class="font-medium"><%= ActionController::Base.helpers.format_seconds(@devlog.seconds_coded) %></span> coded
+          <span class="font-medium"><%= ActionController::Base.helpers.format_seconds(@devlog.duration_seconds) %></span> coded
         </div>
       <% end %>
     </div>
