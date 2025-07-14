@@ -6,7 +6,7 @@
     <span class="pill pill-<%= case @filter
       when 'pending' then 'yellow'
       when 'approved' then 'green'
-      when 'rejected' then 'blue'
+      when 'rejected' then 'red'
       when 'all' then 'dark'
       else 'gray'
     end %>" style="font-size: 0.6em; margin-left: 0.5rem;">
@@ -28,7 +28,7 @@
     <h3>The Stats</h3>
     <p><strong>Total Judged:</strong> <span class="pill pill-dark"><%= @total_approved + @total_rejected %></span></p>
     <p><strong>Approved:</strong> <span class="pill pill-green"><%= @total_approved %></span></p>
-    <p><strong>Rejected:</strong> <span class="pill pill-blue"><%= @total_rejected %></span></p>
+    <p><strong>Rejected:</strong> <span class="pill pill-red"><%= @total_rejected %></span></p>
     <p><strong>Pending:</strong> <span class="pill pill-yellow"><%= @total_pending %></span></p>
     <% if @total_approved + @total_rejected > 0 %>
       <p><strong>Presidential Approval Rate:</strong> <span style="font-weight: bold;"><%= ((@total_approved.to_f / (@total_approved + @total_rejected)) * 100).round(1) %>%</span></p>
@@ -97,7 +97,7 @@
     <%= link_to admin_ship_certifications_path(filter: 'approved', category_filter: @category_filter), class: "pill #{@filter == 'approved' ? 'pill-green' : 'pill-gray'}", style: "text-decoration: none; padding: 0.5rem 1rem;" do %>
       Approved (<%= @total_approved %>)
     <% end %>
-    <%= link_to admin_ship_certifications_path(filter: 'rejected', category_filter: @category_filter), class: "pill #{@filter == 'rejected' ? 'pill-blue' : 'pill-gray'}", style: "text-decoration: none; padding: 0.5rem 1rem;" do %>
+    <%= link_to admin_ship_certifications_path(filter: 'rejected', category_filter: @category_filter), class: "pill #{@filter == 'rejected' ? 'pill-red' : 'pill-gray'}", style: "text-decoration: none; padding: 0.5rem 1rem;" do %>
       Rejected (<%= @total_rejected %>)
     <% end %>
     <%= link_to admin_ship_certifications_path(filter: 'all', category_filter: @category_filter), class: "pill #{@filter == 'all' ? 'pill-dark' : 'pill-gray'}", style: "text-decoration: none; padding: 0.5rem 1rem;" do %>
@@ -143,7 +143,7 @@
           <% when 'approved' %>
             <span class="pill pill-green">Approved</span>
           <% when 'rejected' %>
-            <span class="pill pill-blue">Rejected</span>
+            <span class="pill pill-red">Rejected</span>
           <% else %>
             <span class="pill pill-yellow">Pending</span>
           <% end %>
