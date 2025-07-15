@@ -1,13 +1,7 @@
 <%# Achievement-style badge - bigger and more square %>
-<div class="inline-flex items-center justify-center w-12 h-12 border-2 <%= badge[:color] %> font-bold text-xl cursor-help transition-all duration-200 hover:scale-110 hover:shadow-lg relative group">
+<div class="inline-flex items-center justify-center border-2 <%= badge[:color] %> font-bold text-xl cursor-help transition-all duration-200 hover:scale-110 hover:shadow-lg relative group">
   <% if badge[:icon].include?('.') %>
-  <% if badge[:full_size_icon] %>
     <%= image_tag(badge[:icon], width: "48px", height: "48px", class: "object-contain") %>
-  <% else %>
-    <%= image_tag(badge[:icon], width: "24px", height: "24px", class: "object-contain") %>
-  <% end %>
-  <% else %>
-    <span><%= badge[:icon] %></span>
   <% end %>
 
   <!-- Tooltip on hover -->

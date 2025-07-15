@@ -14,6 +14,14 @@ class Badge
       color: "border-blue-500 bg-blue-500/10 text-blue-800",
       criteria: ->(user) { false }
     },
+    gold_verified: {
+      name: "Gold Verified",
+      flavor_text: "this user is REALLY verified (i.e. gave us $32)",
+      icon: "gold_verified.png",
+      color: "border-yellow-500 bg-yellow-500/10 text-yellow-800",
+      is_svg: true,
+      criteria: ->(user) { false }
+    },
     maiden_voyage: {
       name: "Maiden Voyage",
       flavor_text: "you shipped your first project! the journey begins...",
@@ -142,6 +150,8 @@ class Badge
         "🔨 *ADMIN BADGE AWARDED*\n\nYou've been granted the admin badge on Summer of Making. #{badge_definition[:flavor_text]}\n\nCheck out your badge on your profile: #{profile_url(user)}"
       when :verified
         "✅ *VERIFIED BADGE AWARDED*\n\nYou've been awarded the verified badge on Summer of Making. #{badge_definition[:flavor_text]}\n\nYour badge is now visible on your profile: #{profile_url(user)}"
+      when :gold_verified
+        "🏆 *GOLD VERIFIED BADGE AWARDED*\n\nYou've been awarded the gold verified badge on Summer of Making. #{badge_definition[:flavor_text]}\n\nYour shiny new badge is now on your profile: #{profile_url(user)}"
       when :maiden_voyage
         "🚢 *MAIDEN VOYAGE BADGE AWARDED*\n\nYou've been awarded the maiden voyage badge for shipping your first project - #{badge_definition[:flavor_text]}\n\nSee your badge here: #{profile_url(user)}"
       else
@@ -153,6 +163,8 @@ class Badge
         "🔨 *ADMIN BADGE EARNED!*\n\nCongratulations! You've been granted admin powers on Summer of Making. #{badge_definition[:flavor_text]}\n\nCheck out your new badge on your profile: #{profile_url(user)}"
       when :verified
         "✅ *VERIFIED BADGE PURCHASED!*\n\nNice! You're now verified on Summer of Making. #{badge_definition[:flavor_text]}\n\nYour shiny new badge is waiting on your profile: #{profile_url(user)}"
+      when :gold_verified
+        "🏆 *GOLD VERIFIED BADGE PURCHASED!*\n\nWow! You've gone gold on Summer of Making. #{badge_definition[:flavor_text]}\n\nYour ultra premium badge is now shown proudly on your profile: #{profile_url(user)}"
       when :maiden_voyage
         "🚢 *MAIDEN VOYAGE BADGE EARNED!*\n\nAhoy! You've shipped your first project - #{badge_definition[:flavor_text]}\n\nSee your achievement badge here: #{profile_url(user)}"
       else
