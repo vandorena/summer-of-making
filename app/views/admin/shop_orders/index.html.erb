@@ -1,18 +1,116 @@
-<h1><%= local_assigns[:title] %>shopped orders:</h1>
+<%= stylesheet_link_tag 'admin_dashboard' %>
+<h1 style="color: var(--color-primary); margin-bottom: 1.5em;"><%= local_assigns[:title] %>shopped orders:</h1>
 
-<% if params[:show_free_stickers] %>
-  <%= link_to "oh god please make the free stickers stop", {show_free_stickers: nil} %>
-<% else %>
-  <%= link_to "show me the free stickers ones too", {show_free_stickers: true} %>
-<% end %>
-
-<ul>
-  <% @shop_orders.each do |order| %>
-    <li>
-      #<%= order.id %>: <%= link_to order.full_name, admin_shop_order_path(order) %>
-    </li>
+<div style="margin-bottom: 2em;">
+  <% if params[:show_free_stickers] %>
+    <%= link_to "oh god please make the free stickers stop", {show_free_stickers: nil}, class: 'abtn secondary small' %>
+  <% else %>
+    <%= link_to "show me the free stickers ones too", {show_free_stickers: true}, class: 'abtn primary small' %>
   <% end %>
-</ul>
+</div>
+
+<table class="atable">
+  <thead>
+    <tr>
+      <th>order id</th>
+      <th>user</th>
+      <th>item</th>
+      <th>shells</th>
+      <th>qty</th>
+      <th>status</th>
+      <th>details</th>
+      <th>address</th>
+      <th>created</th>
+      <th>actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @shop_orders.each do |order| %>
+      <% addy = order.frozen_address || {} %>
+      <tr>
+        <td>
+          <%= order.id %>
+        </td>
+        <td>
+          <%= link_to order.user.display_name || "Unknown", admin_user_path(order.user) %><br>
+          <small style="color: var(--color-muted);"><%= order.user.email %></small>
+        </td>
+        <td>
+          <%= order.shop_item.name %><br>
+          <small style="color: var(--color-muted);"><%= order.shop_item.type&.demodulize %></small>
+        </td>
+        <td>
+          <%= number_with_precision(order.frozen_item_price, precision: 0) %>
+        </td>
+        <td>
+          <%= order.quantity %>
+        </td>
+        <td>
+          <% case order.aasm_state %>
+          <% when 'pending' %>
+            <span class="pill pill-yellow">pending</span>
+          <% when 'awaiting_periodical_fulfillment' %>
+            <span class="pill pill-blue">awaiting fulfillment</span>
+          <% when 'fulfilled' %>
+            <span class="pill pill-green">fulfilled</span>
+          <% when 'rejected' %>
+            <span class="pill pill-red">rejected</span>
+          <% when 'on_hold' %>
+            <span class="pill pill-gray">on hold</span>
+          <% when 'in_verification_limbo' %>
+            <span class="pill pill-dark">verification limbo</span>
+          <% else %>
+            <span class="pill"><%= order.aasm_state.humanize %></span>
+          <% end %>
+        </td>
+        <td>
+          <% if order.external_ref.present? %>
+            <strong>ref:</strong> <%= order.external_ref %><br>
+          <% end %>
+          <% if order.fulfilled_by.present? %>
+            <strong>by:</strong> <%= order.fulfilled_by %><br>
+          <% end %>
+          <% if order.fulfillment_cost.present? && order.fulfillment_cost > 0 %>
+            <strong>cost:</strong> $<%= number_with_precision(order.fulfillment_cost, precision: 2) %><br>
+          <% end %>
+          <% if order.rejection_reason.present? %>
+            <strong>rejection:</strong> <%= truncate(order.rejection_reason, length: 30) %><br>
+          <% end %>
+          <% if order.internal_notes.present? %>
+            <strong>notes:</strong> <%= truncate(order.internal_notes, length: 30) %><br>
+          <% end %>
+          <% if order.fulfilled_at.present? %>
+            <small style="color: var(--color-muted);">fulfilled: <%= time_ago_in_words(order.fulfilled_at) %> ago</small>
+          <% elsif order.rejected_at.present? %>
+            <small style="color: var(--color-muted);">rejected: <%= time_ago_in_words(order.rejected_at) %> ago</small>
+          <% elsif order.awaiting_periodical_fulfillment_at.present? %>
+            <small style="color: var(--color-muted);">queued: <%= time_ago_in_words(order.awaiting_periodical_fulfillment_at) %> ago</small>
+          <% elsif order.on_hold_at.present? %>
+            <small style="color: var(--color-muted);">on hold: <%= time_ago_in_words(order.on_hold_at) %> ago</small>
+          <% end %>
+        </td>
+        <td>
+          <% if addy.present? %>
+            <%= addy["first_name"] %> <%= addy["last_name"] %><br>
+            <small style="color: var(--color-muted);">
+              <%= addy["city"] %>, <%= addy["state"] %><br>
+              <%= addy["country"] %>
+            </small>
+          <% else %>
+            <em style="color: var(--color-muted);">nuthing...</em>
+          <% end %>
+        </td>
+        <td>
+          <%= order.created_at.strftime("%m/%d/%y") %><br>
+          <small style="color: var(--color-muted);"><%= order.created_at.strftime("%l:%M %p") %></small>
+        </td>
+        <td>
+          <%= link_to "do shit", admin_shop_order_path(order), class: 'abtn secondary', style: 'padding: 0.3em 0.8em; font-size: 0.95em;' %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
 
 <%== pagy_nav(@pagy) %> <br>
 <%== pagy_info(@pagy) %> <br>
