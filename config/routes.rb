@@ -348,6 +348,12 @@ Rails.application.routes.draw do
       end
     end
     resources :shop_items
+    resources :projects, only: [] do
+      member do
+        delete :destroy
+        patch :restore
+      end
+    end
     resources :shop_orders do
       collection do
         get :pending

@@ -35,6 +35,8 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class Project < ApplicationRecord
+  include PublicActivity::Model
+
   belongs_to :user
   has_many :devlogs
   has_many :project_follows
