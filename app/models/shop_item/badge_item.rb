@@ -46,12 +46,38 @@ class ShopItem::BadgeItem < ShopItem
   validates :internal_description, presence: true,
             format: { with: /\A[a-z_]+\z/, message: "must be a valid badge key (lowercase letters and underscores only)" }
 
+  def can_purchase?(user)
+    badge_key = internal_description.to_sym
+    return false if user.has_badge?(badge_key)
+    if badge_key == :gold_verified && !user.has_badge?(:verified)
+      return false
+    end
+
+    true
+  end
+
+  def prereq(user)
+    badge_key = internal_description.to_sym
+
+    if badge_key == :gold_verified && !user.has_badge?(:verified)
+      "You have to get verified first!"
+    elsif user.has_badge?(badge_key)
+      "You already own this!"
+    else
+      nil
+    end
+  end
+
   def fulfill!(shop_order)
     badge_key = internal_description.to_sym
 
     # Verify the badge exists
     unless Badge.exists?(badge_key)
       raise "Badge '#{badge_key}' does not exist"
+    end
+
+    if badge_key == :gold_verified && !shop_order.user.has_badge?(:verified)
+      raise "User must have the verified badge before purchasing the gold verified badge"
     end
 
     # Check if user already has this badge

@@ -53,6 +53,7 @@ class ShopOrder < ApplicationRecord
   validate :check_black_market_access
   validate :check_user_balance, on: :create
   validate :check_regional_availability
+  validate :check_badge
   after_create :create_negative_payout
   before_create :set_initial_state_for_free_stickers
 
@@ -252,5 +253,14 @@ class ShopOrder < ApplicationRecord
       payable: self,
       reason: "Refund for rejected order of #{shop_item.name.pluralize(quantity)}"
     )
+  end
+
+  def check_badge
+    return unless shop_item.is_a?(ShopItem::BadgeItem)
+
+    unless shop_item.can_purchase?(user)
+      message = shop_item.prereq(user)
+      errors.add(:base, message) if message
+    end
   end
 end
