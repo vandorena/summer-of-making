@@ -339,6 +339,14 @@ class User < ApplicationRecord
     has_badge?(:verified)
   end
 
+  def gold_check?
+    has_badge?(:gold_verified)
+  end
+
+  def verified_check?
+    blue_check? || gold_check?
+  end
+
   def neon_flair?
     !!shenanigans_state["neon_flair"]
   end

@@ -2,7 +2,8 @@
   <% ineligible = current_verification_status == :ineligible %>
   <% out_of_stock = item.out_of_stock? %>
   <% regional_price = (@regionalization_enabled && @selected_region) ? item.price_for_region(@selected_region) : item.ticket_cost %>
-  <% disabled = ineligible || (!current_user.ysws_verified? && !item.is_a?(ShopItem::FreeStickers)) || (current_user.balance < regional_price) || out_of_stock %>
+  <% badge_prerequisite_failed = item.is_a?(ShopItem::BadgeItem) && !item.can_purchase?(current_user) %>
+  <% disabled = ineligible || (!current_user.ysws_verified? && !item.is_a?(ShopItem::FreeStickers)) || (current_user.balance < regional_price) || out_of_stock || badge_prerequisite_failed %>
 <% else %>
   <% regional_price = (@regionalization_enabled && @selected_region) ? item.price_for_region(@selected_region) : item.ticket_cost %>
 <% end %>
@@ -61,11 +62,15 @@
       <% if already_ordered %>
         <%= button_to "Already Ordered", "#", method: :get, disabled: true, class: "w-full px-4 sm:px-6 py-2 sm:py-3 bg-forest text-white text-base sm:text-lg 2xl:text-xl btn-pixel disabled:opacity-40 disabled:cursor-not-allowed block text-center" %>
       <% else %>
-        <%= button_to order_shop_item_path(item), method: :get, data: { turbo: false }, class: "w-full px-4 sm:px-6 py-2 sm:py-3 bg-forest hover:scale-[1.02] text-white transition-transform duration-300 text-base sm:text-lg 2xl:text-xl btn-pixel disabled:opacity-40 disabled:cursor-not-allowed block text-center cursor-pointer", disabled: do %>
+        <%= button_to order_shop_item_path(item), method: :get, data: { turbo: false }, class: "w-full px-4 sm:px-6 py-2 sm:py-3 bg-forest hover:scale-[1.02] text-white transition-transform duration-300 text-base sm:text-lg 2xl:text-xl btn-pixel disabled:opacity-40 disabled:cursor-not-allowed block text-center cursor-pointer", disabled: disabled do %>
           <% if out_of_stock %>
             <span>Out of Stock</span>
           <% elsif ineligible %>
             <span>Not for you!</span>
+          <% elsif item.is_a?(ShopItem::BadgeItem) && !item.can_purchase?(current_user) %>
+            <span>
+              <%= item.prereq(current_user) %>
+            </span>
           <% elsif !current_user.ysws_verified? && !item.is_a?(ShopItem::FreeStickers) %>
             <span>
               You need your ID verified for this

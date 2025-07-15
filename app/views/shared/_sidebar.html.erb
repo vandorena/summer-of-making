@@ -102,7 +102,7 @@
             class: user_is_banned ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
           } %>
         </li>
-        <% if current_user&.blue_check? %>
+        <% if current_user&.verified_check? %>
         <li class="flex justify-start">
             <%= render partial: "shared/link", locals: {
               target: gork_path,
