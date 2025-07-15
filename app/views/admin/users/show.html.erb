@@ -1,191 +1,313 @@
-<h1>User #<%= @user.id %>, <%= @user.display_name %></h1>
-<%= render @user %> <br>
-<b>Total fulfillment cost: </b> <%= number_to_currency(@user.shop_orders.sum(:fulfillment_cost) || 0) %> <br>
-<b>IDV ID:</b> <%= @user.identity_vault_id || "None" %> <%= link_to "visit", "#{IdentityVaultService.host}backend/identities/#{@user.identity_vault_id}" if @user.identity_vault_id.present? %><br>
-<b>Slack ID:</b> <%= (link_to @user.slack_id, "https://hackclub.slack.com/team/#{@user.slack_id}") || "None?!" %> <br>
-<b>Email:</b> <%= (link_to @user.email, "mailto:#{@user.email}") || "None" %><br>
-<b>timezone:</b> <%= @user.timezone || "None" %><br>
-<b>joined:</b> <%= @user.created_at.strftime("%B %d, %Y at %I:%M %p") %><br>
-<b>last update:</b> <%= @user.updated_at.strftime("%B %d, %Y at %I:%M %p") %><br>
-<b>Ship Certifier:</b>
-<% if @user.ship_certifier? %>
-  <span style="color: green; font-weight: bold;">✓ Yes</span>
-<% else %>
-  <span style="color: #666;">✗ No</span>
-<% end %>
-<br>
-<b>banned:</b>
-<% if @user.is_banned? %>
-  <span style="color: red; font-weight: bold;">yurp</span>
-<% else %>
-  <span style="color: green; font-weight: bold;">nah</span>
-<% end %>
-<br>
+<%= stylesheet_link_tag 'admin_dashboard' %>
+<h1 style="color: var(--color-primary); margin-bottom: 1.5em;">
+  User #<%= @user.id %>, <% if @user.is_admin? %>⚡<% end %><%= @user.display_name %>
+</h1>
 
-<hr style="margin: 10px 0;">
-<h3>hackatime deets</h3>
-<b>hackatime id:</b>
-<% if @hackatime_id %>
-  <%= @hackatime_id %> <%= link_to "timeline", "https://hackatime.hackclub.com/admin/timeline?user_ids=#{@hackatime_id}", target: "_blank" %>
-<% else %>
-  <span style="color: #999;">cant find it cuh</span>
-<% end %>
-<br>
-<b>got hackatime?</b>
-<% if @user.has_hackatime? %>
-  <span style="color: green; font-weight: bold;">yuh</span>
-<% else %>
-  <span style="color: red;">nope</span>
-<% end %>
-<br>
-<% if @user.user_hackatime_data.present? %>
-  <b>total time:</b>
-  <% begin %>
-    <%= @user.format_seconds(@user.all_time_coding_seconds) %>
-  <% rescue => e %>
-    fucky wucky
-  <% end %>
-  <br>
-  <b>time today:</b>
-  <% begin %>
-    <%= @user.format_seconds(@user.daily_coding_seconds) %>
-  <% rescue => e %>
-    fucky wucky
-  <% end %>
-  <br>
-  <b>last updated at:</b> <%= @user.user_hackatime_data.last_updated_at&.strftime("%B %d, %Y at %I:%M %p") || "Never" %><br>
-  <b>hackatime projects:</b>
-  <% begin %>
-    <%= @user.hackatime_projects.count %>
-  <% rescue => e %>
-    fucky wucky
-  <% end %>
-  <br>
-<% else %>
-  <em>we got nuthin lil bro</em><br>
-<% end %>
+<div class="asecs">
+  <div class="asec" style="padding: 1.5em;">
+    <h2>basic info</h2>
+    <%= render @user %>
 
-<hr style="margin: 10px 0;">
-<h3>what they making?</h3>
-<b>total:</b> <%= @user.projects.count %><br>
-<b>used AI:</b> <%= @user.projects.where(used_ai: true).count %><br>
-<% if @user.projects.any? %>
-  <details style="margin-top: 10px;">
-    <summary><b>show me the goods</b></summary>
-    <ul style="margin-top: 10px;">
-      <% @user.projects.order(created_at: :desc).each do |project| %>
-        <li>
-            <strong>
-            <%= link_to "#{project.title} (#{project.id})", "https://summer.hackclub.com/projects/#{project.id}", target: "_blank" %>
-            </strong>
-          (<%= project.certification_type || "No certification type" %>)
-          - created: <%= project.created_at.strftime("%m/%d/%Y") %>
-          <% if project.is_shipped? %>
-            <span style="color: green;">shipped</span>
+    <div class="agrid" style="margin-top: 1em;">
+      <div>
+        <strong>IDV ID:</strong><br>
+        <%= @user.identity_vault_id || "None" %>
+        <% if @user.identity_vault_id.present? %>
+          <%= link_to "IDV Backend", "#{IdentityVaultService.host}backend/identities/#{@user.identity_vault_id}", style: "color: var(--color-primary);" %>
+        <% end %>
+      </div>
+
+      <div>
+        <strong>Slack ID:</strong><br>
+        <% if @user.slack_id.present? %>
+          <%= link_to @user.slack_id, "https://hackclub.slack.com/team/#{@user.slack_id}", style: "color: var(--color-primary);" %>
+        <% else %>
+          <span style="color: var(--color-muted);">None?!</span>
+        <% end %>
+      </div>
+
+      <div>
+        <strong>Email:</strong><br>
+        <% if @user.email.present? %>
+          <%= link_to @user.email, "mailto:#{@user.email}", style: "color: var(--color-primary);" %>
+        <% else %>
+          <span style="color: var(--color-muted);">None</span>
+        <% end %>
+      </div>
+
+      <div>
+        <strong>Timezone:</strong><br>
+        <%= @user.timezone || "None" %>
+      </div>
+
+      <div>
+        <strong>Joined:</strong><br>
+        <%= @user.created_at.strftime("%B %d, %Y at %I:%M %p") %>
+      </div>
+
+      <div>
+        <strong>Last update:</strong><br>
+        <%= @user.updated_at.strftime("%B %d, %Y at %I:%M %p") %>
+      </div>
+    </div>
+  </div>
+
+  <div class="asec" style="padding: 1.5em;">
+    <h2>permissions & status</h2>
+    <div class="agrid">
+      <div>
+        <strong>Ship Certifier:</strong><br>
+        <% if @user.ship_certifier? %>
+          <span class="pill pill-green">✓ Yes</span>
+        <% else %>
+          <span class="pill pill-gray">✗ No</span>
+        <% end %>
+      </div>
+
+      <div>
+        <strong>Banned:</strong><br>
+        <% if @user.is_banned? %>
+          <span class="pill pill-red">yurp</span>
+        <% else %>
+          <span class="pill pill-green">nah</span>
+        <% end %>
+      </div>
+
+      <div>
+        <strong>shop banned:</strong><br>
+        <% if @user.freeze_shop_activity? %>
+          <span class="pill pill-red">lmao yes</span>
+        <% else %>
+          <span class="pill pill-green">nah they chill</span>
+        <% end %>
+      </div>
+
+      <div>
+        <strong>Total fulfillment cost:</strong><br>
+        <%= number_to_currency(@user.shop_orders.sum(:fulfillment_cost) || 0) %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="asecs">
+  <div class="asec" style="padding: 1.5em;">
+    <h2>hackatime deets</h2>
+    <div class="agrid">
+      <div>
+        <strong>Hackatime ID:</strong><br>
+        <% if @hackatime_id %>
+          <%= @hackatime_id %>
+          <%= link_to "timeline", "https://hackatime.hackclub.com/admin/timeline?user_ids=#{@hackatime_id}", target: "_blank", style: "color: var(--color-primary);" %>
+        <% else %>
+          <span style="color: var(--color-muted);">cant find it cuh</span>
+        <% end %>
+      </div>
+
+      <div>
+        <strong>Got hackatime?</strong><br>
+        <% if @user.has_hackatime? %>
+          <span class="pill pill-green">yuh</span>
+        <% else %>
+          <span class="pill pill-red">nope</span>
+        <% end %>
+      </div>
+
+      <% if @user.user_hackatime_data.present? %>
+      <div>
+        <strong>Total time:</strong><br>
+        <% begin %>
+          <%= @user.format_seconds(@user.all_time_coding_seconds) %>
+        <% rescue => e %>
+          <span style="color: var(--color-red);">fucky wucky</span>
+        <% end %>
+      </div>
+
+      <div>
+        <strong>Time today:</strong><br>
+        <% begin %>
+          <%= @user.format_seconds(@user.daily_coding_seconds) %>
+        <% rescue => e %>
+          <span style="color: var(--color-red);">fucky wucky</span>
+        <% end %>
+      </div>
+
+      <div>
+        <strong>Last updated:</strong><br>
+        <%= @user.user_hackatime_data.last_updated_at&.strftime("%B %d, %Y at %I:%M %p") || "Never" %>
+      </div>
+
+      <div>
+        <strong>Hackatime projects:</strong><br>
+        <% begin %>
+          <%= @user.hackatime_projects.count %>
+        <% rescue => e %>
+          <span style="color: var(--color-red);">fucky wucky</span>
+        <% end %>
+      </div>
+      <% else %>
+        <div style="grid-column: 1 / -1;">
+          <em style="color: var(--color-muted);">we got nuthin lil bro</em>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="asec" style="padding: 1.5em;">
+    <h2>what they making?</h2>
+    <div class="agrid">
+      <div>
+        <strong>Total projects:</strong><br>
+        <%= @user.projects.count %>
+      </div>
+
+      <div>
+        <strong>Used AI:</strong><br>
+        <%= @user.projects.where(used_ai: true).count %>
+      </div>
+
+      <div>
+        <strong>Devlogs:</strong><br>
+        <%= @user.devlogs.count %>
+      </div>
+
+      <div>
+        <strong>Votes:</strong><br>
+        <%= @user.votes.count %>
+      </div>
+    </div>
+
+    <% if @user.projects.any? %>
+      <details style="margin-top: 1em;">
+        <summary><strong>show me the goods</strong></summary>
+        <ul style="margin-top: 1em; color: var(--color-text);">
+          <% @user.projects.order(created_at: :desc).each do |project| %>
+            <li style="margin-bottom: 0.5em;">
+              <strong>
+                <%= link_to "#{project.title} (#{project.id})", "https://summer.hackclub.com/projects/#{project.id}", target: "_blank", style: "color: var(--color-primary);" %>
+              </strong>
+              (<%= project.certification_type || "No certification type" %>)
+              - created: <%= project.created_at.strftime("%m/%d/%Y") %>
+              <% if project.is_shipped? %>
+                <span class="pill pill-green">shipped</span>
+              <% end %>
+              <% if project.used_ai? %>
+                <span class="pill pill-blue">used AI</span>
+              <% end %>
+              <br>
+              <small style="color: var(--color-muted);">
+                views: <%= project.views_count %> |
+                devlogs: <%= project.devlogs_count %>
+                <% if project.repo_link.present? %>
+                  | <%= link_to "Repo", project.repo_link, target: "_blank", style: "color: var(--color-primary);" %>
+                <% end %>
+                <% if project.demo_link.present? %>
+                  | <%= link_to "Demo", project.demo_link, target: "_blank", style: "color: var(--color-primary);" %>
+                <% end %>
+              </small>
+            </li>
           <% end %>
-          <% if project.used_ai? %>
-            <span style="color: blue;">used AI</span>
-          <% end %>
-          <br>
-          <small>
-            views: <%= project.views_count %> |
-            devlogs: <%= project.devlogs_count %>
-            <% if project.repo_link.present? %>
-              | <%= link_to "Repo", project.repo_link, target: "_blank" %>
-            <% end %>
-            <% if project.demo_link.present? %>
-              | <%= link_to "Demo", project.demo_link, target: "_blank" %>
-            <% end %>
-          </small>
-        </li>
+        </ul>
+      </details>
+    <% end %>
+  </div>
+</div>
+
+<div class="asecs">
+  <div class="asec" style="padding: 1.5em;">
+    <h2>google, show me this persons amazon account</h2>
+    <div class="agrid">
+      <div>
+        <strong>Total orders:</strong><br>
+        <%= @user.shop_orders.count %>
+      </div>
+
+      <div>
+        <strong>Card grants:</strong><br>
+        <%= @user.shop_card_grants.count %>
+      </div>
+    </div>
+  </div>
+
+  <div class="asec" style="padding: 1.5em;">
+    <h2>quick actions</h2>
+    <div class="agrid">
+      <%= button_to "🥸 impersonate?", impersonate_admin_user_path(@user), class: 'abtn secondary' %>
+
+      <% if @user.freeze_shop_activity? %>
+        <%= button_to "defrost (allow shop activity again)", defrost_admin_user_path(@user), class: 'abtn primary' %>
+      <% else %>
+        <%= button_to "freeze (don't allow shop activity)", freeze_admin_user_path(@user), class: 'abtn secondary' %>
+      <% end %>
+
+      <% if @user.has_black_market? %>
+        <%= button_to "remove black market access", take_away_black_market_admin_user_path(@user), class: 'abtn secondary' %>
+      <% else %>
+        <%= button_to "give black market access", give_black_market_admin_user_path(@user), class: 'abtn primary' %>
+      <% end %>
+
+      <% if @user.ship_certifier? %>
+        <%= button_to "revoke ship certifier permissions", revoke_ship_certifier_admin_user_path(@user), confirm: "ya sure you wanna do that?", class: "abtn secondary" %>
+      <% else %>
+        <%= button_to "grant ship certifier permissions", grant_ship_certifier_admin_user_path(@user), class: "abtn primary" %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="asec" style="padding: 1.5em; margin-bottom: 2em; border: 2px dashed var(--color-red);">
+  <h2 style="color: var(--color-red);">DON'T DO THIS</h2>
+  <p style="color: var(--color-red); margin-bottom: 1em;">click these buttons i dare you lmao</p>
+
+  <div class="agrid">
+    <%= button_to "nuke IDV data", nuke_idv_data_admin_user_path(@user), class: 'abtn', style: 'background: var(--color-red);' %>
+    <%= button_to "cancel all card grants (only do this if you're banning somebody)", cancel_card_grants_admin_user_path(@user), class: 'abtn', style: 'background: var(--color-red);' %>
+
+    <div>
+
+    <% if @user.is_banned? %>
+      <%= button_to "unban user from platform", unban_user_admin_user_path(@user), confirm: "ya sure?", class: "abtn secondary" %>
+    <% else %>
+      <%= button_to "platform ban user", ban_user_admin_user_path(@user), confirm: "ya sure? this is quite the decision!", class: "abtn", style: 'background: var(--color-red);' %>
+    <% end %>
+    <p style="color: var(--color-red); margin-bottom: 1em;">quick note about bans, hackatime bans also carry over to SOM, so if someone gets ratioed on hackatime, that will also ban them from SOM. it is better to ban someone on hackatime and wait for that ban to propagate over to SOM.</p>
+    </div>
+  </div>
+</div>
+
+<div class="asecs">
+  <div class="asec" style="padding: 1.5em;">
+    <h2>payouts</h2>
+    <ul style="color: var(--color-text);">
+      <% @payouts.each do |payout| %>
+        <li id="<%= dom_id payout %>" style="margin-bottom: 0.5em;"><%= render payout %></li>
       <% end %>
     </ul>
-  </details>
-<% end %>
 
-<hr style="margin: 10px 0;">
-<h3>are they actually doing shit?</h3>
-<b>devlogs:</b> <%= @user.devlogs.count %><br>
-<b>votes:</b> <%= @user.votes.count %>
-<br>
-
-<hr style="margin: 10px 0;">
-<h3>google, show me this persons amazon account</h3>
-<b>total orders:</b> <%= @user.shop_orders.count %><br>
-<b>card grants:</b> <%= @user.shop_card_grants.count %><br>
-<b>shop banned?</b>
-<% if @user.freeze_shop_activity? %>
-  <span style="color: red; font-weight: bold;">lmao yes</span>
-<% else %>
-  <span style="color: green;">nah they chill</span>
-<% end %>
-<br>
-
-<hr style="margin: 10px 0;">
-
-<%= button_to "🥸 impersonate?", impersonate_admin_user_path(@user) %>
-
-<div style="border: 1px dashed red; width: fit-content; padding: 1rem">
-  <b style="color: red;">DON'T DO THIS:</b>
-  <%= button_to "nuke IDV data", nuke_idv_data_admin_user_path(@user) %>
-  <%= button_to "cancel all card grants (only do this if you're banning somebody)", cancel_card_grants_admin_user_path(@user) %>
-<% if @user.is_banned? %>
-  <%= button_to "unban user", unban_user_admin_user_path(@user),
-      confirm: "ya sure?",
-      class: "abtn secondary" %>
-<% else %>
-  <%= button_to "ban user", ban_user_admin_user_path(@user),
-      confirm: "ya sure? this is quite the decision!",
-      class: "abtn primary" %>
-<% end %>
+    <details style="margin-top: 1em;">
+      <summary style="color: var(--color-primary); cursor: pointer;">
+        create manual adjustment payout (aka be the fed and print money)
+      </summary>
+      <%= form_with url: create_payout_admin_user_path(@user), scope: :payout, style: "margin-top: 1em;" do |f| %>
+        <div style="margin-bottom: 0.5em;">
+          <%= f.label :amount, "Amount: ", style: "color: var(--color-text);" %>
+          <%= f.number_field :amount, style: "width: 100%; padding: 0.5em; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-darker); color: var(--color-text);" %>
+        </div>
+        <div style="margin-bottom: 0.5em;">
+          <%= f.label :reason, "Reason: ", style: "color: var(--color-text);" %>
+          <%= f.text_area :reason, placeholder: "i just want them to have some walkin' around money!", rows: 3, style: "width: 100%; padding: 0.5em; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-darker); color: var(--color-text);" %>
+        </div>
+        <%= f.submit "do it!", class: 'abtn primary' %>
+      <% end %>
+    </details>
+  </div>
 </div>
-<br>
-<% if @user.freeze_shop_activity? %>
-  <%= button_to "defrost (allow shop activity again)", defrost_admin_user_path(@user) %>
-<% else %>
-  <%= button_to "freeze (don't allow shop activity)", freeze_admin_user_path(@user) %>
-<% end %>
 
-<% if @user.has_black_market? %>
-  <%= button_to "remove black market access", take_away_black_market_admin_user_path(@user) %>
-<% else %>
-  <%= button_to "give black market access", give_black_market_admin_user_path(@user) %>
-<% end %>
-
-<% if @user.ship_certifier? %>
-  <%= button_to "revoke ship certifier permissions", revoke_ship_certifier_admin_user_path(@user),
-      confirm: "ya sure you wanna do that?",
-      class: "abtn secondary" %>
-<% else %>
-  <%= button_to "grant ship certifier permissions", grant_ship_certifier_admin_user_path(@user),
-      class: "abtn primary" %>
-<% end %>
-
-<b>Payouts:</b>
-<ul>
-  <% @payouts.each do |payout| %>
-    <li id="<%= dom_id payout %>"><%= render payout %></li>
-  <% end %>
-</ul>
-<details>
-  <summary>
-    create manual adjustment payout (aka be the fed and print money)
-  </summary>
-  <%= form_with url: create_payout_admin_user_path(@user), scope: :payout do |f| %>
-    <div>
-      <%= f.label :amount, "Amount: " %>
-      <%= f.number_field :amount %>
-    </div>
-    <div>
-      <%= f.label :reason, "Reason: " %>
-      <%= f.text_area :reason, placeholder: "i just want them to have some walkin' around money!", rows: 3 %>
-    </div>
-    <%= f.submit "do it!" %>
-  <% end %>
-</details>
-<br><br>
-<b>audit lawg (incomplete):</b>
-<%= render_activities(@activities, layout: "activity") %>
+<div class="asec" style="padding: 1.5em; margin-bottom: 2em;">
+  <h2>audit lawg (incomplete)</h2>
+  <%= render_activities(@activities, layout: "activity") %>
+</div>
 
 <%= render 'admin/inspector', record: @user %>
-<br><br><%= link_to "← back", admin_users_path %>
+
+<%= link_to "← back", admin_users_path, class: 'aout' %>

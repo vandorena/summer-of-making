@@ -1,68 +1,150 @@
-<h1>shop order #<%= @shop_order.id %></h1>
-<%= @shop_order.full_name %>
-<br>
-<br>
+<%= stylesheet_link_tag 'admin_dashboard' %>
+<h1 style="color: var(--color-primary); margin-bottom: 1.5em;">shop order #<%= @shop_order.id %></h1>
+<p style="color: var(--color-muted); margin-bottom: 2em;"><%= @shop_order.full_name %></p>
+
+<div class="asecs">
+  <div class="asec" style="padding: 1.5em;">
+    <h2>order details</h2>
+    <div class="agrid">
+      <div>
+        <strong>status:</strong><br>
+        <% case @shop_order.aasm_state %>
+        <% when 'pending' %>
+          <span class="pill pill-yellow">pending</span>
+        <% when 'awaiting_periodical_fulfillment' %>
+          <span class="pill pill-blue">awaiting fulfillment</span>
+        <% when 'fulfilled' %>
+          <span class="pill pill-green">fulfilled</span>
+        <% when 'rejected' %>
+          <span class="pill pill-red">rejected</span>
+        <% when 'on_hold' %>
+          <span class="pill pill-gray">on hold</span>
+        <% when 'in_verification_limbo' %>
+          <span class="pill pill-dark">verification limbo</span>
+        <% else %>
+          <span class="pill"><%= @shop_order.aasm_state.humanize %></span>
+        <% end %>
+      </div>
+
+      <div>
+        <strong>quantity:</strong><br>
+        <%= @shop_order.quantity %>
+      </div>
+
+      <% if @shop_order.fulfillment_cost.present? %>
+      <div>
+        <strong>fulfillment cost:</strong><br>
+        <%= number_to_currency @shop_order.fulfillment_cost %>
+      </div>
+      <% end %>
+
+      <% if @shop_order.external_ref.present? %>
+      <div>
+        <strong>external ref:</strong><br>
+        <%= @shop_order.external_ref %>
+      </div>
+      <% end %>
+
+      <% if @shop_order.fulfilled_by.present? %>
+      <div>
+        <strong>fulfilled by:</strong><br>
+        <%= @shop_order.fulfilled_by %>
+      </div>
+      <% end %>
+    </div>
+
+    <% if @shop_order.rejection_reason.present? %>
+    <div style="margin-top: 1em;">
+      <strong>rejection reason:</strong><br>
+      <span style="color: var(--color-red);"><%= @shop_order.rejection_reason %></span>
+    </div>
+    <% end %>
+  </div>
+
+  <div class="asec" style="padding: 1.5em;">
+    <h2>shop item</h2>
+    <%= render partial: "admin/shop_items/shop_item", locals: { shop_item: @shop_order.shop_item } %>
+  </div>
+</div>
+
+<div class="asecs">
+  <div class="asec" style="padding: 1.5em;">
+    <h2>customer</h2>
+    <%= render partial: "admin/users/user", locals: { user: @shop_order.user } %>
+  </div>
+
+  <div class="asec" style="padding: 1.5em;">
+    <h2>shipping address</h2>
+    <% addy = @shop_order.frozen_address || {} %>
+    <% if addy.present? %>
+      <div>
+        <%= addy["first_name"] %> <%= addy["last_name"] %><br>
+        <%= addy["line_1"] %><br>
+        <% if addy["line_2"].present? %>
+          <%= addy["line_2"] %><br>
+        <% end %>
+        <%= addy["city"] %>, <%= addy["state"] %> <%= addy["postal_code"] %><br>
+        <%= addy["country"] %>
+      </div>
+    <% else %>
+      <em style="color: var(--color-muted);">no address provided</em>
+    <% end %>
+  </div>
+</div>
+
 <%= render "admin/shared/internal_notes", { record: @shop_order } %>
-<br>
-<b>Status:</b> <%= @shop_order.aasm_state.humanize %> <br>
-<% if @shop_order.fulfillment_cost.present? %>
-  <b>Fulfillment cost: </b> <%= number_to_currency @shop_order.fulfillment_cost %> <br>
-<% end %>
-<% if @shop_order.rejection_reason.present? %>
-  <b>Rejection reason: </b> <%= @shop_order.rejection_reason %> <br>
-<% end %>
-<b>Shop item:</b>
-<div style="border: 1px solid; margin-top: 1rem; margin-bottom: 1rem; padding: 0.5em">
-  <%= render partial: "admin/shop_items/shop_item", locals: { shop_item: @shop_order.shop_item } %>
-</div>
-<b>Quantity: </b> <%= @shop_order.quantity %> <br>
-<b>User:</b>
-<div style="border: 1px solid; margin-top: 1rem; margin-bottom: 1rem; padding: 0.5em">
-  <%= render partial: "admin/users/user", locals: { user: @shop_order.user } %>
-</div>
-<b>Address:</b> <br>
-<% addy = @shop_order.frozen_address || {} %>
-<%= addy["first_name"] %> <%= addy["last_name"] %> <br>
-<%= addy["line_1"] %> <br>
-<%= addy["line_2"] %> <br>
-<%= addy["city"] %>, <%= addy["state"] %> <%= addy["postal_code"] %><br>
-<%= addy["country"] %> <br>
 
 <%= render "admin/shop_card_grants/shop_card_grant", shop_order: @shop_order %>
 
-<br>
-<br>
-<% state = @shop_order.aasm.current_state %>
-<b>Actions:</b>
+<div class="asec" style="padding: 1.5em; margin-bottom: 2em;">
+  <h2>actions</h2>
+  <% state = @shop_order.aasm.current_state %>
 
-<% case state %>
-<% when :pending %>
-  <%= button_to "lgtm, approve order!", [:approve, :admin, @shop_order], method: :post %>
-<% end %>
+  <div class="agrid">
+    <% case state %>
+    <% when :pending %>
+      <%= button_to "lgtm, approve order!", [:approve, :admin, @shop_order], method: :post, class: 'abtn primary' %>
+    <% end %>
 
-<% unless %i(rejected fulfilled).include? state %>
-  <%= form_with url: reject_admin_shop_order_path(@shop_order) do |f| %>
-    <%= f.text_area(:rejection_reason, placeholder: "rejection reason") %> <br>
-    <%= f.submit "reject that mf" %>
+    <% unless %i(rejected fulfilled).include? state %>
+      <% if state == :on_hold %>
+        <%= button_to "take off hold", [:take_off_hold, :admin, @shop_order], method: :post, class: 'abtn secondary' %>
+      <% else %>
+        <%= button_to "put on hold", [:place_on_hold, :admin, @shop_order], method: :post, class: 'abtn secondary' %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <% unless %i(rejected fulfilled).include? state %>
+  <div style="margin-top: 1em;">
+    <%= form_with url: reject_admin_shop_order_path(@shop_order) do |f| %>
+      <%= f.text_area(:rejection_reason, placeholder: "rejection reason", style: "width: 100%; margin-bottom: 0.5em; padding: 0.5em; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-darker); color: var(--color-text);") %>
+      <%= f.submit "reject that mf", class: 'abtn', style: 'background: var(--color-red);' %>
+    <% end %>
+  </div>
   <% end %>
-  <% if state == :on_hold %>
-    <%= button_to "take off hold", [:take_off_hold, :admin, @shop_order], method: :post %>
-  <% else %>
-    <%= button_to "put on hold", [:place_on_hold, :admin, @shop_order], method: :post %>
-  <% end %>
-<% end %>
 
-<% if state == :awaiting_periodical_fulfillment && @shop_order.shop_item.manually_fulfilled? %>
-  <%= form_with url: url_for([:mark_fulfilled, :admin, @shop_order]) do |f| %>
-    <%= f.text_area(:external_ref, placeholder: "external reference") %> <br>
-    <%= f.label :fulfillment_cost, "Fulfillment cost: $" %>
-    <%= f.number_field :fulfillment_cost, step: 0.01, value: @shop_order.shop_item.usd_cost %> <br>
-    <%= f.submit "i fulfilled it!" %>
+  <% if state == :awaiting_periodical_fulfillment && @shop_order.shop_item.manually_fulfilled? %>
+  <div style="margin-top: 1em;">
+    <%= form_with url: url_for([:mark_fulfilled, :admin, @shop_order]) do |f| %>
+      <%= f.text_area(:external_ref, placeholder: "external reference", style: "width: 100%; margin-bottom: 0.5em; padding: 0.5em; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-darker); color: var(--color-text);") %>
+      <div class="agrid" style="margin-bottom: 0.5em;">
+        <div>
+          <%= f.label :fulfillment_cost, "fulfillment cost: $", style: "color: var(--color-text);" %>
+          <%= f.number_field :fulfillment_cost, step: 0.01, value: @shop_order.shop_item.usd_cost, style: "width: 100%; padding: 0.5em; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-darker); color: var(--color-text);" %>
+        </div>
+      </div>
+      <%= f.submit "i fulfilled it!", class: 'abtn primary' %>
+    <% end %>
+  </div>
   <% end %>
-<% end %>
-<br>
-<%= link_to "← back", admin_root_path %><br>
+</div>
 
-<b>audit lawg:</b><br>
-<%= render_activities(@activities, layout: :activity) %>
+<%= link_to "← back", admin_root_path, class: 'aout' %>
+
+<div class="asec" style="padding: 1.5em; margin-bottom: 2em;">
+  <h2>audit lawg</h2>
+  <%= render_activities(@activities, layout: :activity) %>
+</div>
+
 <%= render "admin/inspector", record: @shop_order %>
