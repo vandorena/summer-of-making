@@ -13,7 +13,12 @@ module Admin
     end
 
     def show
-      @activities = @user.activities.order(created_at: :desc).includes(:owner)
+      user_activities = @user.activities
+      project_activities = PublicActivity::Activity.where(trackable: @user.projects.with_deleted)
+
+      @activities = PublicActivity::Activity.where(id: user_activities.pluck(:id) + project_activities.pluck(:id))
+                                            .order(created_at: :desc)
+                                            .includes(:owner, :trackable)
       @payouts = @user.payouts.order(created_at: :desc).includes(:payable)
 
       @user = User.includes(

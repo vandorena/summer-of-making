@@ -1,0 +1,30 @@
+# frozen_string_literal: true
+
+module Admin
+  class ProjectsController < ApplicationController
+    before_action :set_project, only: [ :destroy ]
+
+    def destroy
+      @project.update!(is_deleted: true)
+
+      @project.create_activity(
+        "admin_delete_project",
+        owner: current_user,
+        parameters: {
+          admin_name: current_user.display_name,
+          project_name: @project.title,
+          project_id: @project.id
+        }
+      )
+
+      flash[:success] = "#{@project.title} terminated, your project is ass"
+      redirect_back(fallback_location: admin_root_path)
+    end
+
+    private
+
+    def set_project
+      @project = Project.with_deleted.find(params[:id])
+    end
+  end
+end

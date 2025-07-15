@@ -158,7 +158,12 @@
     <div class="agrid">
       <div>
         <strong>Total projects:</strong><br>
-        <%= @user.projects.count %>
+        <% deleted_count = @user.projects.with_deleted.where(is_deleted: true).count %>
+        <% if deleted_count > 0 %>
+          <%= @user.projects.with_deleted.count %> (<span style="font-style: italic;"><%= deleted_count %> deleted</span>)
+        <% else %>
+          <%= @user.projects.count %>
+        <% end %>
       </div>
 
       <div>
@@ -181,13 +186,56 @@
       <details style="margin-top: 1em;">
         <summary><strong>show me the goods</strong></summary>
         <ul style="margin-top: 1em; color: var(--color-text);">
-          <% @user.projects.order(created_at: :desc).each do |project| %>
+            <% @user.projects.order(created_at: :desc).each do |project| %>
             <li style="margin-bottom: 0.5em;">
               <strong>
-                <%= link_to "#{project.title} (#{project.id})", "https://summer.hackclub.com/projects/#{project.id}", target: "_blank", style: "color: var(--color-primary);" %>
+              <%= link_to "#{project.title} (#{project.id})", "https://summer.hackclub.com/projects/#{project.id}", target: "_blank", style: "color: var(--color-primary);" %>
               </strong>
               (<%= project.certification_type || "No certification type" %>)
               - created: <%= project.created_at.strftime("%m/%d/%Y") %>
+              <% if project.is_shipped? %>
+              <span class="pill pill-green">shipped</span>
+              <% end %>
+              <% if project.used_ai? %>
+              <span class="pill pill-blue">used AI</span>
+              <% end %>
+              <br>
+              <small style="color: var(--color-muted);">
+              views: <%= project.views_count %> |
+              devlogs: <%= project.devlogs_count %>
+              <% if project.repo_link.present? %>
+                | <%= link_to "Repo", project.repo_link, target: "_blank", style: "color: var(--color-primary);" %>
+              <% end %>
+              <% if project.demo_link.present? %>
+                | <%= link_to "Demo", project.demo_link, target: "_blank", style: "color: var(--color-primary);" %>
+              <% end %>
+              | <span style="display: inline;">
+                <%= button_to "Delete", admin_project_path(project),
+                method: :delete,
+                confirm: "You sure you wanna ratio '#{project.title}'? Thats like really bad if this is a legit project.",
+                style: 'color: var(--color-red); background: none; border: none; padding: 0; font: inherit; cursor: pointer; text-decoration: underline;',
+                form: { style: 'display: inline;' } %>
+                </span>
+              </small>
+            </li>
+            <% end %>
+        </ul>
+      </details>
+    <% end %>
+    
+    <% deleted_projects = @user.projects.with_deleted.where(is_deleted: true) %>
+    <% if deleted_projects.any? %>
+      <details style="margin-top: 1em;">
+        <summary><strong style="color: var(--color-red);">deleted projects (<%= deleted_projects.count %>)</strong></summary>
+        <ul style="margin-top: 1em; color: var(--color-text);">
+          <% deleted_projects.order(created_at: :desc).each do |project| %>
+            <li style="margin-bottom: 0.5em;">
+              <strong style="color: var(--color-muted);">
+                <%= project.title %> (<%= project.id %>)
+              </strong>
+              (<%= project.certification_type || "No certification type" %>)
+              - created: <%= project.created_at.strftime("%m/%d/%Y") %>
+              <span class="pill pill-red">deleted</span>
               <% if project.is_shipped? %>
                 <span class="pill pill-green">shipped</span>
               <% end %>
@@ -199,10 +247,10 @@
                 views: <%= project.views_count %> |
                 devlogs: <%= project.devlogs_count %>
                 <% if project.repo_link.present? %>
-                  | <%= link_to "Repo", project.repo_link, target: "_blank", style: "color: var(--color-primary);" %>
+                  | Repo: <%= project.repo_link %>
                 <% end %>
                 <% if project.demo_link.present? %>
-                  | <%= link_to "Demo", project.demo_link, target: "_blank", style: "color: var(--color-primary);" %>
+                  | Demo: <%= project.demo_link %>
                 <% end %>
               </small>
             </li>
