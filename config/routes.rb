@@ -351,6 +351,7 @@ Rails.application.routes.draw do
     resources :projects, only: [] do
       member do
         delete :destroy
+        patch :restore
       end
     end
     resources :shop_orders do
