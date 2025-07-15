@@ -1,5 +1,23 @@
 <%= stylesheet_link_tag 'admin_dashboard' %>
-<h1 style="color: var(--color-primary); margin-bottom: 1.5em;"><%= local_assigns[:title] %>shopped orders:</h1>
+<h1 style="color: var(--color-primary);"><%= local_assigns[:title] %>shopped orders:</h1>
+
+<div style="margin-bottom: 2em; padding: 1em; background: var(--color-darker); border-radius: 8px;">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1em;">
+    <div>
+      <strong style="color: var(--color-text);">time until approved:</strong><br>
+      <span style="color: var(--color-muted); font-family: monospace;">
+        <%= format_duration(@pending_to_approved_seconds) %>
+      </span>
+    </div>
+    
+    <div>
+      <strong style="color: var(--color-text);">time until fulfilled:</strong><br>
+      <span style="color: var(--color-muted); font-family: monospace;">
+        <%= format_duration(@awaiting_to_fulfilled_seconds) %>
+      </span>
+    </div>
+  </div>
+</div>
 
 <div style="margin-bottom: 2em;">
   <% if params[:show_free_stickers] %>

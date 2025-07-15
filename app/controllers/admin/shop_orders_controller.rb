@@ -65,15 +65,18 @@ module Admin
 
     def index
       @pagy, @shop_orders = pagy(filtered_scope)
+      calculate_processing_stats
     end
 
     def pending
       @pagy, @shop_orders = pagy(filtered_scope.pending)
+      calculate_processing_stats
       render :index, locals: { title: "pending " }
     end
 
     def awaiting_fulfillment
       @pagy, @shop_orders = pagy(filtered_scope.manually_fulfilled.awaiting_periodical_fulfillment)
+      calculate_processing_stats
       render :index, locals: { title: "fulfillment queue – " }
     end
 
@@ -135,5 +138,32 @@ module Admin
     def set_shop_order
       @shop_order = scope.find(params[:id])
     end
+
+    def calculate_processing_stats
+      # Calculate average time from pending to approved using activities
+      pending_to_approved = scope.joins("LEFT JOIN activities ON activities.trackable_id = shop_orders.id AND activities.trackable_type = 'ShopOrder' AND activities.key = 'approve'")
+                                 .where.not(aasm_state: "pending")
+                                 .where.not("activities.created_at IS NULL")
+                                 .average("EXTRACT(EPOCH FROM activities.created_at - shop_orders.created_at)")
+
+      # Calculate average time from awaiting fulfillment to fulfilled
+      awaiting_to_fulfilled = scope.where(aasm_state: "fulfilled")
+                                   .where.not(awaiting_periodical_fulfillment_at: nil)
+                                   .where.not(fulfilled_at: nil)
+                                   .average("EXTRACT(EPOCH FROM fulfilled_at - awaiting_periodical_fulfillment_at)")
+
+      @pending_to_approved_seconds = pending_to_approved&.to_i
+      @awaiting_to_fulfilled_seconds = awaiting_to_fulfilled&.to_i
+    end
+
+    def format_duration(seconds)
+      return "--:--:--" unless seconds
+
+      hours = seconds / 3600
+      minutes = (seconds % 3600) / 60
+      secs = seconds % 60
+      sprintf("%02d:%02d:%02d", hours, minutes, secs)
+    end
+    helper_method :format_duration
   end
 end
