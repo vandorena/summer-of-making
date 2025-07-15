@@ -81,11 +81,6 @@
           <span class="pill pill-green">nah they chill</span>
         <% end %>
       </div>
-
-      <div>
-        <strong>Total fulfillment cost:</strong><br>
-        <%= number_to_currency(@user.shop_orders.sum(:fulfillment_cost) || 0) %>
-      </div>
     </div>
   </div>
 </div>
@@ -280,7 +275,83 @@
         <strong>Card grants:</strong><br>
         <%= @user.shop_card_grants.count %>
       </div>
+
+      <div>
+        <strong>Total fulfillment cost:</strong><br>
+        <%= number_to_currency(@user.shop_orders.sum(:fulfillment_cost) || 0) %>
+      </div>
+
+      <div>
+        <strong>Pending orders:</strong><br>
+        <%= @user.shop_orders.where(aasm_state: ['pending', 'awaiting_periodical_fulfillment', 'in_verification_limbo']).count %>
+      </div>
     </div>
+
+    <% if @user.shop_orders.any? %>
+      <details style="margin-top: 1em;">
+        <summary><strong>google show me their orders</strong></summary>
+        <div style="margin-top: 0.5em;">
+          <table style="width: 100%; border-collapse: collapse; color: var(--color-text);">
+            <thead>
+              <tr style="border-bottom: 1px solid var(--color-border);">
+                <th style="text-align: left; padding: 0.5em;">item</th>
+                <th style="text-align: left; padding: 0.5em;">status</th>
+                <th style="text-align: left; padding: 0.5em;">cost</th>
+                <th style="text-align: left; padding: 0.5em;">date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @user.shop_orders.includes(:shop_item).order(created_at: :desc).each do |order| %>
+                <tr style="border-bottom: 1px solid var(--color-border-light);">
+                  <td style="padding: 0.5em; vertical-align: top;">
+                    <strong><%= link_to "#{order.shop_item.name} (##{order.id})", admin_shop_order_path(order), style: "color: var(--color-primary);" %></strong>
+                    <% if order.shop_item.type.present? %>
+                      <br><small style="color: var(--color-muted);"><%= order.shop_item.type.demodulize %></small>
+                    <% end %>
+                  </td>
+                  <td style="padding: 0.5em; vertical-align: top;">
+                    <% case order.aasm_state %>
+                    <% when 'pending' %>
+                      <span class="pill pill-yellow">pending</span>
+                    <% when 'awaiting_periodical_fulfillment' %>
+                      <span class="pill pill-blue">awaiting fulfillment</span>
+                    <% when 'fulfilled' %>
+                      <span class="pill pill-green">fulfilled</span>
+                    <% when 'rejected' %>
+                      <span class="pill pill-red">rejected</span>
+                    <% when 'in_verification_limbo' %>
+                      <span class="pill pill-purple">verification limbo</span>
+                    <% when 'on_hold' %>
+                      <span class="pill pill-gray">on hold</span>
+                    <% else %>
+                      <span class="pill pill-gray"><%= order.aasm_state %></span>
+                    <% end %>
+                  </td>
+                  <td style="padding: 0.5em; vertical-align: top;">
+                    <% if order.frozen_item_price.present? %>
+                      <%= order.frozen_item_price * order.quantity %>
+                    <% else %>
+                      <span style="color: var(--color-muted);">—</span>
+                    <% end %>
+                    <% if order.fulfillment_cost.present? && order.fulfillment_cost > 0 %>
+                      <br><small style="color: var(--color-muted);">fulfillment: <%= number_to_currency(order.fulfillment_cost) %></small>
+                    <% end %>
+                  </td>
+                  <td style="padding: 0.5em; vertical-align: top;">
+                    <%= order.created_at.strftime("%m/%d/%Y") %>
+                    <% if order.fulfilled_at.present? %>
+                      <br><small style="color: var(--color-muted);">fulfilled: <%= order.fulfilled_at.strftime("%m/%d/%Y") %></small>
+                    <% elsif order.rejected_at.present? %>
+                      <br><small style="color: var(--color-red);">rejected: <%= order.rejected_at.strftime("%m/%d/%Y") %></small>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </details>
+    <% end %>
   </div>
 
   <div class="asec" style="padding: 1.5em;">
