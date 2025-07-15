@@ -7,7 +7,7 @@
   <div class="asec" style="padding: 1.5em;">
     <h2>basic info</h2>
     <%= render @user %>
-    
+
     <div class="agrid" style="margin-top: 1em;">
       <div>
         <strong>IDV ID:</strong><br>
@@ -16,7 +16,7 @@
           <%= link_to "IDV Backend", "#{IdentityVaultService.host}backend/identities/#{@user.identity_vault_id}", style: "color: var(--color-primary);" %>
         <% end %>
       </div>
-      
+
       <div>
         <strong>Slack ID:</strong><br>
         <% if @user.slack_id.present? %>
@@ -25,7 +25,7 @@
           <span style="color: var(--color-muted);">None?!</span>
         <% end %>
       </div>
-      
+
       <div>
         <strong>Email:</strong><br>
         <% if @user.email.present? %>
@@ -34,17 +34,17 @@
           <span style="color: var(--color-muted);">None</span>
         <% end %>
       </div>
-      
+
       <div>
         <strong>Timezone:</strong><br>
         <%= @user.timezone || "None" %>
       </div>
-      
+
       <div>
         <strong>Joined:</strong><br>
         <%= @user.created_at.strftime("%B %d, %Y at %I:%M %p") %>
       </div>
-      
+
       <div>
         <strong>Last update:</strong><br>
         <%= @user.updated_at.strftime("%B %d, %Y at %I:%M %p") %>
@@ -63,7 +63,7 @@
           <span class="pill pill-gray">✗ No</span>
         <% end %>
       </div>
-      
+
       <div>
         <strong>Banned:</strong><br>
         <% if @user.is_banned? %>
@@ -72,7 +72,7 @@
           <span class="pill pill-green">nah</span>
         <% end %>
       </div>
-      
+
       <div>
         <strong>shop banned:</strong><br>
         <% if @user.freeze_shop_activity? %>
@@ -81,7 +81,7 @@
           <span class="pill pill-green">nah they chill</span>
         <% end %>
       </div>
-      
+
       <div>
         <strong>Total fulfillment cost:</strong><br>
         <%= number_to_currency(@user.shop_orders.sum(:fulfillment_cost) || 0) %>
@@ -97,13 +97,13 @@
       <div>
         <strong>Hackatime ID:</strong><br>
         <% if @hackatime_id %>
-          <%= @hackatime_id %> 
+          <%= @hackatime_id %>
           <%= link_to "timeline", "https://hackatime.hackclub.com/admin/timeline?user_ids=#{@hackatime_id}", target: "_blank", style: "color: var(--color-primary);" %>
         <% else %>
           <span style="color: var(--color-muted);">cant find it cuh</span>
         <% end %>
       </div>
-      
+
       <div>
         <strong>Got hackatime?</strong><br>
         <% if @user.has_hackatime? %>
@@ -112,7 +112,7 @@
           <span class="pill pill-red">nope</span>
         <% end %>
       </div>
-      
+
       <% if @user.user_hackatime_data.present? %>
       <div>
         <strong>Total time:</strong><br>
@@ -122,7 +122,7 @@
           <span style="color: var(--color-red);">fucky wucky</span>
         <% end %>
       </div>
-      
+
       <div>
         <strong>Time today:</strong><br>
         <% begin %>
@@ -131,12 +131,12 @@
           <span style="color: var(--color-red);">fucky wucky</span>
         <% end %>
       </div>
-      
+
       <div>
         <strong>Last updated:</strong><br>
         <%= @user.user_hackatime_data.last_updated_at&.strftime("%B %d, %Y at %I:%M %p") || "Never" %>
       </div>
-      
+
       <div>
         <strong>Hackatime projects:</strong><br>
         <% begin %>
@@ -160,23 +160,23 @@
         <strong>Total projects:</strong><br>
         <%= @user.projects.count %>
       </div>
-      
+
       <div>
         <strong>Used AI:</strong><br>
         <%= @user.projects.where(used_ai: true).count %>
       </div>
-      
+
       <div>
         <strong>Devlogs:</strong><br>
         <%= @user.devlogs.count %>
       </div>
-      
+
       <div>
         <strong>Votes:</strong><br>
         <%= @user.votes.count %>
       </div>
     </div>
-    
+
     <% if @user.projects.any? %>
       <details style="margin-top: 1em;">
         <summary><strong>show me the goods</strong></summary>
@@ -221,7 +221,7 @@
         <strong>Total orders:</strong><br>
         <%= @user.shop_orders.count %>
       </div>
-      
+
       <div>
         <strong>Card grants:</strong><br>
         <%= @user.shop_card_grants.count %>
@@ -233,19 +233,19 @@
     <h2>quick actions</h2>
     <div class="agrid">
       <%= button_to "🥸 impersonate?", impersonate_admin_user_path(@user), class: 'abtn secondary' %>
-      
+
       <% if @user.freeze_shop_activity? %>
         <%= button_to "defrost (allow shop activity again)", defrost_admin_user_path(@user), class: 'abtn primary' %>
       <% else %>
         <%= button_to "freeze (don't allow shop activity)", freeze_admin_user_path(@user), class: 'abtn secondary' %>
       <% end %>
-      
+
       <% if @user.has_black_market? %>
         <%= button_to "remove black market access", take_away_black_market_admin_user_path(@user), class: 'abtn secondary' %>
       <% else %>
         <%= button_to "give black market access", give_black_market_admin_user_path(@user), class: 'abtn primary' %>
       <% end %>
-      
+
       <% if @user.ship_certifier? %>
         <%= button_to "revoke ship certifier permissions", revoke_ship_certifier_admin_user_path(@user), confirm: "ya sure you wanna do that?", class: "abtn secondary" %>
       <% else %>
@@ -258,13 +258,13 @@
 <div class="asec" style="padding: 1.5em; margin-bottom: 2em; border: 2px dashed var(--color-red);">
   <h2 style="color: var(--color-red);">DON'T DO THIS</h2>
   <p style="color: var(--color-red); margin-bottom: 1em;">click these buttons i dare you lmao</p>
-  
+
   <div class="agrid">
     <%= button_to "nuke IDV data", nuke_idv_data_admin_user_path(@user), class: 'abtn', style: 'background: var(--color-red);' %>
     <%= button_to "cancel all card grants (only do this if you're banning somebody)", cancel_card_grants_admin_user_path(@user), class: 'abtn', style: 'background: var(--color-red);' %>
 
     <div>
-    
+
     <% if @user.is_banned? %>
       <%= button_to "unban user from platform", unban_user_admin_user_path(@user), confirm: "ya sure?", class: "abtn secondary" %>
     <% else %>
@@ -283,7 +283,7 @@
         <li id="<%= dom_id payout %>" style="margin-bottom: 0.5em;"><%= render payout %></li>
       <% end %>
     </ul>
-    
+
     <details style="margin-top: 1em;">
       <summary style="color: var(--color-primary); cursor: pointer;">
         create manual adjustment payout (aka be the fed and print money)
