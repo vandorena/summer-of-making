@@ -70,7 +70,7 @@ class Badge
       flavor_text: "you know what you did.",
       icon: "bong.png",
       color: "border-purple-500 bg-purple-500/10",
-      criteria: ->(user) { user.shop_orders.joins(:shop_item).where(shop_item: {type: "ShopItem::SiteActionItem", site_action: 2}).exists? }
+      criteria: ->(user) { user.shop_orders.joins(:shop_item).where(shop_item: { type: "ShopItem::SiteActionItem", site_action: 2 }).exists? }
     },
     preferred_customer: {
       name: "Preferred Customer",
