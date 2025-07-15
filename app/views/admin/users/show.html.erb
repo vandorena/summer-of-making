@@ -222,7 +222,7 @@
         </ul>
       </details>
     <% end %>
-    
+
     <% deleted_projects = @user.projects.with_deleted.where(is_deleted: true) %>
     <% if deleted_projects.any? %>
       <details style="margin-top: 1em;">
@@ -254,8 +254,8 @@
                 <% end %>
               </small>
               <br>
-              <%= button_to "bring it back!", restore_admin_project_path(project), 
-                  method: :patch, 
+              <%= button_to "bring it back!", restore_admin_project_path(project),
+                  method: :patch,
                   class: "abtn",
                   style: "margin-top: 0.5em; font-size: 0.8em; padding: 0.25em 0.5em;",
                   confirm: "ya sure? it was probs deleted for a good reason, check with the person who did it" %>
