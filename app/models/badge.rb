@@ -71,6 +71,22 @@ class Badge
       full_size_icon: true,
       color: "border-green-500 bg-green-500/10 text-gray-800",
       criteria: ->(user) { false }
+    },
+    pocket_watcher: {
+      name: "Pocket Watcher",
+      flavor_text: "you're a nosy one, aren't you?",
+      icon: "pocket_watcher.png",
+      color: "border-gray-500 bg-gray-500/10 text-gray-800",
+      full_size_icon: true,
+      criteria: ->(user) { false }
+    },
+    offshore_bank_account: {
+      name: "Offshore Bank Account",
+      flavor_text: "away from the watchful eyes...",
+      icon: "offshore_bank_account.png",
+      color: "border-gray-500 bg-gray-500/10 text-gray-800",
+      full_size_icon: true,
+      criteria: ->(user) { false }
     }
   }.freeze
 

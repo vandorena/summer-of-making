@@ -5,7 +5,7 @@
 <% end %>
 
 <div class="container mx-auto px-4 py-6 max-w-7xl profile-container">
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 lg:items-start">
     <!-- Profile Info Sidebar -->
     <div class="lg:col-span-1 space-y-6">
       <%= render "shared/card" do %>
@@ -101,6 +101,17 @@
             <p class="text-sm text-gray-900"><%= @user.created_at.strftime("%B %d, %Y") %></p>
           </div>
 
+          <% if current_user&.has_badge?(:pocket_watcher) %>
+            <div class="flex items-center space-x-2 border-2 border-yellow-300 bg-yellow-50/50 rounded-md p-2">
+              <%= image_tag "pocket_watcher.png", class: "w-10 h-10 inline-block" %>
+              <% unless @user.has_badge?(:offshore_bank_account) %>
+                Balance:&nbsp;<%= render_shells(@user.balance) %>
+              <% else %>
+                Nice try, but they've covered their tracks a little better than that.
+              <% end %>
+            </div>
+          <% end %>
+
           <% if @user.user_profile&.custom_css.present? && @user.has_badge?(:graphic_design_is_my_passion) && current_user&.has_badge?(:sunglasses) %>
           <b> This user has custom CSS, but you're spared from it by your sunglasses.</b>
 <% end %>
@@ -172,16 +183,16 @@
     </div>
 
     <!-- Activity Feed -->
-    <div class="lg:col-span-2">
-      <div class="space-y-6">
+    <div class="lg:col-span-2 flex flex-col h-full">
+      <div class="flex-1 flex flex-col space-y-6">
         <div class="flex items-center justify-between">
           <h2 class="text-2xl font-bold text-gray-800">Activity</h2>
         </div>
 
                  <% if @activities.any? %>
-           <div class="space-y-6" data-controller="view-tracker">
+           <div class="flex-1 flex flex-col space-y-6" data-controller="view-tracker">
              <!-- Combined Activity Feed -->
-             <div id="activities-list" class="space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto pr-2">
+             <div id="activities-list" class="flex-1 space-y-6 overflow-y-auto pr-2">
                <% @activities.each do |activity| %>
                  <% if activity[:type] == :project %>
                    <% project = activity[:item] %>
@@ -306,24 +317,26 @@
            </div>
         <% else %>
           <!-- Empty State -->
-          <%= render "shared/card" do %>
-            <div class="text-center py-12">
-              <div class="text-gray-400 text-6xl mb-4">📝</div>
-              <h3 class="text-lg font-medium text-gray-900 mb-2">No activity yet</h3>
-              <p class="text-gray-500">
+          <div class="flex-1 flex items-center justify-center">
+            <%= render "shared/card" do %>
+              <div class="text-center py-12">
+                <div class="text-gray-400 text-6xl mb-4">📝</div>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No activity yet</h3>
+                <p class="text-gray-500">
+                  <% if @user == current_user %>
+                    Start building something amazing! Create your first project to get started.
+                  <% else %>
+                    <%= @user.display_name %> hasn't shared any projects or devlogs yet.
+                  <% end %>
+                </p>
                 <% if @user == current_user %>
-                  Start building something amazing! Create your first project to get started.
-                <% else %>
-                  <%= @user.display_name %> hasn't shared any projects or devlogs yet.
+                  <div class="mt-6">
+                    <%= link_to "Create Project", new_project_path, class: "inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+                  </div>
                 <% end %>
-              </p>
-              <% if @user == current_user %>
-                <div class="mt-6">
-                  <%= link_to "Create Project", new_project_path, class: "inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
-                </div>
-              <% end %>
-            </div>
-          <% end %>
+              </div>
+            <% end %>
+          </div>
         <% end %>
       </div>
     </div>
