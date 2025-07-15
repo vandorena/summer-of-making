@@ -6,7 +6,7 @@ module Admin
     before_action :set_shop_order, except: [ :index, :pending, :awaiting_fulfillment ]
 
     def scope
-      ShopOrder.all.includes(:user, :shop_item).order(created_at: :desc)
+      ShopOrder.all.includes(:user, :shop_item)
     end
 
     def filtered_scope
@@ -17,6 +17,49 @@ module Admin
         base_scope = base_scope.joins(:shop_item).where.not(shop_items: { type: "ShopItem::FreeStickers" })
       end
 
+      if params[:user_search].present?
+        query = "%#{params[:user_search]}%"
+        base_scope = base_scope.joins(:user).where(
+          "users.display_name ILIKE ? OR users.email ILIKE ? OR users.slack_id ILIKE ?",
+          query, query, query
+        )
+      end
+
+      if params[:shop_item_id].present?
+        base_scope = base_scope.where(shop_item_id: params[:shop_item_id])
+      end
+
+      if params[:status].present?
+        base_scope = base_scope.where(aasm_state: params[:status])
+      end
+
+      if params[:date_from].present?
+        base_scope = base_scope.where("created_at >= ?", Date.parse(params[:date_from]).beginning_of_day)
+      end
+
+      if params[:date_to].present?
+        base_scope = base_scope.where("created_at <= ?", Date.parse(params[:date_to]).end_of_day)
+      end
+
+      case params[:sort]
+      when "id_asc"
+        base_scope = base_scope.order(id: :asc)
+      when "id_desc"
+        base_scope = base_scope.order(id: :desc)
+      when "shells_asc"
+        base_scope = base_scope.order(frozen_item_price: :asc)
+      when "shells_desc"
+        base_scope = base_scope.order(frozen_item_price: :desc)
+      when "created_at_asc"
+        base_scope = base_scope.order(created_at: :asc)
+      when "created_at_desc"
+        base_scope = base_scope.order(created_at: :desc)
+      else
+        base_scope = base_scope.order(created_at: :desc)
+      end
+
+      base_scope
+    rescue Date::Error
       base_scope
     end
 
