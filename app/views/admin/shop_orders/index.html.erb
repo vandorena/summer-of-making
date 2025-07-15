@@ -1,5 +1,23 @@
 <%= stylesheet_link_tag 'admin_dashboard' %>
-<h1 style="color: var(--color-primary); margin-bottom: 1.5em;"><%= local_assigns[:title] %>shopped orders:</h1>
+<h1 style="color: var(--color-primary);"><%= local_assigns[:title] %>shopped orders:</h1>
+
+<div style="margin-bottom: 2em; padding: 1em; background: var(--color-darker); border-radius: 8px;">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1em;">
+    <div>
+      <strong style="color: var(--color-text);">time until approved:</strong><br>
+      <span style="color: var(--color-muted); font-family: monospace;">
+        <%= format_duration(@pending_to_approved_seconds) %>
+      </span>
+    </div>
+    
+    <div>
+      <strong style="color: var(--color-text);">time until fulfilled:</strong><br>
+      <span style="color: var(--color-muted); font-family: monospace;">
+        <%= format_duration(@awaiting_to_fulfilled_seconds) %>
+      </span>
+    </div>
+  </div>
+</div>
 
 <div style="margin-bottom: 2em;">
   <% if params[:show_free_stickers] %>
@@ -9,18 +27,114 @@
   <% end %>
 </div>
 
+<!-- eat shit airtable -->
+<div style="margin-bottom: 2em;">
+  <h3>filters & search</h3>
+  <%= form_with url: admin_shop_orders_path, method: :get, local: true, style: "display: grid; gap: 1em;" do |f| %>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1em; margin-bottom: 2em;">
+      <div>
+        <%= f.label :user_search, "name email slack_id", style: "display: block; margin-bottom: 0.25em; color: var(--color-text);" %>
+        <%= f.text_field :user_search, value: params[:user_search], placeholder: "user search", style: "width: 100%; padding: 0.5em; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-darker); color: var(--color-text);" %>
+      </div>
+
+      <div>
+        <%= f.label :shop_item_id, "item:", style: "display: block; margin-bottom: 0.25em; color: var(--color-text);" %>
+        <%= f.select :shop_item_id, options_from_collection_for_select(ShopItem.order(:name), :id, :name, params[:shop_item_id]), 
+            { prompt: "all" }, 
+            { style: "width: 100%; padding: 0.5em; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-darker); color: var(--color-text);" } %>
+      </div>
+
+      <div>
+        <%= f.label :status, "status:", style: "display: block; margin-bottom: 0.25em; color: var(--color-text);" %>
+        <%= f.select :status, options_for_select([
+            ['no filter', ''],
+            'pending',
+            'awaiting_periodical_fulfillment',
+            'fulfilled',
+            'rejected',
+            'on_hold',
+            'in_verification_limbo'
+          ], params[:status]), 
+          {}, 
+          { style: "width: 100%; padding: 0.5em; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-darker); color: var(--color-text);" } %>
+      </div>
+
+      <div>
+        <%= f.label :date_from, "from:", style: "display: block; margin-bottom: 0.25em; color: var(--color-text);" %>
+        <%= f.date_field :date_from, value: params[:date_from], style: "width: 100%; padding: 0.5em; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-darker); color: var(--color-text);" %>
+      </div>
+
+      <div>
+        <%= f.label :date_to, "to:", style: "display: block; margin-bottom: 0.25em; color: var(--color-text);" %>
+        <%= f.date_field :date_to, value: params[:date_to], style: "width: 100%; padding: 0.5em; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-darker); color: var(--color-text);" %>
+      </div>
+
+      <div>
+        <%= f.label :sort, "sort by:", style: "display: block; margin-bottom: 0.25em; color: var(--color-text);" %>
+        <%= f.select :sort, options_for_select([
+            'created_at_desc',
+            'created_at_asc',
+            'id_desc',
+            'id_asc',
+            'shells_desc',
+            'shells_asc'
+          ], params[:sort] || 'created_at_desc'), 
+          {}, 
+          { style: "width: 100%; padding: 0.5em; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-darker); color: var(--color-text);" } %>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 1em; align-items: center;">
+      <%= f.submit "apply", class: 'abtn primary small' %>
+      <%= link_to "clear all", admin_shop_orders_path, class: 'abtn secondary small' %>
+      <% unless params.slice(:user_search, :shop_item_id, :status, :date_from, :date_to, :sort).values.all?(&:blank?) %>
+        <span style="color: var(--color-muted); font-size: 0.9em;">
+          active: 
+          <% if params[:user_search].present? %>user: "<%= params[:user_search] %>" | <% end %>
+          <% if params[:shop_item_id].present? %>item: "<%= ShopItem.find(params[:shop_item_id]).name rescue 'Unknown' %>" | <% end %>
+          <% if params[:status].present? %>status: "<%= params[:status] %>" | <% end %>
+          <% if params[:date_from].present? || params[:date_to].present? %>
+            dates: <%= params[:date_from] || '∞' %> to <%= params[:date_to] || '∞' %> | 
+          <% end %>
+          <% if params[:sort].present? %>sort: "<%= params[:sort] %>"<% end %>
+        </span>
+      <% end %>
+    </div>
+
+    <%= f.hidden_field :show_free_stickers, value: params[:show_free_stickers] if params[:show_free_stickers] %>
+  <% end %>
+</div>
+
 <table class="atable">
   <thead>
     <tr>
-      <th>order id</th>
+      <th>
+        <%= link_to "order id", admin_shop_orders_path(params.permit!.merge(sort: params[:sort] == 'id_asc' ? 'id_desc' : 'id_asc')), 
+            style: "color: var(--color-text); text-decoration: none;" %>
+        <% if params[:sort]&.start_with?('id_') %>
+          <%= params[:sort] == 'id_asc' ? '↑' : '↓' %>
+        <% end %>
+      </th>
       <th>user</th>
       <th>item</th>
-      <th>shells</th>
+      <th>
+        <%= link_to "shells", admin_shop_orders_path(params.permit!.merge(sort: params[:sort] == 'shells_asc' ? 'shells_desc' : 'shells_asc')), 
+            style: "color: var(--color-text); text-decoration: none;" %>
+        <% if params[:sort]&.start_with?('shells_') %>
+          <%= params[:sort] == 'shells_asc' ? '↑' : '↓' %>
+        <% end %>
+      </th>
       <th>qty</th>
       <th>status</th>
       <th>details</th>
       <th>address</th>
-      <th>created</th>
+      <th>
+        <%= link_to "created", admin_shop_orders_path(params.permit!.merge(sort: params[:sort] == 'created_at_asc' ? 'created_at_desc' : 'created_at_asc')), 
+            style: "color: var(--color-text); text-decoration: none;" %>
+        <% if params[:sort]&.start_with?('created_at_') %>
+          <%= params[:sort] == 'created_at_asc' ? '↑' : '↓' %>
+        <% end %>
+      </th>
       <th>actions</th>
     </tr>
   </thead>

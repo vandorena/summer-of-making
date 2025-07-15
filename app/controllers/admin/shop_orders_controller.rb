@@ -6,7 +6,7 @@ module Admin
     before_action :set_shop_order, except: [ :index, :pending, :awaiting_fulfillment ]
 
     def scope
-      ShopOrder.all.includes(:user, :shop_item).order(created_at: :desc)
+      ShopOrder.all.includes(:user, :shop_item)
     end
 
     def filtered_scope
@@ -17,20 +17,66 @@ module Admin
         base_scope = base_scope.joins(:shop_item).where.not(shop_items: { type: "ShopItem::FreeStickers" })
       end
 
+      if params[:user_search].present?
+        query = "%#{params[:user_search]}%"
+        base_scope = base_scope.joins(:user).where(
+          "users.display_name ILIKE ? OR users.email ILIKE ? OR users.slack_id ILIKE ?",
+          query, query, query
+        )
+      end
+
+      if params[:shop_item_id].present?
+        base_scope = base_scope.where(shop_item_id: params[:shop_item_id])
+      end
+
+      if params[:status].present?
+        base_scope = base_scope.where(aasm_state: params[:status])
+      end
+
+      if params[:date_from].present?
+        base_scope = base_scope.where("created_at >= ?", Date.parse(params[:date_from]).beginning_of_day)
+      end
+
+      if params[:date_to].present?
+        base_scope = base_scope.where("created_at <= ?", Date.parse(params[:date_to]).end_of_day)
+      end
+
+      case params[:sort]
+      when "id_asc"
+        base_scope = base_scope.order(id: :asc)
+      when "id_desc"
+        base_scope = base_scope.order(id: :desc)
+      when "shells_asc"
+        base_scope = base_scope.order(frozen_item_price: :asc)
+      when "shells_desc"
+        base_scope = base_scope.order(frozen_item_price: :desc)
+      when "created_at_asc"
+        base_scope = base_scope.order(created_at: :asc)
+      when "created_at_desc"
+        base_scope = base_scope.order(created_at: :desc)
+      else
+        base_scope = base_scope.order(created_at: :desc)
+      end
+
+      base_scope
+    rescue Date::Error
       base_scope
     end
 
     def index
       @pagy, @shop_orders = pagy(filtered_scope)
+      calculate_processing_stats
     end
 
     def pending
       @pagy, @shop_orders = pagy(filtered_scope.pending)
+      calculate_processing_stats
       render :index, locals: { title: "pending " }
     end
 
     def awaiting_fulfillment
       @pagy, @shop_orders = pagy(filtered_scope.manually_fulfilled.awaiting_periodical_fulfillment)
+      calculate_processing_stats
       render :index, locals: { title: "fulfillment queue – " }
     end
 
@@ -92,5 +138,32 @@ module Admin
     def set_shop_order
       @shop_order = scope.find(params[:id])
     end
+
+    def calculate_processing_stats
+      # Calculate average time from pending to approved using activities
+      pending_to_approved = scope.joins("LEFT JOIN activities ON activities.trackable_id = shop_orders.id AND activities.trackable_type = 'ShopOrder' AND activities.key = 'approve'")
+                                 .where.not(aasm_state: "pending")
+                                 .where.not("activities.created_at IS NULL")
+                                 .average("EXTRACT(EPOCH FROM activities.created_at - shop_orders.created_at)")
+
+      # Calculate average time from awaiting fulfillment to fulfilled
+      awaiting_to_fulfilled = scope.where(aasm_state: "fulfilled")
+                                   .where.not(awaiting_periodical_fulfillment_at: nil)
+                                   .where.not(fulfilled_at: nil)
+                                   .average("EXTRACT(EPOCH FROM fulfilled_at - awaiting_periodical_fulfillment_at)")
+
+      @pending_to_approved_seconds = pending_to_approved&.to_i
+      @awaiting_to_fulfilled_seconds = awaiting_to_fulfilled&.to_i
+    end
+
+    def format_duration(seconds)
+      return "--:--:--" unless seconds
+
+      hours = seconds / 3600
+      minutes = (seconds % 3600) / 60
+      secs = seconds % 60
+      sprintf("%02d:%02d:%02d", hours, minutes, secs)
+    end
+    helper_method :format_duration
   end
 end
