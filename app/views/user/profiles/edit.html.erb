@@ -13,7 +13,7 @@
         <%= link_to "Cancel", user_path(@user), class: "text-gray-600 hover:text-gray-800" %>
       </div>
 
-             <%= form_with model: @profile, url: user_profile_path(@user), local: true do |form| %>
+             <%= form_with model: @profile, url: user_profile_path(@user), local: true, data: { turbo: false } do |form| %>
         <% if @profile.errors.any? %>
           <div class="bg-red-50 border border-red-200 rounded-md p-4 mb-6">
             <h2 class="text-red-800 font-semibold mb-2">There were some errors with your submission:</h2>

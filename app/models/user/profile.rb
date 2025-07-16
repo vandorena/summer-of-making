@@ -23,6 +23,7 @@ class User::Profile < ApplicationRecord
   validates :bio, length: { maximum: 1000 }, allow_blank: true
   validates :custom_css, length: { maximum: 10_000 }, allow_blank: true
   validate :custom_css_requires_badge
+  validate :fucking_xss
 
   private
 
@@ -31,6 +32,14 @@ class User::Profile < ApplicationRecord
 
     unless user.has_badge?(:graphic_design_is_my_passion)
       errors.add(:custom_css, "requires the 'Graphic Design is My Passion' badge")
+    end
+  end
+
+  def fucking_xss
+    return if custom_css.blank?
+
+    if custom_css.include?("</style>")
+      errors.add(:base, "nice try jackwagon")
     end
   end
 end
