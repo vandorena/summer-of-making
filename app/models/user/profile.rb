@@ -25,6 +25,8 @@ class User::Profile < ApplicationRecord
   validate :custom_css_requires_badge
   validate :fucking_xss
 
+  before_save :clean_css
+
   private
 
   def custom_css_requires_badge
@@ -38,8 +40,27 @@ class User::Profile < ApplicationRecord
   def fucking_xss
     return if custom_css.blank?
 
-    if custom_css.include?("</style>")
+    css = custom_css.downcase
+    bad = [ "</style>", "<script", "javascript:", "@import", "/*</style>", "*/<", "/*<" ]
+
+    bad.each do |pattern|
+      if css.include?(pattern)
+        errors.add(:custom_css, "nice try jackwagon")
+        return
+      end
+    end
+
+    if css.match?(/\/\*.*<.*\*\//m) || css.match?(/<[^>]*>/)
       errors.add(:base, "nice try jackwagon")
     end
+  end
+
+  def clean_css
+    return if custom_css.blank?
+
+    self.custom_css = custom_css
+      .gsub(/\/\*.*?<.*?\*\//m, "")
+      .gsub(/<[^>]*>/, "")
+      .strip
   end
 end
