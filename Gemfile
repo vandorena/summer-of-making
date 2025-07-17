@@ -153,12 +153,11 @@ gem "flipper-ui", "1.3.4"
 
 gem "mini_magick", "~> 5.2"
 
-<<<<<<< Updated upstream
 gem "redis", "~> 5.4"
 
 gem "rack-attack", "~> 6.7"
 
 gem "sanitize", "~> 7.0"
-=======
+
 gem "activeinsights"
->>>>>>> Stashed changes
+
