@@ -72,7 +72,7 @@ class UserHackatimeData < ApplicationRecord
     direct_url = "https://hackatime.hackclub.com/api/v1/users/#{user.slack_id}/stats?filter_by_project=#{encoded_project_keys}&start_date=#{start_time.iso8601}&features=projects"
 
     begin
-      direct_res = Faraday.get(direct_url, nil, { "RACK_ATTACK_BYPASS" => Rails.application.credentials.hackatime.ratelimit_bypass_header })
+      direct_res = Faraday.get(direct_url, nil, { "RACK_ATTACK_BYPASS" => Rails.application.credentials.hackatime&.ratelimit_bypass_header }.compact)
 
       if direct_res.success?
         direct_data = JSON.parse(direct_res.body)
