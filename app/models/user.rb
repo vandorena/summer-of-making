@@ -527,7 +527,7 @@ class User < ApplicationRecord
   end
 
   def setup_mock_verified_user
-    return if not should_mock_verification
+    return unless should_mock_verification
 
     assign_attributes(
       identity_vault_id: "mock_#{SecureRandom.hex(8)}",
