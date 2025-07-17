@@ -374,56 +374,68 @@
     <!-- Summer of Making Steps -->
     <div class="mb-8">
       <%= render "shared/card" do %>
-        <div class="text-[#4a2d24]">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-xl font-semibold">Todo list:</h2>
+        <div class="text-[#4a2d24] flex flex-col xl:flex-row space-y-5 xl:space-y-0">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-xl font-semibold">Todo list:</h2>
+            </div>
+
+            <div class="space-y-4">
+              <div class="flex items-center gap-3">
+                <div class="flex-shrink-0">
+                  <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.projects.any? ? 'checked' : '' %> disabled>
+                </div>
+                <div class="flex-1">
+                  <p class="font-medium">Create a project in the <a href="/my_projects" class="text-blue-500 hover:text-blue-700 underline">Projects</a> tab</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <div class="flex-shrink-0">
+                  <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.devlogs.any? ? 'checked' : '' %> disabled>
+                </div>
+                <div class="flex-1">
+                  <p class="font-medium">Post updates on your devlog as you work</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <div class="flex-shrink-0">
+                  <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.ship_events.any? ? 'checked' : '' %> disabled>
+                </div>
+                <div class="flex-1">
+                  <p class="font-medium">Ship your project when it is ready for others to experience</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <div class="flex-shrink-0">
+                  <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.votes.any? ? 'checked' : '' %> disabled>
+                </div>
+                <div class="flex-1">
+                  <p class="font-medium">Vote on other people's projects to receive your shells</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <div class="flex-shrink-0">
+                  <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.shop_orders.joins(:shop_item).where.not(shop_items: { type: "ShopItem::FreeStickers" }).any? ? 'checked' : '' %> disabled>
+                </div>
+                <div class="flex-1">
+                  <p class="font-medium">Spend your hard-earned shells in the shop</p>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div class="space-y-4">
-            <div class="flex items-center gap-3">
-              <div class="flex-shrink-0">
-                <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.projects.any? ? 'checked' : '' %> disabled>
-              </div>
-              <div class="flex-1">
-                <p class="font-medium">Create a project in the <a href="/my_projects" class="text-blue-500 hover:text-blue-700 underline">Projects</a> tab</p>
-              </div>
-            </div>
-
-            <div class="flex items-center gap-3">
-              <div class="flex-shrink-0">
-                <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.devlogs.any? ? 'checked' : '' %> disabled>
-              </div>
-              <div class="flex-1">
-                <p class="font-medium">Post updates on your devlog as you work</p>
-              </div>
-            </div>
-
-            <div class="flex items-center gap-3">
-              <div class="flex-shrink-0">
-                <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.ship_events.any? ? 'checked' : '' %> disabled>
-              </div>
-              <div class="flex-1">
-                <p class="font-medium">Ship your project when it is ready for others to experience</p>
-              </div>
-            </div>
-
-            <div class="flex items-center gap-3">
-              <div class="flex-shrink-0">
-                <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.votes.any? ? 'checked' : '' %> disabled>
-              </div>
-              <div class="flex-1">
-                <p class="font-medium">Vote on other people's projects to receive your shells</p>
-              </div>
-            </div>
-
-            <div class="flex items-center gap-3">
-              <div class="flex-shrink-0">
-                <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.shop_orders.joins(:shop_item).where.not(shop_items: { type: "ShopItem::FreeStickers" }).any? ? 'checked' : '' %> disabled>
-              </div>
-              <div class="flex-1">
-                <p class="font-medium">Spend your hard-earned shells in the shop</p>
-              </div>
-            </div>
+          <div class="grow flex">
+              <iframe 
+                class="h-auto xl:h-full w-full max-w-lg xl:w-auto xl:ml-auto rounded-sm overflow-clip flex aspect-video" 
+                src="https://player.vimeo.com/video/1093563882?h=3f9f9c02e1&amp;muted=1&amp;badge=0&amp;loop=0&amp;autopause=0&amp;autoplay=0&amp;player_id=0&amp;app_id=58479"
+                frameborder="0" 
+                allow="fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" 
+                title="Summer of Making 2025" 
+                data-ready="true"></iframe>
           </div>
         </div>
       <% end %>
