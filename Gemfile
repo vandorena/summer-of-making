@@ -160,4 +160,3 @@ gem "rack-attack", "~> 6.7"
 gem "sanitize", "~> 7.0"
 
 gem "activeinsights"
-
