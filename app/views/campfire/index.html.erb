@@ -429,13 +429,10 @@
           </div>
 
           <div class="grow flex">
-              <iframe
-                class="h-auto xl:h-full w-full max-w-lg xl:w-auto xl:ml-auto rounded-sm overflow-clip flex aspect-video"
-                src="https://player.vimeo.com/video/1093563882?h=3f9f9c02e1&amp;muted=1&amp;badge=0&amp;loop=0&amp;autopause=0&amp;autoplay=0&amp;player_id=0&amp;app_id=58479"
-                frameborder="0"
-                allow="fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
-                title="Summer of Making 2025"
-                data-ready="true"></iframe>
+              <div class="h-auto xl:h-full w-full max-w-lg xl:w-auto xl:ml-auto rounded-sm overflow-clip aspect-video relative">
+                <video class="absolute inset-0" style="box-sizing: border-box;" src="/onboarding.mp4" poster="/onboarding_poster.png" controls>
+                </video>
+              </div>
           </div>
         </div>
       <% end %>
