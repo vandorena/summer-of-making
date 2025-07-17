@@ -10,11 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-<<<<<<< Updated upstream
-ActiveRecord::Schema[8.0].define(version: 2025_07_14_191309) do
-=======
 ActiveRecord::Schema[8.0].define(version: 2025_07_17_203326) do
->>>>>>> Stashed changes
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
