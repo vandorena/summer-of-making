@@ -173,7 +173,7 @@ export default class extends Controller {
     projectElement.innerHTML = `
       <input type="hidden" name="project[hackatime_project_keys][]" value="${key}">
       <div class="flex-grow">
-        <p class="font-medium">${projectName}</p>
+        <p class="font-bold">${projectName}</p>
         <p class="text-xs text-gray-600">Time tracked: ${formattedTime.replace(/[()]/g, "")}</p>
       </div>
       <button type="button" class="ml-2 text-vintage-red hover:text-red-700" data-action="click->project-form#removeSelectedProject">
@@ -195,11 +195,11 @@ export default class extends Controller {
 
     if (checked) {
       this.usedAiCheckboxFakeTarget.classList.remove("hidden");
-      checkboxContainer.classList.add("bg-forest", "border-forest");
+      checkboxContainer.classList.add("bg-som-dark", "border-som-dark");
       checkboxContainer.classList.remove("bg-bread");
     } else {
       this.usedAiCheckboxFakeTarget.classList.add("hidden");
-      checkboxContainer.classList.remove("bg-forest", "border-forest");
+      checkboxContainer.classList.remove("bg-som-dark", "border-som-dark");
       checkboxContainer.classList.add("bg-bread");
     }
   }
@@ -210,7 +210,7 @@ export default class extends Controller {
 
     if (checked) {
       this.yswsSubmissionCheckboxFakeTarget.classList.remove("hidden");
-      checkboxContainer.classList.add("bg-forest", "border-forest");
+      checkboxContainer.classList.add("bg-som-dark", "border-som-dark");
       checkboxContainer.classList.remove("bg-bread");
 
       // Show the YSWS type dropdown
@@ -219,7 +219,7 @@ export default class extends Controller {
       }
     } else {
       this.yswsSubmissionCheckboxFakeTarget.classList.add("hidden");
-      checkboxContainer.classList.remove("bg-forest", "border-forest");
+      checkboxContainer.classList.remove("bg-som-dark", "border-som-dark");
       checkboxContainer.classList.add("bg-bread");
       
       // Hide the YSWS type dropdown and clear selection
