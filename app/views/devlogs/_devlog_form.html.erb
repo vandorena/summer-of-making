@@ -1,4 +1,4 @@
-<div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] p-4 md:p-6 mb-4 md:mb-8">
+<%= render "shared/card", padding: "lg" do %>
   <% if ENV['DEVLOGS_STATUS'] == 'locked' %>
     <div class="text-center">
       <div class="flex justify-center items-center">
@@ -37,25 +37,25 @@
         <% if @project.hackatime_project_keys.present? && @project.user.has_hackatime && has_hackatime_time %>
           <div class="mb-6">
             <label class="block text-base md:text-lg 2xl:text-xl mb-2">Time tracked with Hackatime</label>
-            <div class="p-3 border border-saddle-taupe">
+            <div class="p-3 border-2 border-som-bright rounded-md">
               <div class="text-base md:text-lg">
                 <% total_hackatime_seconds = @project.coding_time %>
                 <% total_hackatime_hours = total_hackatime_seconds / 3600 %>
                 <% total_hackatime_minutes = (total_hackatime_seconds % 3600) / 60 %>
                 <% total_hackatime_secs = total_hackatime_seconds % 60 %>
-                <div>Total Hackatime Duration: <%= "#{total_hackatime_hours}h #{total_hackatime_minutes}m #{total_hackatime_secs}s" %></div>
+                <div><span class="font-extrabold">Total Hackatime Duration:</span> <%= "#{total_hackatime_hours}h #{total_hackatime_minutes}m #{total_hackatime_secs}s" %></div>
 
                 <% total_time = @project.total_seconds_coded %>
                 <% total_hours = total_time / 3600 %>
                 <% total_minutes = (total_time % 3600) / 60 %>
                 <% total_seconds = total_time % 60 %>
-                <div>Tracked in Devlogs: <%= "#{total_hours}h #{total_minutes}m #{total_seconds}s" %></div>
+                <div><span class="font-extrabold">Tracked in Devlogs:</span> <%= "#{total_hours}h #{total_minutes}m #{total_seconds}s" %></div>
 
                 <% time_since_last = total_hackatime_seconds - total_time %>
                 <% since_last_hours = time_since_last / 3600 %>
                 <% since_last_minutes = (time_since_last % 3600) / 60 %>
                 <% since_last_seconds = time_since_last % 60 %>
-                <div>Since Last Devlog: <%= "#{since_last_hours}h #{since_last_minutes}m #{since_last_seconds}s" %></div>
+                <div><span class="font-extrabold">Since Last Devlog:</span> <%= "#{since_last_hours}h #{since_last_minutes}m #{since_last_seconds}s" %></div>
                 <%= f.hidden_field :use_hackatime, value: "true" %>
               </div>
             </div>
@@ -64,15 +64,21 @@
 
         <div class="space-y-1.5 md:space-y-2">
           <%= f.label :text, "Devlog Text", class: "block text-base md:text-lg 2xl:text-xl" %>
-          <%= f.text_area :text, class: "w-full p-2 border-2 border-black focus:outline-none focus:border-forest text-base md:text-lg 2xl:text-xl", rows: 4, required: true %>
+          <%= f.text_area :text,
+            class: %{
+              w-full p-2 border-2 border-som-bright focus:outline-none focus:border-som-dark text-base
+              md:text-lg 2xl:text-xl rounded-md transition-colors
+            }.squish,
+            rows: 4, required: true %>
         </div>
 
         <div class="space-y-1.5 md:space-y-2">
           <%= f.label :file, "Attachment (Required)", class: "block text-base md:text-lg 2xl:text-xl" %>
           <%= f.file_field :file,
-                           class: "w-full border-2 border-black p-2 focus:outline-none focus:border-forest text-base md:text-lg 2xl:text-xl",
-                           accept: "image/*,video/*,audio/*",
-                           required: true %>
+            class: "w-full border-2 border-som-bright p-2 focus:outline-none focus:border-som-dark text-base md:text-lg 2xl:text-xl rounded-md cursor-pointer transition-colors",
+            accept: "image/*,video/*,audio/*",
+            required: true
+          %>
           <p class="text-sm text-gray-600">Supports images, audio, video, and GIFs (Required)</p>
         </div>
 
@@ -148,4 +154,4 @@
       </div>
     </div>
   </div>
-</div>
+<% end %>
