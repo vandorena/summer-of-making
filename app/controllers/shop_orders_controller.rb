@@ -59,6 +59,7 @@ class ShopOrdersController < ApplicationController
     end
 
     if @order.save
+      AwardBadgesJob.perform_later(current_user.id)
       if @item.class.fulfill_immediately?
         @item.fulfill!(@order)
       end
@@ -78,6 +79,7 @@ class ShopOrdersController < ApplicationController
     flash[:alert] = "error! #{e.message} – report #{uuid} plz"
     redirect_to(@item.requires_black_market? ? black_market_path : shop_path)
   end
+
 
   private
 

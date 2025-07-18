@@ -1,1 +1,22 @@
-<span<% if user.neon_flair? %> style="color: deeppink; font-family: Comic Sans MS"<% end %>><%= user.display_name %></span><%= image_tag("verified.png", width: "15px", style: "vertical-align:text-middle; display: inline; margin: 0px 3px") if user.blue_check? %>
+<%= link_to user_path(user) do %>
+  <span style="display: inline-flex; align-items: center;">
+    <span <% if user.neon_flair? %> style="color: deeppink; font-family: Comic Sans MS"<% end %>><%= user.display_name %></span>
+    <% if user.gold_check? %>
+      <%= image_tag(
+        "gold_verified.png",
+        width: "20px",
+        style: "vertical-align: middle; display: inline; margin: 0px 3px",
+        title: "this user is REALLY verified (i.e. gave us $32)",
+        class: "cursor-help"
+      ) %>
+    <% elsif user.blue_check? %>
+      <%= image_tag(
+        "verified.png",
+        width: "20px",
+        style: "vertical-align: middle; display: inline; margin: 0px 3px",
+        title: "this user is verified (i.e. gave us $8)",
+        class: "cursor-help"
+      ) %>
+    <% end %>
+  </span>
+<% end %>

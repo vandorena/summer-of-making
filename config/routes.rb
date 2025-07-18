@@ -176,6 +176,7 @@ class AdminConstraint
 end
 
 Rails.application.routes.draw do
+  mount ActiveInsights::Engine => "/insights"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -257,6 +258,10 @@ Rails.application.routes.draw do
     resources :shop_orders, path: :orders, except: %i[edit update new]
   end
 
+  resources :users, only: [ :show ] do
+    resource :profile, controller: "user/profiles", only: [ :edit, :update ]
+  end
+
   # Payouts etc
   get "/payouts/:slack_id", to: "payouts#index"
 
@@ -295,11 +300,6 @@ Rails.application.routes.draw do
   end
   get "api/check_user", to: "users#check_user"
   post "api/devlogs", to: "devlogs#api_create"
-
-  # User Hackatime routes
-  post "users/update_hackatime_confirmation", to: "users#update_hackatime_confirmation"
-  post "users/refresh_hackatime", to: "users#refresh_hackatime"
-  post "users/check_hackatime_connection", to: "users#check_hackatime_connection"
 
   resources :ship_event_feedbacks
 
@@ -346,9 +346,16 @@ Rails.application.routes.draw do
         post :ban_user
         post :unban_user
         post :impersonate
+        post :set_hackatime_trust_factor
       end
     end
     resources :shop_items
+    resources :projects, only: [] do
+      member do
+        delete :destroy
+        patch :restore
+      end
+    end
     resources :shop_orders do
       collection do
         get :pending

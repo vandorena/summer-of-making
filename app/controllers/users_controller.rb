@@ -3,7 +3,26 @@
 class UsersController < ApplicationController
   before_action :authenticate_api_key, only: [ :check_user ]
   before_action :authenticate_user!,
-                only: %i[refresh_hackatime check_hackatime_connection hackatime_auth_redirect identity_vault_callback]
+                only: %i[hackatime_auth_redirect identity_vault_callback]
+  before_action :set_user, only: [ :show ]
+
+  def show
+    authorize @user
+    @user.user_profile ||= @user.build_user_profile
+
+    # All projects for the sidebar
+    @all_projects = @user.projects.includes(:user, :banner_attachment, :ship_events)
+                         .order(created_at: :desc)
+
+    # Get all activities from cache
+    @activities = get_cached_activities
+
+    respond_to do |format|
+      format.html
+    end
+  end
+
+
 
   def check_user
     user = User.find_by(slack_id: params[:slack_id])
@@ -14,27 +33,6 @@ class UsersController < ApplicationController
       render json: { exists: true, has_project: false }, status: :ok
     else
       render json: { exists: false, has_project: false }, status: :not_found
-    end
-  end
-
-  def refresh_hackatime
-    current_user.refresh_hackatime_data
-    redirect_back_or_to root_path,
-                        notice: "Hackatime data refresh has been initiated. It may take a few moments to complete."
-  end
-
-  def check_hackatime_connection
-    User.check_hackatime(current_user.slack_id)
-
-    current_user.reload
-
-    if current_user.has_hackatime
-      ahoy.track "tutorial_step_hackatime_first_log", user_id: current_user.id
-      redirect_back_or_to root_path,
-                          notice: "Successfully connected to Hackatime! Your coding stats are now being tracked."
-    else
-      redirect_back_or_to root_path,
-                          alert: "No Hackatime connection found. Please sign up at Hackatime with your Slack account and try again."
     end
   end
 
@@ -145,10 +143,50 @@ class UsersController < ApplicationController
 
   private
 
+  def get_cached_activities
+    # Create cache key based on user and their content timestamps
+    cache_key = "user_activities_#{@user.id}_#{@user.updated_at.to_i}_#{@user.projects.maximum(:updated_at)&.to_i}_#{@user.devlogs.maximum(:updated_at)&.to_i}"
+
+    Rails.cache.fetch(cache_key, expires_in: 1.hour) do
+      # Get user's devlogs and projects with includes
+      # Include devlogs even if project is nil to allow proper handling in view
+      devlogs = @user.devlogs.includes(:project, :user, :comments, :likes, :file_attachment)
+                            .order(created_at: :desc)
+
+      projects = @user.projects.includes(:user, :banner_attachment)
+                             .order(created_at: :desc)
+
+      # Combine and sort chronologically
+      combined_activities = []
+
+      # Add devlogs with type marker (including orphaned ones)
+      devlogs.each { |devlog| combined_activities << { type: :devlog, item: devlog, created_at: devlog.created_at } }
+
+      # Add projects with type marker
+      projects.each { |project| combined_activities << { type: :project, item: project, created_at: project.created_at } }
+
+      # Add user joined activity
+      combined_activities << { type: :user_joined, item: @user, created_at: @user.created_at }
+
+      # Sort by created_at descending (newest first)
+      combined_activities.sort! { |a, b| b[:created_at] <=> a[:created_at] }
+
+      combined_activities
+    end
+  end
+
   def authenticate_api_key
     api_key = request.headers["Authorization"]
     return if api_key.present? && api_key == ENV["API_KEY"]
 
     render json: { error: "Unauthorized" }, status: :unauthorized
+  end
+
+  def set_user
+    @user = if params[:id] == "me"
+      current_user
+    else
+      User.includes(:user_profile).find(params[:id])
+    end
   end
 end

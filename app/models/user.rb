@@ -42,11 +42,15 @@ class User < ApplicationRecord
   has_many :staked_projects, through: :stonks, source: :project
   has_many :ship_events, through: :projects
   has_many :payouts
-  has_one :hackatime_stat, dependent: :destroy
+  has_one :user_hackatime_data, dependent: :destroy
+  has_one :user_profile, class_name: "User::Profile", dependent: :destroy
   has_one :tutorial_progress, dependent: :destroy
   has_one :magic_link, dependent: :destroy
   has_many :shop_orders
   has_many :shop_card_grants
+  has_many :user_badges, dependent: :destroy
+
+  accepts_nested_attributes_for :user_profile
   has_many :hackatime_projects
   has_many :fraud_reports, foreign_key: :user_id, class_name: "FraudReport", dependent: :destroy
 
@@ -62,6 +66,8 @@ class User < ApplicationRecord
   serialize :permissions, type: Array, coder: JSON
 
   after_create :create_tutorial_progress
+  after_find :setup_mock_verified_user, if: -> { should_mock_verification }
+  after_initialize :setup_mock_verified_user, if: -> { should_mock_verification }
 
   include PublicActivity::Model
   tracked only: [], owner: Proc.new { |controller, model| controller&.current_user }
@@ -148,7 +154,7 @@ class User < ApplicationRecord
     user.has_hackatime = true
     user.save!
 
-    stats = user.hackatime_stat || user.build_hackatime_stat
+    stats = user.user_hackatime_data || user.build_user_hackatime_data
     stats.update(data: result, last_updated_at: Time.current)
   end
 
@@ -173,7 +179,7 @@ class User < ApplicationRecord
   end
 
   def hackatime_projects
-    hackatime_stat&.projects || []
+    user_hackatime_data&.projects || []
   end
 
   def format_seconds(seconds)
@@ -184,30 +190,50 @@ class User < ApplicationRecord
 
     "#{hours}h #{minutes}m"
   end
+  # all time
+  def all_time_coding_seconds
+    user_hackatime_data&.projects&.sum { |p| p[:total_seconds] } || 0
+  end
 
-  def refresh_hackatime_data
-    from = "2025-05-16"
-    to = Time.zone.today.strftime("%Y-%m-%d")
-    RefreshHackatimeStatsJob.perform_later(id, from: from, to: to)
+  # 24 hrs
+  def daily_coding_seconds
+    return 0 unless has_hackatime?
+
+    # get user's tz
+    user_timezone = timezone.present? ? timezone : "UTC"
+    today_start = Time.use_zone(user_timezone) { Time.current.beginning_of_day }
+
+    response = fetch_raw_hackatime_stats(from: today_start)
+    result = JSON.parse(response.body)
+
+    return 0 unless result&.dig("data", "status") == "ok"
+    result.dig("data", "total_seconds") || 0
+  rescue => e
+    Rails.logger.error("Failed to fetch today's hackatime data: #{e.message}")
+    0
   end
 
   # This is a network call. Do you really need to use this?
   def fetch_raw_hackatime_stats(from: nil, to: nil)
     Rails.cache.fetch("User.fetch_raw_hackatime_stats/#{id}/#{from}-#{to}/1", expires_in: 5.seconds) do
       if from.present?
-        start_date = Time.parse(from.to_s).freeze
+        start_date = Time.parse(from.to_s).utc.freeze
       else
-        start_date = Time.use_zone("America/New_York") { Time.parse("2025-06-16").beginning_of_day }.freeze
+        start_date = begin
+          Time.use_zone("America/New_York") do
+            Time.parse("2025-06-16").beginning_of_day
+          end
+        end.utc.freeze
       end
 
       if to.present?
-        end_date = Time.parse(to.to_s).freeze
+        end_date = Time.parse(to.to_s).utc.freeze
       end
 
-      url = "https://hk048kcko8cw88coc08800oc.hackatime.selfhosted.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects&start_date=#{start_date}"
+      url = "https://hackatime.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects&start_date=#{start_date}"
       url += "&end_date=#{end_date}" if end_date.present?
 
-      Faraday.get(url, nil, { "RACK_ATTACK_BYPASS" => Rails.application.credentials.hackatime.ratelimit_bypass_header })
+      Faraday.get(url, nil, { "RACK_ATTACK_BYPASS" => Rails.application.credentials.hackatime&.ratelimit_bypass_header }.compact)
     end
   end
 
@@ -252,14 +278,8 @@ class User < ApplicationRecord
       record_timestamps: true
     )
 
-    stats = hackatime_stat || build_hackatime_stat
+    stats = user_hackatime_data || build_user_hackatime_data
     stats.update(data: result, last_updated_at: Time.current)
-  end
-
-  def project_time_from_hackatime(project_key)
-    data = hackatime_stat&.data
-    project_stats = data&.dig("data", "projects")&.find { |p| p["name"] == project_key }
-    project_stats&.dig("total_seconds") || 0
   end
 
   def has_hackatime?
@@ -318,7 +338,15 @@ class User < ApplicationRecord
   end
 
   def blue_check?
-    !!shenanigans_state["blue_check"]
+    has_badge?(:verified)
+  end
+
+  def gold_check?
+    has_badge?(:gold_verified)
+  end
+
+  def verified_check?
+    blue_check? || gold_check?
   end
 
   def neon_flair?
@@ -471,10 +499,41 @@ class User < ApplicationRecord
     Rails.logger.info("user #{id} (#{slack_id}) is back")
   end
 
+  # Badge methods
+  def badges
+    Badge.earned_by(self)
+  end
+
+  def has_badge?(badge_key)
+    user_badges.exists?(badge_key: badge_key)
+  end
+
+  def award_badges!(backfill: false)
+    Badge.award_badges_for(self, backfill: backfill)
+  end
+
+  def award_badges_async!(trigger_event = nil, backfill: false)
+    AwardBadgesJob.perform_later(id, trigger_event, backfill)
+  end
+
   private
+
+  def should_mock_verification
+    Rails.env.development? && ENV["MOCK_VERIFIED_USER"] == "true"
+  end
 
   def create_tutorial_progress
     TutorialProgress.create!(user: self)
+  end
+
+  def setup_mock_verified_user
+    return unless should_mock_verification
+
+    assign_attributes(
+      identity_vault_id: "mock_#{SecureRandom.hex(8)}",
+      identity_vault_access_token: "mock_#{SecureRandom.hex(16)}",
+      ysws_verified: true
+    )
   end
 
   def permissions_must_not_be_nil

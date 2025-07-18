@@ -35,6 +35,8 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class Project < ApplicationRecord
+  include PublicActivity::Model
+
   belongs_to :user
   has_many :devlogs
   has_many :project_follows
@@ -184,6 +186,28 @@ class Project < ApplicationRecord
     hackatime_project_keys || []
   end
 
+  def coding_time
+    return 0 unless user.has_hackatime? && hackatime_keys.present?
+
+    user.user_hackatime_data&.total_seconds_for_project(self) || 0
+  end
+
+  def can_post_devlog?(required_seconds = 300)
+    return false unless user.has_hackatime? && hackatime_keys.present?
+
+    unlogged_time >= required_seconds
+  end
+
+  def time_needed(required_seconds = 300)
+    return required_seconds unless user.has_hackatime?
+
+    [ required_seconds - unlogged_time, 0 ].max
+  end
+
+  def unlogged_time
+    [ coding_time - total_seconds_coded, 0 ].max
+  end
+
   def locked_hackatime_keys
     return [] unless persisted?
 
@@ -196,7 +220,9 @@ class Project < ApplicationRecord
   end
 
   def self.globally_locked_hackatime_keys(user_id = nil)
-    query = Devlog.where.not(hackatime_projects_key_snapshot: [])
+    query = Devlog.joins(:project)
+                  .where(projects: { is_deleted: false })
+                  .where.not(hackatime_projects_key_snapshot: [])
     query = query.joins(:user).where(user_id: user_id) if user_id
     query.pluck(:hackatime_projects_key_snapshot)
          .flatten

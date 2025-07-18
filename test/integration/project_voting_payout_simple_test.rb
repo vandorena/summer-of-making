@@ -14,7 +14,7 @@ class ProjectVotingSimpleTest < ActiveSupport::TestCase
     ShipEvent.destroy_all rescue nil
     Devlog.destroy_all rescue nil
     ShipCertification.destroy_all rescue nil
-    HackatimeStat.destroy_all rescue nil
+    UserHackatimeData.destroy_all rescue nil
     TimerSession.destroy_all rescue nil
     Payout.destroy_all rescue nil
     Project.destroy_all rescue nil
@@ -37,7 +37,7 @@ class ProjectVotingSimpleTest < ActiveSupport::TestCase
       )
 
       # Create hackatime_stat for the user with mock data
-      HackatimeStat.create!(
+      UserHackatimeData.create!(
         user: user,
         last_updated_at: 1.hour.ago,
         data: {

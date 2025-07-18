@@ -21,6 +21,7 @@ class ShipEvent < ApplicationRecord
   has_many :payouts, as: :payable
 
   after_create :maybe_create_ship_certification
+  after_create :award_user_badges
 
   def user
     project.user
@@ -63,5 +64,9 @@ class ShipEvent < ApplicationRecord
     return if project.ship_certifications.pending.exists?
 
     project.ship_certifications.create!
+  end
+
+  def award_user_badges
+    user.award_badges_async!("ship_event_created")
   end
 end

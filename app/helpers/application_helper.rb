@@ -64,4 +64,9 @@ module ApplicationHelper
   def random_carousel_transform
     "rotate(#{rand(-3..3)}deg) scale(#{(rand(97..103).to_f / 100).round(2)}) translateY(#{rand(-8..8)}px)"
   end
+
+  def sanitize_css(css)
+    return "" if css.blank?
+    Sanitize::CSS.stylesheet(css, Sanitize::Config::RELAXED)
+  end
 end

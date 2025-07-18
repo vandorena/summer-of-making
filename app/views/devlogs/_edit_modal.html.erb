@@ -21,7 +21,7 @@
       </div>
 
       <%= form_with model: devlog,
-      url: project_devlog_path(devlog.project, devlog),
+      url: (devlog.project ? project_devlog_path(devlog.project, devlog) : devlog_path(devlog)),
       method: :patch,
       id: "edit-form-#{devlog.id}",
           class: "space-y-3",

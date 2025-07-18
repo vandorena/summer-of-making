@@ -1,90 +1,460 @@
-<h1>User #<%= @user.id %></h1>
-<%= render @user %> <br>
-<b>Total fulfillment cost: </b> <%= number_to_currency(@user.shop_orders.sum(:fulfillment_cost) || 0) %> <br>
-<b>IDV ID:</b> <%= @user.identity_vault_id || "None" %> <%= link_to "visit", "#{IdentityVaultService.host}backend/identities/#{@user.identity_vault_id}" if @user.identity_vault_id.present? %><br>
-<b>Slack ID:</b> <%= (link_to @user.slack_id, "https://hackclub.slack.com/team/#{@user.slack_id}") || "None?!" %> <br>
-<b>Email:</b> <%= (link_to @user.email, "mailto:#{@user.email}") || "None" %><br>
-<b>Ship Certifier:</b>
-<% if @user.ship_certifier? %>
-  <span style="color: green; font-weight: bold;">✓ Yes</span>
-<% else %>
-  <span style="color: #666;">✗ No</span>
-<% end %>
-<br>
-<b>banned:</b>
-<% if @user.is_banned? %>
-  <span style="color: red; font-weight: bold;">yurp</span>
-<% else %>
-  <span style="color: green; font-weight: bold;">nah</span>
-<% end %>
-<br>
+<%= stylesheet_link_tag 'admin_dashboard' %>
+<h1 style="color: var(--color-primary); margin-bottom: 1.5em;">
+  User #<%= @user.id %>, <% if @user.is_admin? %>⚡<% end %><%= @user.display_name %>
+</h1>
 
-<%= button_to "🥸 impersonate?", impersonate_admin_user_path(@user) %>
+<div class="asecs">
+  <div class="asec" style="padding: 1.5em;">
+    <h2>basic info</h2>
+    <%= render @user %>
 
-<div style="border: 1px dashed red; width: fit-content; padding: 1rem">
-  <b style="color: red;">DON'T DO THIS:</b>
-  <%= button_to "nuke IDV data", nuke_idv_data_admin_user_path(@user) %>
-  <%= button_to "cancel all card grants (only do this if you're banning somebody)", cancel_card_grants_admin_user_path(@user) %>
-<% if @user.is_banned? %>
-  <%= button_to "unban user", unban_user_admin_user_path(@user),
-      confirm: "ya sure?",
-      class: "abtn secondary" %>
-<% else %>
-  <%= button_to "ban user", ban_user_admin_user_path(@user),
-      confirm: "ya sure? this is quite the decision!",
-      class: "abtn primary" %>
-<% end %>
+    <div class="agrid" style="margin-top: 1em;">
+      <div>
+        <strong>IDV ID:</strong><br>
+        <%= @user.identity_vault_id || "None" %>
+        <% if @user.identity_vault_id.present? %>
+          <%= link_to "IDV Backend", "#{IdentityVaultService.host}backend/identities/#{@user.identity_vault_id}", style: "color: var(--color-primary);" %>
+        <% end %>
+      </div>
+
+      <div>
+        <strong>Slack ID:</strong><br>
+        <% if @user.slack_id.present? %>
+          <%= link_to @user.slack_id, "https://hackclub.slack.com/team/#{@user.slack_id}", style: "color: var(--color-primary);" %>
+        <% else %>
+          <span style="color: var(--color-muted);">None?!</span>
+        <% end %>
+      </div>
+
+      <div>
+        <strong>Email:</strong><br>
+        <% if @user.email.present? %>
+          <%= link_to @user.email, "mailto:#{@user.email}", style: "color: var(--color-primary);" %>
+        <% else %>
+          <span style="color: var(--color-muted);">None</span>
+        <% end %>
+      </div>
+
+      <div>
+        <strong>Timezone:</strong><br>
+        <%= @user.timezone || "None" %>
+      </div>
+
+      <div>
+        <strong>Joined:</strong><br>
+        <%= @user.created_at.strftime("%B %d, %Y at %I:%M %p") %>
+      </div>
+
+      <div>
+        <strong>Last update:</strong><br>
+        <%= @user.updated_at.strftime("%B %d, %Y at %I:%M %p") %>
+      </div>
+    </div>
+  </div>
+
+  <div class="asec" style="padding: 1.5em;">
+    <h2>permissions & status</h2>
+    <div class="agrid">
+      <div>
+        <strong>Ship Certifier:</strong><br>
+        <% if @user.ship_certifier? %>
+          <span class="pill pill-green">✓ Yes</span>
+        <% else %>
+          <span class="pill pill-gray">✗ No</span>
+        <% end %>
+      </div>
+
+      <div>
+        <strong>Banned:</strong><br>
+        <% if @user.is_banned? %>
+          <span class="pill pill-red">yurp</span>
+        <% else %>
+          <span class="pill pill-green">nah</span>
+        <% end %>
+      </div>
+
+      <div>
+        <strong>shop banned:</strong><br>
+        <% if @user.freeze_shop_activity? %>
+          <span class="pill pill-red">lmao yes</span>
+        <% else %>
+          <span class="pill pill-green">nah they chill</span>
+        <% end %>
+      </div>
+    </div>
+  </div>
 </div>
-<br><br>
-<% if @user.freeze_shop_activity? %>
-  <%= button_to "defrost (allow shop activity again)", defrost_admin_user_path(@user) %>
-<% else %>
-  <%= button_to "freeze (don't allow shop activity)", freeze_admin_user_path(@user) %>
-<% end %>
-<br><br>
 
-<% if @user.has_black_market? %>
-  <%= button_to "remove black market access", take_away_black_market_admin_user_path(@user) %>
-<% else %>
-  <%= button_to "give black market access", give_black_market_admin_user_path(@user) %>
-<% end %>
-<br><br>
+<div class="asecs">
+  <div class="asec" style="padding: 1.5em;">
+    <h2>hackatime deets</h2>
+    <div class="agrid">
+      <div>
+        <strong>Hackatime ID:</strong><br>
+        <% if @hackatime_id %>
+          <%= @hackatime_id %>
+          <%= link_to "timeline", "https://hackatime.hackclub.com/admin/timeline?user_ids=#{@hackatime_id}", target: "_blank", style: "color: var(--color-primary);" %>
+        <% else %>
+          <span style="color: var(--color-muted);">cant find it cuh</span>
+        <% end %>
+      </div>
 
-<% if @user.ship_certifier? %>
-  <%= button_to "revoke ship certifier permissions", revoke_ship_certifier_admin_user_path(@user),
-      confirm: "ya sure you wanna do that?",
-      class: "abtn secondary" %>
-<% else %>
-  <%= button_to "grant ship certifier permissions", grant_ship_certifier_admin_user_path(@user),
-      class: "abtn primary" %>
-<% end %>
-<br><br>
+      <div>
+        <strong>Got hackatime?</strong><br>
+        <% if @user.has_hackatime? %>
+          <span class="pill pill-green">yuh</span>
+        <% else %>
+          <span class="pill pill-red">nope</span>
+        <% end %>
+      </div>
 
-<b>Payouts:</b>
-<ul>
-  <% @payouts.each do |payout| %>
-    <li id="<%= dom_id payout %>"><%= render payout %></li>
-  <% end %>
-</ul>
-<details>
-  <summary>
-    create manual adjustment payout
-  </summary>
-  <%= form_with url: create_payout_admin_user_path(@user), scope: :payout do |f| %>
-    <div>
-      <%= f.label :amount, "Amount: " %>
-      <%= f.number_field :amount %>
+      <% if @user.user_hackatime_data.present? %>
+      <div>
+        <strong>Total time:</strong><br>
+        <% begin %>
+          <%= @user.format_seconds(@user.all_time_coding_seconds) %>
+        <% rescue => e %>
+          <span style="color: var(--color-red);">fucky wucky</span>
+        <% end %>
+      </div>
+
+      <div>
+        <strong>Time today:</strong><br>
+        <% begin %>
+          <%= @user.format_seconds(@user.daily_coding_seconds) %>
+        <% rescue => e %>
+          <span style="color: var(--color-red);">fucky wucky</span>
+        <% end %>
+      </div>
+
+      <div>
+        <strong>Last updated:</strong><br>
+        <%= @user.user_hackatime_data.last_updated_at&.strftime("%B %d, %Y at %I:%M %p") || "Never" %>
+      </div>
+
+      <div>
+        <strong>Hackatime projects:</strong><br>
+        <% begin %>
+          <%= @user.hackatime_projects.count %>
+        <% rescue => e %>
+          <span style="color: var(--color-red);">fucky wucky</span>
+        <% end %>
+      </div>
+      <% else %>
+        <div style="grid-column: 1 / -1;">
+          <em style="color: var(--color-muted);">we got nuthin lil bro</em>
+        </div>
+      <% end %>
     </div>
-    <div>
-      <%= f.label :reason, "Reason: " %>
-      <%= f.text_area :reason, placeholder: "i just want them to have some walkin' around money!", rows: 3 %>
+
+    <p style="margin-top:2em;">set hackatime trust factor</p>
+    <%= form_with url: set_hackatime_trust_factor_admin_user_path(@user), local: true, style: "margin-top: 1em; display: flex; gap: 0.5em; align-items: flex-end; flex-wrap: wrap;" do |f| %>
+      <%= f.select :trust_level,
+          options_for_select([
+            ['Blue (Unscored)', '0'],
+            ['Red (Convicted)', '1'],
+            ['Green (Trusted)', '2'],
+            ['Yellow (Suspected)', '3']
+          ]),
+          { prompt: 'Trust level...' },
+          { style: "min-width: 160px; padding: 0.5em; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-darker); color: var(--color-text);" } %>
+      <%= f.password_field :api_key,
+          placeholder: "hka_api_key",
+          style: "min-width: 180px; padding: 0.5em; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-darker); color: var(--color-text);",
+          title: "Your personal Hackatime admin API key (starts with hka_)" %>
+      <%= f.text_field :reason,
+          placeholder: "reason",
+          style: "min-width: 200px; padding: 0.5em; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-darker); color: var(--color-text);" %>
+      <%= f.submit "go go gadget", class: 'abtn primary small', style: "margin-left: 0.5em;" %>
+    <% end %>
+    <small style="color: var(--color-muted); font-style: italic; display: block; margin-top: 0.5em;">API key starts with hka_</small>
+  </div>
+
+  <div class="asec" style="padding: 1.5em;">
+    <h2>what they making?</h2>
+    <div class="agrid">
+      <div>
+        <strong>Total projects:</strong><br>
+        <% deleted_count = @user.projects.with_deleted.where(is_deleted: true).count %>
+        <% if deleted_count > 0 %>
+          <%= @user.projects.with_deleted.count %> (<span style="font-style: italic;"><%= deleted_count %> deleted</span>)
+        <% else %>
+          <%= @user.projects.count %>
+        <% end %>
+      </div>
+
+      <div>
+        <strong>Used AI:</strong><br>
+        <%= @user.projects.where(used_ai: true).count %>
+      </div>
+
+      <div>
+        <strong>Devlogs:</strong><br>
+        <%= @user.devlogs.count %>
+      </div>
+
+      <div>
+        <strong>Votes:</strong><br>
+        <%= @user.votes.count %>
+      </div>
     </div>
-    <%= f.submit "do it!" %>
-  <% end %>
-</details>
-<br><br>
-<b>audit lawg (incomplete):</b>
-<%= render_activities(@activities, layout: "activity") %>
+
+    <% if @user.projects.any? %>
+      <details style="margin-top: 1em;">
+        <summary><strong>show me the goods</strong></summary>
+        <ul style="margin-top: 1em; color: var(--color-text);">
+            <% @user.projects.order(created_at: :desc).each do |project| %>
+            <li style="margin-bottom: 0.5em;">
+              <strong>
+              <%= link_to "#{project.title} (#{project.id})", "https://summer.hackclub.com/projects/#{project.id}", target: "_blank", style: "color: var(--color-primary);" %>
+              </strong>
+              (<%= project.certification_type || "No certification type" %>)
+              - created: <%= project.created_at.strftime("%m/%d/%Y") %>
+              <% if project.is_shipped? %>
+              <span class="pill pill-green">shipped</span>
+              <% end %>
+              <% if project.used_ai? %>
+              <span class="pill pill-blue">used AI</span>
+              <% end %>
+              <br>
+              <small style="color: var(--color-muted);">
+              views: <%= project.views_count %> |
+              devlogs: <%= project.devlogs_count %>
+              <% if project.repo_link.present? %>
+                | <%= link_to "Repo", project.repo_link, target: "_blank", style: "color: var(--color-primary);" %>
+              <% end %>
+              <% if project.demo_link.present? %>
+                | <%= link_to "Demo", project.demo_link, target: "_blank", style: "color: var(--color-primary);" %>
+              <% end %>
+              | <span style="display: inline;">
+                <%= button_to "Delete", admin_project_path(project),
+                method: :delete,
+                confirm: "You sure you wanna ratio '#{project.title}'? Thats like really bad if this is a legit project.",
+                style: 'color: var(--color-red); background: none; border: none; padding: 0; font: inherit; cursor: pointer; text-decoration: underline;',
+                form: { style: 'display: inline;' } %>
+                </span>
+              </small>
+            </li>
+            <% end %>
+        </ul>
+      </details>
+    <% end %>
+
+    <% deleted_projects = @user.projects.with_deleted.where(is_deleted: true) %>
+    <% if deleted_projects.any? %>
+      <details style="margin-top: 1em;">
+        <summary><strong style="color: var(--color-red);">deleted projects (<%= deleted_projects.count %>)</strong></summary>
+        <ul style="margin-top: 1em; color: var(--color-text);">
+          <% deleted_projects.order(created_at: :desc).each do |project| %>
+            <li style="margin-bottom: 0.5em;">
+              <strong style="color: var(--color-muted);">
+                <%= project.title %> (<%= project.id %>)
+              </strong>
+              (<%= project.certification_type || "No certification type" %>)
+              - created: <%= project.created_at.strftime("%m/%d/%Y") %>
+              <span class="pill pill-red">deleted</span>
+              <% if project.is_shipped? %>
+                <span class="pill pill-green">shipped</span>
+              <% end %>
+              <% if project.used_ai? %>
+                <span class="pill pill-blue">used AI</span>
+              <% end %>
+              <br>
+              <small style="color: var(--color-muted);">
+                views: <%= project.views_count %> |
+                devlogs: <%= project.devlogs_count %>
+                <% if project.repo_link.present? %>
+                  | Repo: <%= project.repo_link %>
+                <% end %>
+                <% if project.demo_link.present? %>
+                  | Demo: <%= project.demo_link %>
+                <% end %>
+              </small>
+              <br>
+              <%= button_to "bring it back!", restore_admin_project_path(project),
+                  method: :patch,
+                  class: "abtn",
+                  style: "margin-top: 0.5em; font-size: 0.8em; padding: 0.25em 0.5em;",
+                  confirm: "ya sure? it was probs deleted for a good reason, check with the person who did it" %>
+            </li>
+          <% end %>
+        </ul>
+      </details>
+    <% end %>
+  </div>
+</div>
+
+<div class="asecs">
+  <div class="asec" style="padding: 1.5em;">
+    <h2>google, show me this persons amazon account</h2>
+    <div class="agrid">
+      <div>
+        <strong>Total orders:</strong><br>
+        <%= @user.shop_orders.count %>
+      </div>
+
+      <div>
+        <strong>Card grants:</strong><br>
+        <%= @user.shop_card_grants.count %>
+      </div>
+
+      <div>
+        <strong>Total fulfillment cost:</strong><br>
+        <%= number_to_currency(@user.shop_orders.sum(:fulfillment_cost) || 0) %>
+      </div>
+
+      <div>
+        <strong>Pending orders:</strong><br>
+        <%= @user.shop_orders.where(aasm_state: ['pending', 'awaiting_periodical_fulfillment', 'in_verification_limbo']).count %>
+      </div>
+    </div>
+
+    <% if @user.shop_orders.any? %>
+      <details style="margin-top: 1em;">
+        <summary><strong>google show me their orders</strong></summary>
+        <div style="margin-top: 0.5em;">
+          <table style="width: 100%; border-collapse: collapse; color: var(--color-text);">
+            <thead>
+              <tr style="border-bottom: 1px solid var(--color-border);">
+                <th style="text-align: left; padding: 0.5em;">item</th>
+                <th style="text-align: left; padding: 0.5em;">status</th>
+                <th style="text-align: left; padding: 0.5em;">cost</th>
+                <th style="text-align: left; padding: 0.5em;">date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @user.shop_orders.includes(:shop_item).order(created_at: :desc).each do |order| %>
+                <tr style="border-bottom: 1px solid var(--color-border-light);">
+                  <td style="padding: 0.5em; vertical-align: top;">
+                    <strong><%= link_to "#{order.shop_item.name} (##{order.id})", admin_shop_order_path(order), style: "color: var(--color-primary);" %></strong>
+                    <% if order.shop_item.type.present? %>
+                      <br><small style="color: var(--color-muted);"><%= order.shop_item.type.demodulize %></small>
+                    <% end %>
+                  </td>
+                  <td style="padding: 0.5em; vertical-align: top;">
+                    <% case order.aasm_state %>
+                    <% when 'pending' %>
+                      <span class="pill pill-yellow">pending</span>
+                    <% when 'awaiting_periodical_fulfillment' %>
+                      <span class="pill pill-blue">awaiting fulfillment</span>
+                    <% when 'fulfilled' %>
+                      <span class="pill pill-green">fulfilled</span>
+                    <% when 'rejected' %>
+                      <span class="pill pill-red">rejected</span>
+                    <% when 'in_verification_limbo' %>
+                      <span class="pill pill-purple">verification limbo</span>
+                    <% when 'on_hold' %>
+                      <span class="pill pill-gray">on hold</span>
+                    <% else %>
+                      <span class="pill pill-gray"><%= order.aasm_state %></span>
+                    <% end %>
+                  </td>
+                  <td style="padding: 0.5em; vertical-align: top;">
+                    <% if order.frozen_item_price.present? %>
+                      <%= order.frozen_item_price * order.quantity %>
+                    <% else %>
+                      <span style="color: var(--color-muted);">—</span>
+                    <% end %>
+                    <% if order.fulfillment_cost.present? && order.fulfillment_cost > 0 %>
+                      <br><small style="color: var(--color-muted);">fulfillment: <%= number_to_currency(order.fulfillment_cost) %></small>
+                    <% end %>
+                  </td>
+                  <td style="padding: 0.5em; vertical-align: top;">
+                    <%= order.created_at.strftime("%m/%d/%Y") %>
+                    <% if order.fulfilled_at.present? %>
+                      <br><small style="color: var(--color-muted);">fulfilled: <%= order.fulfilled_at.strftime("%m/%d/%Y") %></small>
+                    <% elsif order.rejected_at.present? %>
+                      <br><small style="color: var(--color-red);">rejected: <%= order.rejected_at.strftime("%m/%d/%Y") %></small>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </details>
+    <% end %>
+  </div>
+
+  <div class="asec" style="padding: 1.5em;">
+    <h2>quick actions</h2>
+    <div class="agrid">
+      <%= button_to "🥸 impersonate?", impersonate_admin_user_path(@user), class: 'abtn secondary' %>
+
+      <% if @user.freeze_shop_activity? %>
+        <%= button_to "defrost (allow shop activity again)", defrost_admin_user_path(@user), class: 'abtn primary' %>
+      <% else %>
+        <%= button_to "freeze (don't allow shop activity)", freeze_admin_user_path(@user), class: 'abtn secondary' %>
+      <% end %>
+
+      <% if @user.has_black_market? %>
+        <%= button_to "remove black market access", take_away_black_market_admin_user_path(@user), class: 'abtn secondary' %>
+      <% else %>
+        <%= button_to "give black market access", give_black_market_admin_user_path(@user), class: 'abtn primary' %>
+      <% end %>
+
+      <% if @user.ship_certifier? %>
+        <%= button_to "revoke ship certifier permissions", revoke_ship_certifier_admin_user_path(@user), confirm: "ya sure you wanna do that?", class: "abtn secondary" %>
+      <% else %>
+        <%= button_to "grant ship certifier permissions", grant_ship_certifier_admin_user_path(@user), class: "abtn primary" %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="asec" style="padding: 1.5em; margin-bottom: 2em; border: 2px dashed var(--color-red);">
+  <h2 style="color: var(--color-red);">DON'T DO THIS</h2>
+  <p style="color: var(--color-red); margin-bottom: 1em;">click these buttons i dare you lmao</p>
+
+  <div class="agrid">
+    <%= button_to "nuke IDV data", nuke_idv_data_admin_user_path(@user), class: 'abtn', style: 'background: var(--color-red);' %>
+    <%= button_to "cancel all card grants (only do this if you're banning somebody)", cancel_card_grants_admin_user_path(@user), class: 'abtn', style: 'background: var(--color-red);' %>
+
+    <div>
+
+    <% if @user.is_banned? %>
+      <%= button_to "unban user from platform", unban_user_admin_user_path(@user), confirm: "ya sure?", class: "abtn secondary" %>
+    <% else %>
+      <%= button_to "platform ban user", ban_user_admin_user_path(@user), confirm: "ya sure? this is quite the decision!", class: "abtn", style: 'background: var(--color-red);' %>
+    <% end %>
+    <p style="color: var(--color-red); margin-bottom: 1em;">quick note about bans, hackatime bans also carry over to SOM, so if someone gets ratioed on hackatime, that will also ban them from SOM. it is better to ban someone on hackatime and wait for that ban to propagate over to SOM.</p>
+    </div>
+  </div>
+</div>
+
+<div class="asecs">
+  <div class="asec" style="padding: 1.5em;">
+    <h2>payouts</h2>
+    <ul style="color: var(--color-text);">
+      <% @payouts.each do |payout| %>
+        <li id="<%= dom_id payout %>" style="margin-bottom: 0.5em;"><%= render payout %></li>
+      <% end %>
+    </ul>
+
+    <details style="margin-top: 1em;">
+      <summary style="color: var(--color-primary); cursor: pointer;">
+        create manual adjustment payout (aka be the fed and print money)
+      </summary>
+      <%= form_with url: create_payout_admin_user_path(@user), scope: :payout, style: "margin-top: 1em;" do |f| %>
+        <div style="margin-bottom: 0.5em;">
+          <%= f.label :amount, "Amount: ", style: "color: var(--color-text);" %>
+          <%= f.number_field :amount, style: "width: 100%; padding: 0.5em; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-darker); color: var(--color-text);" %>
+        </div>
+        <div style="margin-bottom: 0.5em;">
+          <%= f.label :reason, "Reason: ", style: "color: var(--color-text);" %>
+          <%= f.text_area :reason, placeholder: "i just want them to have some walkin' around money!", rows: 3, style: "width: 100%; padding: 0.5em; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-darker); color: var(--color-text);" %>
+        </div>
+        <%= f.submit "do it!", class: 'abtn primary' %>
+      <% end %>
+    </details>
+  </div>
+</div>
+
+<div class="asec" style="padding: 1.5em; margin-bottom: 2em;">
+  <h2>audit lawg (incomplete)</h2>
+  <%= render_activities(@activities, layout: "activity") %>
+</div>
 
 <%= render 'admin/inspector', record: @user %>
-<br><br><%= link_to "← back", admin_users_path %>
+
+<%= link_to "← back", admin_users_path, class: 'aout' %>
