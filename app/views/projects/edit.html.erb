@@ -1,157 +1,162 @@
-<div class="container mx-auto px-4 py-4 sm:py-8">
-  <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] p-4 sm:p-6">
-    <h1 class="text-2xl sm:text-3xl mb-4 sm:mb-6">Edit Project</h1>
+<%
+  card_classes = %{
+    container mx-auto mx-4 my-4 sm:py-8 !border-som-dark border-3
+  }.squeeze
+%>
 
-    <%= form_with(model: @project, class: "space-y-4 sm:space-y-6", data: { controller: "project-form", action: "submit->project-form#validateForm" }) do |f| %>
-      <div class="space-y-1 sm:space-y-2">
-        <%= f.label :title, class: "block text-base sm:text-lg font-medium" %>
-        <%= f.text_field :title, id: "title", class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm sm:text-base ", data: { project_form_target: "title" } %>
-        <p class="text-xs sm:text-sm text-vintage-red hidden" id="titleError" data-project-form-target="titleError"></p>
-      </div>
+<%= render "shared/card", padding: "lg", classes: card_classes do %>
+  <h1 class="text-2xl sm:text-3xl mb-4 sm:mb-6">Edit Project</h1>
 
-      <div class="space-y-1 sm:space-y-2">
-        <%= f.label :description, class: "block text-base sm:text-lg font-medium" %>
-        <%= f.text_area :description, id: "description", rows: 4, class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm sm:text-base ", data: { project_form_target: "description" } %>
-        <p class="text-xs sm:text-sm text-vintage-red hidden" id="descriptionError" data-project-form-target="descriptionError"></p>
-      </div>
+  <%= form_with(model: @project, class: "space-y-4 sm:space-y-6", data: { controller: "project-form", action: "submit->project-form#validateForm" }) do |f| %>
+    <div class="space-y-1 sm:space-y-2">
+      <%= f.label :title, class: "block text-base sm:text-lg font-medium" %>
+      <%= f.text_field :title, id: "title", class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm sm:text-base ", data: { project_form_target: "title" } %>
+      <p class="text-xs sm:text-sm text-vintage-red hidden" id="titleError" data-project-form-target="titleError"></p>
+    </div>
 
-      <div class="space-y-1 sm:space-y-2">
-        <%= f.label :readme_link, "Readme Link", class: "block text-base sm:text-lg font-medium" %>
-        <%= f.url_field :readme_link, id: "readme", class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm sm:text-base ", data: { project_form_target: "readme" } %>
-        <p class="text-xs sm:text-sm text-vintage-red hidden" id="readmeError" data-project-form-target="readmeError"></p>
-      </div>
+    <div class="space-y-1 sm:space-y-2">
+      <%= f.label :description, class: "block text-base sm:text-lg font-medium" %>
+      <%= f.text_area :description, id: "description", rows: 4, class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm sm:text-base ", data: { project_form_target: "description" } %>
+      <p class="text-xs sm:text-sm text-vintage-red hidden" id="descriptionError" data-project-form-target="descriptionError"></p>
+    </div>
 
-      <div class="space-y-1 sm:space-y-2">
-        <%= f.label :demo_link, "Demo Link", class: "block text-base sm:text-lg font-medium" %>
-        <%= f.url_field :demo_link, id: "demo", class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm sm:text-base ", data: { project_form_target: "demo" } %>
-        <p class="text-xs sm:text-sm text-vintage-red hidden" id="demoError" data-project-form-target="demoError"></p>
-      </div>
+    <div class="space-y-1 sm:space-y-2">
+      <%= f.label :readme_link, "Readme Link", class: "block text-base sm:text-lg font-medium" %>
+      <%= f.url_field :readme_link, id: "readme", class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm sm:text-base ", data: { project_form_target: "readme" } %>
+      <p class="text-xs sm:text-sm text-vintage-red hidden" id="readmeError" data-project-form-target="readmeError"></p>
+    </div>
 
-      <div class="space-y-1 sm:space-y-2">
-        <%= f.label :repo_link, "Repository Link", class: "block text-base sm:text-lg font-medium" %>
-        <%= f.url_field :repo_link, id: "repo", class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm sm:text-base ", data: { project_form_target: "repo" } %>
-        <p class="text-xs sm:text-sm text-vintage-red hidden" id="repoError" data-project-form-target="repoError"></p>
-      </div>
+    <div class="space-y-1 sm:space-y-2">
+      <%= f.label :demo_link, "Demo Link", class: "block text-base sm:text-lg font-medium" %>
+      <%= f.url_field :demo_link, id: "demo", class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm sm:text-base ", data: { project_form_target: "demo" } %>
+      <p class="text-xs sm:text-sm text-vintage-red hidden" id="demoError" data-project-form-target="demoError"></p>
+    </div>
 
-      <!-- YSWS Submission Section -->
-      <div class="space-y-1 sm:space-y-2">
-        <div class="flex items-center space-x-2">
-          <label class="flex items-center space-x-2 text-sm cursor-pointer">
-            <div class="h-5 w-5 border-2 border-saddle-taupe <%= @project.ysws_submission? ? 'bg-forest border-forest' : 'bg-bread' %> border-opacity-50 flex items-center justify-center rounded focus-within:ring-2 focus-within:ring-forest hover:border-forest transition-colors">
-              <%= f.checkbox :ysws_submission, class: "sr-only", data: { project_form_target: "yswsSubmissionCheckboxReal", action: "change->project-form#toggleYswsSubmission" } %>
-              <div data-project-form-target="yswsSubmissionCheckboxFake" class="<%= @project.ysws_submission? ? '' : 'hidden' %>">
-                <%= inline_svg_tag "check.svg", class: "h-3 w-3 text-white" %>
-              </div>
+    <div class="space-y-1 sm:space-y-2">
+      <%= f.label :repo_link, "Repository Link", class: "block text-base sm:text-lg font-medium" %>
+      <%= f.url_field :repo_link, id: "repo", class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm sm:text-base ", data: { project_form_target: "repo" } %>
+      <p class="text-xs sm:text-sm text-vintage-red hidden" id="repoError" data-project-form-target="repoError"></p>
+    </div>
+
+    <!-- YSWS Submission Section -->
+    <div class="space-y-1 sm:space-y-2">
+      <div class="flex items-center space-x-2">
+        <label class="flex items-center space-x-2 text-sm cursor-pointer">
+          <div class="h-5 w-5 border-2 border-saddle-taupe <%= @project.ysws_submission? ? 'bg-forest border-forest' : 'bg-bread' %> border-opacity-50 flex items-center justify-center rounded focus-within:ring-2 focus-within:ring-forest hover:border-forest transition-colors">
+            <%= f.checkbox :ysws_submission, class: "sr-only", data: { project_form_target: "yswsSubmissionCheckboxReal", action: "change->project-form#toggleYswsSubmission" } %>
+            <div data-project-form-target="yswsSubmissionCheckboxFake" class="<%= @project.ysws_submission? ? '' : 'hidden' %>">
+              <%= inline_svg_tag "check.svg", class: "h-3 w-3 text-white" %>
             </div>
-            <span>Is this submitted to a YSWS program?</span>
-          </label>
-        </div>
-
-        <!-- YSWS Type Dropdown (conditional) -->
-        <div data-project-form-target="yswsTypeContainer" class="mt-3 <%= @project.ysws_submission? ? '' : 'hidden' %>">
-          <%= f.label :ysws_type, "YSWS Program", class: "block text-base sm:text-lg font-medium" %>
-          <%= f.select :ysws_type,
-              options_for_select(ysws_type_options, @project.ysws_type),
-              {},
-              {
-                class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm sm:text-base",
-                data: { project_form_target: "yswsType" }
-              } %>
-          <p class="text-xs sm:text-sm text-vintage-red hidden" id="yswsTypeError" data-project-form-target="yswsTypeError"></p>
-        </div>
+          </div>
+          <span>Is this submitted to a YSWS program?</span>
+        </label>
       </div>
 
-      <% if current_user&.has_hackatime %>
-        <div class="border-t border-saddle-taupe border-opacity-30 pt-4 mt-4">
-          <div class="flex items-center mb-2">
-            <h3 class="text-base sm:text-lg">HackaTime Projects</h3>
-          </div>
+      <!-- YSWS Type Dropdown (conditional) -->
+      <div data-project-form-target="yswsTypeContainer" class="mt-3 <%= @project.ysws_submission? ? '' : 'hidden' %>">
+        <%= f.label :ysws_type, "YSWS Program", class: "block text-base sm:text-lg font-medium" %>
+        <%= f.select :ysws_type,
+            options_for_select(ysws_type_options, @project.ysws_type),
+            {},
+            {
+              class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm sm:text-base",
+              data: { project_form_target: "yswsType" }
+            } %>
+        <p class="text-xs sm:text-sm text-vintage-red hidden" id="yswsTypeError" data-project-form-target="yswsTypeError"></p>
+      </div>
+    </div>
 
-          <div id="hackatime-projects" data-project-form-target="hackatimeProjects" class="space-y-2">
-            <% hackatime_projects = current_user.hackatime_projects %>
-            <% if hackatime_projects.present? %>
-              <% globally_locked_keys = Project.globally_locked_hackatime_keys(current_user.id) %>
-              <div class="hackatime-project-field mb-2">
-                <select name="__temp_hackatime_select" class="w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm md:text-base" data-project-form-target="hackatimeSelect">
-                  <option value="">Select a project...</option>
-                  <% hackatime_projects.each do |project| %>
-                    <% is_globally_locked = globally_locked_keys.include?(project[:key]) %>
-                    <% is_already_assigned = @project.hackatime_project_keys&.include?(project[:key]) %>
-                    <option value="<%= project[:key] %>" <%= (is_already_assigned || is_globally_locked) ? 'disabled' : '' %> <%= is_globally_locked && !is_already_assigned ? 'style="color: #B91C1C;"' : '' %>>
-                      <%= project[:name] %> (<%= project[:formatted_time] %>)<%= is_globally_locked && !is_already_assigned ? ' - 🔒 Already in use' : '' %>
-                    </option>
-                  <% end %>
-                </select>
-              </div>
+    <% if current_user&.has_hackatime %>
+      <div class="border-t border-saddle-taupe border-opacity-30 pt-4 mt-4">
+        <div class="flex items-center mb-2">
+          <h3 class="text-base sm:text-lg">HackaTime Projects</h3>
+        </div>
 
-              <div class="selected-hackatime-projects space-y-3" data-project-form-target="selectedProjects">
-                <% if @project.hackatime_project_keys.present? %>
-                  <% locked_keys = @project.locked_hackatime_keys %>
-                  <% @project.hackatime_project_keys.each do |key| %>
-                    <% project = hackatime_projects.find { |p| p[:key] == key } %>
-                    <% is_locked = locked_keys.include?(key) %>
-                    <% if project %>
-                      <div class="flex items-center p-2 <%= is_locked ? 'bg-[#F3ECD8] border-2 border-[#E4DCC6] rounded-lg' : 'bg-bread border border-saddle-taupe border-opacity-50 rounded' %>" data-project-key="<%= key %>">
-                        <input type="hidden" name="project[hackatime_project_keys][]" value="<%= key %>">
-                        <div class="flex-grow">
-                          <p class="font-medium"><%= project[:name] %></p>
-                          <p class="text-xs text-gray-600">Time tracked: <%= project[:formatted_time] %></p>
-                        </div>
-                        <% if is_locked %>
-                          <div class="ml-2 text-vintage-red opacity-60" title="This key cannot be removed because it has been used in devlogs">
-                            <%= inline_svg_tag "icons/lock.svg", class: "h-5 w-5" %>
-                          </div>
-                        <% else %>
-                          <button type="button" class="ml-2 text-vintage-red hover:text-red-700 hover:scale-110 transition-all" data-action="click->project-form#removeSelectedProject">
-                            <%= inline_svg_tag "close.svg", class: "h-5 w-5" %>
-                          </button>
-                        <% end %>
+        <div id="hackatime-projects" data-project-form-target="hackatimeProjects" class="space-y-2">
+          <% hackatime_projects = current_user.hackatime_projects %>
+          <% if hackatime_projects.present? %>
+            <% globally_locked_keys = Project.globally_locked_hackatime_keys(current_user.id) %>
+            <div class="hackatime-project-field mb-2">
+              <select name="__temp_hackatime_select" class="w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm md:text-base" data-project-form-target="hackatimeSelect">
+                <option value="">Select a project...</option>
+                <% hackatime_projects.each do |project| %>
+                  <% is_globally_locked = globally_locked_keys.include?(project[:key]) %>
+                  <% is_already_assigned = @project.hackatime_project_keys&.include?(project[:key]) %>
+                  <option value="<%= project[:key] %>" <%= (is_already_assigned || is_globally_locked) ? 'disabled' : '' %> <%= is_globally_locked && !is_already_assigned ? 'style="color: #B91C1C;"' : '' %>>
+                    <%= project[:name] %> (<%= project[:formatted_time] %>)<%= is_globally_locked && !is_already_assigned ? ' - 🔒 Already in use' : '' %>
+                  </option>
+                <% end %>
+              </select>
+            </div>
+
+            <div class="selected-hackatime-projects space-y-3" data-project-form-target="selectedProjects">
+              <% if @project.hackatime_project_keys.present? %>
+                <% locked_keys = @project.locked_hackatime_keys %>
+                <% @project.hackatime_project_keys.each do |key| %>
+                  <% project = hackatime_projects.find { |p| p[:key] == key } %>
+                  <% is_locked = locked_keys.include?(key) %>
+                  <% if project %>
+                    <div class="flex items-center p-2 <%= is_locked ? 'bg-[#F3ECD8] border-2 border-[#E4DCC6] rounded-lg' : 'bg-bread border border-saddle-taupe border-opacity-50 rounded' %>" data-project-key="<%= key %>">
+                      <input type="hidden" name="project[hackatime_project_keys][]" value="<%= key %>">
+                      <div class="flex-grow">
+                        <p class="font-medium"><%= project[:name] %></p>
+                        <p class="text-xs text-gray-600">Time tracked: <%= project[:formatted_time] %></p>
                       </div>
-                    <% else %>
-                      <div class="flex items-center p-2 <%= is_locked ? 'bg-[#F3ECD8] border-2 border-[#E4DCC6] rounded-lg' : 'bg-bread border border-saddle-taupe border-opacity-50 rounded' %>" data-project-key="<%= key %>">
-                        <input type="hidden" name="project[hackatime_project_keys][]" value="<%= key %>">
-                        <div class="flex-grow">
-                          <p class="font-medium"><%= key %></p>
-                          <p class="text-xs text-gray-600">Project data not available</p>
+                      <% if is_locked %>
+                        <div class="ml-2 text-vintage-red opacity-60" title="This key cannot be removed because it has been used in devlogs">
+                          <%= inline_svg_tag "icons/lock.svg", class: "h-5 w-5" %>
                         </div>
-                        <% if is_locked %>
-                          <div class="ml-2 text-vintage-red opacity-60" title="This key cannot be removed because it has been used in devlogs">
-                            <%= inline_svg_tag "icons/lock.svg", class: "h-5 w-5" %>
-                          </div>
-                        <% else %>
-                          <button type="button" class="ml-2 text-vintage-red hover:text-red-700 hover:scale-110 transition-all" data-action="click->project-form#removeSelectedProject">
-                            <%= inline_svg_tag "close.svg", class: "h-5 w-5" %>
-                          </button>
-                        <% end %>
+                      <% else %>
+                        <button type="button" class="ml-2 text-vintage-red hover:text-red-700 hover:scale-110 transition-all" data-action="click->project-form#removeSelectedProject">
+                          <%= inline_svg_tag "close.svg", class: "h-5 w-5" %>
+                        </button>
+                      <% end %>
+                    </div>
+                  <% else %>
+                    <div class="flex items-center p-2 <%= is_locked ? 'bg-[#F3ECD8] border-2 border-[#E4DCC6] rounded-lg' : 'bg-bread border border-saddle-taupe border-opacity-50 rounded' %>" data-project-key="<%= key %>">
+                      <input type="hidden" name="project[hackatime_project_keys][]" value="<%= key %>">
+                      <div class="flex-grow">
+                        <p class="font-medium"><%= key %></p>
+                        <p class="text-xs text-gray-600">Project data not available</p>
                       </div>
-                    <% end %>
+                      <% if is_locked %>
+                        <div class="ml-2 text-vintage-red opacity-60" title="This key cannot be removed because it has been used in devlogs">
+                          <%= inline_svg_tag "icons/lock.svg", class: "h-5 w-5" %>
+                        </div>
+                      <% else %>
+                        <button type="button" class="ml-2 text-vintage-red hover:text-red-700 hover:scale-110 transition-all" data-action="click->project-form#removeSelectedProject">
+                          <%= inline_svg_tag "close.svg", class: "h-5 w-5" %>
+                        </button>
+                      <% end %>
+                    </div>
                   <% end %>
                 <% end %>
-              </div>
+              <% end %>
+            </div>
 
-            <% else %>
-              <div class="p-3">
-                <p class="text-sm text-gray-700">
-                  No HackaTime projects found. Make sure your HackaTime account is connected and has projects.
-                </p>
-              </div>
-            <% end %>
-          </div>
+          <% else %>
+            <div class="p-3">
+              <p class="text-sm text-gray-700">
+                No HackaTime projects found. Make sure your HackaTime account is connected and has projects.
+              </p>
+            </div>
+          <% end %>
         </div>
-      <% end %>
-
-      <div class="space-y-1 sm:space-y-2">
-        <div class="flex items-center space-x-2">
-          <%= f.check_box :used_ai, id: "used_ai", class: "h-5 w-5 text-forest focus:ring-forest border-saddle-taupe rounded" %>
-          <%= f.label :used_ai, "AI helped me build this (AI is allowed if you're transparent about it!)", class: "text-base sm:text-lg font-medium cursor-pointer", for: "used_ai" %>
-        </div>
-        <p class="text-xs sm:text-sm text-gray-700">Did you generate code, READMEs, art, or any other part of your project with Copilot, ChatGPT, Claude, Gemini, or any other kind of AI?</p>
-      </div>
-
-      <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 mt-6">
-        <%= link_to "Cancel", project_path(@project), class: "w-full sm:w-auto px-4 py-2 bg-vintage-red text-white hover:scale-[1.05] btn-pixel text-base sm:text-lg text-center" %>
-        <%= f.submit "Update Project", class: "w-full sm:w-auto px-4 py-2 bg-forest text-white hover:scale-[1.05] btn-pixel text-base sm:text-lg" %>
       </div>
     <% end %>
-  </div>
-</div>
+
+    <div class="space-y-1 sm:space-y-2">
+      <div class="flex items-center space-x-2">
+        <%= f.check_box :used_ai, id: "used_ai", class: "h-5 w-5 text-forest focus:ring-forest border-saddle-taupe rounded" %>
+        <%= f.label :used_ai, "AI helped me build this (AI is allowed if you're transparent about it!)", class: "text-base sm:text-lg font-medium cursor-pointer", for: "used_ai" %>
+      </div>
+      <p class="text-xs sm:text-sm text-gray-700">Did you generate code, READMEs, art, or any other part of your project with Copilot, ChatGPT, Claude, Gemini, or any other kind of AI?</p>
+    </div>
+
+    <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 mt-6">
+      <%= link_to "Cancel", project_path(@project), class: "w-full sm:w-auto px-4 py-2 bg-vintage-red text-white hover:scale-[1.05] btn-pixel text-base sm:text-lg text-center" %>
+      <%= f.submit "Update Project", class: "w-full sm:w-auto px-4 py-2 bg-forest text-white hover:scale-[1.05] btn-pixel text-base sm:text-lg" %>
+    </div>
+  <% end %>
+<% end %>
+
