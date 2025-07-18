@@ -10,31 +10,31 @@
   <%= form_with(model: @project, class: "space-y-4 sm:space-y-6", data: { controller: "project-form", action: "submit->project-form#validateForm" }) do |f| %>
     <div class="space-y-1 sm:space-y-2">
       <%= f.label :title, class: "block text-base sm:text-lg font-medium" %>
-      <%= f.text_field :title, id: "title", class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm sm:text-base ", data: { project_form_target: "title" } %>
+      <%= f.text_field :title, id: "title", class: "som-horizontal-input", data: { project_form_target: "title" } %>
       <p class="text-xs sm:text-sm text-vintage-red hidden" id="titleError" data-project-form-target="titleError"></p>
     </div>
 
     <div class="space-y-1 sm:space-y-2">
       <%= f.label :description, class: "block text-base sm:text-lg font-medium" %>
-      <%= f.text_area :description, id: "description", rows: 4, class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm sm:text-base ", data: { project_form_target: "description" } %>
+      <%= f.text_area :description, id: "description", rows: 4, class: "som-horizontal-input", data: { project_form_target: "description" } %>
       <p class="text-xs sm:text-sm text-vintage-red hidden" id="descriptionError" data-project-form-target="descriptionError"></p>
     </div>
 
     <div class="space-y-1 sm:space-y-2">
       <%= f.label :readme_link, "Readme Link", class: "block text-base sm:text-lg font-medium" %>
-      <%= f.url_field :readme_link, id: "readme", class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm sm:text-base ", data: { project_form_target: "readme" } %>
+      <%= f.url_field :readme_link, id: "readme", class: "som-horizontal-input", data: { project_form_target: "readme" } %>
       <p class="text-xs sm:text-sm text-vintage-red hidden" id="readmeError" data-project-form-target="readmeError"></p>
     </div>
 
     <div class="space-y-1 sm:space-y-2">
       <%= f.label :demo_link, "Demo Link", class: "block text-base sm:text-lg font-medium" %>
-      <%= f.url_field :demo_link, id: "demo", class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm sm:text-base ", data: { project_form_target: "demo" } %>
+      <%= f.url_field :demo_link, id: "demo", class: "som-horizontal-input", data: { project_form_target: "demo" } %>
       <p class="text-xs sm:text-sm text-vintage-red hidden" id="demoError" data-project-form-target="demoError"></p>
     </div>
 
     <div class="space-y-1 sm:space-y-2">
       <%= f.label :repo_link, "Repository Link", class: "block text-base sm:text-lg font-medium" %>
-      <%= f.url_field :repo_link, id: "repo", class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm sm:text-base ", data: { project_form_target: "repo" } %>
+      <%= f.url_field :repo_link, id: "repo", class: "som-horizontal-input", data: { project_form_target: "repo" } %>
       <p class="text-xs sm:text-sm text-vintage-red hidden" id="repoError" data-project-form-target="repoError"></p>
     </div>
 
@@ -59,7 +59,7 @@
             options_for_select(ysws_type_options, @project.ysws_type),
             {},
             {
-              class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm sm:text-base",
+              class: "som-horizontal-input",
               data: { project_form_target: "yswsType" }
             } %>
         <p class="text-xs sm:text-sm text-vintage-red hidden" id="yswsTypeError" data-project-form-target="yswsTypeError"></p>
@@ -77,7 +77,7 @@
           <% if hackatime_projects.present? %>
             <% globally_locked_keys = Project.globally_locked_hackatime_keys(current_user.id) %>
             <div class="hackatime-project-field mb-2">
-              <select name="__temp_hackatime_select" class="w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm md:text-base" data-project-form-target="hackatimeSelect">
+              <select name="__temp_hackatime_select" class="som-horizontal-input" data-project-form-target="hackatimeSelect">
                 <option value="">Select a project...</option>
                 <% hackatime_projects.each do |project| %>
                   <% is_globally_locked = globally_locked_keys.include?(project[:key]) %>
