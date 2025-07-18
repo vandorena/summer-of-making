@@ -1,4 +1,4 @@
-<div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] shadow-lg overflow-hidden mb-4 md:mb-8">
+<%= render "shared/card", padding: "[0px]", classes: "shadow-lg overflow-hidden mb-4 md:mb-8" do %>
   <div class="h-48 md:h-64 overflow-hidden relative group" id="ba">
     <% project_image = @project.banner.presence || @project.devlogs.find { |u| u.file.attached? && u.file.image? }&.file&.then { |f| url_for(f) } || "https://hc-cdn.hel1.your-objectstorage.com/s/v3/41e9de19cfa4e099cf25410ac38542776693b54e_t.png" %>
     <div class="w-full h-full flex items-center justify-center absolute inset-0">
@@ -84,7 +84,7 @@
 
   <div class="p-4 md:p-6">
     <div class="flex flex-col md:flex-row md:items-center mb-4 space-y-3 md:space-y-0">
-      <h1 class="text-2xl md:text-3xl 2xl:text-4xl text-black md:flex-grow"><%= @project.title %></h1>
+      <h1 class="text-2xl md:text-3xl 2xl:text-4xl md:flex-grow"><%= @project.title %></h1>
       <div class="flex items-center space-x-3 md:space-x-4">
         <% if user_signed_in? %>
           <div class="ml-4 flex flex-wrap items-center gap-6">
@@ -109,17 +109,17 @@
       </div>
     </div>
 
-    <div class="flex flex-wrap items-center space-x-2 mb-3 md:mb-4 text-sm md:text-base 2xl:text-lg text-gray-600">
+    <div class="flex flex-wrap items-center space-x-2 mb-1 ml-2 text-sm md:text-base 2xl:text-lg text-som-dark">
       <button data-controller="modal" data-action="click->modal#open" data-modal-id="<%= @project.id %>" data-modal-type="follower" class="hover:underline cursor-pointer duration-200">
-        <span class="text-gray-800"><%= @project.followers.count %> </span> <%= "follower".pluralize(@project.followers.count) %>
+        <span class="text-som-dark"><%= @project.followers.count %> </span> <%= "follower".pluralize(@project.followers.count) %>
       </button>
       •&nbsp;
-      <span class="text-gray-800"><%= @project.devlogs_count %> </span> <%= "devlog".pluralize(@project.devlogs_count) %>
+      <span class="text-som-dark"><%= @project.devlogs_count %> </span> <%= "devlog".pluralize(@project.devlogs_count) %>
       •&nbsp;
       <%
         total_time_seconds = @project.total_seconds_coded
       %>
-      <span class="text-gray-800"><%= format_seconds(total_time_seconds) %></span>
+      <span class="text-som-dark"><%= format_seconds(total_time_seconds) %></span>
       <% if @project.certification_visible_to?(current_user) %>
         •&nbsp;
         <% if policy(@project).can_see_certification_details? %>
@@ -146,12 +146,14 @@
       <% end %>
     </div>
 
-    <div class="text-black mb-3 md:mb-4 text-base md:text-lg 2xl:text-xl [p]:text-inherit">
-      <%= simple_format(@project.description) %>
+    <div class="flex items-center space-x-2 mb-3 ml-2 md:mb-4 text-sm md:text-base 2xl:text-lg text-som-dark">
+      created by&nbsp;<span class="font-extrabold">
+        <%= render "shared/user_display_name", user: @project.user %><% admin_user_visit(@project.user) %>
+      </span>
     </div>
 
-    <div class="flex items-center space-x-2 mb-3 md:mb-4 text-sm md:text-base 2xl:text-lg text-gray-600">
-      By&nbsp;<%= render "shared/user_display_name", user: @project.user %><% admin_user_visit(@project.user) %>
+    <div class="mb-8 text-base md:text-lg 2xl:text-xl [p]:text-inherit">
+      <%= simple_format(@project.description) %>
     </div>
 
     <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
@@ -197,7 +199,7 @@
             <div class="flex items-center space-x-3">
               <img src="<%= follower.avatar %>" alt="<%= follower.display_name %>" class="w-10 h-10 -full" loading="lazy">
               <div>
-                <p class="text-black"><%= follower.display_name %></p>
+                <p class="text-som-dark"><%= follower.display_name %></p>
                 <p class="text-sm text-gray-600">
                   <% if follower.projects.length() > 1 %>
                     Check their projects out:
@@ -468,4 +470,4 @@
       <% end %>
     </div>
   </div>
-</div>
+<% end %>
