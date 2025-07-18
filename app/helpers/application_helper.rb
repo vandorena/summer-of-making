@@ -43,7 +43,6 @@ module ApplicationHelper
 
   def tab_unlocked?(tab)
     unlocked = current_user.identity_vault_id.present? && current_user.verification_status != :ineligible
-
     case tab
     when :campfire
       true
@@ -66,5 +65,14 @@ module ApplicationHelper
     admin_tool("", "span") do
       render "shared/user_twiddles", user:
     end
+  end
+
+  def random_carousel_transform
+    "rotate(#{rand(-3..3)}deg) scale(#{(rand(97..103).to_f / 100).round(2)}) translateY(#{rand(-8..8)}px)"
+  end
+
+  def sanitize_css(css)
+    return "" if css.blank?
+    Sanitize::CSS.stylesheet(css, Sanitize::Config::RELAXED)
   end
 end

@@ -1,18 +1,301 @@
-<h1><%= local_assigns[:title] %>shopped orders:</h1>
+<%= stylesheet_link_tag 'admin_dashboard' %>
+<h1 style="color: var(--color-primary);margin-top: 0;"><%= local_assigns[:title] %>shopped orders:</h1>
 
-<% if params[:show_free_stickers] %>
-  <%= link_to "oh god please make the free stickers stop", {show_free_stickers: nil} %>
-<% else %>
-  <%= link_to "show me the free stickers ones too", {show_free_stickers: true} %>
-<% end %>
+<div style="margin-bottom: 2em; padding: 1em; background: var(--color-darker); border-radius: 8px;">
+  <div style="margin-bottom: 1.5em;">
+    <strong style="color: var(--color-text); display: block; margin-bottom: 0.5em;font-size: 1.2em;">by the numbers: <% if params[:show_free_stickers] == "true" %><span>with free stickers</span><% end %></strong>
 
-<ul>
-  <% @shop_orders.each do |order| %>
-    <li>
-      #<%= order.id %>: <%= link_to order.full_name, admin_shop_order_path(order) %>
-    </li>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5em;">
+      <div>
+        <h4 style="color: var(--color-text); margin: 0 0 0.5em 0; font-size: 0.9em;">all time:</h4>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5em; align-items: center; margin-bottom: 1em;">
+          <span class="pill pill-yellow">pending: <%= @counts[:pending] %></span>
+          <span class="pill pill-blue">awaiting fulfillment: <%= @counts[:awaiting_fulfillment] %></span>
+          <span class="pill pill-green">fulfilled: <%= @counts[:fulfilled] %></span>
+          <span class="pill pill-red">rejected: <%= @counts[:rejected] %></span>
+          <% if params[:show_free_stickers] == "true" %>
+            <span class="pill pill-gray">idv limbo: <%= @counts[:in_verification_limbo] %></span>
+          <% end %>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1em;">
+          <div>
+            <strong style="color: var(--color-text); font-size: 0.8em;">avg time until approved:</strong><br>
+            <span style="font-family: monospace; font-weight: bold; font-size: 1.7em; color: <%= @pending_secs && @pending_secs > 172800 ? '#ff6b6b' : 'white' %>;">
+              <%= format_duration(@pending_secs) %>
+            </span>
+          </div>
+          <div>
+            <strong style="color: var(--color-text); font-size: 0.8em;">avg time until fulfilled:</strong><br>
+            <span style="font-family: monospace; font-weight: bold; font-size: 1.7em; color: <%= @fulfill_secs && @fulfill_secs > 172800 ? '#ff6b6b' : 'white' %>;">
+              <%= format_duration(@fulfill_secs) %>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h4 style="color: var(--color-text); margin: 0 0 0.5em 0; font-size: 0.9em;">past week:</h4>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5em; align-items: center; margin-bottom: 1em;">
+          <span class="pill pill-yellow">pending: <%= @counts_week[:pending] %></span>
+          <span class="pill pill-blue">awaiting fulfillment: <%= @counts_week[:awaiting_fulfillment] %></span>
+          <span class="pill pill-green">fulfilled: <%= @counts_week[:fulfilled] %></span>
+          <span class="pill pill-red">rejected: <%= @counts_week[:rejected] %></span>
+          <% if params[:show_free_stickers] == "true" %>
+            <span class="pill pill-gray">idv limbo: <%= @counts_week[:in_verification_limbo] %></span>
+          <% end %>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1em;">
+          <div>
+            <strong style="color: var(--color-text); font-size: 0.8em;">avg time until approved:</strong><br>
+            <span style="font-family: monospace; font-weight: bold; font-size: 1.7em; color: <%= @pending_secs_week && @pending_secs_week > 172800 ? '#ff6b6b' : 'white' %>;">
+              <%= format_duration(@pending_secs_week) %>
+            </span>
+          </div>
+          <div>
+            <strong style="color: var(--color-text); font-size: 0.8em;">avg time until fulfilled:</strong><br>
+            <span style="font-family: monospace; font-weight: bold; font-size: 1.7em; color: <%= @fulfill_secs_week && @fulfill_secs_week > 172800 ? '#ff6b6b' : 'white' %>;">
+              <%= format_duration(@fulfill_secs_week) %>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h4 style="color: var(--color-text); margin: 0 0 0.5em 0; font-size: 0.9em;">last 100 orders:</h4>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5em; align-items: center; margin-bottom: 1em;">
+          <span class="pill pill-yellow">pending: <%= @counts_100[:pending] %></span>
+          <span class="pill pill-blue">awaiting fulfillment: <%= @counts_100[:awaiting_fulfillment] %></span>
+          <span class="pill pill-green">fulfilled: <%= @counts_100[:fulfilled] %></span>
+          <span class="pill pill-red">rejected: <%= @counts_100[:rejected] %></span>
+          <% if params[:show_free_stickers] == "true" %>
+            <span class="pill pill-gray">idv limbo: <%= @counts_100[:in_verification_limbo] %></span>
+          <% end %>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1em;">
+          <div>
+            <strong style="color: var(--color-text); font-size: 0.8em;">avg time until approved:</strong><br>
+            <span style="font-family: monospace; font-weight: bold; font-size: 1.7em; color: <%= @pending_secs_100 && @pending_secs_100 > 172800 ? '#ff6b6b' : 'white' %>;">
+              <%= format_duration(@pending_secs_100) %>
+            </span>
+          </div>
+          <div>
+            <strong style="color: var(--color-text); font-size: 0.8em;">avg time until fulfilled:</strong><br>
+            <span style="font-family: monospace; font-weight: bold; font-size: 1.7em; color: <%= @fulfill_secs_100 && @fulfill_secs_100 > 172800 ? '#ff6b6b' : 'white' %>;">
+              <%= format_duration(@fulfill_secs_100) %>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-bottom: 2em;">
+  <% if params[:show_free_stickers] %>
+    <%= link_to "oh god please make the free stickers stop", {show_free_stickers: nil}, class: 'abtn secondary small' %>
+  <% else %>
+    <%= link_to "show me the free stickers ones too", {show_free_stickers: true}, class: 'abtn primary small' %>
   <% end %>
-</ul>
+</div>
+
+<!-- eat shit airtable -->
+<div style="margin-bottom: 2em;">
+  <h3>filters & search</h3>
+  <%= form_with url: admin_shop_orders_path, method: :get, local: true, style: "display: grid; gap: 1em;" do |f| %>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1em; margin-bottom: 2em;">
+      <div>
+        <%= f.label :user_search, "name email slack_id", style: "display: block; margin-bottom: 0.25em; color: var(--color-text);" %>
+        <%= f.text_field :user_search, value: params[:user_search], placeholder: "user search", style: "width: 100%; padding: 0.5em; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-darker); color: var(--color-text);" %>
+      </div>
+
+      <div>
+        <%= f.label :shop_item_id, "item:", style: "display: block; margin-bottom: 0.25em; color: var(--color-text);" %>
+        <%= f.select :shop_item_id, options_from_collection_for_select(ShopItem.order(:name), :id, :name, params[:shop_item_id]),
+            { prompt: "all" },
+            { style: "width: 100%; padding: 0.5em; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-darker); color: var(--color-text);" } %>
+      </div>
+
+      <div>
+        <%= f.label :status, "status:", style: "display: block; margin-bottom: 0.25em; color: var(--color-text);" %>
+        <%= f.select :status, options_for_select([
+            ['no filter', ''],
+            'pending',
+            'awaiting_periodical_fulfillment',
+            'fulfilled',
+            'rejected',
+            'on_hold',
+            'in_verification_limbo'
+          ], params[:status]),
+          {},
+          { style: "width: 100%; padding: 0.5em; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-darker); color: var(--color-text);" } %>
+      </div>
+
+      <div>
+        <%= f.label :date_from, "from:", style: "display: block; margin-bottom: 0.25em; color: var(--color-text);" %>
+        <%= f.date_field :date_from, value: params[:date_from], style: "width: 100%; padding: 0.5em; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-darker); color: var(--color-text);" %>
+      </div>
+
+      <div>
+        <%= f.label :date_to, "to:", style: "display: block; margin-bottom: 0.25em; color: var(--color-text);" %>
+        <%= f.date_field :date_to, value: params[:date_to], style: "width: 100%; padding: 0.5em; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-darker); color: var(--color-text);" %>
+      </div>
+
+      <div>
+        <%= f.label :sort, "sort by:", style: "display: block; margin-bottom: 0.25em; color: var(--color-text);" %>
+        <%= f.select :sort, options_for_select([
+            'created_at_desc',
+            'created_at_asc',
+            'id_desc',
+            'id_asc',
+            'shells_desc',
+            'shells_asc'
+          ], params[:sort] || 'created_at_desc'),
+          {},
+          { style: "width: 100%; padding: 0.5em; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-darker); color: var(--color-text);" } %>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 1em; align-items: center;">
+      <%= f.submit "apply", class: 'abtn primary small' %>
+      <%= link_to "clear all", admin_shop_orders_path, class: 'abtn secondary small' %>
+      <% unless params.slice(:user_search, :shop_item_id, :status, :date_from, :date_to, :sort).values.all?(&:blank?) %>
+        <span style="color: var(--color-muted); font-size: 0.9em;">
+          active:
+          <% if params[:user_search].present? %>user: "<%= params[:user_search] %>" | <% end %>
+          <% if params[:shop_item_id].present? %>item: "<%= ShopItem.find(params[:shop_item_id]).name rescue 'Unknown' %>" | <% end %>
+          <% if params[:status].present? %>status: "<%= params[:status] %>" | <% end %>
+          <% if params[:date_from].present? || params[:date_to].present? %>
+            dates: <%= params[:date_from] || '∞' %> to <%= params[:date_to] || '∞' %> |
+          <% end %>
+          <% if params[:sort].present? %>sort: "<%= params[:sort] %>"<% end %>
+        </span>
+      <% end %>
+    </div>
+
+    <%= f.hidden_field :show_free_stickers, value: params[:show_free_stickers] if params[:show_free_stickers] %>
+  <% end %>
+</div>
+
+<table class="atable">
+  <thead>
+    <tr>
+      <th>
+        <%= link_to "order id", admin_shop_orders_path(params.permit!.merge(sort: params[:sort] == 'id_asc' ? 'id_desc' : 'id_asc')),
+            style: "color: var(--color-text); text-decoration: none;" %>
+        <% if params[:sort]&.start_with?('id_') %>
+          <%= params[:sort] == 'id_asc' ? '↑' : '↓' %>
+        <% end %>
+      </th>
+      <th>user</th>
+      <th>item</th>
+      <th>
+        <%= link_to "shells", admin_shop_orders_path(params.permit!.merge(sort: params[:sort] == 'shells_asc' ? 'shells_desc' : 'shells_asc')),
+            style: "color: var(--color-text); text-decoration: none;" %>
+        <% if params[:sort]&.start_with?('shells_') %>
+          <%= params[:sort] == 'shells_asc' ? '↑' : '↓' %>
+        <% end %>
+      </th>
+      <th>qty</th>
+      <th>status</th>
+      <th>details</th>
+      <th>address</th>
+      <th>
+        <%= link_to "created", admin_shop_orders_path(params.permit!.merge(sort: params[:sort] == 'created_at_asc' ? 'created_at_desc' : 'created_at_asc')),
+            style: "color: var(--color-text); text-decoration: none;" %>
+        <% if params[:sort]&.start_with?('created_at_') %>
+          <%= params[:sort] == 'created_at_asc' ? '↑' : '↓' %>
+        <% end %>
+      </th>
+      <th>actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @shop_orders.each do |order| %>
+      <% addy = order.frozen_address || {} %>
+      <tr>
+        <td>
+          <%= order.id %>
+        </td>
+        <td>
+          <%= link_to order.user.display_name || "Unknown", admin_user_path(order.user) %><br>
+          <small style="color: var(--color-muted);"><%= order.user.email %></small>
+        </td>
+        <td>
+          <%= order.shop_item.name %><br>
+          <small style="color: var(--color-muted);"><%= order.shop_item.type&.demodulize %></small>
+        </td>
+        <td>
+          <%= number_with_precision(order.frozen_item_price, precision: 0) %>
+        </td>
+        <td>
+          <%= order.quantity %>
+        </td>
+        <td>
+          <% case order.aasm_state %>
+          <% when 'pending' %>
+            <span class="pill pill-yellow">pending</span>
+          <% when 'awaiting_periodical_fulfillment' %>
+            <span class="pill pill-blue">awaiting fulfillment</span>
+          <% when 'fulfilled' %>
+            <span class="pill pill-green">fulfilled</span>
+          <% when 'rejected' %>
+            <span class="pill pill-red">rejected</span>
+          <% when 'on_hold' %>
+            <span class="pill pill-gray">on hold</span>
+          <% when 'in_verification_limbo' %>
+            <span class="pill pill-gray">verification limbo</span>
+          <% else %>
+            <span class="pill"><%= order.aasm_state.humanize %></span>
+          <% end %>
+        </td>
+        <td>
+          <% if order.external_ref.present? %>
+            <strong>ref:</strong> <%= order.external_ref %><br>
+          <% end %>
+          <% if order.fulfilled_by.present? %>
+            <strong>by:</strong> <%= order.fulfilled_by %><br>
+          <% end %>
+          <% if order.fulfillment_cost.present? && order.fulfillment_cost > 0 %>
+            <strong>cost:</strong> $<%= number_with_precision(order.fulfillment_cost, precision: 2) %><br>
+          <% end %>
+          <% if order.rejection_reason.present? %>
+            <strong>rejection:</strong> <%= truncate(order.rejection_reason, length: 30) %><br>
+          <% end %>
+          <% if order.internal_notes.present? %>
+            <strong>notes:</strong> <%= truncate(order.internal_notes, length: 30) %><br>
+          <% end %>
+          <% if order.fulfilled_at.present? %>
+            <small style="color: var(--color-muted);">fulfilled: <%= time_ago_in_words(order.fulfilled_at) %> ago</small>
+          <% elsif order.rejected_at.present? %>
+            <small style="color: var(--color-muted);">rejected: <%= time_ago_in_words(order.rejected_at) %> ago</small>
+          <% elsif order.awaiting_periodical_fulfillment_at.present? %>
+            <small style="color: var(--color-muted);">queued: <%= time_ago_in_words(order.awaiting_periodical_fulfillment_at) %> ago</small>
+          <% elsif order.on_hold_at.present? %>
+            <small style="color: var(--color-muted);">on hold: <%= time_ago_in_words(order.on_hold_at) %> ago</small>
+          <% end %>
+        </td>
+        <td>
+          <% if addy.present? %>
+            <%= addy["first_name"] %> <%= addy["last_name"] %><br>
+            <small style="color: var(--color-muted);">
+              <%= addy["city"] %>, <%= addy["state"] %><br>
+              <%= addy["country"] %>
+            </small>
+          <% else %>
+            <em style="color: var(--color-muted);">nuthing...</em>
+          <% end %>
+        </td>
+        <td>
+          <%= order.created_at.strftime("%m/%d/%y") %><br>
+          <small style="color: var(--color-muted);"><%= order.created_at.strftime("%l:%M %p") %></small>
+        </td>
+        <td>
+          <%= link_to "do shit", admin_shop_order_path(order), class: 'abtn secondary', style: 'padding: 0.3em 0.8em; font-size: 0.95em;' %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
 
 <%== pagy_nav(@pagy) %> <br>
 <%== pagy_info(@pagy) %> <br>

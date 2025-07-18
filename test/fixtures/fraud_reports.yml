@@ -6,6 +6,7 @@
 #
 #  id           :bigint           not null, primary key
 #  reason       :string
+#  resolved     :boolean          default(FALSE), not null
 #  suspect_type :string
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
@@ -14,7 +15,8 @@
 #
 # Indexes
 #
-#  index_fraud_reports_on_user_id  (user_id)
+#  index_fraud_reports_on_user_and_suspect  (user_id,suspect_type,suspect_id) UNIQUE
+#  index_fraud_reports_on_user_id           (user_id)
 #
 # Foreign Keys
 #

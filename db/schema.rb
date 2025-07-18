@@ -10,9 +10,49 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_08_183914) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_17_203326) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "active_insights_jobs", force: :cascade do |t|
+    t.string "job"
+    t.string "queue"
+    t.float "db_runtime"
+    t.datetime "scheduled_at"
+    t.datetime "started_at"
+    t.datetime "finished_at"
+    t.string "uuid"
+    t.float "duration"
+    t.float "queue_time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["started_at", "duration", "queue_time"], name: "idx_on_started_at_duration_queue_time_010695b74f"
+    t.index ["started_at", "duration"], name: "index_active_insights_jobs_on_started_at_and_duration"
+    t.index ["started_at"], name: "index_active_insights_jobs_on_started_at"
+  end
+
+  create_table "active_insights_requests", force: :cascade do |t|
+    t.string "controller"
+    t.string "action"
+    t.string "format"
+    t.string "http_method"
+    t.text "path"
+    t.integer "status"
+    t.float "view_runtime"
+    t.float "db_runtime"
+    t.datetime "started_at"
+    t.datetime "finished_at"
+    t.string "uuid"
+    t.float "duration"
+    t.virtual "formatted_controller", type: :string, as: "(((controller)::text || '#'::text) || (action)::text)", stored: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "ip_address"
+    t.string "user_agent"
+    t.index ["started_at", "duration"], name: "index_active_insights_requests_on_started_at_and_duration"
+    t.index ["started_at", "formatted_controller"], name: "idx_on_started_at_formatted_controller_5d659a01d9"
+    t.index ["started_at"], name: "index_active_insights_requests_on_started_at"
+  end
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -201,6 +241,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_08_183914) do
     t.integer "comments_count", default: 0, null: false
     t.datetime "hackatime_pulled_at"
     t.integer "views_count", default: 0, null: false
+    t.integer "duration_seconds", default: 0, null: false
+    t.jsonb "hackatime_projects_key_snapshot", default: [], null: false
     t.index ["project_id"], name: "index_devlogs_on_project_id"
     t.index ["user_id"], name: "index_devlogs_on_user_id"
     t.index ["views_count"], name: "index_devlogs_on_views_count"
@@ -240,6 +282,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_08_183914) do
     t.string "reason"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "resolved", default: false, null: false
+    t.index ["user_id", "suspect_type", "suspect_id"], name: "index_fraud_reports_on_user_and_suspect", unique: true
     t.index ["user_id"], name: "index_fraud_reports_on_user_id"
   end
 
@@ -251,15 +295,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_08_183914) do
     t.datetime "updated_at", null: false
     t.index ["user_id", "name"], name: "index_hackatime_projects_on_user_id_and_name", unique: true
     t.index ["user_id"], name: "index_hackatime_projects_on_user_id"
-  end
-
-  create_table "hackatime_stats", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.jsonb "data", default: {}
-    t.datetime "last_updated_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_hackatime_stats_on_user_id"
   end
 
   create_table "likes", force: :cascade do |t|
@@ -289,7 +324,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_08_183914) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "reason"
+    t.index ["created_at", "amount"], name: "index_payouts_on_created_at_and_amount"
+    t.index ["created_at", "payable_type", "amount"], name: "index_payouts_on_date_type_amount"
+    t.index ["created_at"], name: "index_payouts_on_created_at"
     t.index ["payable_type", "payable_id"], name: "index_payouts_on_payable"
+    t.index ["payable_type"], name: "index_payouts_on_payable_type"
     t.index ["user_id"], name: "index_payouts_on_user_id"
   end
 
@@ -449,6 +488,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_08_183914) do
     t.text "internal_notes"
     t.bigint "shop_card_grant_id"
     t.decimal "fulfillment_cost", precision: 6, scale: 2, default: "0.0"
+    t.string "fulfilled_by"
     t.index ["shop_card_grant_id"], name: "index_shop_orders_on_shop_card_grant_id"
     t.index ["shop_item_id"], name: "index_shop_orders_on_shop_item_id"
     t.index ["user_id"], name: "index_shop_orders_on_user_id"
@@ -644,6 +684,35 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_08_183914) do
     t.index ["user_id"], name: "index_tutorial_progresses_on_user_id"
   end
 
+  create_table "user_badges", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "badge_key", null: false
+    t.datetime "earned_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["badge_key"], name: "index_user_badges_on_badge_key"
+    t.index ["user_id", "badge_key"], name: "index_user_badges_on_user_id_and_badge_key", unique: true
+    t.index ["user_id"], name: "index_user_badges_on_user_id"
+  end
+
+  create_table "user_hackatime_data", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.jsonb "data", default: {}
+    t.datetime "last_updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_user_hackatime_data_on_user_id"
+  end
+
+  create_table "user_profiles", force: :cascade do |t|
+    t.text "bio"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text "custom_css"
+    t.index ["user_id"], name: "index_user_profiles_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "slack_id"
     t.string "email"
@@ -668,6 +737,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_08_183914) do
     t.boolean "freeze_shop_activity", default: false
     t.datetime "synced_at", precision: nil
     t.text "permissions", default: "[]"
+    t.jsonb "shenanigans_state", default: {}
+    t.boolean "is_banned", default: false
   end
 
   create_table "view_events", force: :cascade do |t|
@@ -738,7 +809,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_08_183914) do
   add_foreign_key "devlogs", "users"
   add_foreign_key "fraud_reports", "users"
   add_foreign_key "hackatime_projects", "users"
-  add_foreign_key "hackatime_stats", "users"
   add_foreign_key "likes", "users"
   add_foreign_key "magic_links", "users"
   add_foreign_key "project_follows", "projects"
@@ -769,6 +839,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_08_183914) do
   add_foreign_key "timer_sessions", "projects"
   add_foreign_key "timer_sessions", "users"
   add_foreign_key "tutorial_progresses", "users"
+  add_foreign_key "user_badges", "users"
+  add_foreign_key "user_hackatime_data", "users"
+  add_foreign_key "user_profiles", "users"
   add_foreign_key "view_events", "users"
   add_foreign_key "vote_changes", "projects"
   add_foreign_key "vote_changes", "votes"

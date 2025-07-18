@@ -1,3 +1,7 @@
+<%
+  user_is_banned = current_user.is_banned?
+  tab_unlocked = tab_unlocked?(:explore)
+%>
 <%= render layout: "shared/container", locals: {
   full_height: true,
   attr: {
@@ -39,7 +43,7 @@
           <%= render partial: "shared/link", locals: {
             target: explore_path,
             text: "Explore",
-            icon: tab_unlocked?(:explore) ? "compass" : "lock",
+            icon: (user_is_banned || !tab_unlocked) ? "lock" : "compass",
             large: true,
             highlight: current_page?(explore_path),
             text_attr: {
@@ -47,7 +51,7 @@
               class: "text-3xl"
             },
             underline_attr: { data: { sidebar_target: "underline" } },
-            class: tab_unlocked?(:explore) ? "" : "opacity-50 cursor-not-allowed"
+            class: (user_is_banned || !tab_unlocked) ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
           } %>
         </li>
 
@@ -55,7 +59,7 @@
           <%= render partial: "shared/link", locals: {
             target: my_projects_path,
             text: "Projects",
-            icon: tab_unlocked?(:my_projects) ? "user" : "lock",
+            icon: (user_is_banned || !tab_unlocked) ? "lock" : "user",
             large: true,
             highlight: current_page?(my_projects_path),
             text_attr: {
@@ -63,7 +67,7 @@
               class: "text-3xl"
             },
             underline_attr: { data: { sidebar_target: "underline" } },
-            class: tab_unlocked?(:my_projects) ? "" : "opacity-50 cursor-not-allowed"
+            class: (user_is_banned || !tab_unlocked) ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
           } %>
         </li>
 
@@ -71,7 +75,7 @@
           <%= render partial: "shared/link", locals: {
             target: new_vote_path,
             text: "Vote",
-            icon: tab_unlocked?(:vote) ? "vote" : "lock",
+            icon: (user_is_banned || !tab_unlocked) ? "lock" : "vote",
             large: true,
             highlight: current_page?(new_vote_path),
             text_attr: {
@@ -79,7 +83,7 @@
               class: "text-3xl"
             },
             underline_attr: { data: { sidebar_target: "underline" } },
-            class: tab_unlocked?(:vote) ? "" : "opacity-50 cursor-not-allowed"
+            class: (user_is_banned || !tab_unlocked) ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
           } %>
         </li>
 
@@ -87,16 +91,34 @@
           <%= render partial: "shared/link", locals: {
             target: shop_path,
             text: "Shop",
-            icon: "shop",
+            icon: user_is_banned ? "lock" : "shop",
             large: true,
             highlight: current_page?(shop_path),
             text_attr: {
               data: { sidebar_target: "collapseFade" },
               class: "text-3xl"
             },
-            underline_attr: { data: { sidebar_target: "underline" } }
+            underline_attr: { data: { sidebar_target: "underline" } },
+            class: user_is_banned ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
           } %>
         </li>
+        <% if current_user&.verified_check? %>
+        <li class="flex justify-start">
+            <%= render partial: "shared/link", locals: {
+              target: gork_path,
+              text: "gork",
+              icon: "ai",
+              large: true,
+              highlight: current_page?(gork_path),
+              text_attr: {
+                data: { sidebar_target: "collapseFade", turbo: false },
+                class: "text-3xl",
+                style: "font-family: serif"
+              },
+              underline_attr: { data: { sidebar_target: "underline" } }
+            } %>
+        </li>
+        <% end %>
 
         <li class="flex justify-start">
           <%= render partial: "shared/link", locals: {
@@ -166,7 +188,7 @@
               <div><%= current_user.id %></div>
             <% end %>
             <div class="h-4">Hello,</div>
-            <div class="text-xl whitespace-nowrap overflow-ellipsis"><%= current_user.display_name %>!</div>
+            <div class="text-xl whitespace-nowrap overflow-ellipsis"><%= render "shared/user_display_name", user: current_user %>!</div>
             <% admin_user_visit(current_user) %>
             <% if impersonating? %>
               <% admin_tool show_in_impersonate: true do %>
@@ -185,6 +207,7 @@
             method: :delete,
             target: logout_path,
             icon_size: "6",
+            class: "cursor-pointer",
             text_attr: {
               data: { sidebar_target: "collapseFade" },
               class: "text-xl"

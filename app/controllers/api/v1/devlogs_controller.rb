@@ -3,8 +3,12 @@
 module Api
   module V1
     class DevlogsController < ApplicationController
+      include Pagy::Backend
+
       def index
-        @devlogs = Devlog.all.map do |devlog|
+        pagy, devlogs = pagy(Devlog.all, items: 20)
+
+        @devlogs = devlogs.map do |devlog|
           {
             text: devlog.text,
             id: devlog.id,
@@ -15,7 +19,16 @@ module Api
             updated_at: devlog.updated_at
           }
         end
-        render json: @devlogs
+
+        render json: {
+          devlogs: @devlogs,
+          pagination: {
+            page: pagy.page,
+            pages: pagy.pages,
+            count: pagy.count,
+            items: pagy.limit
+          }
+        }
       end
 
       def show

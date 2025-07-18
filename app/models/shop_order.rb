@@ -9,6 +9,7 @@
 #  frozen_address                     :jsonb
 #  frozen_item_price                  :decimal(6, 2)
 #  fulfilled_at                       :datetime
+#  fulfilled_by                       :string
 #  fulfillment_cost                   :decimal(6, 2)    default(0.0)
 #  internal_notes                     :text
 #  on_hold_at                         :datetime
@@ -52,6 +53,7 @@ class ShopOrder < ApplicationRecord
   validate :check_black_market_access
   validate :check_user_balance, on: :create
   validate :check_regional_availability
+  validate :check_badge, on: :create
   after_create :create_negative_payout
   before_create :set_initial_state_for_free_stickers
 
@@ -101,9 +103,10 @@ class ShopOrder < ApplicationRecord
 
     event :mark_fulfilled do
       transitions to: :fulfilled
-      before do |external_ref = nil, fulfillment_cost = nil|
+      before do |external_ref = nil, fulfillment_cost = nil, fulfilled_by = nil|
         self.external_ref = external_ref
         self.fulfillment_cost = fulfillment_cost
+        self.fulfilled_by = fulfilled_by
       end
     end
 
@@ -147,7 +150,8 @@ class ShopOrder < ApplicationRecord
     "quantity" => :quantity,
     "total_cost" => :total_cost,
     "addr.id" => ->(_) { frozen_address&.[]("id") },
-    "addr.country" => ->(_) { frozen_address&.[]("country") }
+    "addr.country" => ->(_) { frozen_address&.[]("country") },
+    "fulfilled_by" => :fulfilled_by
   }
 
   has_table_sync(:real_orders, "appNF8MGrk5KKcYZx", "tblrc0ByljGezp98v", SYNC_MAPPING, scope: :standard_sync)
@@ -249,5 +253,14 @@ class ShopOrder < ApplicationRecord
       payable: self,
       reason: "Refund for rejected order of #{shop_item.name.pluralize(quantity)}"
     )
+  end
+
+  def check_badge
+    return unless shop_item.is_a?(ShopItem::BadgeItem)
+
+    unless shop_item.can_purchase?(user)
+      message = shop_item.prereq(user)
+      errors.add(:base, message) if message
+    end
   end
 end

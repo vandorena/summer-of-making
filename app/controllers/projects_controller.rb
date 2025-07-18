@@ -3,89 +3,110 @@
 class ProjectsController < ApplicationController
   include ActionView::RecordIdentifier
   include ViewTrackable
-  before_action :authenticate_user!, except: %i[index show]
   skip_before_action :verify_authenticity_token, only: [ :check_link ]
   before_action :set_project,
                 only: %i[show edit update follow unfollow ship stake_stonks unstake_stonks destroy update_coordinates unplace_coordinates]
   before_action :check_if_shipped, only: %i[edit update]
   before_action :authorize_user, only: [ :destroy ]
   before_action :require_hackatime, only: [ :create ]
-  before_action :check_identity_verification
+  before_action :check_identity_verification, except: %i[show]
+  skip_before_action :authenticate_user!, only: %i[show]
 
   def index
     sort_order = params[:sort] == "oldest" ? :asc : :desc
-    if params[:action] == "my_projects"
-      @projects = Project.includes(:user)
-                         .includes(:ship_events)
-                         .where.not(user_id: current_user.id)
-                         .order(rating: :asc)
-
-      # @projects = @projects.sort_by do |project|
-      #     weight = rand + (project.updates.count > 0 ? 1.5 : 0)
-      #     -weight
-      # end
-
-      @show_create_project = true if @projects.empty?
-    elsif params[:tab] == "gallery"
+    if params[:tab] == "gallery"
       # Optimize gallery with pagination and DB-level ordering
-      projects_query = Project.includes(:user)
+      projects_query = Project.includes(:user, devlogs: [ :file_attachment ])
                               .joins("LEFT JOIN devlogs ON devlogs.project_id = projects.id")
                               .where(is_deleted: false)
                               .group("projects.id")
                               .order(Arel.sql("COUNT(devlogs.id) DESC, projects.created_at #{sort_order == :asc ? 'ASC' : 'DESC'}"))
 
-      @pagy, @projects = pagy(projects_query, items: 12)
+      begin
+        @pagy, @projects = pagy(projects_query, items: 12)
+      rescue Pagy::OverflowError
+        redirect_to projects_path(tab: "gallery", sort: params[:sort]) and return
+      end
     elsif params[:tab] == "following"
       @followed_projects = current_user.followed_projects.includes(:user)
       @recent_devlogs = Devlog.joins(:project)
-                              .includes(:project, :user, :timer_sessions, :file_attachment, comments: :user)
-                              .where(project_id: @followed_projects.pluck(:id))
+                              .joins("INNER JOIN project_follows ON project_follows.project_id = projects.id")
+                              .includes(:project, :file_attachment, :user, comments: :user)
+                              .where(project_follows: { user_id: current_user.id })
                               .where(projects: { is_deleted: false })
                               .order(created_at: :desc)
 
-      @pagy, @recent_devlogs = pagy(@recent_devlogs, items: 8)
+      begin
+        @pagy, @recent_devlogs = pagy(@recent_devlogs, items: 8)
+      rescue Pagy::OverflowError
+        redirect_to projects_path(tab: "following") and return
+      end
     elsif params[:tab] == "stonked"
       @stonked_projects = current_user.staked_projects.includes(:user)
       @recent_devlogs = Devlog.joins(:project)
-                              .includes(:project, :user, :timer_sessions, :file_attachment, comments: :user)
-                              .where(project_id: @stonked_projects.pluck(:id))
+                              .joins("INNER JOIN stonks ON stonks.project_id = projects.id")
+                              .includes(:project, :file_attachment, :user, comments: :user)
+                              .where(stonks: { user_id: current_user.id })
                               .where(projects: { is_deleted: false })
                               .order(created_at: :desc)
 
-      @pagy, @recent_devlogs = pagy(@recent_devlogs, items: 8)
+      begin
+        @pagy, @recent_devlogs = pagy(@recent_devlogs, items: 8)
+      rescue Pagy::OverflowError
+        redirect_to projects_path(tab: "stonked") and return
+      end
     else
       # Optimize main devlogs query
       devlogs_query = Devlog.joins(:project)
-                            .includes(:project, :user, :timer_sessions, :file_attachment, comments: :user)
+                            .includes(:project, :file_attachment, :user, comments: :user)
                             .where(projects: { is_deleted: false })
                             .order(created_at: :desc)
 
-      @pagy, @recent_devlogs = pagy(devlogs_query, items: 8)
+      begin
+        @pagy, @recent_devlogs = pagy(devlogs_query, items: 8)
+      rescue Pagy::OverflowError
+        redirect_to projects_path and return
+      end
 
       # we can just load stuff for the gallery here too!!
-      projects_query = Project.includes(:user, :banner_attachment)
+      projects_query = Project.includes(:banner_attachment, :user, devlogs: [ :file_attachment ])
                               .joins("LEFT JOIN devlogs ON devlogs.project_id = projects.id")
                               .where(is_deleted: false)
                               .group("projects.id")
                               .order(Arel.sql("COUNT(devlogs.id) DESC, projects.created_at #{sort_order == :asc ? 'ASC' : 'DESC'}"))
 
-      @gallery_pagy, @projects = pagy(projects_query, items: 12)
+      begin
+        @gallery_pagy, @projects = pagy(projects_query, items: 12)
+      rescue Pagy::OverflowError
+        @gallery_pagy, @projects = pagy(projects_query, items: 12, page: 1)
+      end
     end
   end
 
   def show
+    authorize @project, :show?
     track_view(@project)
 
-    @devlogs = @project.devlogs.order(created_at: :desc)
-    @ship_events = @project.ship_events
+    @devlogs = @project.devlogs.sort_by(&:created_at).reverse
+    @ship_events = @project.ship_events.sort_by(&:created_at).reverse
     @timeline = (@devlogs + @ship_events).sort_by(&:created_at).reverse
 
-    @stonks = @project.stonks.includes(:user).order(amount: :desc)
-    @latest_ship_certification = @project.latest_ship_certification
+    @stonks = @project.stonks.sort_by(&:amount).reverse
+    @latest_ship_certification = @project.ship_certifications.max_by(&:created_at)
+
+    @ship_event_data = compute_ship_event_data
+
+    @project_image = pj_image
 
     return unless current_user
 
-    @user_stonk = @project.stonks.find_by(user: current_user)
+    if current_user == @project.user && current_user.has_hackatime?
+      Rails.cache.fetch("hackatime_fetch_#{current_user.id}", expires_in: 30.seconds) do
+        current_user.refresh_hackatime_data_now
+      end
+    end
+
+    @user_stonk = @project.stonks.find { |stonk| stonk.user_id == current_user.id }
   end
 
   def edit
@@ -130,9 +151,11 @@ class ProjectsController < ApplicationController
   end
 
   def my_projects
-    @projects = current_user.projects.order(created_at: :desc)
-
-    current_user.refresh_hackatime_data if current_user.has_hackatime?
+    @projects = current_user.projects.includes(
+      :banner_attachment,
+      ship_events: :payouts,
+      devlogs: [ :file_attachment ]
+    ).order(created_at: :desc)
   end
 
   # Gotta say I love turbo frames and turbo streams and flashes in general
@@ -493,9 +516,6 @@ class ProjectsController < ApplicationController
 
   def destroy
     Project.transaction do
-      # delete all active timer sessions for this project (otherwise it bricks and you can't start new timers)
-      @project.timer_sessions.where(status: %i[running paused]).destroy_all
-
       @project.stonks.destroy_all
       @project.project_follows.destroy_all
 
@@ -547,6 +567,50 @@ class ProjectsController < ApplicationController
   #     end
   # end
 
+  private
+
+  def compute_ship_event_data
+    ship_event_data = {}
+    ship_events_by_date = @ship_events.sort_by(&:created_at)
+    devlogs_by_date = @devlogs.sort_by(&:created_at)
+
+    ship_events_by_date.each_with_index do |ship_event, index|
+      position = index + 1
+      payouts = ship_event.payouts.to_a
+      payout_count = payouts.size
+      payout_sum = payouts.sum(&:amount)
+
+      previous_ship = index > 0 ? ship_events_by_date[index - 1] : nil
+      start_time = previous_ship&.created_at || @project.created_at
+
+      devlogs_count = devlogs_by_date.count do |devlog|
+        devlog.created_at > start_time && devlog.created_at <= ship_event.created_at
+      end
+
+      ship_event_data[ship_event.id] = {
+        position: position,
+        payout_count: payout_count,
+        payout_sum: payout_sum,
+        devlogs_since_last_count: devlogs_count
+      }
+    end
+
+    ship_event_data
+  end
+
+  def pj_image
+    if @project.banner.attached?
+      url_for(@project.banner)
+    else
+      devlog_with_image = @devlogs.find { |devlog| devlog.file.attached? && devlog.file.image? }
+      if devlog_with_image
+        url_for(devlog_with_image.file)
+      else
+        "https://summer.hackclub.com/social-splash.jpg"
+      end
+    end
+  end
+
   def ysws_type_options
     [ [ "Select a YSWS program...", "" ] ] + Project.ysws_types.map { |key, value| [ value, value ] }
   end
@@ -567,11 +631,29 @@ class ProjectsController < ApplicationController
   end
 
   def set_project
-    @project = Project.includes(:user, devlogs: [ :user, :timer_sessions, :likes, :comments, :file_attachment ]).find(params[:id])
+    @project = Project.includes(
+      {
+        user: [ :user_hackatime_data, :projects ],
+        followers: :projects,
+        devlogs: [
+          :user,
+          { comments: :user },
+          :file_attachment
+        ],
+        ship_events: [
+          :payouts
+        ],
+        stonks: [
+          :user
+        ]
+      },
+      :banner_attachment,
+      :ship_certifications
+    ).find(params[:id])
   rescue ActiveRecord::RecordNotFound
     deleted_project = Project.with_deleted.find_by(id: params[:id])
     if deleted_project&.is_deleted?
-      redirect_to projects_path, alert: "This project has been deleted by its owner."
+      redirect_to projects_path, alert: "This project has been deleted."
     else
       redirect_to projects_path, alert: "Project not found."
     end

@@ -21,6 +21,7 @@ class ShipEvent < ApplicationRecord
   has_many :payouts, as: :payable
 
   after_create :maybe_create_ship_certification
+  after_create :award_user_badges
 
   def user
     project.user
@@ -41,8 +42,19 @@ class ShipEvent < ApplicationRecord
     end
   end
 
+  def seconds_covered
+    devlogs_since_last.sum(:duration_seconds)
+  end
+  # this is the hours covered by the ship event, not the total hours up to the ship event
   def hours_covered
-    devlogs_since_last.sum(:last_hackatime_time).fdiv(3600)
+    seconds_covered.fdiv(3600)
+  end
+
+  # this is the total hours up to the ship event
+  def total_time_up_to_ship
+    Devlog.where(project: project)
+          .where("created_at <= ?", created_at)
+          .sum(:duration_seconds)
   end
 
   private
@@ -52,5 +64,9 @@ class ShipEvent < ApplicationRecord
     return if project.ship_certifications.pending.exists?
 
     project.ship_certifications.create!
+  end
+
+  def award_user_badges
+    user.award_badges_async!("ship_event_created")
   end
 end

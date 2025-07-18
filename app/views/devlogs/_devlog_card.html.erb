@@ -13,13 +13,12 @@
   no_parchment ||= false                   # Whether to disable parchment styling
 %>
 
-<% cache([devlog, devlog.user, devlog.project, current_user&.id, show_likes, show_comment_modal, context]) do %>
   <%= render layout: "shared/card" do %>
 
     <div class="ml-4 <%= context == 'explore' || context == 'project' ? '' : '' %> <%= container_classes %> <%= 'cursor-pointer' if show_project_navigation %>"
          id="<%= dom_id(devlog) %>"
          data-controller="modal devlog-card"
-         data-devlog-card-project-path-value="<%= project_path(devlog.project) if show_project_navigation %>"
+         data-devlog-card-project-path-value="<%= project_path(devlog.project) if show_project_navigation && devlog.project %>"
          data-devlog-card-show-project-navigation-value="<%= show_project_navigation %>"
          data-devlog-card-max-length-value="200"
          data-action="<%= 'click->devlog-card#navigateToProject' if show_project_navigation %>"
@@ -32,25 +31,30 @@
             <img src="<%= devlog.user.avatar %>" alt="<%= devlog.user.display_name %>" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3" loading="lazy">
           <% end %>
           <div>
-            <% if show_project_link %>
+            <% if show_project_link && devlog.project %>
               <span class="text-base sm:text-lg 2xl:text-xl text-[#4a2d24]">
-                <%= devlog.user.display_name %><% admin_user_visit(devlog.user) %> <span class="text-[#865c39]">worked on</span>
+                <%= render "shared/user_display_name", user: devlog.user %><% admin_user_visit(devlog.user) %> <span class="text-[#865c39]">worked on</span>
                 <a href="<%= project_path(devlog.project) %>" class="transition-colors duration-200 hover:underline decoration-1 underline-offset-2">
                   <%= devlog.project.title %>
                 </a>
               </span>
+            <% elsif show_project_link && !devlog.project %>
+              <span class="text-base sm:text-lg 2xl:text-xl text-[#4a2d24]">
+                <%= render "shared/user_display_name", user: devlog.user %><% admin_user_visit(devlog.user) %> <span class="text-[#865c39]">worked on</span>
+                <span class="text-gray-500 italic">a deleted project</span>
+              </span>
             <% else %>
               <span class="text-base sm:text-lg 2xl:text-xl">
-                <%= devlog.user.display_name %><% admin_user_visit(devlog.user) %>
+                <%= render "shared/user_display_name", user: devlog.user %><% admin_user_visit(devlog.user) %>
               </span>
             <% end %>
 
             <div class="text-[#B89576]">
               <!-- Time info -->
-              <% if devlog.last_hackatime_time.present? && devlog.last_hackatime_time > 0 %>
+              <% if devlog.duration_seconds.present? && devlog.duration_seconds > 0 %>
                 <span>
-                  <% hours = devlog.last_hackatime_time / 3600 %>
-                  <% minutes = (devlog.last_hackatime_time % 3600) / 60 %>
+                  <% hours = devlog.duration_seconds / 3600 %>
+                  <% minutes = (devlog.duration_seconds % 3600) / 60 %>
                   <%= hours > 0 ? "#{hours}h spent working" : "#{minutes}m spent working" %>
                 </span>
                 <span> • </span>
@@ -74,7 +78,7 @@
                 <% end %>
               </span>
 
-              <% if show_stonks && devlog.project.stonks.count %>
+              <% if show_stonks && devlog.project&.stonks&.count %>
                 <span>
                   • <%= pluralize(devlog.project.stonks.count, 'stonker') %>
                 </span>
@@ -167,10 +171,17 @@
                   <button data-action="click->modal#open" data-modal-id="<%= devlog.id %>" data-modal-type="edit" class="w-full px-4 py-2 text-left text-sm text-nice-blue hover:text-nice-blue transition-colors duration-200 cursor-pointer">
                     Edit
                   </button>
-                  <%= button_to "Delete", project_devlog_path(devlog.project, devlog),
-                      method: :delete,
-                      class: "w-full px-4 py-2 text-left text-sm text-vintage-red hover:bg-saddle-taupe/10 transition-colors duration-200 cursor-pointer",
-                      data: { controller: "delete-confirmation", action: "click->delete-confirmation#confirm" } %>
+                  <% if devlog.project %>
+                    <%= button_to "Delete", project_devlog_path(devlog.project, devlog),
+                        method: :delete,
+                        class: "w-full px-4 py-2 text-left text-sm text-vintage-red hover:bg-saddle-taupe/10 transition-colors duration-200 cursor-pointer",
+                        data: { controller: "delete-confirmation", action: "click->delete-confirmation#confirm" } %>
+                  <% else %>
+                    <%= button_to "Delete", devlog_path(devlog),
+                        method: :delete,
+                        class: "w-full px-4 py-2 text-left text-sm text-vintage-red hover:bg-saddle-taupe/10 transition-colors duration-200 cursor-pointer",
+                        data: { controller: "delete-confirmation", action: "click->delete-confirmation#confirm" } %>
+                  <% end %>
                 <% end %>
               </div>
             </div>
@@ -187,7 +198,6 @@
       <% end %>
     </div>
   <% end %>
-<% end %>
 
 <!-- Render comment modal based on context -->
 <% if show_comment_modal || context == 'project' %>

@@ -41,6 +41,15 @@ class VoteChange < ApplicationRecord
   scope :losses, -> { where(result: "loss") }
   scope :ties, -> { where(result: "tie") }
 
+  def self.cumulative_elo_range_for_vote_count(vote_count, calculate_to = Time.now)
+    vote_changes = where("project_vote_count <= ?", vote_count)
+    vote_changes = vote_changes.where("created_at <= ?", calculate_to) if calculate_to
+
+    return [ nil, nil ] if vote_changes.empty?
+
+    [ vote_changes.minimum(:elo_after), vote_changes.maximum(:elo_after) ]
+  end
+
   def elo_gained?
     elo_delta > 0
   end
@@ -53,6 +62,6 @@ class VoteChange < ApplicationRecord
 
   def try_payout
     genesis_has_run = Payout.where(payable_type: "ShipEvent").any?
-    project.issue_payouts if genesis_has_run
+    project.issue_payouts if genesis_has_run && !project.is_deleted?
   end
 end

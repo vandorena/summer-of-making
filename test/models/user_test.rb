@@ -18,8 +18,10 @@
 #  identity_vault_access_token          :string
 #  internal_notes                       :text
 #  is_admin                             :boolean          default(FALSE), not null
+#  is_banned                            :boolean          default(FALSE)
 #  last_name                            :string
 #  permissions                          :text             default([])
+#  shenanigans_state                    :jsonb
 #  synced_at                            :datetime
 #  timezone                             :string
 #  tutorial_video_seen                  :boolean          default(FALSE), not null

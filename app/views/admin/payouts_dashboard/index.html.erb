@@ -1,0 +1,145 @@
+<%= link_to "← back", admin_root_path %>
+
+<h1>when can we rugpull?</h1>
+
+<h3>market cap <%= number_with_delimiter(@cap) %></h3>
+
+<h3>+<%= number_with_delimiter(@created) %> inflows (24h)</h3>
+
+<h3>-<%= number_with_delimiter(@destroyed) %> outflows (24h)</h3>
+
+<h3><%= number_with_delimiter(@txns) %> txns (24h) </h3>
+
+<h3><%= number_with_delimiter(@volume) %> volume (24h) </h3>
+
+<h2>whos the richest</h2>
+<% if @holders.any? %>
+  <ul>
+    <% @holders.each_with_index do |(user_data, balance), index| %>
+      <li>
+        #<%= index + 1 %>
+        <% user_id, display_name, avatar = user_data %>
+        <img src="<%= avatar %>" alt="<%= display_name %>" width="32" height="32">
+        <strong><%= display_name %></strong> (id <%= user_id %>)
+        <%= number_with_delimiter(balance) %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>nuthing here bucko</p>
+<% end %>
+
+<h2>whos spending the most</h2>
+<% if @spenders.any? %>
+  <ul>
+    <% @spenders.each_with_index do |(user_data, amount), index| %>
+      <li>
+        #<%= index + 1 %>
+        <% user_id, display_name, avatar = user_data %>
+        <img src="<%= avatar %>" alt="<%= display_name %>" width="32" height="32">
+        <strong><%= display_name %></strong> (id <%= user_id %>)
+        <%= number_with_delimiter(amount) %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>nuthing here bucko</p>
+<% end %>
+
+<h2>maker/takers (24h)</h2>
+<table>
+  <thead>
+    <tr>
+      <th>source</th>
+      <th>type</th>
+      <th>amt</th>
+      <th>impact</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @sources.each do |(payable_type, is_positive), amount| %>
+      <tr>
+        <td>
+          <%= payable_type %>
+        </td>
+        <td>
+          <%= is_positive ? 'maker' : 'taker' %>
+        </td>
+        <td><%= number_with_delimiter(amount.abs) %></td>
+        <td>
+          <%= amount > 0 ? '+' : '' %><%= number_with_delimiter(amount) %>
+        </td>
+      </tr>
+    <% end %>
+    <% if @sources.empty? %>
+      <tr>
+        <td colspan="4">no txns in the past 24 hours, somethings wrong</td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<h2>recent payouts</h2>
+<% if @recent.any? %>
+  <table>
+    <thead>
+      <tr>
+        <th>time</th>
+        <th>user</th>
+        <th>amount</th>
+        <th>type</th>
+        <th>related to</th>
+        <th>reason</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @recent.each do |payout| %>
+        <tr>
+          <td><%= time_ago_in_words(payout.created_at) %> ago</td>
+          <td>
+            <% if payout.user %>
+              <img src="<%= payout.user.avatar %>" alt="<%= payout.user.display_name %>" width="24" height="24" style="border-radius: 50%; display: inline;">
+              <strong><%= payout.user.display_name %></strong> (<%= payout.user.id %>)
+            <% else %>
+              <em>No user</em>
+            <% end %>
+          </td>
+          <td class="<%= payout.amount >= 0 ? 'p' : 'n' %>">
+            <%= payout.amount >= 0 ? '+' : '' %><%= number_with_delimiter(payout.amount) %>
+          </td>
+          <td><%= payout.payable_type&.humanize || 'Unknown' %></td>
+          <td>
+            <% if payout.payable %>
+              <% case payout.payable %>
+              <% when User %>
+                👤 <%= link_to payout.payable.display_name, admin_user_path(payout.payable) %>
+              <% when ShopOrder %>
+                🛒 <%= link_to "ShopOrder ##{payout.payable.id}", admin_shop_order_path(payout.payable) %>
+              <% when ShipEvent %>
+                🚢 <%= link_to "ShipEvent ##{payout.payable.id}", project_path(payout.payable.project) %>
+                (<%= payout.payable.project.title %>)
+              <% else %>
+                <%= payout.payable.class.name %> #<%= payout.payable.id %>
+              <% end %>
+            <% else %>
+              <em>nil</em>
+            <% end %>
+          </td>
+          <td>
+            <% if payout.reason.present? %>
+              <%= truncate(payout.reason, length: 50) %>
+            <% else %>
+              <em>nil</em>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <style>
+    .p { color: green; }
+    .n { color: red; }
+  </style>
+<% else %>
+  <p>nuthing, ruh ro raggy</p>
+<% end %>

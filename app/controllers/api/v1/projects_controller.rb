@@ -3,8 +3,13 @@
 module Api
   module V1
     class ProjectsController < ApplicationController
+      include Pagy::Backend
+      before_action :authenticate_user! # fucking over the api clients
+
       def index
-        @projects = Project.all.map do |project|
+        pagy, projects = pagy(Project.where(is_deleted: false), items: 20)
+
+        @projects = projects.map do |project|
           {
             id: project.id,
             title: project.title,
@@ -18,7 +23,16 @@ module Api
             updated_at: project.updated_at
           }
         end
-        render json: @projects
+
+        render json: {
+          projects: @projects,
+          pagination: {
+            page: pagy.page,
+            pages: pagy.pages,
+            count: pagy.count,
+            items: pagy.limit
+          }
+        }
       end
 
       def show

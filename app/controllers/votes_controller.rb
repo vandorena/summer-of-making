@@ -79,7 +79,7 @@ class VotesController < ApplicationController
     @full_projects_count = Project.joins(:ship_certifications, :devlogs)
                                   .where(ship_certifications: { judgement: :approved })
                                   .group("projects.id")
-                                  .having("SUM(COALESCE(devlogs.seconds_coded, 0)) > ?", 10 * 3600)
+                                  .having("SUM(COALESCE(devlogs.duration_seconds, 0)) > ?", 10 * 3600)
                                   .count
                                   .keys
                                   .size
@@ -108,9 +108,7 @@ class VotesController < ApplicationController
     projects_with_latest_ship = Project
                                   .joins(:ship_events)
                                   .joins(:ship_certifications)
-                                  .includes(:banner_attachment, :ship_events,
-                                           user: :hackatime_stat,
-                                           devlogs: [ :user, :file_attachment ])
+                                  .includes(ship_events: :payouts)
                                   .where(ship_certifications: { judgement: :approved })
                                   .where.not(user_id: current_user.id)
                                   .where(
@@ -130,27 +128,33 @@ class VotesController < ApplicationController
 
     eligible_projects = projects_with_latest_ship.to_a
 
-      projects_with_time = eligible_projects.map do |project|
-        latest_ship_event = project.ship_events.max_by(&:created_at)
+    latest_ship_event_ids = eligible_projects.map { |project|
+      project.ship_events.max_by(&:created_at).id
+    }
 
-        ship_devlogs = project.devlogs.select do |devlog|
-          devlog.created_at < latest_ship_event.created_at
-        end
+    total_times_by_ship_event = Devlog
+      .joins("INNER JOIN ship_events ON devlogs.project_id = ship_events.project_id")
+      .where(ship_events: { id: latest_ship_event_ids })
+      .where("devlogs.created_at <= ship_events.created_at")
+      .group("ship_events.id")
+      .sum(:duration_seconds)
 
-        total_time_seconds = ship_devlogs.sum(&:last_hackatime_time)
+    projects_with_time = eligible_projects.map do |project|
+      latest_ship_event = project.ship_events.max_by(&:created_at)
+      total_time_seconds = total_times_by_ship_event[latest_ship_event.id] || 0
+      is_paid = latest_ship_event.payouts.any?
 
       {
         project: project,
         total_time: total_time_seconds,
         ship_event: latest_ship_event,
-        is_paid: latest_ship_event.payouts.exists?,
+        is_paid: is_paid,
         ship_date: latest_ship_event.created_at
       }
     end
 
     # sort by ship date – disabled until genesis
-
-    # projects_with_time.sort_by! { |p| p[:ship_date] }
+    projects_with_time.sort_by! { |p| p[:ship_date] }
 
     unpaid_projects = projects_with_time.select { |p| !p[:is_paid] }
     paid_projects = projects_with_time.select { |p| p[:is_paid] }
@@ -162,6 +166,7 @@ class VotesController < ApplicationController
     end
 
     selected_projects = []
+    selected_project_data = []
     used_user_ids = Set.new
     used_repo_links = Set.new
     max_attempts = 25 # infinite loop!
@@ -174,10 +179,11 @@ class VotesController < ApplicationController
       # pick a random unpaid project first
       if selected_projects.empty?
         available_unpaid = unpaid_projects.select { |p| !used_user_ids.include?(p[:project].user_id) && !used_repo_links.include?(p[:project].repo_link) }
-        first_project_data = available_unpaid.sample
+        first_project_data = weighted_sample(available_unpaid)
         next unless first_project_data
 
         selected_projects << first_project_data[:project]
+        selected_project_data << first_project_data
         used_user_ids << first_project_data[:project].user_id
         used_repo_links << first_project_data[:project].repo_link if first_project_data[:project].repo_link.present?
         first_time = first_project_data[:total_time]
@@ -194,12 +200,14 @@ class VotesController < ApplicationController
         end
 
         if compatible_projects.any?
-          second_project_data = compatible_projects.sample
+          second_project_data = weighted_sample(compatible_projects)
           selected_projects << second_project_data[:project]
+          selected_project_data << second_project_data
           used_user_ids << second_project_data[:project].user_id
           used_repo_links << second_project_data[:project].repo_link if second_project_data[:project].repo_link.present?
         else
           selected_projects.clear
+          selected_project_data.clear
           used_user_ids.clear
           used_repo_links.clear
         end
@@ -208,15 +216,16 @@ class VotesController < ApplicationController
 
     # js getting smtth if after 25 attemps we have nothing
     if selected_projects.size < 2 && unpaid_projects.any?
-      first_project_data = unpaid_projects.sample
+      first_project_data = weighted_sample(unpaid_projects)
       remaining_projects = projects_with_time.reject { |p|
         p[:project].user_id == first_project_data[:project].user_id ||
         (p[:project].repo_link.present? && p[:project].repo_link == first_project_data[:project].repo_link)
       }
 
       if remaining_projects.any?
-        second_project_data = remaining_projects.sample
+        second_project_data = weighted_sample(remaining_projects)
         selected_projects = [ first_project_data[:project], second_project_data[:project] ]
+        selected_project_data = [ first_project_data, second_project_data ]
       end
     end
 
@@ -225,17 +234,26 @@ class VotesController < ApplicationController
       return
     end
 
-    @projects = selected_projects
-    @ship_events = selected_projects.map do |project|
-      project.ship_events.max_by(&:created_at)
-    end
+    # load what we need
+    selected_project_ids = selected_projects.map(&:id)
+    @projects = Project
+                .includes(:banner_attachment,
+                          :ship_certifications,
+                          ship_events: :payouts,
+                          devlogs: [ :user, :file_attachment ])
+                .where(id: selected_project_ids)
+                .index_by(&:id)
+                .values_at(*selected_project_ids)
+
+    @ship_events = selected_project_data.map { |data| data[:ship_event] }
 
     @project_ai_used = {}
     @projects.each do |project|
       ai_used = if project.respond_to?(:ai_used?)
         project.ai_used?
-      elsif project.respond_to?(:latest_ship_certification) && project.latest_ship_certification.respond_to?(:ai_used?)
-        project.latest_ship_certification.ai_used?
+      elsif project.ship_certifications.loaded? && project.ship_certifications.any? { |cert| cert.respond_to?(:ai_used?) }
+        latest_cert = project.ship_certifications.max_by(&:created_at)
+        latest_cert&.ai_used? || false
       else
         false
       end

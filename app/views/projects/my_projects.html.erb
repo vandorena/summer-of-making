@@ -24,21 +24,16 @@
               </div>
               <p class="mb-4 md:mb-6 line-clamp-3 text-sm md:text-base 2xl:text-lg text-gray-600 break-words overflow-wrap-anywhere"><%= project.description %></p>
 
-              <%
-                timer_total_time = project.timer_sessions.where(status: :stopped).sum(:net_time)
-                hackatime_total_time = project.hackatime_total_time
-                total_time_seconds = timer_total_time + hackatime_total_time
-              %>
               <p class="text-gray-400">
-                <%= format_seconds(total_time_seconds) %>
+                <%= format_seconds(project.total_seconds_coded) %>
                 <br>
-                <%= project.devlogs.count %> devlogs
+                <%= project.devlogs_count %> devlogs
               </p>
 
               <% if project.ship_events.empty? %>
                 <p class="text-gray-400">To get shells, ship this project!</p>
               <% elsif project.ship_events&.last&.payouts&.any? %>
-                <p class="text-gray-400">You earned <%= pluralize(project.ship_events&.last&.payout.sum(:amount), "shells") %>!</p>
+                <p class="text-gray-400">You earned <%= pluralize(project.ship_events&.last&.payouts.sum(:amount), "shells") %>!</p>
               <% elsif current_user.votes.size < (20 * current_user.unpaid_ship_events_count) %>
                 <p class="text-red-400">You should go vote - hang tight!</p>
               <% else %>

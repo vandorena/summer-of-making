@@ -1,3 +1,34 @@
+<% content_for :title, @project.title %>
+<% content_for :head do %>
+  <%
+    project_image = @project_image
+    project_title = "#{@project.title} by #{@project.user.display_name}"
+    project_description = strip_tags(@project.description).truncate(300)
+  %>
+
+  <meta property="og:title" content="<%= html_escape(project_title) %>">
+  <meta property="og:description" content="<%= html_escape(project_description) %>">
+  <meta property="og:image" content="<%= html_escape(project_image) %>">
+  <meta property="og:url" content="<%= html_escape(project_url(@project)) %>">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Summer of Making by Hack Club">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<%= html_escape(project_title) %>">
+  <meta name="twitter:description" content="<%= html_escape(project_description) %>">
+  <meta name="twitter:image" content="<%= html_escape(project_image) %>">
+
+  <meta property="article:author" content="<%= html_escape(@project.user.display_name) %>">
+  <meta property="article:published_time" content="<%= @project.created_at.iso8601 %>">
+  <% if @project.updated_at != @project.created_at %>
+    <meta property="article:modified_time" content="<%= @project.updated_at.iso8601 %>">
+  <% end %>
+
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:image:alt" content="<%= html_escape(@project.title) %> project banner">
+<% end %>
+
 <div data-controller="image-viewer">
   <div data-image-viewer-target="modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-75" data-action="click->image-viewer#closeBackground">
     <div class="relative max-w-7xl max-h-[90vh] w-full flex items-center justify-center">
@@ -11,7 +42,7 @@
   <div class="container mx-auto px-4 py-4 md:py-8 max-w-4xl">
     <%= render "projects/project_card" %>
 
-    <% if user_signed_in? && current_user == @project.user %>
+    <% if policy(@project).can_see_actions? %>
       <div id="devlog-form" class="mb-4 md:mb-6">
         <%= render "devlogs/devlog_form" %>
       </div>
@@ -47,12 +78,18 @@
                     <%= link_to "New ship feedback!", new_ship_event_feedback_path(ship_event_id: item.id) %>
                   <% end %>
 
-                  <% p = @ship_events.where("created_at < ?", item.created_at).order(:created_at) %>
-                  <% position = p.count + 1 %>
-                  <p class="font-medium text-base sm:text-lg 2xl:text-xl mb-2 sm:mb-3">Ship <%= position %></p>
+                  <% ship_data = @ship_event_data[item.id] %>
+                  <p class="font-medium text-base sm:text-lg 2xl:text-xl mb-2 sm:mb-3">Ship <%= ship_data[:position] %></p>
 
-                  <% payout_count = Payout.where(payable: item).count %>
-                  <p><%= pluralize(payout_count, "payout") %> totaling $<%= Payout.where(payable: item).sum(&:amount) %></p>
+                  <p>
+                    <%= pluralize(ship_data[:payout_count], "payout") %> of
+                    <picture class="inline-block w-6 h-6 flex-shrink-0">
+                      <source srcset="/shell.avif" type="image/avif">
+                      <source srcset="/shell.webp" type="image/webp">
+                      <img src="/shell.png" class="inline-block w-6 h-6" alt="shell" loading="lazy">
+                    </picture>
+                    <%= ship_data[:payout_sum] %> shells
+                  </p>
 
                   <div class="flex items-center">
                     <% if item.user.avatar.present? %>
@@ -61,11 +98,11 @@
                     <div>
                       <p class="text-gray-600 text-xs sm:text-sm 2xl:text-base"><%= time_ago_in_words item.created_at %> ago</p>
 
-                      <span class="font-medium text-base sm:text-lg 2xl:text-xl"><%= item.user.display_name %><% admin_user_visit(item.user) %></span>
+                      <span class="font-medium text-base sm:text-lg 2xl:text-xl"><%= render "shared/user_display_name", user: item.user %><% admin_user_visit(item.user) %></span>
 
                       <span class="text-gray-600 text-xs sm:text-sm 2xl:text-base">•</span>
 
-                      <span class="text-gray-600 text-xs sm:text-sm 2xl:text-base">Covers <%= pluralize(item.devlogs_since_last.count, "devlog") %></span>
+                      <span class="text-gray-600 text-xs sm:text-sm 2xl:text-base">Covers <%= pluralize(ship_data[:devlogs_since_last_count], "devlog") %></span>
 
                       <%
                         # Get devlogs since previous ship event or project start
@@ -73,8 +110,8 @@
                         # start_time = previous_ship&.created_at || @project.created_at
                         # devlogs_in_period = @project.devlogs.where("created_at > ? AND created_at <= ?", start_time, item.created_at)
 
-                        # # Get hackatime data for this period (simplified - getting project total)
-                        # time = @project.hackatime_total_time / 3600.0
+                        #                         # Get time data for this period (simplified - getting project total)
+                        # time = @project.total_seconds_coded / 3600.0
 
                         # devlog_count = devlogs_in_period.count
 

@@ -62,6 +62,9 @@ export default class extends Controller {
       case 'certification':
         modalElement = document.getElementById(`certification-modal-${modalId}`)
         break
+      case 'report':
+        modalElement = document.getElementById(`report-modal-${modalId}`)
+        break
     }
     
     if (!modalElement) {
@@ -101,6 +104,7 @@ export default class extends Controller {
           this.element.id.startsWith('stonks-modal-') ||
           this.element.id.startsWith('delete-modal-') ||
           this.element.id.startsWith('certification-modal-') ||
+          this.element.id.startsWith('report-modal-') ||
           this.element.id === 'create-project-modal' ||
           this.element.id === 'hackatime-modal')) {
         this.close()

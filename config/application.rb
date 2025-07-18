@@ -22,6 +22,9 @@ module Journey
     MissionControl::Jobs.base_controller_class = "Admin::ApplicationController"
     config.mission_control.jobs.http_basic_auth_enabled = false
 
+    # W IN THE CHAT FOR RACK ATTACK I LOVE YOU
+    config.middleware.use Rack::Attack
+
     # html minify
     # config.middleware.use HtmlCompressor::Rack
 

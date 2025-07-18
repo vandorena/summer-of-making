@@ -176,6 +176,7 @@ class AdminConstraint
 end
 
 Rails.application.routes.draw do
+  mount ActiveInsights::Engine => "/insights"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -261,6 +262,10 @@ Rails.application.routes.draw do
     resources :shop_orders, path: :orders, except: %i[edit update new]
   end
 
+  resources :users, only: [ :show ] do
+    resource :profile, controller: "user/profiles", only: [ :edit, :update ]
+  end
+
   # Payouts etc
   get "/payouts/:slack_id", to: "payouts#index"
 
@@ -300,14 +305,11 @@ Rails.application.routes.draw do
   get "api/check_user", to: "users#check_user"
   post "api/devlogs", to: "devlogs#api_create"
 
-  # User Hackatime routes
-  post "users/update_hackatime_confirmation", to: "users#update_hackatime_confirmation"
-  post "users/refresh_hackatime", to: "users#refresh_hackatime"
-  post "users/check_hackatime_connection", to: "users#check_hackatime_connection"
-
   resources :ship_event_feedbacks
 
   post "track_view", to: "view_tracking#create"
+
+  get "/gork", to: "static_pages#gork"
 
   namespace :admin, constraint: AdminConstraint do
     mount MissionControl::Jobs::Engine, at: "jobs"
@@ -318,7 +320,15 @@ Rails.application.routes.draw do
     get "/", to: "static_pages#index", as: :root
     resources :view_analytics, only: [ :index ]
     resources :voting_dashboard, only: [ :index ]
-    resources :fraud_reports, only: [ :index ]
+    resources :payouts_dashboard, only: [ :index ]
+    resources :fraud_reports, only: [ :index, :show ] do
+      member do
+        get :resolve
+        get :unresolve
+        patch :resolve
+        patch :unresolve
+      end
+    end
     resources :ship_certifications, only: [ :index, :edit, :update ] do
       collection do
         get :logs
@@ -337,10 +347,19 @@ Rails.application.routes.draw do
         post :revoke_ship_certifier
         post :give_black_market
         post :take_away_black_market
+        post :ban_user
+        post :unban_user
         post :impersonate
+        post :set_hackatime_trust_factor
       end
     end
     resources :shop_items
+    resources :projects, only: [] do
+      member do
+        delete :destroy
+        patch :restore
+      end
+    end
     resources :shop_orders do
       collection do
         get :pending

@@ -13,9 +13,30 @@ module Admin
     end
 
     def show
-      @activities = @user.activities.order(created_at: :desc).includes(:owner)
+      user_activities = @user.activities
+      project_activities = PublicActivity::Activity.where(trackable: @user.projects.with_deleted)
+
+      @activities = PublicActivity::Activity.where(id: user_activities.pluck(:id) + project_activities.pluck(:id))
+                                            .order(created_at: :desc)
+                                            .includes(:owner, :trackable)
       @payouts = @user.payouts.order(created_at: :desc).includes(:payable)
+
+      @user = User.includes(
+        :user_hackatime_data,
+        :tutorial_progress,
+        :projects,
+        :devlogs,
+        :votes,
+        :followed_projects,
+        :staked_projects,
+        :shop_orders,
+        :shop_card_grants,
+        :hackatime_projects
+      ).find(params[:id])
+
+      @hackatime_id = fetch_hackatime(@user.email)
     end
+
     def internal_notes
       @user.internal_notes = params[:internal_notes]
       @user.create_activity("edit_internal_notes", params: { note: params[:internal_notes] })
@@ -103,6 +124,18 @@ module Admin
       redirect_to admin_user_path(@user)
     end
 
+    def ban_user
+      @user.ban_user!("admin_ban")
+      flash[:success] = "get rekt"
+      redirect_to admin_user_path(@user)
+    end
+
+    def unban_user
+      @user.unban_user!
+      flash[:success] = "//undoing"
+      redirect_to admin_user_path(@user)
+    end
+
     def impersonate
       unless current_user&.is_admin?
         Honeybadger.notify("what the h-e-double-hockey-sticks?")
@@ -119,7 +152,104 @@ module Admin
       redirect_to root_path
     end
 
+    def set_hackatime_trust_factor
+      trust_params = trust_factor_params
+      trust_level = trust_params[:trust_level]
+      reason = trust_params[:reason]
+      api_key = trust_params[:api_key]
+
+      unless trust_level.present? && reason.present? && api_key.present?
+        flash[:error] = "you gotta fill everything out silly head"
+        return redirect_to admin_user_path(@user)
+      end
+
+      hackatime_id = fetch_hackatime(@user.email)
+      unless hackatime_id
+        flash[:error] = "could not find that person!"
+        return redirect_to admin_user_path(@user)
+      end
+
+      begin
+        headers = {
+          "Authorization" => "Bearer #{api_key}",
+          "Content-Type" => "application/json"
+        }
+
+        payload = {
+          id: hackatime_id.to_s,
+          trust_level: trust_level,
+          reason: reason
+        }
+
+        response = Faraday.post(
+          "https://hackatime.hackclub.com/api/admin/v1/user/convict",
+          payload.to_json,
+          headers
+        )
+
+        if response.success?
+          trust_level_name = case trust_level.to_i
+          when 0 then "blue (unscored)"
+          when 1 then "red (convicted)"
+          when 2 then "green (trusted)"
+          when 3 then "yellow (suspected)"
+          else "unknown"
+          end
+
+          flash[:success] = "Successfully set trust level to #{trust_level_name}"
+        else
+          error_message = begin
+            error_body = JSON.parse(response.body)
+            error_body["error"] || error_body["message"] || response.body
+          rescue JSON::ParserError
+            response.body
+          end
+
+          flash[:error] = "#{error_message}"
+        end
+      rescue => e
+        Rails.logger.error("ruh ro, failed to do that #{e.message}")
+        Honeybadger.notify(e, context: { user_id: @user.id, trust_level: trust_level, reason: reason })
+        flash[:error] = "error! #{e.message}"
+      end
+      redirect_to admin_user_path(@user)
+    end
+
     private
+
+    def fetch_hackatime(email)
+      return nil if email.blank?
+
+      begin
+        headers = {
+          "Authorization" => ENV.fetch("HACKATIME_AUTH_TOKEN"),
+          "RACK_ATTACK_BYPASS" => Rails.application.credentials.hackatime&.ratelimit_bypass_header
+        }.compact
+
+        res = Faraday.get(
+          "https://hackatime.hackclub.com/api/v1/users/lookup_email/#{email}",
+          nil,
+          headers
+        )
+
+        if res.success?
+          data = JSON.parse(res.body)
+          data["user_id"]
+        else
+          Rails.logger.warn("Hackatime lookup failed for #{email}")
+          Honeybadger.notify("Hackatime lookup failed", context: { email: email, status: res.status })
+          nil
+        end
+      rescue JSON::ParserError => e
+        Rails.logger.error("Hackatime JSON parse error")
+        Honeybadger.notify(e, context: { email: email })
+        nil
+      rescue => e
+        Rails.logger.error("Hackatime lookup error")
+        Honeybadger.notify(e, context: { email: email })
+        nil
+      end
+    end
 
     def set_user
       @user = User.find(params[:id])
@@ -127,6 +257,10 @@ module Admin
 
     def payout_params
       params.require(:payout).permit(:amount, :reason)
+    end
+
+    def trust_factor_params
+      params.permit(:trust_level, :reason, :api_key)
     end
   end
 end

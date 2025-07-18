@@ -3,8 +3,12 @@
 module Api
   module V1
     class CommentsController < ApplicationController
+      include Pagy::Backend
+
       def index
-        @comments = Comment.all.map do |comment|
+        pagy, comments = pagy(Comment.all, items: 20)
+
+        @comments = comments.map do |comment|
           {
             text: comment.content,
             devlog_id: comment.devlog_id,
@@ -12,7 +16,16 @@ module Api
             created_at: comment.created_at
           }
         end
-        render json: @comments
+
+        render json: {
+          comments: @comments,
+          pagination: {
+            page: pagy.page,
+            pages: pagy.pages,
+            count: pagy.count,
+            items: pagy.limit
+          }
+        }
       end
 
       def show

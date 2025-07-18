@@ -214,6 +214,11 @@ body.adash {
   color: var(--color-black);
 }
 
+.pill-red {
+  background: var(--color-red);
+  color: var(--color-white);
+}
+
 .pill-gray {
   background: var(--color-muted);
   color: var(--color-white);

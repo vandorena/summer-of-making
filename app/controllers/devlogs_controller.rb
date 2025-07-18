@@ -32,62 +32,89 @@ class DevlogsController < ApplicationController
   def create
     @project = Project.find(params[:project_id])
 
-    if @project.hackatime_keys.present? && current_user.has_hackatime? && params[:devlog][:timer_session_id].blank?
-      current_user.refresh_hackatime_data_now
-    end
-
-    # Skip time verification if user is linking a timer session
-    if params[:devlog][:timer_session_id].blank? &&
-       @project.hackatime_keys.present? && current_user.has_hackatime? &&
-       current_user.hackatime_stat.present? &&
-       !current_user.hackatime_stat.has_enough_time_since_last_update?(@project)
-      seconds_needed = current_user.hackatime_stat.seconds_needed_since_last_update(@project)
-      redirect_to project_path(@project),
-                  alert: "You need to spend more time on this project before posting a devlog. #{helpers.format_seconds(seconds_needed)} more needed since your last update."
+    unless current_user == @project.user
+      redirect_to project_path(@project), alert: "wuh"
       return
     end
 
-    if ENV["UPDATES_STATUS"] == "locked"
-      redirect_to @project,
-                  alert: "Posting devlogs is currently locked. Please check back later when devlogs are unlocked."
+    # check time reqs
+    unless @project.can_post_devlog?
+      seconds_needed = @project.time_needed
+      redirect_to project_path(@project),
+                  alert: "You need to spend more time on this project before posting a devlog. #{helpers.format_seconds(seconds_needed)} more needed."
       return
     end
 
     @devlog = @project.devlogs.build(devlog_params)
     @devlog.user = current_user
 
-    if @project.hackatime_keys.present? && @project.user.has_hackatime? && params[:devlog][:timer_session_id].blank?
-      @devlog.last_hackatime_time = @project.user.hackatime_stat.time_since_last_update_for_project(@project)
+    # set hackatime data
+    if @project.hackatime_keys.present?
+      @devlog.hackatime_projects_key_snapshot = @project.hackatime_keys
+      @devlog.hackatime_pulled_at = Time.current
     end
 
     if @devlog.save
-      redirect_to @devlog.project, notice: "Devlog was successfully posted."
+      if @project.hackatime_keys.present?
+        @devlog.recalculate_seconds_coded
+      end
+
+      if @devlog.project
+        redirect_to @devlog.project, notice: "Devlog was successfully posted."
+      else
+        redirect_to campfire_path, notice: "Devlog was successfully posted."
+      end
     else
-      redirect_to @devlog.project, alert: "Failed to post devlog."
+      if @devlog.project
+        redirect_to @devlog.project, alert: "Failed to post devlog."
+      else
+        redirect_to campfire_path, alert: "Failed to post devlog."
+      end
     end
   end
 
   def update
+    authorize @devlog
     if @devlog.user != current_user
       flash.now[:alert] = "You can only edit your own devlogs."
-      redirect_to @devlog.project, alert: "You can only edit your own devlogs."
+      if @devlog.project
+        redirect_to @devlog.project, alert: "You can only edit your own devlogs."
+      else
+        redirect_to campfire_path, alert: "You can only edit your own devlogs."
+      end
       return
     end
 
     # Only allow editing the text field
     if @devlog.update(devlog_params.slice(:text))
-      redirect_to @devlog.project, notice: "Devlog was successfully edited."
+      if @devlog.project
+        redirect_to @devlog.project, notice: "Devlog was successfully edited."
+      else
+        redirect_to campfire_path, notice: "Devlog was successfully edited."
+      end
     else
-      redirect_to @devlog.project, alert: "Failed to edit devlog."
+      if @devlog.project
+        redirect_to @devlog.project, alert: "Failed to edit devlog."
+      else
+        redirect_to campfire_path, alert: "Failed to edit devlog."
+      end
     end
   end
 
   def destroy
     if @devlog.user == current_user
       @devlog.destroy
-      redirect_to @devlog.project, notice: "Devlog was successfully deleted."
+      if @devlog.project
+        redirect_to @devlog.project, notice: "Devlog was successfully deleted."
+      else
+        redirect_to campfire_path, notice: "Devlog was successfully deleted."
+      end
     else
-      redirect_to @devlog.project, alert: "You can only delete your own devlogs."
+      if @devlog.project
+        redirect_to @devlog.project, alert: "You can only delete your own devlogs."
+      else
+        redirect_to campfire_path, alert: "You can only delete your own devlogs."
+      end
     end
   end
 
@@ -101,6 +128,11 @@ class DevlogsController < ApplicationController
 
     project = Project.find_by(id: params[:project_id])
     return render json: { error: "Project not found" }, status: :not_found unless project
+
+    # Check if the user owns the project
+    unless user == project.user
+      return render json: { error: "You can only post devlogs to your own projects" }, status: :forbidden
+    end
 
     devlog = project.devlogs.build(devlog_params)
     devlog.user = user
@@ -116,7 +148,7 @@ class DevlogsController < ApplicationController
   private
 
   def set_project
-    @project = Project.find(params[:project_id])
+    @project = Project.find(params[:project_id]) if params[:project_id]
   end
 
   def set_devlog
@@ -129,7 +161,7 @@ class DevlogsController < ApplicationController
   end
 
   def check_if_shipped
-    return unless @project.is_shipped?
+    return unless @project&.is_shipped?
 
     redirect_to @project, alert: "This project has been shipped and cannot be modified."
   end
@@ -142,6 +174,6 @@ class DevlogsController < ApplicationController
   end
 
   def devlog_params
-    params.expect(devlog: %i[text file timer_session_id])
+    params.expect(devlog: %i[text file])
   end
 end

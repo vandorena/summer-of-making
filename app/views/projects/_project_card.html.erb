@@ -4,7 +4,7 @@
     <div class="w-full h-full flex items-center justify-center absolute inset-0">
       <%= image_tag project_image, alt: @project.title, class: "object-contain w-full h-full max-h-full max-w-full" %>
     </div>
-    <% if current_user.is_admin? || @project.user == current_user %>
+    <% if policy(@project).can_edit_banner? %>
       <div class="absolute inset-0 bg-transparent group-hover:bg-[#F3ECD8]/75 transition-colors duration-300 flex flex-col justify-center pointer-events-none" id="bh">
         <p id="bt" class="text-transparent group-hover:text-black text-center duration-300 transition-colors z-1">Click, drag, or paste to upload a new banner image</p>
       </div>
@@ -89,11 +89,12 @@
         <% if user_signed_in? %>
           <div class="ml-4 flex flex-wrap items-center gap-6">
 
-            <% if user_signed_in? && current_user != @project.user %>
+            <% if policy(@project).can_follow_or_report? %>
               <%= render "projects/follow_button", project: @project %>
+              <%= render "projects/report_button", project: @project %>
             <% end %>
 
-            <% if current_user == @project.user %>
+            <% if policy(@project).can_see_actions? %>
               <%= render "projects/ship_button", project: @project %>
               <%= render "projects/edit_button", project: @project %>
               <!-- TODO: Move delete button to actions dropdown + share button -->
@@ -113,15 +114,15 @@
         <span class="text-gray-800"><%= @project.followers.count %> </span> <%= "follower".pluralize(@project.followers.count) %>
       </button>
       •&nbsp;
-      <span class="text-gray-800"><%= @project.devlogs.count %> </span> <%= "devlog".pluralize(@project.devlogs.count) %>
+      <span class="text-gray-800"><%= @project.devlogs_count %> </span> <%= "devlog".pluralize(@project.devlogs_count) %>
       •&nbsp;
       <%
-        total_time_seconds = @project.hackatime_total_time
+        total_time_seconds = @project.total_seconds_coded
       %>
       <span class="text-gray-800"><%= format_seconds(total_time_seconds) %></span>
       <% if @project.certification_visible_to?(current_user) %>
         •&nbsp;
-        <% if current_user && (current_user == @project.user || current_user.is_admin?) %>
+        <% if policy(@project).can_see_certification_details? %>
           <button data-controller="modal" data-action="click->modal#open" data-modal-id="<%= @project.id %>" data-modal-type="certification" class="hover:underline cursor-pointer duration-200
             <%= if @latest_ship_certification&.pending?
                   'text-amber-600'
@@ -150,7 +151,7 @@
     </div>
 
     <div class="flex items-center space-x-2 mb-3 md:mb-4 text-sm md:text-base 2xl:text-lg text-gray-600">
-      By <%= @project.user.display_name %><% admin_user_visit(@project.user) %>
+      By&nbsp;<%= render "shared/user_display_name", user: @project.user %><% admin_user_visit(@project.user) %>
     </div>
 
     <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
@@ -223,7 +224,7 @@
   </div>
 </div>
 
-<% if current_user && (current_user == @project.user || current_user.is_admin?) %>
+<% if policy(@project).can_see_certification_details? %>
   <div id="certification-modal-<%= @project.id %>" data-controller="modal" class="hidden fixed inset-0 z-50 overflow-auto bg-black/30 flex items-center justify-center p-2 md:p-4">
     <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] w-full max-w-lg mx-2 md:mx-auto relative max-h-[80vh] flex flex-col" data-modal-target="container">
       <div class="p-3 md:p-4 border-b border-saddle-taupe border-opacity-30 flex-shrink-0">

@@ -128,7 +128,7 @@ class ShopItem::HCBGrant < ShopItem
 
     # Update shop order to reference the card grant
     shop_order.shop_card_grant = grant_rec
-    shop_order.mark_fulfilled! "SCG #{grant_rec.id}"
+    shop_order.mark_fulfilled! "SCG #{grant_rec.id}", nil, "System"
 
     # Try to rename the transaction
     if latest_disbursement

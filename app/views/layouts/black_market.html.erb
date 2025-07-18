@@ -5,6 +5,7 @@
     <%= javascript_importmap_tags %>
     <link rel="icon" href="/favicon.png" type="image/png">
     <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
+    <% unless current_user&.has_badge?(:preferred_customer) %>
     <script>
       document.addEventListener('DOMContentLoaded', function() {
         // make them wait a bit nora!
@@ -17,8 +18,10 @@
         }, 5000 + Math.random()*3783);
       });
     </script>
+    <% end %>
   </head>
   <body class="no_scroll">
+  <% unless current_user&.has_badge?(:preferred_customer) %>
     <div class="loader">
       <div class="inner">
       <div class="l">
@@ -33,6 +36,7 @@
       <p style="margin: 0;">Please do not refresh the page, you will be automatically redirected.</p>
       </div>
     </div>
+    <% end %>
     <div id="flash-container">
       <% flash.each do |type, message| %>
         <% clazz = case type.to_sym

@@ -1,0 +1,90 @@
+<h1>report #<%= @fraud_report.id %></h1>
+
+<div style="margin-bottom: 2rem;">
+  <%= link_to "back", admin_fraud_reports_path, style: "color: blue;" %>
+</div>
+
+<div style="margin-bottom: 2rem;">
+  <h2>status</h2>
+  <p style="font-weight: bold; color: <%= @fraud_report.resolved? ? 'green' : 'red' %>;">
+    <%= @fraud_report.resolved? ? 'RESOLVED' : 'UNRESOLVED' %>
+  </p>
+
+  <div style="margin-top: 1rem;">
+    <% if @fraud_report.resolved? %>
+      <%= link_to "nvm this not done", unresolve_admin_fraud_report_path(@fraud_report),
+                  style: "background: #ff4444; color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 4px;" %>
+    <% else %>
+      <%= link_to "ye this delt with", resolve_admin_fraud_report_path(@fraud_report),
+                  style: "background: #44aa44; color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 4px;" %>
+    <% end %>
+  </div>
+</div>
+
+<div style="margin-bottom: 2rem;">
+  <h2>da facking deets</h2>
+  <table style="border-collapse: collapse; width: 100%;">
+    <tr>
+      <td style="padding: 0.5rem; border: 1px solid #ddd; font-weight: bold;">id:</td>
+      <td style="padding: 0.5rem; border: 1px solid #ddd;"><%= @fraud_report.id %></td>
+    </tr>
+    <tr>
+      <td style="padding: 0.5rem; border: 1px solid #ddd; font-weight: bold;">reported at:</td>
+      <td style="padding: 0.5rem; border: 1px solid #ddd;"><%= @fraud_report.created_at.strftime('%Y-%m-%d %H:%M:%S UTC') %></td>
+    </tr>
+    <tr>
+      <td style="padding: 0.5rem; border: 1px solid #ddd; font-weight: bold;">reporter:</td>
+      <td style="padding: 0.5rem; border: 1px solid #ddd;">
+        <%= @fraud_report.reporter.try(:display_name) || @fraud_report.reporter.try(:email) %>
+        <br>
+        <small style="color: #666;">user id: <%= @fraud_report.reporter.id %></small>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 0.5rem; border: 1px solid #ddd; font-weight: bold;">suspect type:</td>
+      <td style="padding: 0.5rem; border: 1px solid #ddd;"><%= @fraud_report.suspect_type %></td>
+    </tr>
+    <tr>
+      <td style="padding: 0.5rem; border: 1px solid #ddd; font-weight: bold;">suspect:</td>
+      <td style="padding: 0.5rem; border: 1px solid #ddd;">
+        <% if @fraud_report.suspect_type == 'Project' && @fraud_report.suspect %>
+          <%= link_to @fraud_report.suspect.title, project_path(@fraud_report.suspect), style: "color: blue;" %>
+          <br>
+          <small style="color: #666;">project id: <%= @fraud_report.suspect_id %></small>
+        <% else %>
+          <%= @fraud_report.suspect_type %> (id: <%= @fraud_report.suspect_id %>)
+        <% end %>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 0.5rem; border: 1px solid #ddd; font-weight: bold;">why:</td>
+      <td style="padding: 0.5rem; border: 1px solid #ddd;"><%= @fraud_report.reason.presence || '-' %></td>
+    </tr>
+  </table>
+</div>
+
+<% if @fraud_report.suspect_type == 'Project' && @fraud_report.suspect %>
+  <div style="margin-bottom: 2rem;">
+    <h2>project deets</h2>
+    <table style="border-collapse: collapse; width: 100%;">
+      <tr>
+        <td style="padding: 0.5rem; border: 1px solid #ddd; font-weight: bold;">title:</td>
+        <td style="padding: 0.5rem; border: 1px solid #ddd;"><%= @fraud_report.suspect.title %></td>
+      </tr>
+      <tr>
+        <td style="padding: 0.5rem; border: 1px solid #ddd; font-weight: bold;">description:</td>
+        <td style="padding: 0.5rem; border: 1px solid #ddd;"><%= truncate(@fraud_report.suspect.description, length: 200) %></td>
+      </tr>
+      <tr>
+        <td style="padding: 0.5rem; border: 1px solid #ddd; font-weight: bold;">author:</td>
+        <td style="padding: 0.5rem; border: 1px solid #ddd;">
+          <%= @fraud_report.suspect.user.try(:display_name) || @fraud_report.suspect.user.try(:email) %>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding: 0.5rem; border: 1px solid #ddd; font-weight: bold;">created:</td>
+        <td style="padding: 0.5rem; border: 1px solid #ddd;"><%= @fraud_report.suspect.created_at.strftime('%Y-%m-%d %H:%M:%S UTC') %></td>
+      </tr>
+    </table>
+  </div>
+<% end %>

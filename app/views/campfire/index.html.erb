@@ -1,85 +1,79 @@
 <div class="px-4 md:px-8">
-  <div class="flex justify-between items-start mb-6" id="fxb">
+  <div class="flex justify-between items-start" id="fxb">
     <div>
       <%= render "shared/page_title",
-          title: "Campfire",
-          subtitle: "Huddle around! Get your news here." %>
+        title: "Campfire",
+        subtitle: "Huddle around! Get your news here." %>
     </div>
   </div>
 
+  <% if current_user.is_banned? %>
+    <%= render "shared/card", classes: "bg-red-50/80 border-red-400 mb-8" do %>
+      <div class="flex items-start gap-3">
+        <div class="flex-shrink-0">
+          <div class="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24"><path fill="white" d="M12 0a12 12 0 0 1 12 12a12 12 0 0 1-12 12A12 12 0 0 1 0 12A12 12 0 0 1 12 0m0 2A10 10 0 0 0 2 12c0 2.4.85 4.6 2.26 6.33L18.33 4.26A10 10 0 0 0 12 2m0 20a10 10 0 0 0 10-10c0-2.4-.85-4.6-2.26-6.33L5.67 19.74A10 10 0 0 0 12 22" /></svg>
+          </div>
+        </div>
+        <div class="flex-1">
+          <h4 class="text-xl font-bold text-red-500 mb-1">Hold up!</h4>
+          <p class="text-md text-red-500 font-medium leading-relaxed">
+            Your account has been banned from Summer of Making. You are unable to create projects, post devlogs, or earn prizes. If you believe this was an error, please DM <a href="https://hackclub.slack.com/team/U080A3QP42C" target="_blank" class="underline">Rowan</a> on Slack.
+          </p>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+
   <!-- Hackatime Dashboard Section -->
   <% if @account_status[:hackatime_setup] %>
-    <div class="mb-8">
-      <h2 class="text-xl text-gray-900 mb-4">Hackatime Dashboard</h2>
+    <div class="mb-8 color-forest">
       <%= render "shared/card", data: { controller: "hackatime-dashboard" } do %>
-        <div class="">
-          <div class="flex items-center gap-3 mb-6">
+        <div class="text-[#4a2d24]">
+          <div class="flex items-center gap-3 mb-4">
             <div class="flex-shrink-0">
               <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
                 <%= inline_svg "icons/time_fill.svg", class: "w-6 h-6 text-white" %>
               </div>
             </div>
             <div class="flex-1">
-              <h3 class="text-xl font-bold text-gray-900">
-                <a href="https://hackatime.hackclub.com/" target="_blank" class="hover:text-blue-600 transition-all duration-200 flex items-center gap-2">
-                  Hackatime
-                  <%= inline_svg "icons/external_link_line.svg", class: "w-4 h-4 text-gray-400" %>
-                </a>
-              </h3>
+              <div class="flex items-center gap-2">
+                <h3 class="text-xl font-bold mb-0">
+                  <a href="https://hackatime.hackclub.com/" target="_blank" class="hover:text-blue-600 transition-all duration-200 flex items-center gap-2">
+                    Hackatime
+                  </a>
+                </h3>
+                <%= inline_svg "icons/external_link_line.svg", class: "w-5 h-5" %>
+              </div>
             </div>
           </div>
 
           <% if @hackatime_dashboard[:error] %>
-            <div class="bg-red-50 rounded-xl p-6 border border-red-200">
-              <div class="flex items-start gap-3">
+            <div class="rounded-xl p-2 border border-red-500">
+              <div class="flex items-center gap-3">
                 <div class="flex-shrink-0">
                   <div class="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center">
-                    <svg class="w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <svg class="w-6 h-6 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                      <path fill="currentColor" d="M12 17q.425 0 .713-.288Q13 16.425 13 16t-.287-.713Q12.425 15 12 15t-.712.287Q11 15.575 11 16t.288.712Q11.575 17 12 17Zm0-4q.425 0 .713-.288Q13 12.425 13 12V8q0-.425-.287-.713Q12.425 7 12 7t-.712.287Q11 7.575 11 8v4q0 .425.288.712q.287.288.712.288Zm0 9q-2.075 0-3.9-.788q-1.825-.787-3.175-2.137q-1.35-1.35-2.137-3.175Q2 14.075 2 12t.788-3.9q.787-1.825 2.137-3.175q1.35-1.35 3.175-2.138Q9.925 2 12 2t3.9.787q1.825.788 3.175 2.138q1.35 1.35 2.137 3.175Q22 9.925 22 12t-.788 3.9q-.787 1.825-2.137 3.175q-1.35 1.35-3.175 2.137Q14.075 22 12 22Zm0-2q3.35 0 5.675-2.325Q20 15.35 20 12q0-3.35-2.325-5.675Q15.35 4 12 4Q8.65 4 6.325 6.325Q4 8.65 4 12q0 3.35 2.325 5.675Q8.65 20 12 20Zm0-8Z" />
                     </svg>
                   </div>
                 </div>
-                <div class="flex-1">
-                  <h4 class="text-sm font-semibold text-red-800 mb-1">Connection Issue</h4>
-                  <p class="text-sm text-red-700 leading-relaxed">
-                    <%= @hackatime_dashboard[:error_message] %>. Please try refreshing the page in a few minutes.
-                  </p>
+                <div class="flex-1 flex items-center">
+                  <h4 class="text-sm text-red-500 mb-0">We are having some issues with Hackatime, try again in a few minutes!</h4>
                 </div>
               </div>
             </div>
           <% else %>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div class="bg-gray-50 rounded-xl p-6">
-                <div class="flex items-center justify-between mb-3">
-                  <div class="w-12 h-12 bg-[#51A373] rounded-lg flex items-center justify-center">
-                    <%= inline_svg "icons/chart_bar_fill.svg", class: "w-6 h-6 text-white" %>
-                  </div>
-                </div>
-                <div class="text-3xl font-bold text-gray-900 mb-1" data-hackatime-dashboard-target="todayTime">
-                   <%= current_user.format_seconds(@hackatime_dashboard[:today_time]) %>
-                 </div>
-                 <div class="text-sm font-medium text-gray-600">Today's Coding Time</div>
-               </div>
+            <p class="text-lg mb-4">
+              Today you have logged <span data-hackatime-dashboard-target="todayTime"><%= current_user.format_seconds(@hackatime_dashboard[:today_time]) %></span> of coding time, and overall you have logged <span data-hackatime-dashboard-target="totalTime"><%= current_user.format_seconds(@hackatime_dashboard[:total_time]) %></span>.
+            </p>
+            <p class="text-sm sm:text-sm md:text-md lg:text-md xl:text-lg">
+              You will need to post a devlog <span class="text-[#E65A42]">after 10 hours of work</span> before you can log more time!
+              <%# TODO: Show currently time before next devlog needed, or show amount of time being cut off %>
+            </p>
 
-               <div class="bg-gray-50 rounded-xl p-6">
-                 <div class="flex items-center justify-between mb-3">
-                   <div class="w-12 h-12 bg-[#523A52] rounded-lg flex items-center justify-center">
-                     <%= inline_svg "icons/chart_pie_2_fill.svg", class: "w-6 h-6 text-white" %>
-                   </div>
-                 </div>
-                 <div class="text-3xl font-bold text-gray-900 mb-1" data-hackatime-dashboard-target="totalTime">
-                   <%= current_user.format_seconds(@hackatime_dashboard[:total_time]) %>
-                 </div>
-                <div class="text-sm font-medium text-gray-600">Total Coding Time</div>
-              </div>
-            </div>
-               <p class="text-sm sm:text-sm md:text-md lg:text-md xl:text-lg">
-                You will need to post a devlog <span class="text-[#E65A42]">after 10 hours of work</span> before you can log more time!
-                <%# TODO: Show currently time before next devlog needed, or show amount of time being cut off %>
-               </p>
-
-           <% unless @hackatime_dashboard[:has_time_recorded] %>
-              <div class="bg-gray-50 rounded-xl p-4" data-hackatime-dashboard-target="noDataAlert">
+            <% unless @hackatime_dashboard[:has_time_recorded] %>
+              <div class="rounded-xl p-4" data-hackatime-dashboard-target="noDataAlert">
                 <div class="flex items-start gap-3">
                   <div class="flex-shrink-0">
                     <div class="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center">
@@ -112,8 +106,8 @@
   <% if !current_user.tutorial_progress.completed? %>
     <!-- Set up your account! Section -->
     <div class="mb-4">
-      <h2 class="text-2xl text-gray-900 mb-4">Set up your account!</h2>
-      <p class="text-gray-600 mb-4 text-xl font-semibold">
+      <h2 class="text-2xl mb-4">Set up your account!</h2>
+      <p class="mb-4 text-xl font-semibold">
         Complete these steps to start earning shells, get free stickers, and unlock access to the rest of the platform!
         <br>
         <span class="text-base">
@@ -148,27 +142,27 @@
               <% end %>
             </div>
             <div class="inline-flex items-baseline gap-4">
-              <h3 class="text-lg font-semibold text-gray-900">Install Hackatime</h3>
+              <h3 class="text-lg font-semibold">Install Hackatime</h3>
               <p class="opacity-60">will take 3 minutes</p>
             </div>
           </div>
 
           <div class="flex-1 md:ml-12">
-            <p class="text-gray-600 mb-4">
-                Hackatime is an open-source tool which automatically tracks your coding time. <br class="hidden lg:block">
-                1 hour = 1 shell
-                <picture class="inline-block w-5 h-5 align-text-bottom">
-                  <source srcset="/inlineshell.avif" type="image/avif">
-                  <source srcset="/inlineshell.webp" type="image/webp">
-                  <img src="/inlineshell.png" alt="shell" class="w-5 h-5 inline-block" loading="lazy">
-                </picture>,
-                with up to 30x bonuses based on community votes!
-                <br><br>
+            <p class="mb-4">
+              Hackatime is an open-source tool which automatically tracks your coding time. <br class="hidden lg:block">
+              1 hour = 1 shell
+              <picture class="inline-block w-5 h-5 align-text-bottom">
+                <source srcset="/inlineshell.avif" type="image/avif">
+                <source srcset="/inlineshell.webp" type="image/webp">
+                <img src="/inlineshell.png" alt="shell" class="w-5 h-5 inline-block" loading="lazy">
+              </picture>,
+              with up to 30x bonuses based on community votes!
+              <br><br>
               Make sure <span class="text-[#E65A42]">all your code editors</span> are connected to Hackatime. You can't get shells without it!
             </p>
             <% if @account_status[:hackatime_projects] %>
               <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800" data-hackatime-status-target="status">
-                Hackatime is installed
+                Hackatime is installed!
               </span>
             <% elsif @account_status[:hackatime_setup] %>
               <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-800" data-hackatime-status-target="status">
@@ -200,13 +194,13 @@
               <% end %>
             </div>
             <div class="inline-flex items-baseline gap-4">
-              <h3 class="text-lg font-semibold text-gray-900">Order free stickers</h3>
+              <h3 class="text-lg font-semibold">Order free stickers</h3>
               <p class="opacity-60">will take 5 minutes</p>
             </div>
           </div>
 
           <div class="flex-1 md:ml-12">
-            <p class="text-gray-600 mb-4">Now for the best part… getting free stuff! Order some stickers to get oriented with the shop.</p>
+            <p class="mb-4">Now for the best part… getting free stuff! Order some stickers to get oriented with the shop.</p>
             <% if current_user.shop_orders.joins(:shop_item).where(shop_items: { type: "ShopItem::FreeStickers" }).exists? %>
               <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800">
                 Ordered
@@ -232,12 +226,10 @@
                 </div>
               <% end %>
             </div>
-            <h3 class="text-lg font-semibold text-gray-900">Verify Your Age</h3>
+            <h3 class="text-lg font-semibold">Verify Your Age</h3>
           </div>
 
           <div class="flex-1 md:ml-12">
-            <%# <p class="text-gray-600 mb-4">Hack Club is for people 18 and under, so we need verify your age before the rest of the platform unlocks!</p> %>
-
             <% case current_verification_status %>
             <% when :needs_resubmission %>
               <div class="space-y-2">
@@ -270,7 +262,7 @@
     <!-- Account Status Section -->
     <% if current_verification_status == :not_linked || current_verification_status == :needs_resubmission || current_verification_status == :pending || current_verification_status == :ineligible || !@account_status[:hackatime_projects] %>
     <div class="mb-8">
-      <h2 class="text-xl  text-gray-900 mb-4">Account Status</h2>
+      <h2 class="text-xl mb-4">Account Status</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
         <!-- Hackatime Status Card -->
@@ -278,7 +270,7 @@
         <div class="bg-white rounded-lg border p-4">
           <div class="flex items-center justify-between">
             <div>
-              <h3 class=" text-gray-900">Hackatime</h3>
+              <h3>Hackatime</h3>
             </div>
             <% if @account_status[:hackatime_setup] %>
               <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs bg-yellow-100 text-yellow-800">
@@ -304,7 +296,7 @@
           <%= render "shared/card" do %>
             <div class="flex items-center justify-between">
               <div>
-                <h3 class=" text-gray-900">Identity Verification</h3>
+                <h3>Identity Verification</h3>
               </div>
               <% case current_verification_status %>
               <% when :not_linked %>
@@ -342,27 +334,27 @@
     <!-- Announcements Section -->
     <% if @announcements.any? %>
     <div class="mb-8">
-      <h2 class="text-xl  text-gray-900 mb-4">Announcements</h2>
+      <h2 class="text-xl mb-4">Announcements</h2>
       <div class="space-y-4">
         <% @announcements.each do |announcement| %>
           <%= render "shared/card" do %>
             <div class="flex items-start justify-between">
               <div class="flex-1">
                 <div class="flex items-center mb-2">
-                  <h3 class=" text-gray-900 mr-2"><%= announcement[:title] %></h3>
+                  <h3 class="mr-2"><%= announcement[:title] %></h3>
                   <% case announcement[:type] %>
                   <% when 'info' %>
-                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs  bg-blue-100 text-blue-800">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-blue-100 text-blue-800">
                       Info
                     </span>
                   <% when 'warning' %>
-                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs  bg-yellow-100 text-yellow-800">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-yellow-100 text-yellow-800">
                       Important
                     </span>
                   <% end %>
                 </div>
-                <p class="text-gray-600 mb-2 font-national-park font-bold tracking-tight"><%= announcement[:content] %></p>
-                <p class="text-sm text-gray-400 font-national-park font-bold tracking-tight">
+                <p class="mb-2 font-national-park font-bold tracking-tight"><%= announcement[:content] %></p>
+                <p class="text-sm font-national-park font-bold tracking-tight">
                   <%= time_ago_in_words(announcement[:created_at]) %> ago
                 </p>
               </div>
@@ -382,56 +374,104 @@
     <!-- Summer of Making Steps -->
     <div class="mb-8">
       <%= render "shared/card" do %>
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-xl font-semibold text-gray-900">How to Build a Project</h2>
+        <div class="text-[#4a2d24] flex flex-col xl:flex-row space-y-5 xl:space-y-0">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-xl font-semibold">Todo list:</h2>
+            </div>
+
+            <div class="space-y-4">
+              <div class="flex items-center gap-3">
+                <div class="flex-shrink-0">
+                  <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.projects.any? ? 'checked' : '' %> disabled>
+                </div>
+                <div class="flex-1">
+                  <p class="font-medium">Create a project in the <a href="/my_projects" class="text-blue-500 hover:text-blue-700 underline">Projects</a> tab</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <div class="flex-shrink-0">
+                  <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.devlogs.any? ? 'checked' : '' %> disabled>
+                </div>
+                <div class="flex-1">
+                  <p class="font-medium">Post updates on your devlog as you work</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <div class="flex-shrink-0">
+                  <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.ship_events.any? ? 'checked' : '' %> disabled>
+                </div>
+                <div class="flex-1">
+                  <p class="font-medium">Ship your project when it is ready for others to experience</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <div class="flex-shrink-0">
+                  <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.votes.any? ? 'checked' : '' %> disabled>
+                </div>
+                <div class="flex-1">
+                  <p class="font-medium">Vote on other people's projects to receive your shells</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <div class="flex-shrink-0">
+                  <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.shop_orders.joins(:shop_item).where.not(shop_items: { type: "ShopItem::FreeStickers" }).any? ? 'checked' : '' %> disabled>
+                </div>
+                <div class="flex-1">
+                  <p class="font-medium">Spend your hard-earned shells in the shop</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grow flex relative">
+            <div class="h-auto xl:h-full w-full max-w-lg xl:w-auto xl:ml-auto aspect-video relative">
+              <video id="onboarding" class="absolute inset-0 overflow-clip rounded-md" style="box-sizing: border-box;" src="/onboarding.mp4" poster="/onboarding_poster.png" controls title="Onboarding tutorial video for this page">
+              </video>
+              <div class="absolute z-50 -right-36 xl:left-12 -top-5 xl:-top-3 w-24 hidden md:block">
+                <div class="absolute -top-8 -left-24 p-3 bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] max-w-[120px] animate-pulse rotate-24 xl:-rotate-24 cursor-pointer" id="onboarding-callout">
+                  <div class="text-[#4A2D24] font-bold text-center text-lg">Click me!</div>
+                  <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-[#E4DCC6]"></div>
+                  <div class="absolute top-full left-1/2 transform -translate-x-1/2 translate-y-[-2px] w-0 h-0 border-l-6 border-r-6 border-t-6 border-l-transparent border-r-transparent border-t-[#F3ECD8]"></div>
+                </div>
+              </div>
+              <%= image_tag "tutorial-mascot.png",
+                class: "absolute hidden md:block -right-24 xl:-left-32 bottom-0 w-32 h-32 xl:w-40 xl:h-40 cursor-pointer transition-all duration-200 hover:scale-110 animate-bounce -rotate-12 xl:rotate-12 xl:-scale-x-100",
+                title: "Show tutorial for this page",
+                id: "onboarding-mascot" %>
+            </div>
+          </div>
         </div>
 
-        <div class="space-y-4">
-          <div class="flex items-start gap-3">
-            <div class="flex-shrink-0 mt-1">
-              <input type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" <%= current_user.projects.any? ? 'checked' : '' %> disabled>
-            </div>
-            <div>
-              <p class="text-gray-700 font-medium">Create a project in the <a href="/my_projects" class="text-blue-600 hover:text-blue-700">Projects</a> tab</p>
-            </div>
-          </div>
+        <script>
+          function initializeOnboardingVideo() {
+            const video = document.querySelector("video#onboarding");
+            const mascot = document.getElementById("onboarding-mascot");
+            const callout = document.getElementById("onboarding-callout");
 
-          <div class="flex items-start gap-3">
-            <div class="flex-shrink-0 mt-1">
-              <input type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" <%= current_user.devlogs.any? ? 'checked' : '' %> disabled>
-            </div>
-            <div>
-              <p class="text-gray-700 font-medium">Post updates on your devlog as you work</p>
-            </div>
-          </div>
+            if (!video || !mascot || !callout) return;
 
-          <div class="flex items-start gap-3">
-            <div class="flex-shrink-0 mt-1">
-              <input type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" <%= current_user.ship_events.any? ? 'checked' : '' %> disabled>
-            </div>
-            <div>
-              <p class="text-gray-700 font-medium">Ship your project when it is ready for others to experience</p>
-            </div>
-          </div>
+            function playOnboarding() {
+              video.play();
+              mascot.style.display = "none";
+              callout.style.display = "none";
+            }
 
-          <div class="flex items-start gap-3">
-            <div class="flex-shrink-0 mt-1">
-              <input type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" <%= current_user.votes.any? ? 'checked' : '' %> disabled>
-            </div>
-            <div>
-              <p class="text-gray-700 font-medium">Vote on other people's projects to receive your shells</p>
-            </div>
-          </div>
+            mascot.addEventListener("click", playOnboarding);
+            callout.addEventListener("click", playOnboarding);
+            video.addEventListener("play", function() {
+              mascot.style.display = "none";
+              callout.style.display = "none";
+            });
+          }
 
-          <div class="flex items-start gap-3">
-            <div class="flex-shrink-0 mt-1">
-              <input type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" <%= current_user.shop_orders.joins(:shop_item).where.not(shop_items: { type: "ShopItem::FreeStickers" }).any? ? 'checked' : '' %> disabled>
-            </div>
-            <div>
-              <p class="text-gray-700 font-medium">Spend your hard-earned shells in the shop</p>
-            </div>
-          </div>
-        </div>
+          document.addEventListener("DOMContentLoaded", initializeOnboardingVideo);
+          document.addEventListener("turbo:load", initializeOnboardingVideo);
+        </script>
       <% end %>
     </div>
   <% end %>

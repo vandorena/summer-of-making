@@ -2,6 +2,8 @@ class ShopOrdersController < ApplicationController
   before_action :set_shop_order, only: [ :show ]
   before_action :set_shop_item, only: [ :new, :create ]
   before_action :check_freeze, except: [ :index, :show ]
+  # before_action :check_circuit_breaker, only: [ :new, :create ]
+
   def index
     @orders = current_user.shop_orders.includes(:shop_item).order(created_at: :desc)
   end
@@ -31,8 +33,8 @@ class ShopOrdersController < ApplicationController
 
     # Check if user can afford this item at regional price
     if @regional_price.present? && @regional_price > 0 && current_user.balance < @regional_price
-      return redirect_to shop_path, alert: "You don't have enough tickets to purchase #{@item.name}. You need #{@regional_price - current_user.balance} more tickets."
-      nil
+      redirect_to shop_path, alert: "You don't have enough tickets to purchase #{@item.name}. You need #{@regional_price - current_user.balance} more tickets."
+      return
     end
 
     render :new_black_market, layout: "black_market" if @item.requires_black_market?
@@ -57,6 +59,7 @@ class ShopOrdersController < ApplicationController
     end
 
     if @order.save
+      AwardBadgesJob.perform_later(current_user.id)
       if @item.class.fulfill_immediately?
         @item.fulfill!(@order)
       end
@@ -76,6 +79,7 @@ class ShopOrdersController < ApplicationController
     flash[:alert] = "error! #{e.message} – report #{uuid} plz"
     redirect_to(@item.requires_black_market? ? black_market_path : shop_path)
   end
+
 
   private
 
@@ -116,6 +120,8 @@ class ShopOrdersController < ApplicationController
 
   def set_shop_order
     @order = current_user.shop_orders.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    redirect_to shop_path, alert: "wuh"
   end
 
   def set_shop_item
@@ -129,6 +135,12 @@ class ShopOrdersController < ApplicationController
   def check_freeze
     if current_user&.freeze_shop_activity?
       redirect_to shop_path, alert: "You can't make purchases right now."
+    end
+  end
+
+  def check_circuit_breaker
+    if Flipper.enabled?(:block_shop_ordering, current_user)
+      redirect_to shop_path, alert: "Shop orders are temporarily unavailable."
     end
   end
 

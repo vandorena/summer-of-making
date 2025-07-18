@@ -46,7 +46,6 @@ class ProjectTest < ActiveSupport::TestCase
     @project = Project.new(
       title: "Test Project",
       description: "A test project",
-      category: "Web App",
       user: @user
     )
   end
