@@ -450,3 +450,24 @@
     </div>
   <% end %>
 </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const video = document.querySelector("video#onboarding");
+    const mascot = document.getElementById("onboarding-mascot");
+    const callout = document.getElementById("onboarding-callout");
+
+    function playOnboarding() {
+      video.play();
+      mascot.style.display = "none";
+      callout.style.display = "none";
+    }
+
+    mascot.addEventListener("click", playOnboarding);
+    callout.addEventListener("click", playOnboarding);
+    video.addEventListener("play", function() {
+      mascot.style.display = "none";
+      callout.style.display = "none";
+    });
+  });
+</script>
