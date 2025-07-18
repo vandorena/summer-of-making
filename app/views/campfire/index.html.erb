@@ -374,58 +374,104 @@
     <!-- Summer of Making Steps -->
     <div class="mb-8">
       <%= render "shared/card" do %>
-        <div class="text-[#4a2d24]">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-xl font-semibold">Todo list:</h2>
+        <div class="text-[#4a2d24] flex flex-col xl:flex-row space-y-5 xl:space-y-0">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-xl font-semibold">Todo list:</h2>
+            </div>
+
+            <div class="space-y-4">
+              <div class="flex items-center gap-3">
+                <div class="flex-shrink-0">
+                  <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.projects.any? ? 'checked' : '' %> disabled>
+                </div>
+                <div class="flex-1">
+                  <p class="font-medium">Create a project in the <a href="/my_projects" class="text-blue-500 hover:text-blue-700 underline">Projects</a> tab</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <div class="flex-shrink-0">
+                  <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.devlogs.any? ? 'checked' : '' %> disabled>
+                </div>
+                <div class="flex-1">
+                  <p class="font-medium">Post updates on your devlog as you work</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <div class="flex-shrink-0">
+                  <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.ship_events.any? ? 'checked' : '' %> disabled>
+                </div>
+                <div class="flex-1">
+                  <p class="font-medium">Ship your project when it is ready for others to experience</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <div class="flex-shrink-0">
+                  <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.votes.any? ? 'checked' : '' %> disabled>
+                </div>
+                <div class="flex-1">
+                  <p class="font-medium">Vote on other people's projects to receive your shells</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <div class="flex-shrink-0">
+                  <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.shop_orders.joins(:shop_item).where.not(shop_items: { type: "ShopItem::FreeStickers" }).any? ? 'checked' : '' %> disabled>
+                </div>
+                <div class="flex-1">
+                  <p class="font-medium">Spend your hard-earned shells in the shop</p>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div class="space-y-4">
-            <div class="flex items-center gap-3">
-              <div class="flex-shrink-0">
-                <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.projects.any? ? 'checked' : '' %> disabled>
+          <div class="grow flex relative">
+            <div class="h-auto xl:h-full w-full max-w-lg xl:w-auto xl:ml-auto aspect-video relative">
+              <video id="onboarding" class="absolute inset-0 overflow-clip rounded-md" style="box-sizing: border-box;" src="/onboarding.mp4" poster="/onboarding_poster.png" controls title="Onboarding tutorial video for this page">
+              </video>
+              <div class="absolute z-50 -right-36 xl:left-12 -top-5 xl:-top-3 w-24 hidden md:block">
+                <div class="absolute -top-8 -left-24 p-3 bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] max-w-[120px] animate-pulse rotate-24 xl:-rotate-24 cursor-pointer" id="onboarding-callout">
+                  <div class="text-[#4A2D24] font-bold text-center text-lg">Click me!</div>
+                  <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-[#E4DCC6]"></div>
+                  <div class="absolute top-full left-1/2 transform -translate-x-1/2 translate-y-[-2px] w-0 h-0 border-l-6 border-r-6 border-t-6 border-l-transparent border-r-transparent border-t-[#F3ECD8]"></div>
+                </div>
               </div>
-              <div class="flex-1">
-                <p class="font-medium">Create a project in the <a href="/my_projects" class="text-blue-500 hover:text-blue-700 underline">Projects</a> tab</p>
-              </div>
-            </div>
-
-            <div class="flex items-center gap-3">
-              <div class="flex-shrink-0">
-                <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.devlogs.any? ? 'checked' : '' %> disabled>
-              </div>
-              <div class="flex-1">
-                <p class="font-medium">Post updates on your devlog as you work</p>
-              </div>
-            </div>
-
-            <div class="flex items-center gap-3">
-              <div class="flex-shrink-0">
-                <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.ship_events.any? ? 'checked' : '' %> disabled>
-              </div>
-              <div class="flex-1">
-                <p class="font-medium">Ship your project when it is ready for others to experience</p>
-              </div>
-            </div>
-
-            <div class="flex items-center gap-3">
-              <div class="flex-shrink-0">
-                <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.votes.any? ? 'checked' : '' %> disabled>
-              </div>
-              <div class="flex-1">
-                <p class="font-medium">Vote on other people's projects to receive your shells</p>
-              </div>
-            </div>
-
-            <div class="flex items-center gap-3">
-              <div class="flex-shrink-0">
-                <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.shop_orders.joins(:shop_item).where.not(shop_items: { type: "ShopItem::FreeStickers" }).any? ? 'checked' : '' %> disabled>
-              </div>
-              <div class="flex-1">
-                <p class="font-medium">Spend your hard-earned shells in the shop</p>
-              </div>
+              <%= image_tag "tutorial-mascot.png",
+                class: "absolute hidden md:block -right-24 xl:-left-32 bottom-0 w-32 h-32 xl:w-40 xl:h-40 cursor-pointer transition-all duration-200 hover:scale-110 animate-bounce -rotate-12 xl:rotate-12 xl:-scale-x-100",
+                title: "Show tutorial for this page",
+                id: "onboarding-mascot" %>
             </div>
           </div>
         </div>
+
+        <script>
+          function initializeOnboardingVideo() {
+            const video = document.querySelector("video#onboarding");
+            const mascot = document.getElementById("onboarding-mascot");
+            const callout = document.getElementById("onboarding-callout");
+
+            if (!video || !mascot || !callout) return;
+
+            function playOnboarding() {
+              video.play();
+              mascot.style.display = "none";
+              callout.style.display = "none";
+            }
+
+            mascot.addEventListener("click", playOnboarding);
+            callout.addEventListener("click", playOnboarding);
+            video.addEventListener("play", function() {
+              mascot.style.display = "none";
+              callout.style.display = "none";
+            });
+          }
+
+          document.addEventListener("DOMContentLoaded", initializeOnboardingVideo);
+          document.addEventListener("turbo:load", initializeOnboardingVideo);
+        </script>
       <% end %>
     </div>
   <% end %>
