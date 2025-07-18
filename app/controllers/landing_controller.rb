@@ -21,35 +21,9 @@ class LandingController < ApplicationController
     else
       ahoy.track "tutorial_step_landing_first_visit"
 
-      @prizes = Rails.cache.fetch("landing_shop_carousel", expires_in: 10.minutes) do
-        prizes = ShopItem.includes(image_attachment: { blob: :variant_records }).shown_in_carousel.order(ticket_cost: :asc).map do |item|
-          hours = item.average_hours_estimated.to_i
-          {
-            name: item.name,
-            time: "~#{hours} #{"hour".pluralize(hours)}",
-            image: item.image.present? ? url_for(item.image) : "https://crouton.net/crouton.png",
-            ticket_cost: item.ticket_cost
-          }
-        end
-
-        prizes.map! do |prize|
-          hours =
-            if prize[:time].to_s.include?(">500")
-              9999
-            elsif prize[:time].to_s =~ /([0-9]+)/
-              prize[:time].to_s.include?("~") ? $1.to_i : $1.to_i
-            else
-              0
-            end
-          prize.merge(
-            numeric_hours: hours,
-            display_time: hours >= 500 ? ">500 hours" : prize[:time],
-            random_transform: "rotate(#{rand(-3..3)}deg) scale(#{(rand(97..103).to_f / 100).round(2)}) translateY(#{rand(-8..8)}px)"
-          )
-        end
-
-        prizes.sort_by { |p| [ p[:ticket_cost] || 0, p[:numeric_hours] ] }
-      end
+      @prizes = ShopItem.includes(image_attachment: { blob: :variant_records })
+                        .shown_in_carousel
+                        .order(:ticket_cost)
     end
   end
 
