@@ -85,7 +85,7 @@ class Devlog < ApplicationRecord
         direct_url = "https://hackatime.hackclub.com/api/v1/users/#{user.slack_id}/stats?filter_by_project=#{encoded_project_keys}&start_date=#{prev_time.iso8601}&end_date=#{created_at.utc.iso8601}&features=projects"
 
         # rake attach bypass
-        headers = { "RACK_ATTACK_BYPASS" => Rails.application.credentials.hackatime.ratelimit_bypass_header }
+        headers = { "RACK_ATTACK_BYPASS" => Rails.application.credentials.hackatime&.ratelimit_bypass_header }.compact
         direct_res = Faraday.get(direct_url, nil, headers)
 
         if direct_res.success?

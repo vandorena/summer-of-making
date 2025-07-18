@@ -66,6 +66,8 @@ class User < ApplicationRecord
   serialize :permissions, type: Array, coder: JSON
 
   after_create :create_tutorial_progress
+  after_find :setup_mock_verified_user, if: -> { should_mock_verification }
+  after_initialize :setup_mock_verified_user, if: -> { should_mock_verification }
 
   include PublicActivity::Model
   tracked only: [], owner: Proc.new { |controller, model| controller&.current_user }
@@ -231,7 +233,7 @@ class User < ApplicationRecord
       url = "https://hackatime.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects&start_date=#{start_date}"
       url += "&end_date=#{end_date}" if end_date.present?
 
-      Faraday.get(url, nil, { "RACK_ATTACK_BYPASS" => Rails.application.credentials.hackatime.ratelimit_bypass_header })
+      Faraday.get(url, nil, { "RACK_ATTACK_BYPASS" => Rails.application.credentials.hackatime&.ratelimit_bypass_header }.compact)
     end
   end
 
@@ -516,8 +518,22 @@ class User < ApplicationRecord
 
   private
 
+  def should_mock_verification
+    Rails.env.development? && ENV["MOCK_VERIFIED_USER"] == "true"
+  end
+
   def create_tutorial_progress
     TutorialProgress.create!(user: self)
+  end
+
+  def setup_mock_verified_user
+    return unless should_mock_verification
+
+    assign_attributes(
+      identity_vault_id: "mock_#{SecureRandom.hex(8)}",
+      identity_vault_access_token: "mock_#{SecureRandom.hex(16)}",
+      ysws_verified: true
+    )
   end
 
   def permissions_must_not_be_nil
