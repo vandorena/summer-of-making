@@ -48,6 +48,12 @@ module ApplicationHelper
       true
     when :explore
       unlocked
+    when :my_projects
+      unlocked
+    when :vote
+      unlocked
+    when :map
+      unlocked
     when :shop
       true
     else
@@ -59,6 +65,10 @@ module ApplicationHelper
     admin_tool("", "span") do
       render "shared/user_twiddles", user:
     end
+  end
+
+  def random_carousel_transform
+    "rotate(#{rand(-3..3)}deg) scale(#{(rand(97..103).to_f / 100).round(2)}) translateY(#{rand(-8..8)}px)"
   end
 
   def sanitize_css(css)

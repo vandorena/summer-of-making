@@ -19,6 +19,8 @@
 #  title                  :string
 #  used_ai                :boolean
 #  views_count            :integer          default(0), not null
+#  x                      :float
+#  y                      :float
 #  ysws_submission        :boolean          default(FALSE), not null
 #  ysws_type              :string
 #  created_at             :datetime         not null
@@ -27,8 +29,10 @@
 #
 # Indexes
 #
+#  index_projects_on_is_shipped   (is_shipped)
 #  index_projects_on_user_id      (user_id)
 #  index_projects_on_views_count  (views_count)
+#  index_projects_on_x_and_y      (x,y)
 #
 # Foreign Keys
 #
@@ -54,6 +58,27 @@ class Project < ApplicationRecord
   has_many :vote_changes, dependent: :destroy
 
   has_many :timer_sessions
+
+  coordinate_min = 0
+  coordinate_max = 100
+
+  validates :x, numericality: { greater_than_or_equal_to: coordinate_min, less_than_or_equal_to: coordinate_max }, allow_nil: true
+  validates :y, numericality: { greater_than_or_equal_to: coordinate_min, less_than_or_equal_to: coordinate_max }, allow_nil: true
+  validate :coordinates_must_be_set_together
+
+  scope :on_map, -> { where.not(x: nil, y: nil) }
+  scope :shipped, -> { where(is_shipped: true) }
+  scope :not_on_map, -> { where(x: nil, y: nil) }
+
+  def shipped_once?
+    ship_events.any?
+  end
+
+  def coordinates_must_be_set_together
+    if (x.present? && y.blank?) || (y.present? && x.blank?)
+      errors.add(:base, "Both X and Y coordinates must be set, or neither.")
+    end
+  end
 
   default_scope { where(is_deleted: false) }
 

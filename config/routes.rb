@@ -216,6 +216,8 @@ Rails.application.routes.draw do
   get "check_github_readme", to: "projects#check_github_readme"
   get "campfire", to: "campfire#index"
   get "campfire/hackatime_status", to: "campfire#hackatime_status"
+  get "/map", to: "map#index", as: :map
+  get "/map/points", to: "map#points", as: :map_points
 
   # Global timer session check - must be before projects resource
   get "timer_sessions/active", to: "timer_sessions#global_active"
@@ -233,6 +235,8 @@ Rails.application.routes.draw do
       patch :ship
       post :stake_stonks
       delete :unstake_stonks
+      patch :update_coordinates
+      delete :unplace_coordinates
       # patch :recover
     end
   end

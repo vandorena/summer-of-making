@@ -51,6 +51,10 @@ class ProjectPolicy < ApplicationPolicy
     update?
   end
 
+  def update_coordinates?
+    update?
+  end
+
   def can_edit_banner?
     user&.is_admin? || user == record.user
   end

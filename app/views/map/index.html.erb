@@ -1,4 +1,76 @@
-<div>
-  <h1 class="font-bold text-4xl">Map#index</h1>
-  <p>Find me in app/views/map/index.html.erb</p>
+<div data-controller="map"
+     data-map-projects-value="<%= @projects_on_map %>"
+     data-map-user-id-value="<%= current_user.id %>"
+     data-map-update-url-value="<%= update_coordinates_project_path(':id') %>"
+     data-map-map-points-url-value="<%= map_points_path %>"
+     data-map-unplace-url-value="<%= unplace_coordinates_project_path(':id') %>"
+     class="relative w-screen h-screen overflow-hidden bg-[#41A5E7]">
+  <div class="absolute inset-0 bg-[url('/map_sea_background.jpg')] bg-cover bg-center opacity-28 pointer-events-none z-0"></div>
+
+  <div data-map-target="canvas"
+       class="w-full h-full relative z-10"
+       data-action="mousedown->map#startDrag
+                    mousemove->map#drag
+                    mouseup->map#endDrag
+                    mouseleave->map#endDrag
+                    dragover->map#handleDragOver
+                    drop->map#handleDrop">
+    <%= image_tag "map_colored.jpg",
+        class: "w-full h-full object-cover pointer-events-none select-none",
+        alt: "The Map",
+        data: { map_target: "image" } %>
+    <div data-map-target="pointsContainer" class="absolute inset-0"></div>
+  </div>
+
+  <div class="absolute top-4 left-4 z-20">
+    <%= link_to root_path, class: "px-4 md:px-6 py-1 md:py-2 marble-button cursor-pointer flex items-center justify-center" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+      </svg>
+    <% end %>
+  </div>
+
+  <div class="absolute top-4 right-4 z-20 flex flex-col gap-2">
+    <button data-action="click->map#zoomIn" data-map-target="zoomInButton" class="px-4 md:px-6 py-1 md:py-2 marble-button cursor-pointer flex items-center justify-center disabled:opacity-50">
+      <%= image_tag "plus.svg", alt: "Zoom In", class: "h-6 w-6" %>
+    </button>
+    <button data-action="click->map#zoomOut" data-map-target="zoomOutButton" class="px-4 md:px-6 py-1 md:py-2 marble-button cursor-pointer flex items-center justify-center disabled:opacity-50">
+      <%= image_tag "minus.svg", alt: "Zoom Out", class: "h-6 w-6" %>
+    </button>
+  </div>
+
+  <div class="absolute bottom-4 left-4 z-20 bg-soft-bone p-4 card-pixel max-w-sm w-full">
+    <h3 class="text-lg font-bold mb-2">Place a Project on the Map</h3>
+    <p class="text-sm mb-2 text-saddle-taupe" data-map-target="placeableCount">
+      <%= placeable_projects_message(@placeable_projects.count) %>
+    </p>
+    <% if @placeable_projects.any? %>
+      <div class="space-y-2 max-h-48 overflow-y-auto" data-map-target="placeableProjects">
+        <% @placeable_projects.each do |project| %>
+          <div draggable="true"
+               data-action="dragstart->map#startCardDrag"
+               data-project-id="<%= project.id %>"
+               class="w-full text-left p-2 bg-bread border-2 border-saddle-taupe/30 hover:bg-warm cursor-pointer transition-colors">
+            <%= project.title %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="text-center py-4">
+        <%= link_to "View All Projects", my_projects_path, class: "px-4 py-2 marble-button cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- tooltip! -->
+  <template data-map-target="tooltipTemplate">
+    <div class="absolute bottom-full mb-3 w-max max-w-xs bg-black text-white text-xs rounded py-2 px-3 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg -translate-x-1/2 left-1/2">
+      <h4 class="font-bold text-sm" data-map-target="tooltipTitle"></h4>
+      <p class="text-xs opacity-80" data-map-target="tooltipInfo"></p>
+      <div class="mt-1 flex gap-1">
+        <a href="#" data-map-target="tooltipLink" class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded text-xs pointer-events-auto">View Project</a>
+        <button data-map-target="tooltipUnplaceButton" class="inline-block bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded text-xs pointer-events-auto hidden">Remove</button>
+      </div>
+    </div>
+  </template>
 </div>
