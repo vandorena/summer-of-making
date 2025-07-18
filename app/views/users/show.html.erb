@@ -204,7 +204,7 @@
                              <img src="<%= project.user.avatar %>" alt="<%= project.user.display_name %>" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3" loading="lazy">
                            <% end %>
                            <div>
-                             <span class="text-base sm:text-lg 2xl:text-xl text-[#4a2d24]">
+                             <span class="text-base sm:text-lg 2xl:text-xl text-som-dark">
                                <%= render "shared/user_display_name", user: project.user %>
                                <span class="text-[#865c39]">created a project</span>
                              </span>
@@ -230,14 +230,14 @@
                          </div>
                        </div>
 
-                       <div class="prose max-w-[32em] text-[#4a2d24] mb-2 sm:mb-3 text-base sm:text-lg 2xl:text-xl break-words overflow-wrap-anywhere">
-                         <h3 class="text-lg font-semibold text-[#4a2d24] mb-2 m-0">
+                       <div class="prose max-w-[32em] text-som-dark mb-2 sm:mb-3 text-base sm:text-lg 2xl:text-xl break-words overflow-wrap-anywhere">
+                         <h3 class="text-lg font-semibold text-som-dark mb-2 m-0">
                            <a href="<%= project_path(project) %>" class="hover:text-blue-600 transition-colors no-underline">
                              <%= project.title %>
                            </a>
                          </h3>
 
-                         <p class="text-[#4a2d24] text-base sm:text-lg 2xl:text-xl m-0">
+                         <p class="text-som-dark text-base sm:text-lg 2xl:text-xl m-0">
                            <%= project.description %>
                          </p>
                        </div>
@@ -277,7 +277,7 @@
                              <img src="<%= user.avatar %>" alt="<%= user.display_name %>" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3" loading="lazy">
                            <% end %>
                            <div>
-                             <span class="text-base sm:text-lg 2xl:text-xl text-[#4a2d24]">
+                             <span class="text-base sm:text-lg 2xl:text-xl text-som-dark">
                                <%= render "shared/user_display_name", user: user %>
                                <span class="text-[#865c39]">joined Summer of Making</span>
                              </span>
@@ -303,8 +303,8 @@
                          </div>
                        </div>
 
-                       <div class="prose max-w-[32em] text-[#4a2d24] mb-2 sm:mb-3 text-base sm:text-lg 2xl:text-xl break-words overflow-wrap-anywhere">
-                         <p class="text-[#4a2d24] text-base sm:text-lg 2xl:text-xl m-0">
+                       <div class="prose max-w-[32em] text-som-dark mb-2 sm:mb-3 text-base sm:text-lg 2xl:text-xl break-words overflow-wrap-anywhere">
+                         <p class="text-som-dark text-base sm:text-lg 2xl:text-xl m-0">
                            This was widely regarded as a great move by everyone.
                          </p>
                        </div>

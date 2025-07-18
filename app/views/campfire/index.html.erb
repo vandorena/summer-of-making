@@ -29,7 +29,7 @@
   <% if @account_status[:hackatime_setup] %>
     <div class="mb-8 color-forest">
       <%= render "shared/card", data: { controller: "hackatime-dashboard" } do %>
-        <div class="text-[#4a2d24]">
+        <div class="text-som-dark">
           <div class="flex items-center gap-3 mb-4">
             <div class="flex-shrink-0">
               <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
@@ -374,7 +374,7 @@
     <!-- Summer of Making Steps -->
     <div class="mb-8">
       <%= render "shared/card" do %>
-        <div class="text-[#4a2d24]">
+        <div class="text-som-dark">
           <div class="flex items-center justify-between mb-4">
             <h2 class="text-xl font-semibold">Todo list:</h2>
           </div>
@@ -382,7 +382,7 @@
           <div class="space-y-4">
             <div class="flex items-center gap-3">
               <div class="flex-shrink-0">
-                <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.projects.any? ? 'checked' : '' %> disabled>
+                <input type="checkbox" class="w-5 h-5 text-som-dark border-som-dark rounded-md focus:ring-som-dark focus:ring-2" <%= current_user.projects.any? ? 'checked' : '' %> disabled>
               </div>
               <div class="flex-1">
                 <p class="font-medium">Create a project in the <a href="/my_projects" class="text-blue-500 hover:text-blue-700 underline">Projects</a> tab</p>
@@ -391,7 +391,7 @@
 
             <div class="flex items-center gap-3">
               <div class="flex-shrink-0">
-                <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.devlogs.any? ? 'checked' : '' %> disabled>
+                <input type="checkbox" class="w-5 h-5 text-som-dark border-som-dark rounded-md focus:ring-som-dark focus:ring-2" <%= current_user.devlogs.any? ? 'checked' : '' %> disabled>
               </div>
               <div class="flex-1">
                 <p class="font-medium">Post updates on your devlog as you work</p>
@@ -400,7 +400,7 @@
 
             <div class="flex items-center gap-3">
               <div class="flex-shrink-0">
-                <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.ship_events.any? ? 'checked' : '' %> disabled>
+                <input type="checkbox" class="w-5 h-5 text-som-dark border-som-dark rounded-md focus:ring-som-dark focus:ring-2" <%= current_user.ship_events.any? ? 'checked' : '' %> disabled>
               </div>
               <div class="flex-1">
                 <p class="font-medium">Ship your project when it is ready for others to experience</p>
@@ -409,7 +409,7 @@
 
             <div class="flex items-center gap-3">
               <div class="flex-shrink-0">
-                <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.votes.any? ? 'checked' : '' %> disabled>
+                <input type="checkbox" class="w-5 h-5 text-som-dark border-som-dark rounded-md focus:ring-som-dark focus:ring-2" <%= current_user.votes.any? ? 'checked' : '' %> disabled>
               </div>
               <div class="flex-1">
                 <p class="font-medium">Vote on other people's projects to receive your shells</p>
@@ -418,7 +418,7 @@
 
             <div class="flex items-center gap-3">
               <div class="flex-shrink-0">
-                <input type="checkbox" class="w-5 h-5 text-[#4a2d24] border-[#4a2d24] rounded-md focus:ring-[#4a2d24] focus:ring-2" <%= current_user.shop_orders.joins(:shop_item).where.not(shop_items: { type: "ShopItem::FreeStickers" }).any? ? 'checked' : '' %> disabled>
+                <input type="checkbox" class="w-5 h-5 text-som-dark border-som-dark rounded-md focus:ring-som-dark focus:ring-2" <%= current_user.shop_orders.joins(:shop_item).where.not(shop_items: { type: "ShopItem::FreeStickers" }).any? ? 'checked' : '' %> disabled>
               </div>
               <div class="flex-1">
                 <p class="font-medium">Spend your hard-earned shells in the shop</p>
