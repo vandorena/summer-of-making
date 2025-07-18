@@ -362,8 +362,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_17_203326) do
     t.integer "devlogs_count", default: 0, null: false
     t.integer "certification_type"
     t.integer "views_count", default: 0, null: false
+    t.float "x"
+    t.float "y"
+    t.index ["is_shipped"], name: "index_projects_on_is_shipped"
     t.index ["user_id"], name: "index_projects_on_user_id"
     t.index ["views_count"], name: "index_projects_on_views_count"
+    t.index ["x", "y"], name: "index_projects_on_x_and_y"
   end
 
   create_table "readme_certifications", force: :cascade do |t|

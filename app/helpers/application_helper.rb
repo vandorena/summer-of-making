@@ -48,6 +48,12 @@ module ApplicationHelper
       true
     when :explore
       unlocked
+    when :my_projects
+      unlocked
+    when :vote
+      unlocked
+    when :map
+      unlocked
     when :shop
       true
     else
