@@ -311,7 +311,7 @@
 
 <!-- Ship Modal -->
 <div id="ship-modal-<%= @project.id %>" data-controller="ship" class="hidden fixed inset-0 z-50 overflow-auto bg-black/30 flex items-center justify-center p-2 md:p-4" data-ship-target="modal" data-action="click->ship#closeBackground">
-  <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] w-full max-w-2xl mx-2 md:mx-auto relative max-h-[90vh] flex flex-col overflow-hidden">
+  <%= render "shared/card", classes: "max-w-2xl max-h-[90vh]" do %>
     <div class="p-3 md:p-4 border-b border-saddle-taupe border-opacity-30 flex-shrink-0">
       <div class="flex justify-between items-center">
         <h3 class="text-lg md:text-2xl">Ship Your Project</h3>
@@ -322,7 +322,7 @@
     </div>
 
     <!-- Page 1: Introduction -->
-    <div data-ship-target="page1" class="p-4 md:p-6 overflow-y-auto">
+    <div data-ship-target="page1" class="p-4 md:p-6 overflow-y-auto max-h-[70vh]">
       <div class="text-center mb-8">
         <%= image_tag "orpheusyap1.png", class: "w-64 h-64 mx-auto mb-4", alt: "Orpheus Yap" %>
         <h4 class="text-xl md:text-2xl 2xl:text-3xl mb-2">Get ready!</h4>
@@ -478,5 +478,5 @@
         </div>
       <% end %>
     </div>
-  </div>
+  <% end %>
 <% end %>
