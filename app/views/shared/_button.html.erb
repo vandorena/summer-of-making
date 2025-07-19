@@ -1,0 +1,41 @@
+<%#
+#  Parameters:
+#    - text: The content of the button.
+#    - icon: An optional icon to put alongside the text content.
+#    - link: If specified, instead of a button, an <a> tag with link_to
+#            will be generated, with the target being this parameter.
+#    - data: Data attributes to set on either the button or link element.
+#    - kind: May be one of: [:primary, :secondary]. Determines the color scheme.
+#    - type: A button type to pass into 'button_tag'. Defaults to ':button'.
+%>
+
+<% raise "shared/button requires 'text' as a local" unless local_assigns[:text] %>
+
+<%
+    button_type = local_assigns.fetch(:type, :button)
+    kind = local_assigns.fetch(:kind, :primary)
+    
+    button_class = case kind
+        when :primary then "som-button-primary"
+        when :secondary then "som-button-secondary"
+        else "som-button-primary"
+    end
+%>
+
+<% button_content = capture do %>
+    <% if local_assigns[:icon] %>
+        <%= inline_svg("icons/#{local_assigns[:icon]}", class: "w-4 h-4") %>
+    <% end %>
+    
+    <span><%= local_assigns[:text] %></span>
+<% end %>
+
+<% if local_assigns[:link] %>
+    <%= link_to local_assigns[:link], class: button_class do %>
+        <%= button_content %>
+    <% end %>
+<% else %>
+    <%= button_tag button_type, class: button_class, data: local_assigns[:data] do %>
+        <%= button_content %>
+    <% end %>
+<% end %>

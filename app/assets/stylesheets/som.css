@@ -204,3 +204,40 @@
     font-size: var(--text-sm);
   }
 }
+
+.som-button-primary, .som-button-secondary {
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 5px 5px 6px 0px rgba(0, 0, 0, 5%);
+  padding: .5em 2em;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  transition: background .25s;
+}
+
+.som-button-primary {
+  background-color: #FFE8CD;
+  color: var(--color-som-dark);
+
+  &:hover {
+    background-color: rgb(255, 228, 196);
+  }
+
+  &:active {
+    background: #f0d9be;
+  }
+}
+
+.som-button-secondary {
+  background-color: #523A52;
+  color: var(--color-som-bright);
+
+  &:hover {
+    background-color: #6d4f6d;
+  }
+
+  &:active {
+    background: #362736;
+  }
+}

@@ -83,7 +83,11 @@
         </div>
 
         <div class="flex justify-end space-x-4 pt-6">
-          <%= f.submit "Post Devlog", class: "px-4 md:px-6 py-2 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 text-sm md:text-base 2xl:text-xl btn-pixel cursor-pointer", data: { form_target: "submitButton" } %>
+          <%= render "shared/button",
+            data: { form_target: "submitButton" },
+            icon: "quill.svg",
+            text: "Create Devlog"
+          %>
         </div>
       </div>
     <% end %>

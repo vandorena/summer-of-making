@@ -154,8 +154,8 @@
     </div>
 
     <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 mt-6">
-      <%= link_to "Cancel", project_path(@project), class: "w-full sm:w-auto px-4 py-2 bg-vintage-red text-white hover:scale-[1.05] btn-pixel text-base sm:text-lg text-center" %>
-      <%= f.submit "Update Project", class: "w-full sm:w-auto px-4 py-2 bg-forest text-white hover:scale-[1.05] btn-pixel text-base sm:text-lg" %>
+      <%= render "shared/button", text: "Cancel", link: project_path(@project), kind: :secondary %>
+      <%= render "shared/button", type: :submit, text: "Update Project", icon: "edit.svg" %>
     </div>
   <% end %>
 <% end %>
