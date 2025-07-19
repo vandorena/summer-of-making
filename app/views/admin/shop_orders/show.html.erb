@@ -116,22 +116,27 @@
   </div>
 
   <% unless %i(rejected fulfilled).include? state %>
-  <div style="margin-top: 1em;">
-    <%= form_with url: reject_admin_shop_order_path(@shop_order) do |f| %>
-      <%= f.text_area(:rejection_reason, placeholder: "rejection reason", style: "width: 100%; margin-bottom: 0.5em; padding: 0.5em; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-darker); color: var(--color-text);") %>
-      <%= f.submit "reject that mf", class: 'abtn', style: 'background: var(--color-red);' %>
-    <% end %>
-  </div>
+  <summary style="margin-top: 1em;">
+    <details>
+      <summary style="cursor: pointer; font-weight: bold;">reject order (expand)</summary>
+      <div style="margin-top: 1em;">
+        <%= form_with url: reject_admin_shop_order_path(@shop_order) do |f| %>
+          <%= f.text_area(:rejection_reason, placeholder: "rejection reason", style: "width: 100%; margin-bottom: 0.5em; padding: 0.5em; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-darker); color: var(--color-text);") %>
+          <%= f.submit "reject that mf", class: 'abtn', style: 'background: var(--color-red);' %>
+        <% end %>
+      </div>
+    </details>
+  </summary>
   <% end %>
 
   <% if state == :awaiting_periodical_fulfillment && @shop_order.shop_item.manually_fulfilled? %>
   <div style="margin-top: 1em;">
     <%= form_with url: url_for([:mark_fulfilled, :admin, @shop_order]) do |f| %>
-      <%= f.text_area(:external_ref, placeholder: "external reference", style: "width: 100%; margin-bottom: 0.5em; padding: 0.5em; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-darker); color: var(--color-text);") %>
+      <%= f.text_area(:external_ref, placeholder: "external reference", style: "margin-bottom: 0.5em; padding: 0.5em; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-darker); color: var(--color-text);") %>
       <div class="agrid" style="margin-bottom: 0.5em;">
         <div>
           <%= f.label :fulfillment_cost, "fulfillment cost: $", style: "color: var(--color-text);" %>
-          <%= f.number_field :fulfillment_cost, step: 0.01, value: @shop_order.shop_item.usd_cost, style: "width: 100%; padding: 0.5em; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-darker); color: var(--color-text);" %>
+          <%= f.number_field :fulfillment_cost, step: 0.01, value: @shop_order.shop_item.usd_cost, style: "padding: 0.5em; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-darker); color: var(--color-text);" %>
         </div>
       </div>
       <%= f.submit "i fulfilled it!", class: 'abtn primary' %>
