@@ -253,6 +253,7 @@ textarea.som-horizontal-input[placeholder=" "] {
 
   &:not(.disabled):hover {
     background: var(--hover-color);
+    transform: scale(1.05);
   }
 
   &.disabled {
