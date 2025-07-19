@@ -115,8 +115,7 @@
         data-action="click->modal#open"
         data-modal-id="<%= @project.id %>"
         data-modal-type="follower"
-        class="flex items-center gap-2 hover:underline cursor-pointer duration-200"
-      >
+        class="flex items-center gap-2 hover:underline cursor-pointer duration-200">
         <%= inline_svg("icons/users.svg", class: "w-4 h-4") %>
         <span class="text-som-dark"><%= @project.followers.count %> <%= "follower".pluralize(@project.followers.count) %></span>
       </button>
@@ -184,7 +183,7 @@
         <%= render "shared/button", text: "Readme", link: @project.readme_link, link_target: "_blank", icon: "document.svg", fill_width: true %>
       <% end %>
     </div>
-    
+
     <%= render "admin/inspector", record: @project, always_inspect: true, show_in_impersonate: true %>
   </div>
 </div>
@@ -451,7 +450,7 @@
           <% end %>
 
           <div class="text-center mt-4 mb-1">
-            <a href="<%= edit_project_path(@project)%>" class="text-sm text-nice-blue underline">
+            <a href="<%= edit_project_path(@project) %>" class="text-sm text-nice-blue underline">
               Edit Project Links
             </a>
           </div>
