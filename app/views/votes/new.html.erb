@@ -66,11 +66,11 @@
                   <%= image_tag project.banner, alt: project.title, class: "w-full h-full object-cover rounded-lg", loading: "lazy" %>
                   <% if project.used_ai %>
                     <div class="mt-2 flex items-center justify-center group relative">
-                      <span class="inline-flex items-center bg-[#FFE8CD] text-[#4A2D24] text-xs font-semibold px-2 py-1 rounded-full border border-[#a8956b] shadow-sm">
+                      <span class="inline-flex items-center bg-[#FFE8CD] text-som-dark text-xs font-semibold px-2 py-1 rounded-full border border-[#a8956b] shadow-sm">
                         Used
                         <%= inline_svg "icons/ai.svg", class: "w-5 h-5 sm:w-6 sm:h-6 ml-1" %>
                       </span>
-                      <span class="absolute left-1/2 -translate-x-1/2 mt-2 w-max bg-[#4A2D24] text-[#FFE8CD] text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 whitespace-nowrap shadow-lg border border-[#a8956b]">Built with help from AI models</span>
+                      <span class="absolute left-1/2 -translate-x-1/2 mt-2 w-max bg-som-dark text-[#FFE8CD] text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 whitespace-nowrap shadow-lg border border-[#a8956b]">Built with help from AI models</span>
                     </div>
                   <% end %>
                 </div>
@@ -108,7 +108,7 @@
                 <div class="grid grid-cols-1 sm:flex sm:flex-wrap justify-center gap-3 sm:gap-4">
                   <% if project.demo_link.present? %>
                     <a href="<%= project.demo_link %>" target="_blank"
-                       class="inline-flex items-center gap-2 px-6 sm:px-8 py-3 bg-[#FFE8CD] hover:scale-[1.05] text-[#4A2D24] transition-transform duration-300 text-base sm:text-lg 2xl:text-xl rounded-lg font-medium"
+                       class="inline-flex items-center gap-2 px-6 sm:px-8 py-3 bg-[#FFE8CD] hover:scale-[1.05] text-som-dark transition-transform duration-300 text-base sm:text-lg 2xl:text-xl rounded-lg font-medium"
                        onclick="event.stopPropagation()"
                        data-analytics-link="demo"
                        data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
@@ -118,7 +118,7 @@
                   <% end %>
                   <% if project.repo_link.present? %>
                     <a href="<%= project.repo_link %>" target="_blank"
-                       class="inline-flex items-center gap-2 px-6 sm:px-8 py-3 bg-[#FFE8CD] hover:scale-[1.05] text-[#4A2D24] transition-transform duration-300 text-base sm:text-lg 2xl:text-xl rounded-lg font-medium"
+                       class="inline-flex items-center gap-2 px-6 sm:px-8 py-3 bg-[#FFE8CD] hover:scale-[1.05] text-som-dark transition-transform duration-300 text-base sm:text-lg 2xl:text-xl rounded-lg font-medium"
                        onclick="event.stopPropagation()"
                        data-analytics-link="repo"
                        data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">

@@ -1,5 +1,5 @@
 <div id="create-project-modal" data-controller="modal" class="hidden fixed inset-0 z-50 overflow-auto bg-black/30 flex items-center justify-center p-2 md:p-4">
-  <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] w-full max-w-2xl mx-2 md:mx-auto relative" data-modal-target="container">
+  <%= render "shared/card" do %>
     <div class="p-3 md:p-6 border-b border-saddle-taupe border-opacity-30">
       <div class="flex justify-between items-center">
         <h3 class="text-lg md:text-2xl">Create New Project</h3>
@@ -21,7 +21,9 @@
                 <span class="tooltiptext">Give your project a cool title!</span>
               </div>
             </div>
-            <%= f.text_field :title, class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm md:text-base", id: "title", data: { project_form_target: "title" } %>
+
+            <%= f.text_field :title, class: "som-horizontal-input", id: "title", data: { project_form_target: "title" }, placeholder: " " %>
+
             <div class="flex justify-end">
               <p class="mt-1 text-xs md:text-sm text-vintage-red">Required</p>
             </div>
@@ -36,7 +38,7 @@
                 <span class="tooltiptext">Describe what your project does, how you made it, and what makes it special. This helps others understand your work.</span>
               </div>
             </div>
-            <%= f.text_area :description, rows: 3, class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm md:text-base", id: "description", data: { project_form_target: "description" } %>
+            <%= f.text_area :description, rows: 3, class: "som-horizontal-input", id: "description", data: { project_form_target: "description" }, placeholder: " " %>
             <div class="flex justify-end">
               <p class="mt-1 text-xs md:text-sm text-vintage-red">Required</p>
             </div>
@@ -58,7 +60,7 @@
           <div class="mb-3 md:mb-6">
             <div class="tooltip-label-container flex items-center space-x-2">
               <label class="flex items-center space-x-2 text-sm cursor-pointer">
-                <div class="h-5 w-5 border-2 border-saddle-taupe bg-bread border-opacity-50 flex items-center justify-center rounded focus-within:ring-2 focus-within:ring-forest hover:border-forest transition-colors">
+                <div class="som-checkbox">
                   <%= f.checkbox :ysws_submission, id: "ysws_submission", class: "sr-only", data: { project_form_target: "yswsSubmissionCheckboxReal", action: "change->project-form#toggleYswsSubmission" } %>
                   <div data-project-form-target="yswsSubmissionCheckboxFake" class="hidden">
                     <%= inline_svg_tag "check.svg", class: "h-3 w-3 text-white" %>
@@ -85,7 +87,7 @@
                   options_for_select(ysws_type_options),
                   {},
                   {
-                    class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm md:text-base",
+                    class: "som-horizontal-input",
                     data: { project_form_target: "yswsType" }
                   }
               %>
@@ -96,7 +98,7 @@
           <div class="mb-3 md:mb-6">
             <div class="tooltip-label-container flex items-center space-x-2">
               <label class="flex items-center space-x-2 text-sm cursor-pointer">
-                <div class="h-5 w-5 border-2 border-saddle-taupe bg-bread border-opacity-50 flex items-center justify-center rounded focus-within:ring-2 focus-within:ring-forest hover:border-forest transition-colors">
+                <div class="som-checkbox">
                   <%= f.checkbox :used_ai, id: "used_ai", class: "sr-only", data: { project_form_target: "usedAiCheckboxReal", action: "change->project-form#toggleUsedAiCheck" } %>
                   <div data-project-form-target="usedAiCheckboxFake" class="hidden">
                     <%= inline_svg_tag "check.svg", class: "h-3 w-3 text-white" %>
@@ -121,7 +123,10 @@
                 <span class="tooltiptext">Link to your project's GitHub, GitLab, or other remote repository.</span>
               </div>
             </div>
-            <%= f.url_field :repo_link, placeholder: "https://github.com/username/repo", class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm md:text-base", id: "repo", data: { project_form_target: "repo", repo_autofill_target: "repoInput", action: "input->repo-autofill#repoInputChanged" } %>
+            <%= f.url_field :repo_link,
+              placeholder: "https://github.com/username/repo",
+              class: "som-horizontal-input",
+              id: "repo", data: { project_form_target: "repo", repo_autofill_target: "repoInput", action: "input->repo-autofill#repoInputChanged" } %>
             <div class="flex justify-end">
               <p class="mt-1 text-xs md:text-sm text-gray-700">Optional</p>
             </div>
@@ -136,7 +141,18 @@
                 <span class="tooltiptext">Direct link to your README file (usually the raw GitHub URL). This will be rendered in the arena.</span>
               </div>
             </div>
-            <%= f.url_field :readme_link, placeholder: "https://raw.githubusercontent.com/username/repo/main/README.md", class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm md:text-base", id: "readme", data: { project_form_target: "readme", repo_autofill_target: "readmeInput", action: "input->repo-autofill#validateReadmeUrl" } %>
+
+            <%= f.url_field :readme_link,
+              placeholder: "https://raw.githubusercontent.com/username/repo/main/README.md",
+              class: "som-horizontal-input",
+              id: "readme",
+              data: {
+                project_form_target: "readme",
+                repo_autofill_target: "readmeInput",
+                action: "input->repo-autofill#validateReadmeUrl"
+              }
+            %>
+            
             <div class="flex justify-end">
               <p class="mt-1 text-xs md:text-sm text-gray-700">Optional</p>
             </div>
@@ -151,7 +167,7 @@
                 <span class="tooltiptext">Link to a live demo, deployed version, or video demonstration of your project in action.</span>
               </div>
             </div>
-            <%= f.url_field :demo_link, placeholder: "https://summer.hackclub.com", class: "w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm md:text-base", id: "demo", data: { project_form_target: "demo" } %>
+            <%= f.url_field :demo_link, placeholder: "https://summer.hackclub.com", class: "som-horizontal-input", id: "demo", data: { project_form_target: "demo" } %>
             <div class="flex justify-end">
               <p class="mt-1 text-xs md:text-sm text-gray-700">Optional</p>
             </div>
@@ -173,7 +189,7 @@
                 <% if hackatime_projects.present? %>
                   <% globally_locked_keys = Project.globally_locked_hackatime_keys(current_user.id) %>
                   <div class="hackatime-project-field mb-2">
-                    <select name="__temp_hackatime_select" class="w-full px-3 py-2 border border-saddle-taupe bg-bread border-opacity-50 focus:outline-none focus:ring-forest focus:border-forest text-sm md:text-base" data-project-form-target="hackatimeSelect">
+                    <select name="__temp_hackatime_select" class="<%= "som-horizontal-input" %>" data-project-form-target="hackatimeSelect">
                       <option value="">Select a project...</option>
                       <% hackatime_projects.each do |project| %>
                         <% is_globally_locked = globally_locked_keys.include?(project[:key]) %>
@@ -198,18 +214,16 @@
             </div>
           <% end %>
 
-          <p class="text-xs md:text-base text-gray-800 border-t border-saddle-taupe border-opacity-30 pt-3">
+          <p class="text-xs md:text-base border-t border-saddle-taupe border-opacity-30 pt-3">
             Only Title and Description are required. All other fields can be added later when you're ready to ship.
           </p>
         </div>
 
         <div class="flex flex-row justify-end space-x-2 md:space-x-3 mt-3 md:mt-4">
-          <button type="button" data-action="modal#close" class="px-3 md:px-4 py-1 md:py-2 bg-vintage-red text-white hover:scale-[1.05] btn-pixel text-sm md:text-base">
-            Cancel
-          </button>
-          <%= f.submit "Create Project", class: "px-3 md:px-4 py-1 md:py-2 bg-forest text-white hover:scale-[1.05] btn-pixel text-sm md:text-base" %>
+          <%= render "shared/button", text: "Cancel", data: { action: "modal#close" }, kind: :secondary %>
+          <%= render "shared/button", text: "Create Project", type: :submit %>
         </div>
       <% end %>
     </div>
-  </div>
+  <% end %>
 </div>

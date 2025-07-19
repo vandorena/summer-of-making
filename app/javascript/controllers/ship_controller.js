@@ -6,6 +6,7 @@ export default class extends Controller {
     "form",
     "no404Checkbox",
     "no404Check",
+    "no404CheckboxParent",
     "submitButton",
     "page1",
     "page2",
@@ -244,10 +245,10 @@ export default class extends Controller {
 
     if (checked) {
       this.no404CheckTarget.classList.remove("hidden");
-      this.no404CheckTarget.closest(".h-5").classList.add("bg-forest");
+      this.no404CheckboxParentTarget.classList.add("checked");
     } else {
       this.no404CheckTarget.classList.add("hidden");
-      this.no404CheckTarget.closest(".h-5").classList.remove("bg-forest");
+      this.no404CheckboxParentTarget.classList.remove("checked");
     }
 
     this.updateSubmitButton();
@@ -256,18 +257,10 @@ export default class extends Controller {
   updateSubmitButton() {
     if (this.no404CheckboxTarget.checked) {
       this.submitButtonTarget.disabled = false;
-      this.submitButtonTarget.classList.remove(
-        "bg-forest/70",
-        "cursor-not-allowed",
-      );
-      this.submitButtonTarget.classList.add("bg-forest");
+      this.submitButtonTarget.classList.remove("disabled");
     } else {
       this.submitButtonTarget.disabled = true;
-      this.submitButtonTarget.classList.add(
-        "bg-forest/70",
-        "cursor-not-allowed",
-      );
-      this.submitButtonTarget.classList.remove("bg-forest");
+      this.submitButtonTarget.classList.add("disabled");
     }
   }
 

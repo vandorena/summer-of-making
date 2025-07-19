@@ -32,14 +32,14 @@
           <% end %>
           <div>
             <% if show_project_link && devlog.project %>
-              <span class="text-base sm:text-lg 2xl:text-xl text-[#4a2d24]">
+              <span class="text-base sm:text-lg 2xl:text-xl text-som-dark">
                 <%= render "shared/user_display_name", user: devlog.user %><% admin_user_visit(devlog.user) %> <span class="text-[#865c39]">worked on</span>
                 <a href="<%= project_path(devlog.project) %>" class="transition-colors duration-200 hover:underline decoration-1 underline-offset-2">
                   <%= devlog.project.title %>
                 </a>
               </span>
             <% elsif show_project_link && !devlog.project %>
-              <span class="text-base sm:text-lg 2xl:text-xl text-[#4a2d24]">
+              <span class="text-base sm:text-lg 2xl:text-xl text-som-dark">
                 <%= render "shared/user_display_name", user: devlog.user %><% admin_user_visit(devlog.user) %> <span class="text-[#865c39]">worked on</span>
                 <span class="text-gray-500 italic">a deleted project</span>
               </span>
@@ -49,7 +49,7 @@
               </span>
             <% end %>
 
-            <div class="text-[#B89576]">
+            <div class="text-som-detail">
               <!-- Time info -->
               <% if devlog.duration_seconds.present? && devlog.duration_seconds > 0 %>
                 <span>
@@ -94,7 +94,7 @@
 
       <div class="<%= content_margin.present? ? content_margin : '' %>">
         <!-- Update content -->
-        <div data-devlog-card-target="content" class="prose max-w-[32em] text-[#4a2d24] mb-2 sm:mb-3 text-base sm:text-lg 2xl:text-xl break-words overflow-wrap-anywhere">
+        <div data-devlog-card-target="content" class="prose max-w-[32em] text-som-dark mb-2 sm:mb-3 text-base sm:text-lg 2xl:text-xl break-words overflow-wrap-anywhere">
           <%= h(devlog.text) %>
         </div>
 
@@ -149,7 +149,7 @@
         <% end %>
 
         <!-- Action buttons -->
-        <div class="mt-3 sm:mt-4 flex flex-row items-center justify-left gap-x-4 max-w-prose w-full text-[#4a2d24]">
+        <div class="mt-3 sm:mt-4 flex flex-row items-center justify-left gap-x-4 max-w-prose w-full text-som-dark">
           <!-- Like button -->
           <% if show_likes && user_signed_in? %>
             <%= render "likes/button", likeable: devlog %>

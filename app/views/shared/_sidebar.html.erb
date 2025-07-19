@@ -12,11 +12,11 @@
   }
 } do %>
   <div
-    class="flex flex-col transition-all duration-300 text-[#4A2D24] h-full w-[220px] justify-between relative"
+    class="flex flex-col transition-all duration-300 text-som-dark h-full w-[220px] justify-between relative"
     data-sidebar-target="sidebar">
     <div class="flex flex-col">
       <button
-        class="p-1 hover:bg-[#4A2D24]/10 rounded-lg transition-all absolute -top-5 right-0"
+        class="p-1 hover:bg-som-dark/10 rounded-lg transition-all absolute -top-5 right-0 cursor-pointer"
         data-sidebar-target="pinButton"
         data-action="click->sidebar#togglePin">
         <svg xmlns="http://www.w3.org/2000/svg" class="opacity-50 hover:opacity-100 w-5 h-5 rotate-45 transition-transform" data-sidebar-target="pinIcon" viewBox="0 0 24 24"><path fill="currentColor" d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h2.6v-6H19v-2z" /></svg>
@@ -30,6 +30,7 @@
             text: "Campfire",
             icon: "campfire",
             large: true,
+            animate_push: true,
             highlight: current_page?(campfire_path),
             text_attr: {
               data: { sidebar_target: "collapseFade" },
@@ -45,6 +46,7 @@
             text: "Explore",
             icon: (user_is_banned || !tab_unlocked) ? "lock" : "compass",
             large: true,
+            animate_push: true,
             highlight: current_page?(explore_path),
             text_attr: {
               data: { sidebar_target: "collapseFade" },
@@ -61,6 +63,7 @@
             text: "Projects",
             icon: (user_is_banned || !tab_unlocked) ? "lock" : "user",
             large: true,
+            animate_push: true,
             highlight: current_page?(my_projects_path),
             text_attr: {
               data: { sidebar_target: "collapseFade" },
@@ -77,6 +80,7 @@
             text: "Vote",
             icon: (user_is_banned || !tab_unlocked) ? "lock" : "vote",
             large: true,
+            animate_push: true,
             highlight: current_page?(new_vote_path),
             text_attr: {
               data: { sidebar_target: "collapseFade" },
@@ -93,6 +97,7 @@
             text: "Shop",
             icon: user_is_banned ? "lock" : "shop",
             large: true,
+            animate_push: true,
             highlight: current_page?(shop_path),
             text_attr: {
               data: { sidebar_target: "collapseFade" },
@@ -109,6 +114,7 @@
               text: "gork",
               icon: "ai",
               large: true,
+              animate_push: true,
               highlight: current_page?(gork_path),
               text_attr: {
                 data: { sidebar_target: "collapseFade", turbo: false },
@@ -126,6 +132,7 @@
             text: "Map",
             icon: tab_unlocked?(:map) ? "map" : "lock",
             large: true,
+            animate_push: true,
             highlight: current_page?(map_path),
             text_attr: {
               data: { sidebar_target: "collapseFade" },
@@ -143,6 +150,7 @@
               text: "Admin",
               icon: "edit",
               large: true,
+              animate_push: true,
               text_attr: {
                 data: { sidebar_target: "collapseFade" },
                 class: "text-3xl"
@@ -157,6 +165,7 @@
               text: "Ship Certs",
               icon: "edit",
               large: true,
+              animate_push: true,
               text_attr: {
                 data: { sidebar_target: "collapseFade" },
                 class: "text-3xl"
@@ -170,25 +179,27 @@
   </div>
 
     <div class="flex flex-col gap-4">
-      <div class="flex items-center justify-center bg-[#4A2D24]/10 rounded-full p-2 relative min-w-[40px]">
-        <picture class="inline-block w-6 h-6 flex-shrink-0">
-          <source srcset="/shell.avif" type="image/avif">
-          <source srcset="/shell.webp" type="image/webp">
-          <img src="/shell.png" class="inline-block w-6 h-6" alt="shell" loading="lazy">
-        </picture>
-        <span class="text-xl font-semibold whitespace-nowrap" data-sidebar-target="collapseFade"><span class="ml-1"><%= current_user.balance.to_i %></span></span>
-      </div>
-
       <div class="relative flex flex-col items-start">
         <div class="flex items-center w-full">
           <%= image_tag current_user.avatar, class: "h-12 w-12 rounded-full flex-shrink-0" %>
 
-          <div class="flex flex-col w-full ml-3 overflow-ellipsis overflow-hidden" data-sidebar-target="collapseHide">
+          <div class="flex flex-col w-full ml-3 overflow-ellipsis overflow-hidden" data-sidebar-target="collapseFade">
             <% admin_tool show_in_impersonate: true do %>
               <div><%= current_user.id %></div>
             <% end %>
-            <div class="h-4">Hello,</div>
-            <div class="text-xl whitespace-nowrap overflow-ellipsis"><%= render "shared/user_display_name", user: current_user %>!</div>
+            <div class="h-4 flex items-center">
+              <picture class="inline-block w-4 h-4 flex-shrink-0">
+                <source srcset="/shell.avif" type="image/avif">
+                <source srcset="/shell.webp" type="image/webp">
+                <img src="/shell.png" class="w-4 h-4" alt="shell" loading="lazy">
+              </picture>
+
+              <span class="font-extrabold whitespace-nowrap">
+                <span class="ml-1"><%= current_user.balance.to_i %></span>
+              </span>
+            </div>
+
+            <div class="text-xl whitespace-nowrap overflow-ellipsis"><%= render "shared/user_display_name", user: current_user %></div>
             <% admin_user_visit(current_user) %>
             <% if impersonating? %>
               <% admin_tool show_in_impersonate: true do %>
@@ -206,6 +217,7 @@
             icon: "exit",
             method: :delete,
             target: logout_path,
+            animate_push: true,
             icon_size: "6",
             class: "cursor-pointer",
             text_attr: {
