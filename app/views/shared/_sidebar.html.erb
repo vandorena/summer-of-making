@@ -179,25 +179,27 @@
   </div>
 
     <div class="flex flex-col gap-4">
-      <div class="flex items-center justify-center bg-som-dark/10 rounded-full p-2 relative min-w-[40px]">
-        <picture class="inline-block w-6 h-6 flex-shrink-0">
-          <source srcset="/shell.avif" type="image/avif">
-          <source srcset="/shell.webp" type="image/webp">
-          <img src="/shell.png" class="inline-block w-6 h-6" alt="shell" loading="lazy">
-        </picture>
-        <span class="text-xl font-semibold whitespace-nowrap" data-sidebar-target="collapseFade"><span class="ml-1"><%= current_user.balance.to_i %></span></span>
-      </div>
-
       <div class="relative flex flex-col items-start">
         <div class="flex items-center w-full">
           <%= image_tag current_user.avatar, class: "h-12 w-12 rounded-full flex-shrink-0" %>
 
-          <div class="flex flex-col w-full ml-3 overflow-ellipsis overflow-hidden" data-sidebar-target="collapseHide">
+          <div class="flex flex-col w-full ml-3 overflow-ellipsis overflow-hidden" data-sidebar-target="collapseFade">
             <% admin_tool show_in_impersonate: true do %>
               <div><%= current_user.id %></div>
             <% end %>
-            <div class="h-4">Hello,</div>
-            <div class="text-xl whitespace-nowrap overflow-ellipsis"><%= render "shared/user_display_name", user: current_user %>!</div>
+            <div class="h-4 flex items-center">
+              <picture class="inline-block w-4 h-4 flex-shrink-0">
+                <source srcset="/shell.avif" type="image/avif">
+                <source srcset="/shell.webp" type="image/webp">
+                <img src="/shell.png" class="w-4 h-4" alt="shell" loading="lazy">
+              </picture>
+
+              <span class="font-extrabold whitespace-nowrap">
+                <span class="ml-1"><%= current_user.balance.to_i %></span>
+              </span>
+            </div>
+
+            <div class="text-xl whitespace-nowrap overflow-ellipsis"><%= render "shared/user_display_name", user: current_user %></div>
             <% admin_user_visit(current_user) %>
             <% if impersonating? %>
               <% admin_tool show_in_impersonate: true do %>
