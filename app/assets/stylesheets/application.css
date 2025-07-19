@@ -136,11 +136,11 @@ main {
 
 /* Angry question mark. Chris calls it angry.¯\_(ツ)_/¯ */
 .tutorial-help-btn {
-  background: #2563eb;
+  background: #F28657;
 }
 
 .tutorial-help-btn:hover {
-  background: #2563eb;
+  background: #ff9668;
 }
 
 .video-autoplay {
