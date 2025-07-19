@@ -7,7 +7,10 @@
       <p class="mb-6 sm:mb-8 text-black text-large sm:text-xl 2xl:text-2xl">Posting devlogs is current locked. It'll open on May 16th!</p>
     </div>
   <% else %>
-    <h3 class="text-xl md:text-2xl 2xl:text-3xl mb-3 md:mb-4">Add Devlog</h3>
+    <h3 class="text-xl md:text-2xl 2xl:text-3xl mb-3 md:mb-4 flex items-center gap-2">
+      <%= inline_svg("icons/quill.svg", class: "w-6 h-6") %>
+      Add Devlog
+    </h3>
 
     <%
       has_hackatime_time = @project.can_post_devlog?
