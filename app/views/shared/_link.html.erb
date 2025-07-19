@@ -31,13 +31,16 @@
         larger underline). Defaults to false.
     - hop:
         If true, when hovered, the link content will do a small, cute little hop!
+    - animate_push:
+        If true, when clicked, the link will have a push-in animation.
 %>
 <% raise "shared/link requires 'text' as a local" unless local_assigns[:text] %>
 
-<% as_button    = local_assigns[:as_button] %>
-<% highlight    = local_assigns.fetch(:highlight, false) %>
-<% large        = local_assigns.fetch(:large, false) %>
-<% hop          = local_assigns.fetch(:hop, false) %>
+<% as_button        = local_assigns[:as_button] %>
+<% highlight        = local_assigns.fetch(:highlight, false) %>
+<% large            = local_assigns.fetch(:large, false) %>
+<% hop              = local_assigns.fetch(:hop, false) %>
+<% animate_push     = local_assigns.fetch(:animate_push, false) %>
 <% content_attr     = local_assigns.fetch(:content_attr, {}) %>
 <% text_attr        = local_assigns.fetch(:text_attr, {}) %>
 <% underline_attr   = local_assigns.fetch(:underline_attr, {}) %>
@@ -62,7 +65,7 @@
 
   <%= content_tag :button, btn_opts do %>
     <%= tag.span(
-      class: "som-link-content #{'som-link-hop' if hop} #{content_attr.delete(:class)}".strip,
+      class: "som-link-content #{'som-link-hop' if hop} #{'som-link-push' if animate_push} #{content_attr.delete(:class)}".strip,
       **content_attr
     ) do %>
       <% if local_assigns[:icon] %>
@@ -86,7 +89,7 @@
 <% else %>
   <%= button_to target, method: http_method, class: final_class do %>
     <%= tag.span(
-      class: "som-link-content #{'som-link-hop' if hop} #{content_attr.delete(:class)}".strip,
+      class: "som-link-content #{'som-link-hop' if hop} #{'som-link-push' if animate_push} #{content_attr.delete(:class)}".strip,
       **content_attr
     ) do %>
       <% if local_assigns[:icon] %>

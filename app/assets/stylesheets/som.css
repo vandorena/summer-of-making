@@ -287,8 +287,12 @@ textarea.som-horizontal-input[placeholder=" "] {
   animation: single-hop 0.3s ease;
 }
 
-.som-link-hop:active {
-  transform: scale(0.8);
+.som-link-push {
+  transition: transform .3s;
+
+  &:active {
+    transform: scale(0.8);
+  }
 }
 
 @keyframes single-hop {

@@ -30,6 +30,7 @@
             text: "Campfire",
             icon: "campfire",
             large: true,
+            animate_push: true,
             highlight: current_page?(campfire_path),
             text_attr: {
               data: { sidebar_target: "collapseFade" },
@@ -45,6 +46,7 @@
             text: "Explore",
             icon: (user_is_banned || !tab_unlocked) ? "lock" : "compass",
             large: true,
+            animate_push: true,
             highlight: current_page?(explore_path),
             text_attr: {
               data: { sidebar_target: "collapseFade" },
@@ -61,6 +63,7 @@
             text: "Projects",
             icon: (user_is_banned || !tab_unlocked) ? "lock" : "user",
             large: true,
+            animate_push: true,
             highlight: current_page?(my_projects_path),
             text_attr: {
               data: { sidebar_target: "collapseFade" },
@@ -77,6 +80,7 @@
             text: "Vote",
             icon: (user_is_banned || !tab_unlocked) ? "lock" : "vote",
             large: true,
+            animate_push: true,
             highlight: current_page?(new_vote_path),
             text_attr: {
               data: { sidebar_target: "collapseFade" },
@@ -93,6 +97,7 @@
             text: "Shop",
             icon: user_is_banned ? "lock" : "shop",
             large: true,
+            animate_push: true,
             highlight: current_page?(shop_path),
             text_attr: {
               data: { sidebar_target: "collapseFade" },
@@ -109,6 +114,7 @@
               text: "gork",
               icon: "ai",
               large: true,
+              animate_push: true,
               highlight: current_page?(gork_path),
               text_attr: {
                 data: { sidebar_target: "collapseFade", turbo: false },
@@ -126,6 +132,7 @@
             text: "Map",
             icon: tab_unlocked?(:map) ? "map" : "lock",
             large: true,
+            animate_push: true,
             highlight: current_page?(map_path),
             text_attr: {
               data: { sidebar_target: "collapseFade" },
@@ -143,6 +150,7 @@
               text: "Admin",
               icon: "edit",
               large: true,
+              animate_push: true,
               text_attr: {
                 data: { sidebar_target: "collapseFade" },
                 class: "text-3xl"
@@ -157,6 +165,7 @@
               text: "Ship Certs",
               icon: "edit",
               large: true,
+              animate_push: true,
               text_attr: {
                 data: { sidebar_target: "collapseFade" },
                 class: "text-3xl"
@@ -206,6 +215,7 @@
             icon: "exit",
             method: :delete,
             target: logout_path,
+            animate_push: true,
             icon_size: "6",
             class: "cursor-pointer",
             text_attr: {
