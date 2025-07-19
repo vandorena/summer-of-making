@@ -109,17 +109,31 @@
       </div>
     </div>
 
-    <div class="flex flex-wrap items-center space-x-2 mb-1 ml-2 text-sm md:text-base 2xl:text-lg text-som-dark">
-      <button data-controller="modal" data-action="click->modal#open" data-modal-id="<%= @project.id %>" data-modal-type="follower" class="hover:underline cursor-pointer duration-200">
-        <span class="text-som-dark"><%= @project.followers.count %> </span> <%= "follower".pluralize(@project.followers.count) %>
+    <div class="flex gap-3 flex-wrap items-center space-x-2 mb-1 ml-2 text-sm md:text-base 2xl:text-lg text-som-dark">
+      <button
+        data-controller="modal"
+        data-action="click->modal#open"
+        data-modal-id="<%= @project.id %>"
+        data-modal-type="follower"
+        class="flex items-center gap-2 hover:underline cursor-pointer duration-200"
+      >
+        <%= inline_svg("icons/users.svg", class: "w-4 h-4") %>
+        <span class="text-som-dark"><%= @project.followers.count %> <%= "follower".pluralize(@project.followers.count) %></span>
       </button>
-      •&nbsp;
-      <span class="text-som-dark"><%= @project.devlogs_count %> </span> <%= "devlog".pluralize(@project.devlogs_count) %>
-      •&nbsp;
+
+      <div class="flex items-center gap-2">
+        <%= inline_svg("icons/quill.svg", class: "w-4 h-4") %>
+        <span class="text-som-dark"><%= @project.devlogs_count %> <%= "devlog".pluralize(@project.devlogs_count) %></span>
+      </div>
+
       <%
         total_time_seconds = @project.total_seconds_coded
       %>
-      <span class="text-som-dark"><%= format_seconds(total_time_seconds) %></span>
+      <div class="flex items-center gap-2">
+        <%= inline_svg("icons/time.svg", class: "w-4 h-4") %>
+        <span class="text-som-dark"><%= format_seconds(total_time_seconds) %></span>
+      </div>
+
       <% if @project.certification_visible_to?(current_user) %>
         •&nbsp;
         <% if policy(@project).can_see_certification_details? %>
@@ -146,9 +160,10 @@
       <% end %>
     </div>
 
-    <div class="flex items-center space-x-2 mb-3 ml-2 md:mb-4 text-sm md:text-base 2xl:text-lg text-som-dark">
-      created by&nbsp;<span class="font-extrabold">
-        <%= render "shared/user_display_name", user: @project.user %><% admin_user_visit(@project.user) %>
+    <div class="flex items-center gap-2 space-x-2 mb-3 ml-2 md:mb-4 text-sm md:text-base 2xl:text-lg text-som-dark">
+      <%= inline_svg("icons/user.svg", class: "w-4 h-4 m-0") %>
+      <span>
+        created by&nbsp;<span class="font-extrabold"><%= render "shared/user_display_name", user: @project.user %><% admin_user_visit(@project.user) %></span>
       </span>
     </div>
 
