@@ -14,7 +14,7 @@
 <%
     button_type = local_assigns.fetch(:type, :button)
     kind = local_assigns.fetch(:kind, :primary)
-    
+
     button_class = case kind
         when :primary then "som-button-primary"
         when :secondary then "som-button-secondary"
@@ -26,7 +26,7 @@
     <% if local_assigns[:icon] %>
         <%= inline_svg("icons/#{local_assigns[:icon]}", class: "w-4 h-4") %>
     <% end %>
-    
+
     <span><%= local_assigns[:text] %></span>
 <% end %>
 

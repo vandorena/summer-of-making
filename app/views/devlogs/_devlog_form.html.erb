@@ -74,19 +74,21 @@
 
         <div class="space-y-1.5 md:space-y-2">
           <%= f.label :file, "Attachment (Required)", class: "block text-base md:text-lg 2xl:text-xl" %>
-          <%= f.file_field :file,
-            class: "w-full border-2 border-som-bright p-2 focus:outline-none focus:border-som-dark text-base md:text-lg 2xl:text-xl rounded-md cursor-pointer transition-colors",
-            accept: "image/*,video/*,audio/*",
-            required: true
+          <%=
+            f.file_field :file,
+              class: "w-full border-2 border-som-bright p-2 focus:outline-none focus:border-som-dark text-base md:text-lg 2xl:text-xl rounded-md cursor-pointer transition-colors",
+              accept: "image/*,video/*,audio/*",
+              required: true
           %>
           <p class="text-sm text-gray-600">Supports images, audio, video, and GIFs (Required)</p>
         </div>
 
         <div class="flex justify-end space-x-4 pt-6">
-          <%= render "shared/button",
-            data: { form_target: "submitButton" },
-            icon: "quill.svg",
-            text: "Create Devlog"
+          <%=
+            render "shared/button",
+              data: { form_target: "submitButton" },
+              icon: "quill.svg",
+              text: "Create Devlog"
           %>
         </div>
       </div>
