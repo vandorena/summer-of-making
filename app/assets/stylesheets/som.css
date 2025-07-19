@@ -213,7 +213,11 @@
   display: flex;
   gap: 8px;
   align-items: center;
-  transition: background .25s;
+  transition: background .25s, transform .25s;
+
+  &:active {
+    transform: scale(.8);
+  }
 }
 
 .som-button-primary {
