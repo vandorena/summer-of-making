@@ -341,7 +341,7 @@
         <%=
           render "shared/button",
             text: "Next",
-            data: { shipTarget: "nextButton1", action: "ship#next1" },
+            data: { ship_target: "nextButton1", action: "ship#next1" },
             icon: "check_circle.svg"
         %>
       </div>
@@ -386,7 +386,7 @@
         <%=
           render "shared/button",
             text: "Go Back",
-            data: { shipTarget: "backButton1", action: "ship#back1" },
+            data: { ship_target: "backButton1", action: "ship#back1" },
             icon: "back_circle.svg",
             kind: :secondary
         %>
@@ -394,7 +394,7 @@
         <%=
           render "shared/button",
             text: all_requirements_met ? "Next: Check Links" : "Complete Requirements First",
-            data: { shipTarget: "nextButton2", action: "ship#next2" },
+            data: { ship_target: "nextButton2", action: "ship#next2" },
             icon: "check_circle.svg",
             disabled: not all_requirements_met
         %>
@@ -409,9 +409,9 @@
       </div>
 
       <div class="mb-6">
-        <p data-ship-target="statusText" class="text-center text-lg mb-4 p-2 border-2 border-saddle-taupe/30 bg-soft-bone/50">Ready to check your links...</p>
+        <p data-ship-target="statusText" class="text-center text-lg mb-4 p-2 border-2 border-saddle-taupe/30 bg-soft-bone/50 rounded-md">Ready to check your links...</p>
 
-        <div class="space-y-4 p-4 border-2 border-saddle-taupe/30 bg-soft-bone/50">
+        <div class="space-y-4 p-4 border-2 border-saddle-taupe/30 bg-soft-bone/50 rounded-md">
           <h5 class="text-base md:text-lg mb-2">Link Status:</h5>
 
           <% if @project.repo_link.present? %>
@@ -451,19 +451,19 @@
           <% end %>
 
           <div class="text-center mt-4 mb-1">
-            <button type="button" onclick="window.location.href='<%= edit_project_path(@project).to_json %>'" class="text-sm text-nice-blue underline">
+            <a href="<%= edit_project_path(@project)%>" class="text-sm text-nice-blue underline">
               Edit Project Links
-            </button>
+            </a>
           </div>
 
         </div>
       </div>
 
-      <div class="mb-4 p-4 border-2 border-saddle-taupe/30 bg-soft-bone/50">
+      <div class="mb-4 p-4 border-2 border-saddle-taupe/30 bg-soft-bone/50 rounded-md">
         <div class="flex items-start mb-4" data-ship-target="confirmCheckbox">
           <div class="flex-shrink-0 h-6 w-6 mt-0.5">
             <label for="no-404-links">
-              <div class="h-5 w-5 border-2 border-gray-400 flex items-center justify-center">
+              <div class="som-checkbox" data-ship-target="no404CheckboxParent">
                 <input type="checkbox" id="no-404-links" class="sr-only" data-ship-target="no404Checkbox" data-action="change->ship#toggleNo404Check">
                 <div data-ship-target="no404Check" class="hidden">
                   <%= inline_svg "check.svg", class: "h-3 w-3 text-white" %>
@@ -471,6 +471,7 @@
               </div>
             </label>
           </div>
+
           <span class="ml-2 text-gray-600">
             <label for="no-404-links">
               <strong>I confirm that:</strong>
@@ -486,12 +487,21 @@
 
       <%= form_with(model: @project, url: ship_project_path(@project), method: :patch, data: { ship_target: "form", action: "submit->ship#submit" }) do |form| %>
         <div class="mt-6 flex justify-center space-x-4">
-          <button type="button" class="px-4 py-2 btn-pixel bg-nice-blue text-white hover:scale-[1.05] transition-transform 2xl:text-xl" data-ship-target="backButton2" data-action="ship#back2">
-            Go Back
-          </button>
-          <button type="submit" class="px-4 py-2 btn-pixel bg-forest/70 cursor-not-allowed text-white hover:scale-[1.05] transition-transform 2xl:text-xl" data-ship-target="submitButton" disabled>
-            Ship It!
-          </button>
+          <%=
+            render "shared/button",
+              text: "Go Back",
+              data: { ship_target: "backButton2", action: "ship#back2" },
+              icon: "back_circle.svg",
+              kind: :secondary
+          %>
+
+          <%=
+            render "shared/button",
+              text: "Ship It!",
+              data: { ship_target: "submitButton" },
+              icon: "ship.svg",
+              disabled: true
+          %>
         </div>
       <% end %>
     </div>
