@@ -380,7 +380,7 @@
         <div class="text-som-dark flex flex-col xl:flex-row space-y-5 xl:space-y-0">
           <div>
             <div class="flex items-center justify-between mb-4">
-              <h2 class="text-xl font-semibold">Todo list:</h2>
+              <h2 class="text-xl">Todo list:</h2>
             </div>
 
             <div class="space-y-4">
@@ -389,7 +389,7 @@
                   <input type="checkbox" class="w-5 h-5 text-som-dark border-som-dark rounded-md focus:ring-som-dark focus:ring-2" <%= current_user.projects.any? ? 'checked' : '' %> disabled>
                 </div>
                 <div class="flex-1">
-                  <p class="font-medium">Create a project in the <a href="/my_projects" class="text-blue-500 hover:text-blue-700 underline">Projects</a> tab</p>
+                  <p>Create a project in the <a href="/my_projects" class="text-blue-500 hover:text-blue-700 underline">Projects</a> tab</p>
                 </div>
               </div>
 
@@ -398,7 +398,7 @@
                   <input type="checkbox" class="w-5 h-5 text-som-dark border-som-dark rounded-md focus:ring-som-dark focus:ring-2" <%= current_user.devlogs.any? ? 'checked' : '' %> disabled>
                 </div>
                 <div class="flex-1">
-                  <p class="font-medium">Post updates on your devlog as you work</p>
+                  <p>Post updates on your devlog as you work</p>
                 </div>
               </div>
 
@@ -407,7 +407,7 @@
                   <input type="checkbox" class="w-5 h-5 text-som-dark border-som-dark rounded-md focus:ring-som-dark focus:ring-2" <%= current_user.ship_events.any? ? 'checked' : '' %> disabled>
                 </div>
                 <div class="flex-1">
-                  <p class="font-medium">Ship your project when it is ready for others to experience</p>
+                  <p>Ship your project when it is ready for others to experience</p>
                 </div>
               </div>
 
@@ -416,7 +416,7 @@
                   <input type="checkbox" class="w-5 h-5 text-som-dark border-som-dark rounded-md focus:ring-som-dark focus:ring-2" <%= current_user.votes.any? ? 'checked' : '' %> disabled>
                 </div>
                 <div class="flex-1">
-                  <p class="font-medium">Vote on other people's projects to receive your shells</p>
+                  <p>Vote on other people's projects to receive your shells</p>
                 </div>
               </div>
 
@@ -425,7 +425,7 @@
                   <input type="checkbox" class="w-5 h-5 text-som-dark border-som-dark rounded-md focus:ring-som-dark focus:ring-2" <%= current_user.shop_orders.joins(:shop_item).where.not(shop_items: { type: "ShopItem::FreeStickers" }).any? ? 'checked' : '' %> disabled>
                 </div>
                 <div class="flex-1">
-                  <p class="font-medium">Spend your hard-earned shells in the shop</p>
+                  <p>Spend your hard-earned shells in the shop</p>
                 </div>
               </div>
             </div>
