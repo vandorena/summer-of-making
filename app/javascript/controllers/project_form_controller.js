@@ -195,12 +195,10 @@ export default class extends Controller {
 
     if (checked) {
       this.usedAiCheckboxFakeTarget.classList.remove("hidden");
-      checkboxContainer.classList.add("bg-som-dark", "border-som-dark");
-      checkboxContainer.classList.remove("bg-bread");
+      checkboxContainer.classList.add("checked");
     } else {
       this.usedAiCheckboxFakeTarget.classList.add("hidden");
-      checkboxContainer.classList.remove("bg-som-dark", "border-som-dark");
-      checkboxContainer.classList.add("bg-bread");
+      checkboxContainer.classList.remove("checked");
     }
   }
 
@@ -210,8 +208,7 @@ export default class extends Controller {
 
     if (checked) {
       this.yswsSubmissionCheckboxFakeTarget.classList.remove("hidden");
-      checkboxContainer.classList.add("bg-som-dark", "border-som-dark");
-      checkboxContainer.classList.remove("bg-bread");
+      checkboxContainer.classList.add("checked");
 
       // Show the YSWS type dropdown
       if (this.hasYswsTypeContainerTarget) {
@@ -219,8 +216,7 @@ export default class extends Controller {
       }
     } else {
       this.yswsSubmissionCheckboxFakeTarget.classList.add("hidden");
-      checkboxContainer.classList.remove("bg-som-dark", "border-som-dark");
-      checkboxContainer.classList.add("bg-bread");
+      checkboxContainer.classList.remove("checked");
       
       // Hide the YSWS type dropdown and clear selection
       if (this.hasYswsTypeContainerTarget) {

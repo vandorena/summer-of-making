@@ -310,7 +310,7 @@
 <% end %>
 
 <!-- Ship Modal -->
-<div id="ship-modal-<%= @project.id %>" data-controller="ship" class="hidden fixed inset-0 z-50 overflow-auto bg-black/30 flex items-center justify-center p-2 md:p-4" data-ship-target="modal" data-action="click->ship#closeBackground">
+<div id="ship-modal-<%= @project.id %>" data-controller="ship" class="hidden fixed inset-0 z-50 bg-black/30 flex items-center justify-center p-2 md:p-4" data-ship-target="modal" data-action="click->ship#closeBackground">
   <%= render "shared/card", classes: "max-w-2xl max-h-[90vh]" do %>
     <div class="p-3 md:p-4 border-b border-saddle-taupe border-opacity-30 flex-shrink-0">
       <div class="flex justify-between items-center">
@@ -330,12 +330,20 @@
       </div>
 
       <div class="mt-6 flex justify-center space-x-4">
-        <button type="button" class="px-4 py-2 btn-pixel bg-vintage-red text-white hover:scale-[1.05] transition-transform 2xl:text-xl" data-action="ship#close">
-          Not Yet
-        </button>
-        <button type="button" data-ship-target="nextButton1" data-action="ship#next1" class="px-4 py-2 btn-pixel 2xl:text-xl bg-forest text-white hover:scale-[1.05] transition-transform">
-          Next
-        </button>
+        <%=
+          render "shared/button",
+            text: "Not Yet",
+            data: { action: "ship#close" },
+            icon: "back_circle.svg",
+            kind: :secondary
+        %>
+
+        <%=
+          render "shared/button",
+            text: "Next",
+            data: { shipTarget: "nextButton1", action: "ship#next1" },
+            icon: "check_circle.svg"
+        %>
       </div>
     </div>
 
@@ -375,17 +383,26 @@
       <input type="hidden" id="demo-link" value="<%= @project.demo_link.to_json %>">
 
       <div class="mt-6 flex justify-center space-x-4">
-        <button type="button" class="px-4 py-2 btn-pixel bg-nice-blue text-white hover:scale-[1.05] transition-transform 2xl:text-xl" data-ship-target="backButton1" data-action="ship#back1">
-          Go Back
-        </button>
-        <button type="button" data-ship-target="nextButton2" data-action="ship#next2" class="px-4 py-2 btn-pixel <%= all_requirements_met ? 'bg-forest' : 'bg-forest/70 cursor-not-allowed' %> text-white hover:scale-[1.05] transition-transform 2xl:text-xl" <%= all_requirements_met ? '' : 'disabled' %>>
-          <%= all_requirements_met ? 'Next: Check Links' : 'Complete Requirements First' %>
-        </button>
+        <%=
+          render "shared/button",
+            text: "Go Back",
+            data: { shipTarget: "backButton1", action: "ship#back1" },
+            icon: "back_circle.svg",
+            kind: :secondary
+        %>
+
+        <%=
+          render "shared/button",
+            text: all_requirements_met ? "Next: Check Links" : "Complete Requirements First",
+            data: { shipTarget: "nextButton2", action: "ship#next2" },
+            icon: "check_circle.svg",
+            disabled: not all_requirements_met
+        %>
       </div>
     </div>
 
     <!-- Page 3: Link Verification -->
-    <div data-ship-target="page3" class="p-4 md:p-6 overflow-y-auto hidden">
+    <div data-ship-target="page3" class="p-4 md:p-6 overflow-y-auto hidden max-h-[70vh]">
       <div class="text-center mb-6">
         <h4 class="text-xl md:text-2xl 2xl:text-3xl mb-2">Link Verification</h4>
         <p class="text-base md:text-lg mb-4 text-gray-600">Look, I'm not going through airtable to check your links so here's some automated checks. I hope it's bug free.</p>

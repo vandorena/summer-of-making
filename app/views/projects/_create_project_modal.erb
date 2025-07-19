@@ -9,13 +9,6 @@
       </div>
     </div>
 
-    <%
-      checkbox_class = %{
-        h-5 w-5 border-1 border-som-dark bg-bread border-opacity-50 flex
-        items-center justify-center rounded transition-colors
-      }.squish
-    %>
-
     <div class="max-h-[calc(90vh-100px)] overflow-y-auto overflow-x-hidden">
       <%= form_with model: Project.new, class: "p-3 md:p-6 mx-auto w-[calc(100%-2px)]", data: { controller: "project-form repo-autofill", action: "submit->project-form#validateForm" } do |f| %>
 
@@ -67,7 +60,7 @@
           <div class="mb-3 md:mb-6">
             <div class="tooltip-label-container flex items-center space-x-2">
               <label class="flex items-center space-x-2 text-sm cursor-pointer">
-                <div class="<%= checkbox_class %>">
+                <div class="som-checkbox">
                   <%= f.checkbox :ysws_submission, id: "ysws_submission", class: "sr-only", data: { project_form_target: "yswsSubmissionCheckboxReal", action: "change->project-form#toggleYswsSubmission" } %>
                   <div data-project-form-target="yswsSubmissionCheckboxFake" class="hidden">
                     <%= inline_svg_tag "check.svg", class: "h-3 w-3 text-white" %>
@@ -105,7 +98,7 @@
           <div class="mb-3 md:mb-6">
             <div class="tooltip-label-container flex items-center space-x-2">
               <label class="flex items-center space-x-2 text-sm cursor-pointer">
-                <div class="<%= checkbox_class %>">
+                <div class="som-checkbox">
                   <%= f.checkbox :used_ai, id: "used_ai", class: "sr-only", data: { project_form_target: "usedAiCheckboxReal", action: "change->project-form#toggleUsedAiCheck" } %>
                   <div data-project-form-target="usedAiCheckboxFake" class="hidden">
                     <%= inline_svg_tag "check.svg", class: "h-3 w-3 text-white" %>
