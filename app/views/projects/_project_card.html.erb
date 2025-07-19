@@ -162,7 +162,7 @@
     <div class="flex items-center gap-2 space-x-2 mb-3 ml-2 md:mb-4 text-sm md:text-base 2xl:text-lg text-som-dark">
       <%= inline_svg("icons/user.svg", class: "w-4 h-4 m-0") %>
       <span>
-        created by&nbsp;<span class="font-extrabold"><%= render "shared/user_display_name", user: @project.user %><% admin_user_visit(@project.user) %></span>
+        Created by&nbsp;<span class="font-extrabold"><%= render "shared/user_display_name", user: @project.user %><% admin_user_visit(@project.user) %></span>
       </span>
     </div>
 
