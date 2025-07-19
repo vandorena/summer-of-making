@@ -173,24 +173,18 @@
 
     <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
       <% if @project.demo_link.present? %>
-        <a href="<%= @project.demo_link %>" target="_blank"
-           class="px-3 md:px-4 py-3 md:py-2 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 flex-1 text-center btn-pixel text-base md:text-lg 2xl:text-2xl">
-          Demo
-        </a>
+        <%= render "shared/button", text: "Demo", link: @project.demo_link, link_target: "_blank", icon: "world.svg", fill_width: true %>
       <% end %>
+
       <% if @project.repo_link.present? %>
-        <a href="<%= @project.repo_link %>" target="_blank"
-           class="px-3 md:px-4 py-3 md:py-2 bg-nice-blue hover:scale-[1.05] text-white transition-transform duration-300 flex-1 text-center btn-pixel text-base md:text-lg 2xl:text-2xl">
-          Repository
-        </a>
+        <%= render "shared/button", text: "Repository", link: @project.repo_link, link_target: "_blank", icon: "repo.svg", fill_width: true %>
       <% end %>
+
       <% if @project.readme_link.present? %>
-        <a href="<%= @project.readme_link %>" target="_blank"
-           class="px-3 md:px-4 py-3 md:py-2 bg-saddle-taupe hover:scale-[1.05] text-white transition-transform duration-300 flex-1 text-center btn-pixel text-base md:text-lg 2xl:text-2xl">
-          Readme
-        </a>
+        <%= render "shared/button", text: "Readme", link: @project.readme_link, link_target: "_blank", icon: "document.svg", fill_width: true %>
       <% end %>
     </div>
+    
     <%= render "admin/inspector", record: @project, always_inspect: true, show_in_impersonate: true %>
   </div>
 </div>

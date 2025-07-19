@@ -241,6 +241,7 @@ textarea.som-horizontal-input[placeholder=" "] {
   display: flex;
   gap: 8px;
   align-items: center;
+  justify-content: center;
   transition: background .25s, transform .25s;
 
   &:active {
