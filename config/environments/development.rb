@@ -5,8 +5,8 @@ Rails.application.configure do
 
   # Alert N+1 queries and unused eager loading
   config.after_initialize do
-    Bullet.enable        = false
-    Bullet.alert         = false
+    Bullet.enable        = true
+    Bullet.alert         = true
     Bullet.bullet_logger = true
     Bullet.console       = true
     Bullet.rails_logger  = true
