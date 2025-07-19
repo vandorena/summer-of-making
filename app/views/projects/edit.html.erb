@@ -10,31 +10,31 @@
   <%= form_with(model: @project, class: "space-y-4 sm:space-y-6", data: { controller: "project-form", action: "submit->project-form#validateForm" }) do |f| %>
     <div class="space-y-1 sm:space-y-2">
       <%= f.label :title, class: "block text-base sm:text-lg font-medium" %>
-      <%= f.text_field :title, id: "title", class: "som-horizontal-input", data: { project_form_target: "title" } %>
+      <%= f.text_field :title, id: "title", class: "som-horizontal-input", data: { project_form_target: "title" }, placeholder: " " %>
       <p class="text-xs sm:text-sm text-vintage-red hidden" id="titleError" data-project-form-target="titleError"></p>
     </div>
 
     <div class="space-y-1 sm:space-y-2">
       <%= f.label :description, class: "block text-base sm:text-lg font-medium" %>
-      <%= f.text_area :description, id: "description", rows: 4, class: "som-horizontal-input", data: { project_form_target: "description" } %>
+      <%= f.text_area :description, id: "description", rows: 4, class: "som-horizontal-input", data: { project_form_target: "description" }, placeholder: " " %>
       <p class="text-xs sm:text-sm text-vintage-red hidden" id="descriptionError" data-project-form-target="descriptionError"></p>
     </div>
 
     <div class="space-y-1 sm:space-y-2">
       <%= f.label :readme_link, "Readme Link", class: "block text-base sm:text-lg font-medium" %>
-      <%= f.url_field :readme_link, id: "readme", class: "som-horizontal-input", data: { project_form_target: "readme" } %>
+      <%= f.url_field :readme_link, id: "readme", class: "som-horizontal-input", data: { project_form_target: "readme" }, placeholder: " " %>
       <p class="text-xs sm:text-sm text-vintage-red hidden" id="readmeError" data-project-form-target="readmeError"></p>
     </div>
 
     <div class="space-y-1 sm:space-y-2">
       <%= f.label :demo_link, "Demo Link", class: "block text-base sm:text-lg font-medium" %>
-      <%= f.url_field :demo_link, id: "demo", class: "som-horizontal-input", data: { project_form_target: "demo" } %>
+      <%= f.url_field :demo_link, id: "demo", class: "som-horizontal-input", data: { project_form_target: "demo" }, placeholder: " " %>
       <p class="text-xs sm:text-sm text-vintage-red hidden" id="demoError" data-project-form-target="demoError"></p>
     </div>
 
     <div class="space-y-1 sm:space-y-2">
       <%= f.label :repo_link, "Repository Link", class: "block text-base sm:text-lg font-medium" %>
-      <%= f.url_field :repo_link, id: "repo", class: "som-horizontal-input", data: { project_form_target: "repo" } %>
+      <%= f.url_field :repo_link, id: "repo", class: "som-horizontal-input", data: { project_form_target: "repo" }, placeholder: " " %>
       <p class="text-xs sm:text-sm text-vintage-red hidden" id="repoError" data-project-form-target="repoError"></p>
     </div>
 

@@ -190,12 +190,34 @@
 .som-horizontal-input {
   width: 100%;
   padding: .5rem .75rem;
-  border: 1px solid var(--color-som-dark);
-  background-color: var(--color-bread);
-  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background-color: #FFEAD0;
+  background-image: url("input-bg.svg");
+  background-repeat: repeat-x;
+  background-position-y: -200%;
+  border-radius: var(--radius-xl);
+  transition: border-color .25s, background-position-y .25s;
+
+  &:placeholder-shown {
+    background-position-y: 80%;
+  }
 
   &:focus {
     outline: none;
+    border-color: 1px solid var(--color-som-dark);
+    background-position-y: -200%;
+  }
+}
+
+textarea.som-horizontal-input  {
+  background-position-y: 200%;
+
+  &:placeholder-shown {
+    background-position-y: 100%;
+  }
+
+  &:focus {
+    background-position-y: 200%;
   }
 }
 

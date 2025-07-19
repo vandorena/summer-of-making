@@ -29,7 +29,7 @@
               </div>
             </div>
 
-            <%= f.text_field :title, class: "som-horizontal-input", id: "title", data: { project_form_target: "title" } %>
+            <%= f.text_field :title, class: "som-horizontal-input", id: "title", data: { project_form_target: "title" }, placeholder: " " %>
 
             <div class="flex justify-end">
               <p class="mt-1 text-xs md:text-sm text-vintage-red">Required</p>
@@ -45,7 +45,7 @@
                 <span class="tooltiptext">Describe what your project does, how you made it, and what makes it special. This helps others understand your work.</span>
               </div>
             </div>
-            <%= f.text_area :description, rows: 3, class: "som-horizontal-input", id: "description", data: { project_form_target: "description" } %>
+            <%= f.text_area :description, rows: 3, class: "som-horizontal-input", id: "description", data: { project_form_target: "description" }, placeholder: " " %>
             <div class="flex justify-end">
               <p class="mt-1 text-xs md:text-sm text-vintage-red">Required</p>
             </div>
