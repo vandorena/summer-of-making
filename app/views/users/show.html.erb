@@ -208,7 +208,7 @@
                                <%= render "shared/user_display_name", user: project.user %>
                                <span class="text-[#865c39]">created a project</span>
                              </span>
-                             <div class="text-[#B89576]">
+                             <div class="text-som-detail">
                                <span>
                                  <% time_diff = Time.current - project.created_at %>
                                  <% if time_diff >= 86400 %>
@@ -248,7 +248,7 @@
                          </div>
                        <% end %>
 
-                       <div class="flex items-center space-x-4 mt-3 text-sm text-[#B89576]">
+                       <div class="flex items-center space-x-4 mt-3 text-sm text-som-detail">
                          <span><%= pluralize(project.devlogs.count, 'devlog') %></span>
                          <span><%= pluralize(project.followers.count, 'follower') %></span>
                          <% if project.ship_events.any? %>
@@ -281,7 +281,7 @@
                                <%= render "shared/user_display_name", user: user %>
                                <span class="text-[#865c39]">joined Summer of Making</span>
                              </span>
-                             <div class="text-[#B89576]">
+                             <div class="text-som-detail">
                                <span>
                                  <% time_diff = Time.current - user.created_at %>
                                  <% if time_diff >= 86400 %>
