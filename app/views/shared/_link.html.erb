@@ -29,12 +29,15 @@
     - large:
         If true, a the link will be styled to be larger. (text-2xl, larger icon,
         larger underline). Defaults to false.
+    - hop:
+        If true, when hovered, the link content will do a small, cute little hop!
 %>
 <% raise "shared/link requires 'text' as a local" unless local_assigns[:text] %>
 
 <% as_button    = local_assigns[:as_button] %>
 <% highlight    = local_assigns.fetch(:highlight, false) %>
 <% large        = local_assigns.fetch(:large, false) %>
+<% hop          = local_assigns.fetch(:hop, false) %>
 <% content_attr     = local_assigns.fetch(:content_attr, {}) %>
 <% text_attr        = local_assigns.fetch(:text_attr, {}) %>
 <% underline_attr   = local_assigns.fetch(:underline_attr, {}) %>
@@ -59,7 +62,7 @@
 
   <%= content_tag :button, btn_opts do %>
     <%= tag.span(
-      class: "relative z-10 flex items-center space-x-2 #{content_attr.delete(:class)}".strip,
+      class: "som-link-content #{'som-link-hop' if hop} #{content_attr.delete(:class)}".strip,
       **content_attr
     ) do %>
       <% if local_assigns[:icon] %>
@@ -83,7 +86,7 @@
 <% else %>
   <%= button_to target, method: http_method, class: final_class do %>
     <%= tag.span(
-      class: "relative z-10 flex items-center space-x-2 #{content_attr.delete(:class)}".strip,
+      class: "som-link-content #{'som-link-hop' if hop} #{content_attr.delete(:class)}".strip,
       **content_attr
     ) do %>
       <% if local_assigns[:icon] %>

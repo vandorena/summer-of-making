@@ -241,3 +241,32 @@
     background: #362736;
   }
 }
+
+.som-link-content {
+  position: relative;
+  z-index: 10;
+  align-items: center;
+  display: flex;
+  gap: 4px;
+  transition: transform .3s;
+}
+
+.som-link-hop:hover {
+  animation: single-hop 0.3s ease;
+}
+
+.som-link-hop:active {
+  transform: scale(0.8);
+}
+
+@keyframes single-hop {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
