@@ -47,5 +47,7 @@ module Journey
                          expire_after: 30.days,
                          secure: Rails.env.production?,
                          httponly: true
+
+    config.exceptions_app = self.routes
   end
 end
