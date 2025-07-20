@@ -282,6 +282,141 @@
       </details>
     <% end %>
   </div>
+
+  <div class="asec" style="padding: 1.5em;">
+    <h2>reporting</h2>
+    <% reports_by_user = @user.fraud_reports.includes(:suspect) %>
+    <% reports_against_user = FraudReport.joins("JOIN projects ON fraud_reports.suspect_id = projects.id AND fraud_reports.suspect_type = 'Project'").where(projects: { user_id: @user.id }).includes(:suspect, :reporter) %>
+    <div class="agrid">
+      <div>
+        <strong>reports by this person:</strong><br>
+        <span class="pill pill-blue"><%= reports_by_user.count %></span>
+      </div>
+      <div>
+        <strong>reports against this person:</strong><br>
+        <% if reports_against_user.unresolved.any? %>
+          <span class="pill pill-red"><%= reports_against_user.unresolved.count %> open</span>
+        <% else %>
+          <span class="pill pill-green">0 open</span>
+        <% end %>
+        <% if reports_against_user.any? %>
+          <br><small style="color: var(--color-muted);">out of <%= reports_against_user.count %> total</small>
+        <% end %>
+      </div>
+      <div>
+        <strong>open reports by this person:</strong><br>
+        <% if reports_by_user.unresolved.any? %>
+          <span class="pill pill-yellow"><%= reports_by_user.unresolved.count %></span>
+        <% else %>
+          <span class="pill pill-green">0</span>
+        <% end %>
+      </div>
+    </div>
+    <% if reports_against_user.unresolved.any? %>
+      <details style="margin-top: 1em;">
+      <summary><strong style="color: var(--color-red);">reports against this person (<%= reports_against_user.unresolved.count %>)</strong></summary>
+      <div style="margin-top: 1em;">
+        <% reports_against_user.unresolved.order(created_at: :desc).each do |report| %>
+        <div style="background: var(--color-darker); border: 2px solid var(--color-red); border-radius: 6px; padding: 1em; margin-bottom: 0.5em;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5em;">
+          <div>
+            <strong>reporter:</strong>
+            <%= link_to report.reporter.display_name, admin_user_path(report.reporter), style: "color: var(--color-primary);" %>
+            <br>
+            <strong>reported:</strong>
+            <%= link_to "#{report.suspect.title} (##{report.suspect.id})", "https://summer.hackclub.com/projects/#{report.suspect.id}", target: "_blank", style: "color: var(--color-primary);" %>
+            · <%= link_to "View Report", admin_fraud_report_path(report), style: "color: var(--color-primary); font-size: 0.9em;" %>
+          </div>
+          <small style="color: var(--color-muted);">
+            <%= report.created_at.strftime("%m/%d/%Y at %I:%M %p") %>
+          </small>
+          </div>
+          <div style="margin-bottom: 0.5em;">
+          <strong>why?</strong> <%= report.reason %>
+          </div>
+          <div style="display: flex; gap: 0.5em; margin: 0;">
+          <%= button_to "mark resolved", resolve_admin_fraud_report_path(report),
+            method: :patch,
+            class: "abtn primary small",
+            style: "font-size: 0.8em; padding: 0.25em 0.5em; margin: 0;" %>
+          </div>
+        </div>
+        <% end %>
+      </div>
+      </details>
+    <% end %>
+    <% if reports_by_user.unresolved.any? %>
+      <details style="margin-top: 1em;">
+      <summary><strong style="color: var(--color-orange);">reports by this person (<%= reports_by_user.unresolved.count %>)</strong></summary>
+      <div style="margin-top: 1em;">
+        <% reports_by_user.unresolved.order(created_at: :desc).each do |report| %>
+        <div style="background: var(--color-darker); border: 1px solid var(--color-orange); border-radius: 6px; padding: 1em; margin-bottom: 0.5em;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5em;">
+          <div>
+            <strong>reported:</strong>
+            <% if report.suspect_type == "Project" %>
+            <%= link_to "#{report.suspect.title} (##{report.suspect.id})", "https://summer.hackclub.com/projects/#{report.suspect.id}", target: "_blank", style: "color: var(--color-primary);" %>
+            <% else %>
+            <%= report.suspect_type %> #<%= report.suspect_id %>
+            <% end %>
+            · <%= link_to "View Report", admin_fraud_report_path(report), style: "color: var(--color-primary); font-size: 0.9em;" %>
+          </div>
+          <small style="color: var(--color-muted);">
+            <%= report.created_at.strftime("%m/%d/%Y at %I:%M %p") %>
+          </small>
+          </div>
+          <div style="margin-bottom: 0.5em;">
+          <strong>why?</strong> <%= report.reason %>
+          </div>
+          <div style="display: flex; gap: 0.5em; margin: 0;">
+          <%= button_to "mark resolved", resolve_admin_fraud_report_path(report),
+            method: :patch,
+            class: "abtn primary small",
+            style: "font-size: 0.8em; padding: 0.25em 0.5em; margin: 0;" %>
+          </div>
+        </div>
+        <% end %>
+      </div>
+      </details>
+    <% end %>
+    <% all_resolved = reports_by_user.resolved.to_a + reports_against_user.resolved.to_a %>
+    <% if all_resolved.any? %>
+      <details style="margin-top: 1em;">
+        <summary><strong>resolved reports (<%= all_resolved.count %>)</strong></summary>
+        <div style="margin-top: 0.5em;">
+          <% all_resolved.sort_by(&:updated_at).reverse.each do |report| %>
+            <div style="background: var(--color-darker); border: 1px solid var(--color-border); border-radius: 6px; padding: 1em; margin-bottom: 0.5em; opacity: 0.7;">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5em;">
+                <div>
+                  <% if report.reporter == @user %>
+                    <small style="color: var(--color-orange);">filed by this user</small><br>
+                    <strong>reported:</strong>
+                    <% if report.suspect_type == "Project" %>
+                      <%= link_to "#{report.suspect.title} (##{report.suspect.id})", "https://summer.hackclub.com/projects/#{report.suspect.id}", target: "_blank", style: "color: var(--color-primary);" %>
+                    <% else %>
+                      <%= report.suspect_type %> #<%= report.suspect_id %>
+                    <% end %>
+                  <% else %>
+                    <small style="color: var(--color-red);">🚨 Against user's project</small><br>
+                    <strong>reporter:</strong> <%= report.reporter.display_name %><br>
+                    <strong>project:</strong>
+                    <%= link_to "#{report.suspect.title} (##{report.suspect.id})", "https://summer.hackclub.com/projects/#{report.suspect.id}", target: "_blank", style: "color: var(--color-primary);" %>
+                  <% end %>
+                  <span class="pill pill-green" style="margin-left: 0.5em;">resolved</span>
+                </div>
+                <small style="color: var(--color-muted);">
+                  <%= report.created_at.strftime("%m/%d/%Y") %>
+                </small>
+              </div>
+              <div>
+                <strong>why?</strong> <%= report.reason %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </details>
+    <% end %>
+  </div>
 </div>
 
 <div class="asecs">
