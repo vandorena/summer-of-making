@@ -107,24 +107,30 @@
               <div class="space-y-4 sm:space-y-6">
                 <div class="grid grid-cols-1 sm:flex sm:flex-wrap justify-center gap-3 sm:gap-4">
                   <% if project.demo_link.present? %>
-                    <a href="<%= project.demo_link %>" target="_blank"
-                       class="inline-flex items-center gap-2 px-6 sm:px-8 py-3 bg-[#FFE8CD] hover:scale-[1.05] text-som-dark transition-transform duration-300 text-base sm:text-lg 2xl:text-xl rounded-lg font-medium"
-                       onclick="event.stopPropagation()"
-                       data-analytics-link="demo"
-                       data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
-                      <%= inline_svg "icons/world.svg", class: "w-5 h-5 sm:w-6 sm:h-6" %>
-                      Demo
-                    </a>
+                    <%= render "shared/button",
+                        text: "Demo",
+                        href: project.demo_link,
+                        target: "_blank",
+                        type: "secondary",
+                        icon: "world.svg",
+                        onclick: "event.stopPropagation()",
+                        data: {
+                          analytics_link: "demo",
+                          action: "mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick"
+                        } %>
                   <% end %>
                   <% if project.repo_link.present? %>
-                    <a href="<%= project.repo_link %>" target="_blank"
-                       class="inline-flex items-center gap-2 px-6 sm:px-8 py-3 bg-[#FFE8CD] hover:scale-[1.05] text-som-dark transition-transform duration-300 text-base sm:text-lg 2xl:text-xl rounded-lg font-medium"
-                       onclick="event.stopPropagation()"
-                       data-analytics-link="repo"
-                       data-action="mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick">
-                      <%= inline_svg "icons/git.svg", class: "w-5 h-5 sm:w-6 sm:h-6" %>
-                      Repository
-                    </a>
+                    <%= render "shared/button",
+                        text: "Repository",
+                        href: project.repo_link,
+                        target: "_blank",
+                        type: "secondary",
+                        icon: "git.svg",
+                        onclick: "event.stopPropagation()",
+                        data: {
+                          analytics_link: "repo",
+                          action: "mousedown->voting-steps#trackLinkClick touchstart->voting-steps#trackLinkClick keydown->voting-steps#trackLinkClick"
+                        } %>
                   <% end %>
 
                   <%= render "projects/report_button", project: project %>
