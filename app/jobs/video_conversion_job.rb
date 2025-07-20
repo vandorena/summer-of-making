@@ -1,6 +1,6 @@
 class VideoConversionJob < ApplicationJob
   include UniqueJob
-  
+
   queue_as :literally_whenever
 
   def self.perform_unique(ship_certification_id)
