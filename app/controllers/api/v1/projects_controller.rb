@@ -7,7 +7,14 @@ module Api
       before_action :authenticate_user! # fucking over the api clients
 
       def index
-        pagy, projects = pagy(Project.where(is_deleted: false), items: 20)
+        begin
+          pagy, projects = pagy(Project.where(is_deleted: false), items: 20)
+        rescue Pagy::OverflowError
+          render json: {
+            error: "Page out of bounds"
+          }, status: :not_found
+          return
+        end
 
         @projects = projects.map do |project|
           {

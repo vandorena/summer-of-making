@@ -6,7 +6,14 @@ module Api
       include Pagy::Backend
 
       def index
-        pagy, devlogs = pagy(Devlog.all, items: 20)
+        begin
+          pagy, devlogs = pagy(Devlog.all, items: 20)
+        rescue Pagy::OverflowError
+          render json: {
+            error: "Page out of bounds"
+          }, status: :not_found
+          return
+        end
 
         @devlogs = devlogs.map do |devlog|
           {
