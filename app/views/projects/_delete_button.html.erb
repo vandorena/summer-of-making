@@ -19,7 +19,7 @@
         text: "Cancel",
         kind: :primary,
         data: { action: "click->modal#close" } %>
-    
+
     <%= form_with model: @project, url: project_path(@project), method: :delete, local: true, class: "inline-block" do |form| %>
       <%= render "shared/button",
           text: "Delete Project",
