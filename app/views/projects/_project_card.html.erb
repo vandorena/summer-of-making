@@ -247,13 +247,13 @@
       <div class="p-3 md:p-4 overflow-y-auto">
         <% if @latest_ship_certification %>
           <div class="mb-4">
-            <% if @latest_ship_certification.approved? && @latest_ship_certification.proof_video.attached? %>
+            <% if @latest_ship_certification.proof_video.attached? %>
               <div class="mb-4">
                 <p class="font-medium text-sm mb-2">Proof Video:</p>
                 <div class="bg-soft-bone/50 border border-saddle-taupe/30 rounded-lg p-3">
                   <video controls class="w-full max-h-64 rounded">
                     <source src="<%= url_for(@latest_ship_certification.proof_video) %>" type="<%= @latest_ship_certification.proof_video.content_type %>">
-                    Your browser does not support the video tag.
+                    Your browser does not support this video. <%= link_to "Download it instead.", url_for(@latest_ship_certification.proof_video), class: "text-nice-blue underline" %>
                   </video>
                   <p class="text-xs text-gray-600 mt-2">
                     <%= @latest_ship_certification.proof_video.filename %> • <%= number_to_human_size(@latest_ship_certification.proof_video.byte_size) %>
