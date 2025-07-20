@@ -1,5 +1,5 @@
 class Mole::BrowserTestJob < ApplicationJob
-  queue_as :default
+  queue_as :literally_whenever
 
   def perform
     Rails.logger.info "Starting browser test job"

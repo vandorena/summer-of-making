@@ -1,5 +1,5 @@
 class AwardBadgesJob < ApplicationJob
-  queue_as :default
+  queue_as :latency_5m
 
   def perform(user_id, trigger_event = nil, backfill = false)
     user = User.find(user_id)

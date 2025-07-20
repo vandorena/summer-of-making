@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Shop::UpdateHCBLocksJob < ApplicationJob
-  queue_as :default
+  queue_as :latency_10s
 
   def perform(shop_item_id)
     shop_item = ShopItem.find(shop_item_id)

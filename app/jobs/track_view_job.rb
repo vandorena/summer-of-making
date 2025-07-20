@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class TrackViewJob < ApplicationJob
-  queue_as :default
+  queue_as :literally_whenever
 
   def perform(viewable_type:, viewable_id:, user_id: nil, ip_address: nil, user_agent: nil)
     viewable = viewable_type.constantize.find_by(id: viewable_id)
