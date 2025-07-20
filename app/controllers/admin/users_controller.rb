@@ -235,6 +235,8 @@ module Admin
         if res.success?
           data = JSON.parse(res.body)
           data["user_id"]
+        elsif res.status == 404
+          nil
         else
           Rails.logger.warn("Hackatime lookup failed for #{email}")
           Honeybadger.notify("Hackatime lookup failed", context: { email: email, status: res.status })
