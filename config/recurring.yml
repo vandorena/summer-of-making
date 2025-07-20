@@ -39,6 +39,7 @@ production:
 
   recalculate_devlog_times:
     class: RecalculateDevlogTimesJob
+    command: perform_unique
     schedule: every minute
     concurrency: 1
     description: "Recalculate devlogs' seconds_coded columns"
