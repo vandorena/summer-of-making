@@ -100,7 +100,13 @@ module Admin
       rejection_reason = params[:rejection_reason]
       unless rejection_reason
         redirect_to @shop_order, notice: "you need to provide a rejection reason!"
+        return
       end
+
+      if @shop_order.aasm_state == "on_hold"
+        @shop_order.take_off_hold!
+      end
+
       @shop_order.mark_rejected!(rejection_reason)
       @shop_order.create_activity("reject", parameters: { rejection_reason: })
       flash[:success] = "rejected with extreme prejudice..."
