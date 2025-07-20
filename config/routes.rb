@@ -176,6 +176,13 @@ class AdminConstraint
 end
 
 Rails.application.routes.draw do
+  # Temporary flash testing routes (remove after testing)
+  if Rails.env.development?
+    get "/test/flash/notice", to: "flash_test#test_notice"
+    get "/test/flash/alert", to: "flash_test#test_alert"
+    get "/test/flash/both", to: "flash_test#test_both"
+  end
+
   mount ActiveInsights::Engine => "/insights"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -314,7 +321,7 @@ Rails.application.routes.draw do
   namespace :admin, constraint: AdminConstraint do
     mount MissionControl::Jobs::Engine, at: "jobs"
     mount AhoyCaptain::Engine, at: "ahoy_captain"
-    mount Blazer::Engine, at: "blazer"
+    mount Blazer::Engine, at: "flipper"
     mount Flipper::UI.app(Flipper), at: "flipper"
     # mount_avo
     get "/", to: "static_pages#index", as: :root
