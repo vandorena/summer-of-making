@@ -1,4 +1,6 @@
 class RecalculateDevlogTimesJob < ApplicationJob
+  include UniqueJob
+  
   queue_as :literally_whenever
 
   def perform

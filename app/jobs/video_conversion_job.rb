@@ -1,12 +1,10 @@
 class VideoConversionJob < ApplicationJob
+  include UniqueJob
+  
   queue_as :literally_whenever
 
   def self.perform_unique(ship_certification_id)
-    return if SolidQueue::Job.where(
-      class_name: "VideoConversionJob"
-    ).where(finished_at: nil, arguments: [ ship_certification_id ]).exists?
-
-    perform_later(ship_certification_id)
+    perform_unique_with_args(ship_certification_id)
   end
 
   def perform(ship_certification_id)
