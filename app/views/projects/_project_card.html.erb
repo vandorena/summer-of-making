@@ -251,10 +251,13 @@
               <div class="mb-4">
                 <p class="font-medium text-sm mb-2">Proof Video:</p>
                 <div class="bg-soft-bone/50 border border-saddle-taupe/30 rounded-lg p-3">
-                  <video controls class="w-full max-h-64 rounded">
+                  <video controls class="w-full max-h-64 rounded mb-3">
                     <source src="<%= url_for(@latest_ship_certification.proof_video) %>" type="<%= @latest_ship_certification.proof_video.content_type %>">
-                    Your browser does not support this video. <%= link_to "Download it instead.", url_for(@latest_ship_certification.proof_video), class: "text-nice-blue underline" %>
+                    Your browser does not support this video format.
                   </video>
+                  <div class="flex items-center justify-between text-xs text-gray-600">
+                    <span>Having trouble viewing? <%= link_to "Download video", url_for(@latest_ship_certification.proof_video), class: "text-nice-blue underline" %></span>
+                  </div>
                   <p class="text-xs text-gray-600 mt-2">
                     <%= @latest_ship_certification.proof_video.filename %> • <%= number_to_human_size(@latest_ship_certification.proof_video.byte_size) %>
                   </p>
