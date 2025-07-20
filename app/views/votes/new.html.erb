@@ -109,7 +109,7 @@
                   <% if project.demo_link.present? %>
                     <%= render "shared/button",
                         text: "Demo",
-                        href: project.demo_link,
+                        link: project.demo_link,
                         target: "_blank",
                         type: "secondary",
                         icon: "world.svg",
@@ -122,7 +122,7 @@
                   <% if project.repo_link.present? %>
                     <%= render "shared/button",
                         text: "Repository",
-                        href: project.repo_link,
+                        link: project.repo_link,
                         target: "_blank",
                         type: "secondary",
                         icon: "git.svg",
