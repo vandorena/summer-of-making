@@ -76,7 +76,7 @@ class User < ApplicationRecord
     return all if query.blank?
 
     query = "%#{query}%"
-    res = where(
+    where(
       "first_name ILIKE ? OR last_name ILIKE ? OR email ILIKE ? OR slack_id ILIKE ? OR display_name ILIKE ? OR identity_vault_id ILIKE ?",
       query, query, query, query, query, query
     )
@@ -111,7 +111,7 @@ class User < ApplicationRecord
         }.to_json)
       end
 
-      UpdateSlackAvatarJob.perform_for_user(user)
+      user.refresh_profile!
 
       return user
     end
@@ -176,6 +176,74 @@ class User < ApplicationRecord
         raise
       end
     end
+  end
+
+  def refresh_profile!
+    Rails.logger.tagged("ProfileRefresh") do
+      Rails.logger.info({
+        event: "refreshing_profile_data",
+        user_id: id,
+        slack_id: slack_id
+      }.to_json)
+    end
+
+    user_info = User.fetch_slack_user_info(slack_id)
+
+    new_display_name = user_info.user.profile.display_name.presence || user_info.user.profile.real_name
+    new_email = user_info.user.profile.email
+    new_timezone = user_info.user.tz
+    new_avatar = user_info.user.profile.image_original.presence || user_info.user.profile.image_512
+
+    changes = {}
+    changes[:display_name] = { from: display_name, to: new_display_name } if display_name != new_display_name
+    changes[:email] = { from: email, to: new_email } if email != new_email
+    changes[:timezone] = { from: timezone, to: new_timezone } if timezone != new_timezone
+    changes[:avatar] = { from: avatar, to: new_avatar } if avatar != new_avatar
+
+    if changes.any?
+      Rails.logger.tagged("ProfileRefresh") do
+        Rails.logger.info({
+          event: "profile_changes_detected",
+          user_id: id,
+          slack_id: slack_id,
+          changes: changes
+        }.to_json)
+      end
+
+      update!(
+        display_name: new_display_name,
+        email: new_email,
+        timezone: new_timezone,
+        avatar: new_avatar
+      )
+
+      Rails.logger.tagged("ProfileRefresh") do
+        Rails.logger.info({
+          event: "profile_refresh_success",
+          user_id: id,
+          slack_id: slack_id
+        }.to_json)
+      end
+    else
+      Rails.logger.tagged("ProfileRefresh") do
+        Rails.logger.debug({
+          event: "profile_refresh_no_change",
+          user_id: id,
+          slack_id: slack_id
+        }.to_json)
+      end
+    end
+  rescue StandardError => e
+    Rails.logger.tagged("ProfileRefresh") do
+      Rails.logger.error({
+        event: "profile_refresh_failed",
+        user_id: id,
+        slack_id: slack_id,
+        error: e.message
+      }.to_json)
+    end
+
+    Honeybadger.notify(e, context: { user_id: id, slack_id: slack_id })
   end
 
   def hackatime_projects
