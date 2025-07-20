@@ -8,7 +8,7 @@
       modal_type: "report"
     } %>
 
-<%= render "shared/modal", 
+<%= render "shared/modal",
     id: "report-modal-#{project.id}",
     title: "Report #{project.title}?" do %>
   <%= form_with model: FraudReport.new, url: fraud_reports_path, method: :post, local: true do |form| %>
@@ -21,8 +21,8 @@
       </p>
 
       <div class="mb-4">
-        <%= form.text_area :reason, 
-            placeholder: "Why are you reporting this project?", 
+        <%= form.text_area :reason,
+            placeholder: "Why are you reporting this project?",
             class: "som-horizontal-input w-full rounded-lg resize-none focus:ring-2 focus:ring-nice-blue focus:border-nice-blue transition-colors",
             rows: 4,
             required: true,
@@ -32,11 +32,11 @@
     </div>
 
     <div class="flex justify-end space-x-3 mt-6">
-      <%= render "shared/button", 
-          text: "Cancel", 
+      <%= render "shared/button",
+          text: "Cancel",
           data: { action: "click->modal#close" } %>
-      <%= render "shared/button", 
-          text: "Submit", 
+      <%= render "shared/button",
+          text: "Submit",
           type: :submit %>
     </div>
   <% end %>

@@ -45,9 +45,14 @@
       <% end %>
 
       <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] transform hover:scale-[1.02] transition-transform duration-300 flex flex-col h-full items-center justify-center p-6">
-        <button data-action="click->modal#open" data-modal-type="create-project" class="px-4 md:px-6 py-1 md:py-2 marble-button cursor-pointer">
-          Create Project
-        </button>
+        <%= render "shared/button",
+            text: "Create Project",
+            type: "primary",
+            icon: "plus.svg",
+            data: {
+              action: "click->modal#open",
+              modal_type: "create-project"
+            } %>
       </div>
     <% else %>
       <%= render "shared/card", classes: "col-span-full flex flex-col items-center", padding: "lg" do %>
@@ -73,9 +78,16 @@
         <% end %>
 
         <div class="flex justify-center w-full">
-          <button <%= "disabled" if current_user.hackatime_projects.empty? %> data-action="click->modal#open" data-modal-type="create-project" class="px-4 md:px-6 py-1 md:py-2 marble-button cursor-pointer mx-auto">
-            Create Your Project
-          </button>
+          <%= render "shared/button",
+              text: "Create Your Project",
+              type: "primary",
+              icon: "plus.svg",
+              disabled: current_user.hackatime_projects.empty?,
+              data: {
+                action: "click->modal#open",
+                modal_type: "create-project"
+              },
+              classes: "mx-auto" %>
         </div>
       <% end %>
     <% end %>
