@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module UniqueJob
+module Jobs::Concerns::UniqueJob
   extend ActiveSupport::Concern
 
   class_methods do
