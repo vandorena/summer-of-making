@@ -15,7 +15,12 @@
     </div>
     <%= image_tag 'raffle.png', class: "rounded-lg w-full h-auto object-scale-down aspect-square max-h-48 mb-4" %>
     <div class="mt-auto pt-4">
-      <%= link_to "go!", "https://hcb.hackclub.com/from/summer-of-making-shop/Ml3HeJ", class: "w-full px-4 sm:px-6 py-2 sm:py-3 bg-forest hover:scale-[1.02] text-white transition-transform duration-300 text-base sm:text-lg 2xl:text-xl btn-pixel block text-center cursor-pointer", target: "_blank" %>
+      <%= render "shared/button",
+          text: "Sign me up!",
+          link: "https://hcb.hackclub.com/from/summer-of-making-shop/Ml3HeJ",
+          link_target: "_blank",
+          kind: :buy,
+          fill_width: true %>
     </div>
   </div>
 <% end %>
