@@ -1,23 +1,18 @@
 <% if !project.is_shipped %>
-  <div data-controller="modal" class="cursor-pointer h-min">
-    <%=
-      render "shared/link",
-        text: "Ship It!",
-        class: "cursor-pointer",
-        icon: "ship",
-        hop: true,
-        animate_push: true,
-        as_button: {
-          data: {
-            action: "modal#open",
-            modal_id: "#{project.id}",
-            modal_type: "is_shipped"
-          }
-        }
-    %>
-  </div>
+  <%= render "shared/button",
+      text: "Ship It!",
+      kind: "primary",
+      icon: "ship.svg",
+      data: {
+        controller: "modal",
+        action: "modal#open",
+        modal_id: "#{project.id}",
+        modal_type: "is_shipped"
+      } %>
 <% else %>
-  <div class="px-3 py-2 text-sm md:text-base 2xl:text-xl text-forest/70 font-medium cursor-not-allowed btn-pixel bg-forest/30">
-    Shipped!
-  </div>
+  <%= render "shared/button",
+      text: "Shipped!",
+      kind: "primary",
+      icon: "ship.svg",
+      disabled: true %>
 <% end %>

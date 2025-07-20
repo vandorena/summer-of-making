@@ -1,13 +1,7 @@
 <% if !project.is_shipped %>
-  <div>
-    <%=
-      render "shared/link",
-        text: "Edit",
-        class: "cursor-pointer",
-        hop: true,
-        animate_push: true,
-        target: edit_project_path(project),
-        icon: "edit"
-    %>
-  </div>
+  <%= render "shared/button",
+      text: "Edit",
+      kind: "primary",
+      icon: "edit.svg",
+      link: edit_project_path(project) %>
 <% end %>
