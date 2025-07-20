@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class SyncSlackEmotesJob < ApplicationJob
-  queue_as :default
+  queue_as :literally_whenever
 
   def perform
     Rails.logger.info "Starting Slack emotes sync..."

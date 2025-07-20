@@ -17,7 +17,7 @@ FRAMES_TXT = "frames.txt" # list‑file we’ll generate right here
 E11_VOICE_ID = "CpgXlDvBprXc3q2PyB56"
 
 class GenerateStonkNewsVideoJob < ApplicationJob
-  queue_as :default
+  queue_as :literally_whenever
 
   def perform(*_args)
     audio_tmp = generate_audio

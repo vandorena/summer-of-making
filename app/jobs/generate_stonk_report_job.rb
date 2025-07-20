@@ -4,7 +4,7 @@ require "json"
 require "openai"
 
 class GenerateStonkReportJob < ApplicationJob
-  queue_as :default
+  queue_as :literally_whenever
 
   def perform
     report_data = Stonk.report.to_s

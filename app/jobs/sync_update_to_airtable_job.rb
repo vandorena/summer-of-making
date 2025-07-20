@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class SyncUpdateToAirtableJob < ApplicationJob
-  queue_as :default
+  queue_as :literally_whenever
 
   def perform(devlog_id)
     devlog = Devlog.find(devlog_id)
