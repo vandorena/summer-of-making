@@ -57,21 +57,14 @@ class VideoConversionJob < ApplicationJob
       audio_codec: "aac",
       video_bitrate: "1000k",
       audio_bitrate: "128k",
-      resolution: "1280x720",      # Max 720p for web
-      frame_rate: 30,
       custom: [
         "-preset", "medium",       # Good balance of speed vs quality
         "-crf", "23",              # Good quality setting
         "-movflags", "+faststart", # Enable progressive download
-        "-pix_fmt", "yuv420p"      # Ensure compatibility
+        "-pix_fmt", "yuv420p",     # Ensure compatibility
+        "-vf", "scale='min(1280,iw)':'min(720,ih)':force_original_aspect_ratio=decrease" # Max 1280x720, maintain aspect ratio
       ]
     }
-
-    if movie.width && movie.height
-      if movie.width <= 1280 && movie.height <= 720
-        options.delete(:resolution)
-      end
-    end
 
     movie.transcode(output_path, options)
   end
