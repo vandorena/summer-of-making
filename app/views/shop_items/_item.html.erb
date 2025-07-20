@@ -74,12 +74,11 @@
                               if regional_price == 0
                                 "Acquire!"
                               else
-                                raw("Buy for #{render_shells(regional_price)} shells!")
+                                "Buy for #{render_shells(regional_price)} shells!"
                               end
                             else
-                              raw("#{render_shells(regional_price - current_user.balance)} more shells needed")
+                              "#{render_shells(regional_price - current_user.balance)} more shells needed"
                             end %>
-
             <%= form_with url: order_shop_item_path(item), method: :get, data: { turbo: false }, local: true, class: "w-full" do |form| %>
               <%= render "shared/button",
                   text: button_text,

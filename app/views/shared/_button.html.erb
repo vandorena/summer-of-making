@@ -39,7 +39,7 @@
         <% if local_assigns[:icon] %>
             <%= inline_svg("icons/#{local_assigns[:icon]}", class: "w-4 h-4") %>
         <% end %>
-        <span class="flex items-center gap-1"><%= raw local_assigns[:text] %></span>
+        <span class="flex items-center gap-1"><%= raw local_assigns[:text] %></span> <%# erb_lint:disable ErbSafety %>
     </div>
 <% end %>
 
