@@ -1,32 +1,32 @@
 <% if notice %>
-  <div class="fixed top-4 right-4 left-4 md:left-auto z-50 transform transition-transform duration-500 ease-in-out"
+  <div class="fixed top-4 right-4 left-4 md:left-auto z-50 transform transition-all duration-500 ease-in-out"
        data-controller="flash"
        data-flash-target="message"
        data-flash-hide-after-value="5000">
-    <div class="bg-forest text-white px-4 md:px-6 py-3 shadow-lg flex items-center justify-between btn-pixel max-w-full break-words">
+    <div class="bg-forest text-white px-6 py-4 rounded-xl shadow-lg flex items-center justify-between max-w-md">
       <div class="flex items-center space-x-3 flex-grow mr-4">
-        <%= inline_svg "check.svg", class: "h-5 w-5 md:h-6 md:w-6 flex-shrink-0" %>
-        <p class="text-sm md:text-base"><%= notice %></p>
+        <%= inline_svg "icons/check.svg", class: "h-5 w-5 md:h-6 md:w-6 flex-shrink-0" %>
+        <p class="text-sm md:text-base font-medium"><%= notice %></p>
       </div>
-      <button class="flex-shrink-0 hover:scale-110 transition-transform duration-200" data-action="flash#close">
-        <%= inline_svg "close.svg", class: "h-4 w-4 md:h-5 md:w-5" %>
+      <button class="flex-shrink-0 hover:scale-110 transition-all duration-200 p-1 rounded-full hover:bg-white/50 hover:bg-opacity-20" data-action="flash#close">
+        <%= inline_svg "icons/close.svg", class: "h-4 w-4 md:h-5 md:w-5" %>
       </button>
     </div>
   </div>
 <% end %>
 
 <% if alert %>
-  <div class="fixed top-4 right-4 left-4 md:left-auto z-50 transform transition-transform duration-500 ease-in-out"
+  <div class="fixed top-4 right-4 left-4 md:left-auto z-50 transform transition-all duration-500 ease-in-out"
        data-controller="flash"
        data-flash-target="message"
        data-flash-hide-after-value="5000">
-    <div class="bg-vintage-red text-white px-4 md:px-6 py-3 shadow-lg flex items-center justify-between btn-pixel max-w-full break-words">
+    <div class="bg-vintage-red text-white px-6 py-4 rounded-xl shadow-lg flex items-center justify-between max-w-md">
       <div class="flex items-center space-x-3 flex-grow mr-4">
-        <%= inline_svg "warning.svg", class: "h-5 w-5 md:h-6 md:w-6 flex-shrink-0" %>
-        <p class="text-sm md:text-base"><%= alert %></p>
+        <%= inline_svg "icons/warning.svg", class: "h-5 w-5 md:h-6 md:w-6 flex-shrink-0" %>
+        <p class="text-sm md:text-base font-medium"><%= alert %></p>
       </div>
-      <button class="flex-shrink-0 hover:scale-110 transition-transform duration-200" data-action="flash#close">
-        <%= inline_svg "close.svg", class: "h-4 w-4 md:h-5 md:w-5" %>
+      <button class="flex-shrink-0 hover:scale-110 transition-all duration-200 p-1 rounded-full hover:bg-white/50 hover:bg-opacity-20" data-action="flash#close">
+        <%= inline_svg "icons/close.svg", class: "h-4 w-4 md:h-5 md:w-5" %>
       </button>
     </div>
   </div>
