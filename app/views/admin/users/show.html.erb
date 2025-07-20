@@ -321,10 +321,18 @@
           <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5em;">
           <div>
             <strong>reporter:</strong>
-            <%= link_to report.reporter.display_name, admin_user_path(report.reporter), style: "color: var(--color-primary);" %>
+            <% if report.reporter.present? %>
+              <%= link_to report.reporter.display_name, admin_user_path(report.reporter), style: "color: var(--color-primary);" %>
+            <% else %>
+              <span style="color: var(--color-muted);">Unknown User (deleted)</span>
+            <% end %>
             <br>
             <strong>reported:</strong>
-            <%= link_to "#{report.suspect.title} (##{report.suspect.id})", "https://summer.hackclub.com/projects/#{report.suspect.id}", target: "_blank", style: "color: var(--color-primary);" %>
+            <% if report.suspect.present? %>
+              <%= link_to "#{report.suspect.title} (##{report.suspect.id})", "https://summer.hackclub.com/projects/#{report.suspect.id}", target: "_blank", style: "color: var(--color-primary);" %>
+            <% else %>
+              <span style="color: var(--color-muted);">Deleted project</span>
+            <% end %>
             · <%= link_to "View Report", admin_fraud_report_path(report), style: "color: var(--color-primary); font-size: 0.9em;" %>
           </div>
           <small style="color: var(--color-muted);">
@@ -355,7 +363,11 @@
           <div>
             <strong>reported:</strong>
             <% if report.suspect_type == "Project" %>
-            <%= link_to "#{report.suspect.title} (##{report.suspect.id})", "https://summer.hackclub.com/projects/#{report.suspect.id}", target: "_blank", style: "color: var(--color-primary);" %>
+              <% if report.suspect.present? %>
+                <%= link_to "#{report.suspect.title} (##{report.suspect.id})", "https://summer.hackclub.com/projects/#{report.suspect.id}", target: "_blank", style: "color: var(--color-primary);" %>
+              <% else %>
+                <span style="color: var(--color-muted);">Unknown Project (deleted) (##{report.suspect_id})</span>
+              <% end %>
             <% else %>
             <%= report.suspect_type %> #<%= report.suspect_id %>
             <% end %>
@@ -392,15 +404,28 @@
                     <small style="color: var(--color-orange);">filed by this user</small><br>
                     <strong>reported:</strong>
                     <% if report.suspect_type == "Project" %>
-                      <%= link_to "#{report.suspect.title} (##{report.suspect.id})", "https://summer.hackclub.com/projects/#{report.suspect.id}", target: "_blank", style: "color: var(--color-primary);" %>
+                      <% if report.suspect.present? %>
+                        <%= link_to "#{report.suspect.title} (##{report.suspect.id})", "https://summer.hackclub.com/projects/#{report.suspect.id}", target: "_blank", style: "color: var(--color-primary);" %>
+                      <% else %>
+                        <span style="color: var(--color-muted);">Unknown Project (deleted) (##{report.suspect_id})</span>
+                      <% end %>
                     <% else %>
                       <%= report.suspect_type %> #<%= report.suspect_id %>
                     <% end %>
                   <% else %>
                     <small style="color: var(--color-red);">🚨 Against user's project</small><br>
-                    <strong>reporter:</strong> <%= report.reporter.display_name %><br>
+                    <strong>reporter:</strong> 
+                    <% if report.reporter.present? %>
+                      <%= report.reporter.display_name %>
+                    <% else %>
+                      <span style="color: var(--color-muted);">Unknown User (deleted)</span>
+                    <% end %><br>
                     <strong>project:</strong>
-                    <%= link_to "#{report.suspect.title} (##{report.suspect.id})", "https://summer.hackclub.com/projects/#{report.suspect.id}", target: "_blank", style: "color: var(--color-primary);" %>
+                    <% if report.suspect.present? %>
+                      <%= link_to "#{report.suspect.title} (##{report.suspect.id})", "https://summer.hackclub.com/projects/#{report.suspect.id}", target: "_blank", style: "color: var(--color-primary);" %>
+                    <% else %>
+                      <span style="color: var(--color-muted);">Unknown Project (deleted) (##{report.suspect_id})</span>
+                    <% end %>
                   <% end %>
                   <span class="pill pill-green" style="margin-left: 0.5em;">resolved</span>
                 </div>
