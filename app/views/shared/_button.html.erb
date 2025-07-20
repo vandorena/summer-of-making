@@ -27,6 +27,7 @@
         when :primary then "som-button-primary"
         when :secondary then "som-button-secondary"
         when :danger then "som-button-danger"
+        when :buy then "som-button-buy"
         else "som-button-primary"
     end
 
@@ -34,11 +35,11 @@
 %>
 
 <% button_content = capture do %>
-    <div class="flex items-center gap-2">
+    <div class="flex items-center justify-center gap-2">
         <% if local_assigns[:icon] %>
             <%= inline_svg("icons/#{local_assigns[:icon]}", class: "w-4 h-4") %>
         <% end %>
-        <span><%= local_assigns[:text] %></span>
+        <span class="flex items-center gap-1"><%= raw local_assigns[:text] %></span>
     </div>
 <% end %>
 

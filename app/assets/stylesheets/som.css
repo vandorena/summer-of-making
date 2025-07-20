@@ -233,7 +233,7 @@ textarea.som-horizontal-input[placeholder=" "] {
   }
 }
 
-.som-button-primary, .som-button-secondary, .som-button-danger {
+.som-button-primary, .som-button-secondary, .som-button-danger, .som-button-buy {
   border-radius: 12px;
   cursor: pointer;
   box-shadow: 5px 5px 6px 0px rgba(0, 0, 0, 5%);
@@ -284,6 +284,14 @@ textarea.som-horizontal-input[placeholder=" "] {
   --fg-color: var(--color-som-dark);
   --hover-color: #ff9f9f;
   --click-color: #ff8c8c;
+}
+
+.som-button-buy {
+  --bg-color: #B8FFC2;
+  --bg-disabled-color: #b8a795;
+  --fg-color: var(--color-som-dark);
+  --hover-color: #a3ffb0;
+  --click-color: #8cff9e;
 }
 
 .som-link-content {

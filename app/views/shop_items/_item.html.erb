@@ -60,43 +60,37 @@
       <% already_ordered = item.one_per_person_ever? && current_user.shop_orders.joins(:shop_item).where(shop_item: item).exists? %>
 
       <% if already_ordered %>
-        <%= button_to "Already Ordered", "#", method: :get, disabled: true, class: "w-full px-4 sm:px-6 py-2 sm:py-3 bg-forest text-white text-base sm:text-lg 2xl:text-xl btn-pixel disabled:opacity-40 disabled:cursor-not-allowed block text-center" %>
+        <%= render "shared/button",
+            text: "Already Ordered",
+            kind: :buy,
+            fill_width: true,
+            disabled: true %>
       <% else %>
-        <%= button_to order_shop_item_path(item), method: :get, data: { turbo: false }, class: "w-full px-4 sm:px-6 py-2 sm:py-3 bg-forest hover:scale-[1.02] text-white transition-transform duration-300 text-base sm:text-lg 2xl:text-xl btn-pixel disabled:opacity-40 disabled:cursor-not-allowed block text-center cursor-pointer", disabled: disabled do %>
-          <% if out_of_stock %>
-            <span>Out of Stock</span>
-          <% elsif ineligible %>
-            <span>Not for you!</span>
-          <% elsif item.is_a?(ShopItem::BadgeItem) && !item.can_purchase?(current_user) %>
-            <span>
-              <%= item.prereq(current_user) %>
-            </span>
-          <% elsif !current_user.ysws_verified? && !item.is_a?(ShopItem::FreeStickers) %>
-            <span>
-              You need your ID verified for this
-            </span>
-          <% elsif current_user.balance >= regional_price %>
-            <span>
-              <% if regional_price == 0 %>
-                Acquire!
-              <% else %>
-                <span class="flex items-center justify-center gap-1">Buy for
-                  <span class="flex items-center gap-1">
-                    <%= render_shells regional_price %>
-                  </span>
-                </span>
-              <% end %>
-            </span>
-          <% else %>
-            <span class="flex items-center gap-1 justify-center">
-              <picture>
-                <source srcset="/shell.avif" type="image/avif">
-                <source srcset="/shell.webp" type="image/webp">
-                <img src="/shell.png" width="15px" style="vertical-align:text-top" alt="shell" loading="lazy">
-              </picture>
-              <span><%= (regional_price - current_user.balance).ceil %> needed</span>
-            </span>
-          <% end %>
+        <% button_text = if out_of_stock
+                          "Out of Stock"
+                        elsif ineligible
+                          "Not for you!"
+                        elsif item.is_a?(ShopItem::BadgeItem) && !item.can_purchase?(current_user)
+                          item.prereq(current_user)
+                        elsif !current_user.ysws_verified? && !item.is_a?(ShopItem::FreeStickers)
+                          "Get your ID verified first!"
+                        elsif current_user.balance >= regional_price
+                          if regional_price == 0
+                            "Acquire!"
+                          else
+                            raw("Buy for #{render_shells(regional_price)} shells!")
+                          end
+                        else
+                          raw("#{render_shells(regional_price - current_user.balance)} more shells needed")
+                        end %>
+        
+        <%= form_with url: order_shop_item_path(item), method: :get, data: { turbo: false }, local: true, class: "w-full" do |form| %>
+          <%= render "shared/button",
+              text: button_text,
+              kind: :buy,
+              fill_width: true,
+              disabled: disabled,
+              type: :submit %>
         <% end %>
       <% end %>
     </div>
@@ -106,8 +100,11 @@
       <div class="text-xs text-gray-500 mt-2">
         ≈<%= hours %> <%= "hour".pluralize(hours) %> on an average project
       </div>
+    <% else %>
+      <div class="text-xs text-gray-500 mt-2">
+        This item is free! Go for it!
+      </div>
     <% end %>
-
   </div>
 <% end %>
 
