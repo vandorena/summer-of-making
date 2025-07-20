@@ -276,10 +276,8 @@ Rails.application.routes.draw do
   # Payouts etc
   get "/payouts/:slack_id", to: "payouts#index"
 
-  match "/404", to: "errors#not_found", via: :all
-  match "/500", to: "errors#internal_server_error", via: :all
-  match "/422", to: "errors#unprocessable_entity", via: :all
-  match "/400", to: "errors#bad_request", via: :all
+  get "/404", to: "errors#not_found"
+  get "/500", to: "errors#internal_server"
 
   resources :attachments, only: [] do
     collection do
