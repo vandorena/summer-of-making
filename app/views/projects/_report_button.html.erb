@@ -8,73 +8,36 @@
       modal_type: "report"
     } %>
 
-<!-- Report Modal -->
-<div id="report-modal-<%= project.id %>" data-controller="modal" class="hidden fixed inset-0 z-50 overflow-auto bg-black/30 flex items-center justify-center p-2 md:p-4">
-  <div class="bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] w-full max-w-md mx-2 md:mx-auto relative max-h-[80vh] flex flex-col" data-modal-target="container">
-    <div class="p-3 md:p-4 border-b border-saddle-taupe border-opacity-30 flex-shrink-0">
-      <div class="flex justify-between items-center">
-        <h3 class="text-lg md:text-2xl">Report Project</h3>
-        <button type="button" class="text-gray-600 hover:text-vintage-red cursor-pointer" data-action="click->modal#close">
-          <%= inline_svg_tag "close.svg", class: "h-6 w-6 2xl:h-8 2xl:w-8" %>
-        </button>
+<%= render "shared/modal",
+    id: "report-modal-#{project.id}",
+    title: "Report #{project.title}?" do %>
+  <%= form_with model: FraudReport.new, url: fraud_reports_path, method: :post, local: true do |form| %>
+    <%= form.hidden_field :suspect_type, value: "Project" %>
+    <%= form.hidden_field :suspect_id, value: project.id %>
+
+    <div class="mb-4">
+      <p class="text-md mb-4">
+        We want good, high quality projects on Summer of Making. If you believe this project does not follow that mission, please let us know why:
+      </p>
+
+      <div class="mb-4">
+        <%= form.text_area :reason,
+            placeholder: "Why are you reporting this project?",
+            class: "som-horizontal-input w-full rounded-lg resize-none focus:ring-2 focus:ring-nice-blue focus:border-nice-blue transition-colors",
+            rows: 4,
+            required: true,
+            minlength: 20 %>
+        <p class="text-xs text-gray-500 mt-1">Be as specific as possible, it helps us understand the issue better!</p>
       </div>
     </div>
 
-    <div class="p-3 md:p-4 overflow-y-auto">
-      <%= form_with model: FraudReport.new, url: fraud_reports_path, method: :post, local: true do |form| %>
-        <%= form.hidden_field :suspect_type, value: "Project" %>
-        <%= form.hidden_field :suspect_id, value: project.id %>
-
-        <div class="mb-4">
-          <p class="text-sm text-gray-600 mb-4">
-            If you believe this project violates our community guidelines, please let us know why:
-          </p>
-
-          <div class="space-y-3">
-            <label class="flex items-start space-x-3">
-              <%= form.radio_button :reason, "Did not declare AI help", class: "mt-1" %>
-              <div>
-                <span class="font-medium">Did not declare AI help</span>
-              </div>
-            </label>
-
-            <label class="flex items-start space-x-3">
-              <%= form.radio_button :reason, "Spam or promotional content", class: "mt-1" %>
-              <div>
-                <span class="font-medium">Spam or promotional content</span>
-              </div>
-            </label>
-
-            <label class="flex items-start space-x-3">
-              <%= form.radio_button :reason, "Fake or misleading project", class: "mt-1" %>
-              <div>
-                <span class="font-medium">Fake or misleading project</span>
-              </div>
-            </label>
-
-            <label class="flex items-start space-x-3">
-              <%= form.radio_button :reason, "Plagiarism or stolen content", class: "mt-1" %>
-              <div>
-                <span class="font-medium">Plagiarism or stolen content</span>
-              </div>
-            </label>
-
-            <label class="flex items-start space-x-3">
-              <%= form.radio_button :reason, "Other", class: "mt-1" %>
-              <div>
-                <span class="font-medium">Other</span>
-              </div>
-            </label>
-          </div>
-        </div>
-
-        <div class="flex justify-end space-x-3 mt-6">
-          <button type="button" class="px-4 py-2 text-gray-600 hover:text-gray-800 btn-pixel border border-gray-300 hover:bg-gray-50 transition-colors" data-action="click->modal#close">
-            Cancel
-          </button>
-          <%= form.submit "Submit", class: "px-4 py-2 bg-vintage-red hover:bg-vintage-red/80 text-white btn-pixel hover:scale-[1.05] transition-transform" %>
-        </div>
-      <% end %>
+    <div class="flex justify-end space-x-3 mt-6">
+      <%= render "shared/button",
+          text: "Cancel",
+          data: { action: "click->modal#close" } %>
+      <%= render "shared/button",
+          text: "Submit",
+          type: :submit %>
     </div>
-  </div>
-</div>
+  <% end %>
+<% end %>

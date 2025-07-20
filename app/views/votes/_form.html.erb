@@ -20,7 +20,7 @@
   <%= f.hidden_field :music_played, value: false, data: { voting_steps_target: "musicPlayedInput" } %>
 
   <div class="text-center">
-    <h2 class="text-md sm:text-md md:text-lg lg:text-2xl mb-6 sm:mb-8 text-center text-gray-600">
+    <h2 class="text-md sm:text-md md:text-lg lg:text-2xl mb-6 sm:mb-8 text-center">
       A good ship is technical, creative, and tells the story of how it was made.
       By that definition, which of these two projects is better?
     </h2>
@@ -34,22 +34,28 @@
     <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6 mb-6">
       <label class="flex items-center cursor-pointer">
         <%= f.radio_button :winning_project_id, @projects.first.id, class: "sr-only peer", required: true %>
-        <div class="inline-flex items-center justify-center px-6 sm:px-8 py-3 bg-[#FFE8CD] border-2 border-transparent peer-checked:bg-forest peer-checked:text-white peer-checked:border-forest-dark hover:scale-[1.05] text-som-dark transition-all duration-300 text-base sm:text-lg rounded-lg font-medium min-w-0">
-          <span class=""><%= truncate(@projects.first.title, length: 20) %></span>
+        <div class="som-button-primary peer-checked:!bg-forest peer-checked:!text-white border-2 border-transparent peer-checked:!border-forest transition-all duration-300">
+          <div class="flex items-center gap-2">
+            <span><%= truncate(@projects.first.title, length: 20) %></span>
+          </div>
         </div>
       </label>
 
       <label class="flex items-center cursor-pointer">
         <%= f.radio_button :winning_project_id, "tie", class: "sr-only peer", required: true %>
-        <div class="inline-flex items-center justify-center px-6 sm:px-8 py-3 bg-[#FFE8CD] border-2 border-transparent peer-checked:bg-nice-blue peer-checked:text-white peer-checked:border-nice-blue-dark hover:scale-[1.05] text-som-dark transition-all duration-300 text-base sm:text-lg rounded-lg font-medium min-w-0">
-          Tie
+        <div class="som-button-primary peer-checked:!bg-nice-blue peer-checked:!text-white border-2 border-transparent peer-checked:!border-nice-blue transition-all duration-300">
+          <div class="flex items-center gap-2">
+            <span>Tie</span>
+          </div>
         </div>
       </label>
 
       <label class="flex items-center cursor-pointer">
         <%= f.radio_button :winning_project_id, @projects.last.id, class: "sr-only peer", required: true %>
-        <div class="inline-flex items-center justify-center px-6 sm:px-8 py-3 bg-[#FFE8CD] border-2 border-transparent peer-checked:bg-saddle-taupe peer-checked:text-white peer-checked:border-saddle-taupe-dark hover:scale-[1.05] text-som-dark transition-all duration-300 text-base sm:text-lg rounded-lg font-medium min-w-0">
-          <span class=""><%= truncate(@projects.last.title, length: 20) %></span>
+        <div class="som-button-primary peer-checked:!bg-saddle-taupe peer-checked:!text-white border-2 border-transparent peer-checked:!border-saddle-taupe transition-all duration-300">
+          <div class="flex items-center gap-2">
+            <span><%= truncate(@projects.last.title, length: 20) %></span>
+          </div>
         </div>
       </label>
     </div>
@@ -57,7 +63,7 @@
 
   <div class="space-y-2">
     <%= f.text_area :explanation,
-      class: "w-full p-3 border-2 rounded border-saddle-taupe/70 focus:outline-none focus:border-fores text-base #{'border-vintage-red' if vote.errors[:explanation].any?}",
+      class: "som-horizontal-input w-full rounded-lg resize-none focus:ring-2 focus:ring-nice-blue focus:border-nice-blue transition-colors #{'border-vintage-red' if vote.errors[:explanation].any?}",
       rows: 4,
       required: true,
       placeholder: "Tell us why you made this choice..." %>
@@ -69,9 +75,10 @@
     <% end %>
   </div>
 
-  <div class="text-center">
-    <%= f.submit "Submit Vote",
-      class: "px-6 sm:px-8 py-2 sm:py-3 bg-forest hover:scale-[1.05] text-white transition-transform duration-300 rounded-lg text-base sm:text-lg disabled:bg-gray-400 disabled:hover:scale-100 disabled:cursor-not-allowed",
-      data: { form_target: "submitButton" } %>
+  <div class="flex justify-center items-center w-full">
+    <%= render "shared/button",
+        text: "Submit Vote",
+        type: :submit,
+        data: { form_target: "submitButton" } %>
   </div>
 <% end %>

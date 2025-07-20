@@ -70,8 +70,19 @@ export default class extends Controller {
     if (!modalElement) {
       return
     }
+
     modalElement.classList.remove("hidden")
     document.body.classList.add("overflow-hidden")
+    
+    modalElement.offsetHeight
+    
+    requestAnimationFrame(() => {
+      const content = modalElement.querySelector('.modal-content')
+      if (content) {
+        content.style.transform = 'scale(1) translateY(0)'
+        content.style.opacity = '1'
+      }
+    })
     
     if (modalElement.dataset) {
       modalElement.dataset.openModalType = modalType
@@ -84,8 +95,22 @@ export default class extends Controller {
   }
 
   close() {
-    this.element.classList.add("hidden")
-    document.body.classList.remove("overflow-hidden")
+    const content = this.element.querySelector('.modal-content')
+    
+    if (content) {
+      content.style.transform = 'scale(0.95) translateY(16px)'
+      content.style.opacity = '0'
+    }
+    
+    setTimeout(() => {
+      this.element.classList.add("hidden")
+      document.body.classList.remove("overflow-hidden")
+      
+      if (content) {
+        content.style.transform = 'scale(0.95) translateY(16px)'
+        content.style.opacity = '0'
+      }
+    }, 100)
     
     // Check if this is the hackatime modal and set localStorage
     if (this.element.id === 'hackatime-modal') {
