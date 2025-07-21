@@ -68,10 +68,7 @@ class UsersController < ApplicationController
 
     ahoy.track "tutorial_step_hackatime_redirect", user_id: current_user.id
 
-    bypass_keys = [
-      "04cfb6fb-bb7a-41a4-b6fb-d3a9368c99c7",
-      "3d92e593-db18-4208-961a-cd95f0926cf1"
-    ]
+    bypass_keys = ENV.fetch("HACKATIME_BYPASS_KEYS", "").split(",")
     response = nil
     res = nil
 
