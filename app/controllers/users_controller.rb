@@ -81,7 +81,7 @@ class UsersController < ApplicationController
           f.headers["Rack-Attack-Bypass"] = bypass_key
         end
         .post(
-          "https://hk048kcko8cw88coc08800oc.hackatime.selfhosted.hackclub.com/api/internal/can_i_have_a_magic_link_for/#{current_user.slack_id}",
+          "https://hackatime.hackclub.com/api/internal/can_i_have_a_magic_link_for/#{current_user.slack_id}",
           {
             email: current_user.email,
             return_data: {
