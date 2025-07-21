@@ -90,7 +90,7 @@ class UserHackatimeData < ApplicationRecord
 
       if direct_res.success?
         direct_data = JSON.parse(direct_res.body)
-        direct_data.dig("data", "unique_total_seconds") || direct_data.dig("data", "total_seconds") || 0
+        direct_data.dig("data", "total_seconds")
       else
         Rails.logger.warn "Failed to fetch combined Hackatime data for user #{user.slack_id}: HTTP #{direct_res.status}"
         Honeybadger.notify("UserHackatimeData API failure", context: {
