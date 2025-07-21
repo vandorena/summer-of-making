@@ -18,24 +18,45 @@ namespace :devlogs do
     puts "Starting recalculation process..."
     updated_count = 0
     failed_count = 0
+    processed_count = 0
+    successful_updates = []
 
-    devlogs_to_update.includes(:project, :user).find_each.with_index do |devlog, index|
+    devlogs_to_update.includes(:project, :user).find_each do |devlog|
+      processed_count += 1
+
       begin
-        devlog.recalculate_seconds_coded
-        updated_count += 1
+        success = devlog.recalculate_seconds_coded
 
-        if (index + 1) % 50 == 0
-          puts "Progress: #{index + 1}/#{total_count} processed, #{updated_count} updated, #{failed_count} failed"
+        if success
+          updated_count += 1
+          devlog.reload
+          successful_updates << { id: devlog.id, duration: devlog.duration_seconds } if successful_updates.length < 10
+          puts "[SUCCESS] Devlog #{devlog.id} updated to #{devlog.duration_seconds}s | Progress: #{processed_count}/#{total_count} | Updated: #{updated_count} | Failed: #{failed_count}"
+        else
+          failed_count += 1
+          puts "[FAILED] Devlog #{devlog.id} - API call failed or no hackatime data | Progress: #{processed_count}/#{total_count} | Updated: #{updated_count} | Failed: #{failed_count}"
+          puts "  User: #{devlog.user.email} (slack_id: #{devlog.user.slack_id})"
+          puts "  Project: #{devlog.project.title}"
+          puts "  Hackatime projects: #{devlog.hackatime_projects_key_snapshot}"
+          puts "  Created: #{devlog.created_at}"
         end
       rescue => e
         failed_count += 1
-        puts "Failed to update devlog #{devlog.id}: #{e.message}"
+        puts "[ERROR] Devlog #{devlog.id} raised exception: #{e.message}"
+        puts "  User: #{devlog.user.email} (slack_id: #{devlog.user.slack_id})" if devlog.user
+        puts "  Project: #{devlog.project.title}" if devlog.project
+        puts "  Error details: #{e.class.name} - #{e.message}"
+        puts "  Backtrace: #{e.backtrace.first(3).join(', ')}"
+      end
+
+      if processed_count % 100 == 0
+        success_rate = (updated_count.to_f / processed_count * 100).round(1)
+        puts "🔄 Progress: #{processed_count}/#{total_count} (#{(processed_count.to_f / total_count * 100).round(1)}%) | Success rate: #{success_rate}%"
       end
     end
 
-    puts "Recalculation complete!"
     puts "Total devlogs processed: #{total_count}"
-    puts "Total devlogs updated: #{updated_count}"
-    puts "Total devlogs failed: #{failed_count}"
+    puts "Successfully updated: #{updated_count} (#{(updated_count.to_f / total_count * 100).round(1)}%)"
+    puts "Failed to update: #{failed_count} (#{(failed_count.to_f / total_count * 100).round(1)}%)"
   end
 end

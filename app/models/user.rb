@@ -303,7 +303,7 @@ class User < ApplicationRecord
       url = "https://hackatime.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects&start_date=#{start_date}"
       url += "&end_date=#{end_date}" if end_date.present?
 
-      Faraday.get(url, nil, { "RACK_ATTACK_BYPASS" => Rails.application.credentials.hackatime&.ratelimit_bypass_header }.compact)
+      Faraday.get(url, nil, { "RACK_ATTACK_BYPASS" => ENV["HACKATIME_BYPASS_KEYS"] }.compact)
     end
   end
 
