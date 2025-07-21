@@ -299,7 +299,7 @@ class Project < ApplicationRecord
         message: "Project must have a valid description (at least 30 characters)."
       },
       banner: {
-        met: banner.present?,
+        met: banner.present? || project_image = (devlogs.find { |u| u.file.attached? && u.file.image? }&.file).present?,
         message: "Project must have a banner image."
       },
       previous_payout: {
