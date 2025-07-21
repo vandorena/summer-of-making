@@ -54,7 +54,29 @@
               }
           </style> -->
 
-
+          <div class="mb-6 md:mb-12">
+            <div class="tooltip-label-container">
+              <%= f.label :banner, class: "block text-sm" %>
+                <div class="tooltip">
+                  <span class="question-mark">?</span>
+                  <span class="tooltiptext">An image showing your project (not your code).</span>
+                </div>
+            </div>
+            <div class="relative">
+                <div class="h-32 sm:h-40 w-full rounded-lg border-2 border-dashed border-saddle-taupe hover:border-forest transition-colors cursor-pointer relative overflow-hidden group bg-[#FFEAD0]"
+                    onclick="document.getElementById('banner').click()"
+                    data-project-form-target="bannerDropZone"
+                    data-action="dragover->project-form#handleDragOver dragleave->project-form#handleDragLeave drop->project-form#handleDrop">
+                    <img id="banner-preview" class="absolute inset-0 w-full h-full object-cover hidden" alt="Banner preview" data-project-form-target="bannerPreview">
+                  <div class="absolute inset-0 group-hover:bg-[#F3ECD8]/75 transition-all duration-200 flex items-center justify-center" data-project-form-target="bannerOverlay">
+                    <div class="som-button-primary bg-opacity-90 opacity-0 group-hover:opacity-100 transition-opacity duration-200" data-project-form-target="bannerTextContainer">
+                      <p class="" data-project-form-target="bannerDropText">Upload a banner</p>
+                    </div>
+                  </div>
+                </div>
+              <%= f.file_field :banner, id: "banner", class: "hidden", accept: "image/*", data: { project_form_target: "bannerInput", action: "change->project-form#updateBannerPreview" } %>
+            </div>
+          </div>
 
           <!-- YSWS Submission Section -->
           <div class="mb-3 md:mb-6">

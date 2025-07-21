@@ -22,10 +22,17 @@ export default class extends Controller {
     "yswsTypeContainer",
     "yswsType",
     "yswsTypeError",
+    "bannerInput",
+    "bannerPreview",
+    "bannerDropZone",
+    "bannerDropText",
+    "bannerTextContainer",
+    "bannerOverlay",
   ];
 
   connect() {
     this.element.setAttribute("novalidate", true);
+    this.dragCounter = 0; // Track drag enter/leave events
 
     if (this.hasHackatimeSelectTarget) {
       this.hackatimeSelectTarget.addEventListener(
@@ -266,6 +273,127 @@ export default class extends Controller {
       emptyInput.name = "project[hackatime_project_keys][]";
       emptyInput.value = "";
       this.selectedProjectsTarget.appendChild(emptyInput);
+    }
+  }
+
+  updateBannerPreview(event) {
+    const file = event.target.files[0];
+    if (file) {
+      this.updateBannerFromFile(file);
+    }
+  }
+
+  handleDragOver(event) {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'copy';
+    
+    // Only apply styles on first drag enter
+    if (this.dragCounter === 0) {
+      if (this.hasBannerDropZoneTarget) {
+        this.bannerDropZoneTarget.classList.add('border-forest', 'bg-forest/10');
+        this.bannerDropZoneTarget.classList.remove('border-saddle-taupe');
+      }
+      
+      if (this.hasBannerDropTextTarget) {
+        this.bannerDropTextTarget.textContent = 'Drop to upload';
+      }
+      
+      if (this.hasBannerTextContainerTarget) {
+        this.bannerTextContainerTarget.classList.remove('opacity-0');
+        this.bannerTextContainerTarget.classList.add('opacity-100');
+      }
+      
+      if (this.hasBannerOverlayTarget) {
+        this.bannerOverlayTarget.classList.add('!bg-[#F3ECD8]/75');
+      }
+    }
+    
+    this.dragCounter++;
+  }
+
+  handleDragLeave(event) {
+    event.preventDefault();
+    
+    this.dragCounter--;
+    
+    // Only reset styles when completely leaving the drop zone
+    if (this.dragCounter <= 0) {
+      this.dragCounter = 0;
+      
+      if (this.hasBannerDropZoneTarget) {
+        this.bannerDropZoneTarget.classList.remove('border-forest', 'bg-forest/10');
+        this.bannerDropZoneTarget.classList.add('border-saddle-taupe');
+      }
+      
+      if (this.hasBannerDropTextTarget) {
+        const hasBanner = !this.bannerPreviewTarget.classList.contains('hidden');
+        const isCreateModal = this.bannerDropZoneTarget.classList.contains('bg-[#FFEAD0]');
+        
+        if (hasBanner) {
+          this.bannerDropTextTarget.textContent = 'Upload a new banner';
+        } else if (isCreateModal) {
+          this.bannerDropTextTarget.textContent = 'Upload a banner';
+        } else {
+          this.bannerDropTextTarget.textContent = 'Upload a banner';
+        }
+      }
+      
+      if (this.hasBannerTextContainerTarget) {
+        this.bannerTextContainerTarget.classList.add('opacity-0');
+        this.bannerTextContainerTarget.classList.remove('opacity-100');
+      }
+      
+      if (this.hasBannerOverlayTarget) {
+        this.bannerOverlayTarget.classList.remove('!bg-[#F3ECD8]/75');
+      }
+    }
+  }
+
+  handleDrop(event) {
+    event.preventDefault();
+    
+    // Reset drag counter and styles
+    this.dragCounter = 0;
+    
+    if (this.hasBannerDropZoneTarget) {
+      this.bannerDropZoneTarget.classList.remove('border-forest', 'bg-forest/10');
+      this.bannerDropZoneTarget.classList.add('border-saddle-taupe');
+    }
+    
+    if (this.hasBannerTextContainerTarget) {
+      this.bannerTextContainerTarget.classList.add('opacity-0');
+      this.bannerTextContainerTarget.classList.remove('opacity-100');
+    }
+    
+    if (this.hasBannerOverlayTarget) {
+      this.bannerOverlayTarget.classList.remove('!bg-[#F3ECD8]/75');
+    }
+    
+    const files = event.dataTransfer.files;
+    if (files.length > 0 && files[0].type.startsWith('image/')) {
+      this.bannerInputTarget.files = files;
+      this.updateBannerFromFile(files[0]);
+    }
+  }
+
+  updateBannerFromFile(file) {
+    if (file && this.hasBannerPreviewTarget) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.bannerPreviewTarget.src = e.target.result;
+        this.bannerPreviewTarget.classList.remove('hidden');
+        
+        if (this.hasBannerDropZoneTarget) {
+          // Remove gray background from edit form or default background from create modal
+          this.bannerDropZoneTarget.classList.remove('bg-gray-100', 'bg-[#FFEAD0]');
+        }
+        
+        if (this.hasBannerDropTextTarget) {
+          // Update text to indicate a new banner can be uploaded
+          this.bannerDropTextTarget.textContent = 'Upload a new banner';
+        }
+      };
+      reader.readAsDataURL(file);
     }
   }
 }

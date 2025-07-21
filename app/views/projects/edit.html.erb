@@ -21,6 +21,28 @@
     </div>
 
     <div class="space-y-1 sm:space-y-2">
+      <%= f.label :banner, "Banner Image", class: "block text-base sm:text-lg font-medium" %>
+      <div class="relative">
+          <div class="h-32 sm:h-40 w-full rounded-lg border-2 border-dashed border-saddle-taupe hover:border-forest transition-colors cursor-pointer relative overflow-hidden group <%= @project.banner.present? ? '' : 'bg-[#FFEAD0]' %>"
+               onclick="document.getElementById('banner').click()"
+               data-project-form-target="bannerDropZone"
+               data-action="dragover->project-form#handleDragOver dragleave->project-form#handleDragLeave drop->project-form#handleDrop">
+            <% if @project.banner.present? %>
+              <%= image_tag @project.banner, class: "absolute inset-0 w-full h-full object-cover", alt: "Current banner", id: "banner-preview", data: { project_form_target: "bannerPreview" } %>
+            <% else %>
+              <img id="banner-preview" class="absolute inset-0 w-full h-full object-cover hidden" alt="Banner preview" data-project-form-target="bannerPreview">
+            <% end %>
+            <div class="absolute inset-0 group-hover:bg-[#F3ECD8]/75 transition-all duration-200 flex items-center justify-center" data-project-form-target="bannerOverlay">
+              <div class="som-button-primary bg-opacity-90 opacity-0 group-hover:opacity-100 transition-opacity duration-200" data-project-form-target="bannerTextContainer">
+                <p class="" data-project-form-target="bannerDropText">Upload a <%= if not @project.banner.present? then "new" end%> banner</p>
+              </div>
+            </div>
+          </div>
+        <%= f.file_field :banner, id: "banner", class: "hidden", accept: "image/*", data: { project_form_target: "bannerInput", action: "change->project-form#updateBannerPreview" } %>
+      </div>
+    </div>
+
+    <div class="space-y-1 sm:space-y-2">
       <%= f.label :readme_link, "Readme Link", class: "block text-base sm:text-lg font-medium" %>
       <%= f.url_field :readme_link, id: "readme", class: "som-horizontal-input", data: { project_form_target: "readme" }, placeholder: " " %>
       <p class="text-xs sm:text-sm text-vintage-red hidden" id="readmeError" data-project-form-target="readmeError"></p>
