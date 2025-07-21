@@ -384,12 +384,10 @@ export default class extends Controller {
         this.bannerPreviewTarget.classList.remove('hidden');
         
         if (this.hasBannerDropZoneTarget) {
-          // Remove gray background from edit form or default background from create modal
           this.bannerDropZoneTarget.classList.remove('bg-gray-100', 'bg-[#FFEAD0]');
         }
         
         if (this.hasBannerDropTextTarget) {
-          // Update text to indicate a new banner can be uploaded
           this.bannerDropTextTarget.textContent = 'Upload a new banner';
         }
       };
