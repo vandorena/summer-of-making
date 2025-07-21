@@ -300,7 +300,7 @@ class Project < ApplicationRecord
       },
       banner: {
         met: banner.present?,
-        message: "Project must have a banner image."
+        message: "Project must have a banner image (not from a Devlog)."
       },
       previous_payout: {
         met: latest_ship_certification&.rejected? || unpaid_ship_events_since_last_payout.empty?,
