@@ -16,70 +16,79 @@
   </div>
 
   <script>
-    const area = document.getElementById("ba");
-    const highlight = document.getElementById("bh");
-    const input = document.getElementById("bi");
-    const text = document.getElementById("bt");
-    let dragging = false;
+    function initializeBannerUpload() {
+      const area = document.getElementById("ba");
+      const highlight = document.getElementById("bh");
+      const input = document.getElementById("bi");
+      const text = document.getElementById("bt");
+      let dragging = false;
 
-    function showb() {
-      highlight.classList.add("bg-[#E4DCC6]/80");
-      text.classList.remove("text-transparent");
-      text.classList.add("text-black");
-    }
-    function hideb() {
-      highlight.classList.remove("bg-[#E4DCC6]/80");
-      text.classList.add("text-transparent");
-      text.classList.remove("text-black");
-    }
+      // Make sure this is only initialized once
+      if (area.dataset.initialized) return;
+      area.dataset.initialized = 'true';
 
-    if (input) {
-      input.onchange = ({ target }) => {
-        if (text) text.textContent = "Uploading...hold on tight!";
-        hideb();
-        target.parentNode.submit();
-      };
-    }
+      function showb() {
+        highlight.classList.add("bg-[#E4DCC6]/80");
+        text.classList.remove("text-transparent");
+        text.classList.add("text-black");
+      }
+      function hideb() {
+        highlight.classList.remove("bg-[#E4DCC6]/80");
+        text.classList.add("text-transparent");
+        text.classList.remove("text-black");
+      }
 
-    if (area && input && highlight) {
-      area.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        dragging = true;
-        showb();
-      });
-      area.addEventListener("dragleave", (e) => {
-        dragging = false;
-        hideb();
-      });
-      area.addEventListener("drop", (e) => {
-        e.preventDefault();
-        dragging = false;
-        hideb();
-        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      if (input) {
+        input.onchange = ({ target }) => {
           if (text) text.textContent = "Uploading...hold on tight!";
-          input.files = e.dataTransfer.files;
-          input.dispatchEvent(new Event('change', { bubbles: true }));
-        }
-      });
-      area.addEventListener("paste", (e) => {
-        if (e.clipboardData && e.clipboardData.files && e.clipboardData.files[0]) {
-          showb();
-          if (text) text.textContent = "Uploading...hold on tight!";
-          input.files = e.clipboardData.files;
-          input.dispatchEvent(new Event('change', { bubbles: true }));
-        }
-      });
-      window.addEventListener("dragenter", (e) => {
-        if (e.dataTransfer && Array.from(e.dataTransfer.types).includes("Files")) {
-          showb();
-        }
-      });
-      window.addEventListener("dragleave", (e) => {
-        if (!dragging) {
           hideb();
-        }
-      });
+          target.parentNode.submit();
+        };
+      }
+
+      if (area && input && highlight) {
+        area.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          dragging = true;
+          showb();
+        });
+        area.addEventListener("dragleave", (e) => {
+          dragging = false;
+          hideb();
+        });
+        area.addEventListener("drop", (e) => {
+          e.preventDefault();
+          dragging = false;
+          hideb();
+          if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            if (text) text.textContent = "Uploading...hold on tight!";
+            input.files = e.dataTransfer.files;
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        });
+        area.addEventListener("paste", (e) => {
+          if (e.clipboardData && e.clipboardData.files && e.clipboardData.files[0]) {
+            showb();
+            if (text) text.textContent = "Uploading...hold on tight!";
+            input.files = e.clipboardData.files;
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        });
+        window.addEventListener("dragenter", (e) => {
+          if (e.dataTransfer && Array.from(e.dataTransfer.types).includes("Files")) {
+            showb();
+          }
+        });
+        window.addEventListener("dragleave", (e) => {
+          if (!dragging) {
+            hideb();
+          }
+        });
+      }
     }
+
+    document.addEventListener("DOMContentLoaded", initializeBannerUpload);
+    document.addEventListener("turbo:load", initializeBannerUpload);
   </script>
 
   <div class="p-4 md:p-6">
