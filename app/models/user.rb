@@ -277,7 +277,7 @@ class User < ApplicationRecord
     result = JSON.parse(response.body)
     return 0 unless result&.dig("data", "status") == "ok"
 
-    result.dig("data", "unique_total_seconds") || result.dig("data", "total_seconds") || 0
+    result.dig("data", "total_seconds")
   rescue => e
     Rails.logger.error("Failed to fetch today's hackatime data: #{e.message}")
     0
