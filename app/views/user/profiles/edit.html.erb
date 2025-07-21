@@ -49,6 +49,11 @@
 
         </div>
 
+        <div class="flex items-center">
+          <%= form.check_box :hide_from_logged_out, class: "h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" %>
+          <%= form.label :hide_from_logged_out, "Hide your profile from logged out users? ", class: "ml-2 text-sm font-medium text-gray-700" %>
+        </div>
+
         <div class="mt-8 pt-6 border-t border-gray-200">
           <div class="flex justify-end space-x-3">
             <%= link_to "Cancel", user_path(@user), class: "px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors" %>

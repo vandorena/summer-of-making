@@ -2,12 +2,13 @@
 #
 # Table name: user_profiles
 #
-#  id         :bigint           not null, primary key
-#  bio        :text
-#  custom_css :text
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  user_id    :bigint           not null
+#  id                   :bigint           not null, primary key
+#  bio                  :text
+#  custom_css           :text
+#  hide_from_logged_out :boolean          default(FALSE)
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
+#  user_id              :bigint           not null
 #
 # Indexes
 #
