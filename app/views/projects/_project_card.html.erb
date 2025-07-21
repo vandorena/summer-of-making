@@ -24,9 +24,9 @@
       let dragging = false;
 
       // Make sure this is only initialized once
-      if (area.dataset.initialized) return;
-      area.dataset.initialized = 'true';
-
+      if (area?.dataset.initialized) return;
+      if (area) area.dataset.initialized = 'true';
+      
       function showb() {
         highlight.classList.add("bg-[#E4DCC6]/80");
         text.classList.remove("text-transparent");
