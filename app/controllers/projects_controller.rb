@@ -98,6 +98,9 @@ class ProjectsController < ApplicationController
 
     @project_image = pj_image
 
+    # Handle devlog highlighting for direct devlog links
+    @target_devlog_id = params[:devlog_id] if params[:devlog_id].present?
+
     return unless current_user
 
     if current_user == @project.user && current_user.has_hackatime?

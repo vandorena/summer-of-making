@@ -245,6 +245,7 @@ Rails.application.routes.draw do
       patch :update_coordinates
       delete :unplace_coordinates
       # patch :recover
+      get "devlog/:devlog_id", action: :show, as: :devlog
     end
   end
 
