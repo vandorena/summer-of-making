@@ -73,10 +73,22 @@ class Devlog < ApplicationRecord
 
     # alternatively, record from the beginning of the event
     prev_time ||= begin
-      Time.use_zone("America/New_York") do
+      som_start = Time.use_zone("America/New_York") do
         Time.parse("2025-06-16").beginning_of_day
+      end.utc
+
+      is_first_devlog = Devlog.where(project_id: project_id).where("created_at < ?", created_at).empty?
+
+      if is_first_devlog
+        if created_at.utc < som_start
+          created_at.utc - 24.hours
+        else
+          som_start
+        end
+      else
+        [ som_start, created_at.utc - 24.hours ].max
       end
-    end.utc
+    end
 
     begin
       if hackatime_projects_key_snapshot.present?
@@ -85,25 +97,56 @@ class Devlog < ApplicationRecord
         direct_url = "https://hackatime.hackclub.com/api/v1/users/#{user.slack_id}/stats?filter_by_project=#{encoded_project_keys}&start_date=#{prev_time.iso8601}&end_date=#{created_at.utc.iso8601}&features=projects"
 
         # rake attach bypass
-        headers = { "RACK_ATTACK_BYPASS" => Rails.application.credentials.hackatime&.ratelimit_bypass_header }.compact
+        headers = { "RACK_ATTACK_BYPASS" => ENV["HACKATIME_BYPASS_KEYS"] }.compact
         direct_res = Faraday.get(direct_url, nil, headers)
 
         if direct_res.success?
           direct_data = JSON.parse(direct_res.body)
           duration_seconds = direct_data.dig("data", "unique_total_seconds") || direct_data.dig("data", "total_seconds") || 0
+
+          Rails.logger.info "\tDevlog #{id} duration_seconds: #{duration_seconds}"
+          update!(duration_seconds: duration_seconds, hackatime_pulled_at: Time.now)
+          true
         else
           Rails.logger.error "Hackatime API failed for devlog #{id}: HTTP #{direct_res.status} - #{direct_res.body}"
-          duration_seconds = 0
+          Honeybadger.notify("Hackatime API failed for devlog", context: {
+            devlog_id: id,
+            user_id: user_id,
+            slack_id: user.slack_id,
+            status: direct_res.status,
+            body: direct_res.body.truncate(500)
+          })
+          false
         end
       else
-        duration_seconds = 0
+        if duration_seconds.nil?
+          Rails.logger.info "devlog #{id} has no hackatime projects"
+          Honeybadger.notify("devlog #{id} has no hackatime projects", context: {
+            devlog_id: id,
+            user_id: user_id,
+            project_id: project_id,
+            created_at: created_at,
+            hackatime_projects: hackatime_projects_key_snapshot
+          })
+          update!(duration_seconds: 0, hackatime_pulled_at: Time.now)
+          true
+        else
+          Rails.logger.info "devlog #{id} has no hackatime projects, keeping existing #{duration_seconds}"
+          Honeybadger.notify("devlog #{id} has no hackatime projects, keeping existing duration_seconds", context: {
+            devlog_id: id,
+            user_id: user_id,
+            project_id: project_id,
+            created_at: created_at,
+            hackatime_projects: hackatime_projects_key_snapshot,
+            duration_seconds: duration_seconds
+          })
+          false
+        end
       end
-
-      duration_seconds = 0 if duration_seconds.nil?
-
-      Rails.logger.info "\tDevlog #{id} duration_seconds: #{duration_seconds}"
-      update!(duration_seconds: duration_seconds, hackatime_pulled_at: Time.now)
-      true
+    rescue JSON::ParserError => e
+      Rails.logger.error "JSON parse error in recalculate_seconds_coded for Devlog #{id}: #{e.message}"
+      Honeybadger.notify("Devlog JSON parse error", context: { devlog_id: id, user_id: user_id, error: e.message })
+      false
     rescue => e
       Rails.logger.error "Unexpected error in recalculate_seconds_coded for Devlog #{id}: #{e.message}"
       Honeybadger.notify(
@@ -112,8 +155,6 @@ class Devlog < ApplicationRecord
         context: { devlog_id: id, user_id: user_id, project_id: project_id }
       )
 
-      # set safe defaults
-      update!(duration_seconds: 0, hackatime_pulled_at: Time.now)
       false
     end
   end

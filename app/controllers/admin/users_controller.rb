@@ -223,7 +223,7 @@ module Admin
       begin
         headers = {
           "Authorization" => ENV.fetch("HACKATIME_AUTH_TOKEN"),
-          "RACK_ATTACK_BYPASS" => Rails.application.credentials.hackatime&.ratelimit_bypass_header
+          "RACK_ATTACK_BYPASS" => ENV.fetch("HACKATIME_BYPASS_KEYS")
         }.compact
 
         res = Faraday.get(
