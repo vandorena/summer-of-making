@@ -300,7 +300,7 @@ class Project < ApplicationRecord
       },
       banner: {
         met: banner.present?,
-        message: if !banner.present? && (devlogs.find { |u| u.file.attached? && u.file.image? }&.file).present? then "Project must have a banner image (not from a Devlog)." else "Project must have a banner image." end
+        message: "Project must have a banner image (not from a Devlog)."
       },
       previous_payout: {
         met: latest_ship_certification&.rejected? || unpaid_ship_events_since_last_payout.empty?,
