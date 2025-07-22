@@ -82,7 +82,7 @@ class UserHackatimeData < ApplicationRecord
       end
     end.utc
 
-    direct_url = "https://hackatime.hackclub.com/api/v1/users/#{user.slack_id}/stats?filter_by_project=#{encoded_project_keys}&start_date=#{start_time.iso8601}&features=projects"
+    direct_url = "https://hackatime.hackclub.com/api/v1/users/#{user.slack_id}/stats?filter_by_project=#{encoded_project_keys}&start_date=#{start_time.iso8601}&features=projects&total_seconds=true&boundary_aware=true"
 
     begin
       headers = { "RACK_ATTACK_BYPASS" => ENV["HACKATIME_BYPASS_KEYS"] }.compact
@@ -90,7 +90,7 @@ class UserHackatimeData < ApplicationRecord
 
       if direct_res.success?
         direct_data = JSON.parse(direct_res.body)
-        direct_data.dig("data", "total_seconds")
+        direct_data.dig("total_seconds")
       else
         Rails.logger.warn "Failed to fetch combined Hackatime data for user #{user.slack_id}: HTTP #{direct_res.status}"
         Honeybadger.notify("UserHackatimeData API failure", context: {
