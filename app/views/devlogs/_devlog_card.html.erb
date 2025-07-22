@@ -53,9 +53,7 @@
               <!-- Time info -->
               <% if devlog.duration_seconds.present? && devlog.duration_seconds > 0 %>
                 <span>
-                  <% hours = devlog.duration_seconds / 3600 %>
-                  <% minutes = (devlog.duration_seconds % 3600) / 60 %>
-                  <%= hours > 0 ? "#{hours}h spent working" : "#{minutes}m spent working" %>
+                  <%= format_seconds devlog.duration_seconds %>
                 </span>
                 <span> • </span>
               <% end %>
