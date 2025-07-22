@@ -3,15 +3,14 @@
 require "thread"
 
 namespace :devlogs do
-  desc "Recalculate seconds_coded for devlogs with 0 duration_seconds"
+  desc "Recalculate seconds_coded for all devlogs"
   task recalculate_duration_seconds_without_cap: :environment do
     devlogs_to_update = Devlog.joins(:project)
                              .where(projects: { is_deleted: false })
-                             .where(duration_seconds: 0)
                              .order(id: :desc)
 
     total_count = devlogs_to_update.count
-    puts "Found #{total_count} devlogs with 0 duration_seconds"
+    puts "Found #{total_count} devlogs to process"
 
     if total_count == 0
       puts "No devlogs need updating!"
