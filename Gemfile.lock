@@ -647,7 +647,7 @@ DEPENDENCIES
   aws-sdk-s3
   blazer (~> 3.3)
   bootsnap
-  brakeman
+  brakeman (~> 7.1.0)
   bullet
   capybara
   chartkick (~> 5.1)
