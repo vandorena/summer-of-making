@@ -364,14 +364,6 @@ class User < ApplicationRecord
     staked_projects.distinct.count
   end
 
-  def can_vote?
-    is_admin? || Flipper.enabled?(:can_vote_2025_06_28, self)
-  end
-
-  def mark_vote_tester!
-    Flipper.enable(:can_vote_2025_06_28, self)
-  end
-
   def give_black_market!
     update!(has_black_market: true)
     SendSlackDmJob.perform_later slack_id, <<~EOM
