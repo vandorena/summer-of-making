@@ -326,13 +326,7 @@ export default class extends Controller {
       }
       
       if (this.hasBannerDropTextTarget) {
-        const hasBanner = this.bannerPreviewTarget.dataset.hasBanner === "true";
-        
-        if (hasBanner) {
-          this.bannerDropTextTarget.textContent = 'Upload a new banner';
-        } else {
-          this.bannerDropTextTarget.textContent = 'Upload a banner';
-        }
+        this.bannerDropTextTarget.textContent = 'Upload a banner';
       }
       
       if (this.hasBannerTextContainerTarget) {
