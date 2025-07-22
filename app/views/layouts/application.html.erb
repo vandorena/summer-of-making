@@ -66,22 +66,13 @@
 
     <% if user_signed_in? %>
       <div data-controller="todo" class="relative">
-        <div class="group">
-          <div class="fixed bottom-30 -right-4 z-50 w-20" data-todo-target="callout" data-action="click->todo#toggle">
-            <div class="absolute -top-8 -left-24 p-3 bg-[#F3ECD8] rounded-2xl border-4 border-[#E4DCC6] max-w-[120px] animate-pulse group-hover:animate-none group-hover:scale-110 transition-transform duration-200 -rotate-30">
-              <div class="text-sm text-som-dark font-bold text-center lg:text-lg">Click me!</div>
-              <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-[#E4DCC6]"></div>
-              <div class="absolute top-full left-1/2 transform -translate-x-1/2 translate-y-[-2px] w-0 h-0 border-l-6 border-r-6 border-t-6 border-l-transparent border-r-transparent border-t-[#F3ECD8]"></div>
-            </div>
-          </div>
-          <button
-            data-todo-target="todoButton"
-            data-action="click->todo#toggle"
-            class="bg-[#523A52] group-hover:bg-[#856185] fixed top-4 right-4 md:top-auto md:bottom-8 md:right-6 z-50 w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center transition-all duration-200 group-hover:scale-110 text-white cursor-pointer drop-shadow-md"
-            title="Show todo for this page">
-            <%= inline_svg "icons/clipboard.svg", class: "size-8" %>
-          </button>
-        </div>
+        <button
+          data-todo-target="todoButton"
+          data-action="click->todo#toggle"
+          class="bg-[#523A52] hover:bg-[#856185] fixed top-4 right-4 md:top-auto md:bottom-8 md:right-6 z-50 w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 text-white cursor-pointer drop-shadow-md"
+          title="Show todo for this page">
+          <%= inline_svg "icons/clipboard.svg", class: "size-8" %>
+        </button>
 
         <!-- Todo Modal -->
         <%= render "tutorial/todo_modal" %>
