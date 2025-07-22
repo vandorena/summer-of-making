@@ -28,34 +28,40 @@
   <meta property="og:image:height" content="630">
   <meta name="twitter:image:alt" content="<%= html_escape(@project.title) %> project banner">
 
-  <% if @target_devlog_id %>
-    <style>
-      .devlog-highlight {
-        background-color: #fef3c7 !important;
-        border: 2px solid #f59e0b !important;
-        transition: all 0.3s ease;
+  <style>
+    .devlog-highlight {
+      background-color: #fef3c7 !important;
+      border: 2px solid #f59e0b !important;
+      transition: all 0.3s ease;
+    }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      let targetDevlogId = <%= @target_devlog_id.to_json.html_safe %>;
+      
+      if (!targetDevlogId && window.location.hash) {
+        const hashMatch = window.location.hash.match(/^#devlog_(\d+)$/);
+        if (hashMatch) {
+          targetDevlogId = hashMatch[1];
+        }
       }
-    </style>
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const targetDevlog = document.getElementById('devlog_<%= @target_devlog_id.to_json.html_safe %>');
+
+      if (targetDevlogId) {
+        const targetDevlog = document.getElementById('devlog_' + targetDevlogId);
         if (targetDevlog) {
-          // Scroll to the devlog with some offset
           setTimeout(function() {
             targetDevlog.scrollIntoView({ behavior: 'smooth', block: 'center' });
           }, 100);
 
-          // Add highlight class
           targetDevlog.classList.add('devlog-highlight');
 
-          // Remove highlight after 5 seconds
           setTimeout(function() {
             targetDevlog.classList.remove('devlog-highlight');
           }, 5000);
         }
-      });
-    </script>
-  <% end %>
+      }
+    });
+  </script>
 <% end %>
 
 <div data-controller="image-viewer">
