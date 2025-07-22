@@ -94,7 +94,7 @@ class Devlog < ApplicationRecord
       if hackatime_projects_key_snapshot.present?
         project_keys = hackatime_projects_key_snapshot.join(",")
         encoded_project_keys = URI.encode_www_form_component(project_keys)
-        direct_url = "https://hackatime.hackclub.com/api/v1/users/#{user.slack_id}/stats?filter_by_project=#{encoded_project_keys}&start_date=#{prev_time.iso8601}&end_date=#{created_at.utc.iso8601}&features=projects"
+        direct_url = "https://hackatime.hackclub.com/api/v1/users/#{user.slack_id}/stats?filter_by_project=#{encoded_project_keys}&start_date=#{prev_time.iso8601}&end_date=#{created_at.utc.iso8601}&features=projects&total_seconds=true&boundary_aware=true"
 
         # rake attach bypass
         headers = { "RACK_ATTACK_BYPASS" => ENV["HACKATIME_BYPASS_KEYS"] }.compact
@@ -102,7 +102,7 @@ class Devlog < ApplicationRecord
 
         if direct_res.success?
           direct_data = JSON.parse(direct_res.body)
-          duration_seconds = direct_data.dig("data", "total_seconds")
+          duration_seconds = direct_data.dig("total_seconds")
 
           Rails.logger.info "\tDevlog #{id} duration_seconds: #{duration_seconds}"
           update!(duration_seconds: duration_seconds, hackatime_pulled_at: Time.now)
