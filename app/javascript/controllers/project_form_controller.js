@@ -327,7 +327,7 @@ export default class extends Controller {
       
       if (this.hasBannerDropTextTarget) {
         const hasBanner = this.bannerPreviewTarget.dataset.hasBanner === "true";
-        const isCreateModal = this.bannerDropZoneTarget.classList.contains('bg-[#FFEAD0]');
+        const isCreateModal = this.bannerDropZoneTarget.dataset.mode === 'create';
         
         if (hasBanner) {
           this.bannerDropTextTarget.textContent = 'Upload a new banner';
