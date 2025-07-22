@@ -11,12 +11,18 @@ module ApplicationHelper
   end
 
   def format_seconds(seconds)
+    # 3660 => "1h 1m"
+    # 3600 => "1h"
+    # 60 => "1m"
     return "0h 0m" if seconds.nil? || seconds.zero?
 
     hours = seconds / 3600
     minutes = (seconds % 3600) / 60
 
-    "#{hours}h #{minutes}m"
+    result = []
+    result << "#{hours}h" if hours.positive?
+    result << "#{minutes}m" if minutes.positive?
+    result.join(" ")
   end
 
   def admin_tool(class_name = "", element = "div", show_in_impersonate: false, **, &)
