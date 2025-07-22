@@ -38,7 +38,7 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       let targetDevlogId = <%= @target_devlog_id.to_json.html_safe %>;
-      
+
       if (!targetDevlogId && window.location.hash) {
         const hashMatch = window.location.hash.match(/^#devlog_(\d+)$/);
         if (hashMatch) {
