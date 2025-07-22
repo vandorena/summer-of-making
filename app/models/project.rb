@@ -59,14 +59,14 @@ class Project < ApplicationRecord
 
   def self.airtable_field_mappings
     {
-      '_ship_events' => 'airtable_ship_event_record_ids'
+      "_ship_events" => "airtable_ship_event_record_ids"
     }
   end
 
   def airtable_ship_event_record_ids
     ship_events.joins(:airtable_sync)
                .where.not(airtable_syncs: { airtable_record_id: nil })
-               .pluck('airtable_syncs.airtable_record_id')
+               .pluck("airtable_syncs.airtable_record_id")
   end
 
   has_many :ship_certifications

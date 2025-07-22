@@ -31,14 +31,14 @@ class ShipEvent < ApplicationRecord
 
   def self.airtable_field_mappings
     {
-      'duration_seconds' => 'seconds_covered',
-      '_projects' => 'airtable_project_record_ids'
+      "duration_seconds" => "seconds_covered",
+      "_projects" => "airtable_project_record_ids"
     }
   end
 
   def airtable_project_record_ids
     return [] unless project.airtable_synced?
-    [project.airtable_record_id]
+    [ project.airtable_record_id ]
   end
 
   def user

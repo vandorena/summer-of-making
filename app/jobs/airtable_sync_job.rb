@@ -43,12 +43,12 @@ class AirtableSyncJob < ApplicationJob
     upserted_records = table.batch_upsert(records, "som_id")
 
     airtable_records = upserted_records[:records] || []
-    
+
     sync_records.each do |sync_record|
       airtable_record = airtable_records.find do |record|
         record["fields"]["som_id"] == sync_record.syncable.id.to_s
       end
-      
+
       if airtable_record
         sync_record.update!(
           airtable_record_id: airtable_record["id"],
