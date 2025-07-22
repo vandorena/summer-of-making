@@ -78,6 +78,14 @@
         <%= render "tutorial/todo_modal" %>
       </div>
 
+      <% if !current_page?(campfire_path) %>
+        <div class="bg-black/75 absolute inset-0 z-40 text-white">
+          <div class="absolute bottom-24 right-24">
+            <%= inline_svg "swirly-arrow.svg", class: "size-52 rotate-90" %>
+          </div>
+        </div>
+      <% end %>
+
       <div>
         <%= render "tutorial/tutorial" %>
         <% if current_user.tutorial_progress.should_show_completion_modal? %>
