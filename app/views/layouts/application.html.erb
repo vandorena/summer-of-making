@@ -78,7 +78,7 @@
           <!-- Todo Modal -->
           <%= render "tutorial/todo_modal" %>
 
-          <% if !current_page?(campfire_path) && !current_user.tutorial_progress.soft_step_completed?("todo") && current_user.projects.empty? %>
+          <% if !current_page?(campfire_path) && !current_user.tutorial_progress.soft_step_completed?("todo") && current_user.tutorial_progress.completed? && current_user.projects.empty? %>
             <div class="bg-black/75 absolute inset-0 z-40 text-white cursor-pointer" data-todo-target="overlay" data-action="click->todo#completeAndHideOverlay">
               <div class="absolute bottom-24 right-24">
                 <p class="text-3xl pr-8 pb-4">Check your todo list here!</p>
