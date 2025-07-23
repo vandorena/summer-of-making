@@ -65,27 +65,29 @@
     <%# end %>
 
     <% if user_signed_in? %>
-      <div data-controller="todo">
-        <button
-          data-todo-target="todoButton"
-          data-action="click->todo#toggleAndComplete"
-          class="bg-[#523A52] hover:bg-[#856185] fixed hidden top-auto bottom-8 right-6 z-50 w-16 h-16 rounded-full md:flex items-center justify-center transition-all duration-200 hover:scale-110 text-white cursor-pointer drop-shadow-md"
-          title="Show todo for this page">
-          <%= inline_svg "icons/clipboard.svg", class: "size-8" %>
-        </button>
+      <% if !mobile_device? %>
+        <div data-controller="todo">
+          <button
+            data-todo-target="todoButton"
+            data-action="click->todo#toggleAndComplete"
+            class="bg-[#523A52] hover:bg-[#856185] fixed hidden top-auto bottom-8 right-6 z-50 w-16 h-16 rounded-full md:flex items-center justify-center transition-all duration-200 hover:scale-110 text-white cursor-pointer drop-shadow-md"
+            title="Show todo for this page">
+            <%= inline_svg "icons/clipboard.svg", class: "size-8" %>
+          </button>
 
-        <!-- Todo Modal -->
-        <%= render "tutorial/todo_modal" %>
+          <!-- Todo Modal -->
+          <%= render "tutorial/todo_modal" %>
 
-        <% if !current_page?(campfire_path) && !current_user.tutorial_progress.soft_step_completed?("todo") %>
-          <div class="bg-black/75 absolute inset-0 z-40 text-white cursor-pointer" data-todo-target="overlay" data-action="click->todo#completeAndHideOverlay">
-            <div class="absolute bottom-24 right-24">
-              <p class="text-3xl pr-8 pb-4">Check your todo list here!</p>
-              <%= inline_svg "swirly-arrow.svg", class: "size-52 rotate-90 ml-auto" %>
+          <% if !current_page?(campfire_path) && !current_user.tutorial_progress.soft_step_completed?("todo") && current_user.projects.empty? %>
+            <div class="bg-black/75 absolute inset-0 z-40 text-white cursor-pointer" data-todo-target="overlay" data-action="click->todo#completeAndHideOverlay">
+              <div class="absolute bottom-24 right-24">
+                <p class="text-3xl pr-8 pb-4">Check your todo list here!</p>
+                <%= inline_svg "swirly-arrow.svg", class: "size-52 rotate-90 ml-auto" %>
+              </div>
             </div>
-          </div>
-        <% end %>
-      </div>
+          <% end %>
+        </div>
+      <% end %>
 
       <div>
         <%= render "tutorial/tutorial" %>
