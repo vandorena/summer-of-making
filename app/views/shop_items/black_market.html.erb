@@ -1,20 +1,16 @@
-<h1 style="color: white;">heidi's black market :3</h1>
-<%= link_to "<—back to main site...", shop_path %>
-
-<marquee><%=
-[
-    "new listings coming soon!!!",
-    "most trusted vendor on the island",
-    "availability subject to change",
-    "they'll never be able to prove it",
-    "we finalize early"
-].sample
-         %>
-</marquee>
-<p>you want it? it's yours, my friend.</p>
-
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
-  <% @shop_items.each do |item| %>
-    <%= render "shop_items/black_market/item", item: %>
-  <% end %>
+<div class="container">
+  <header>
+    <div class="s header-icon"></div>
+    <span class="header-title">heidi's black market :3</span>
+    <span class="header-out">
+      <%= link_to "logout".html_safe, shop_path %>
+    </span>
+  </header>
+  <main>
+    <div>
+      <% @shop_items.each do |item| %>
+        <%= render "shop_items/black_market/item", item: %>
+      <% end %>
+    </div>
+  </main>
 </div>
