@@ -2,12 +2,13 @@
 #
 # Table name: airtable_syncs
 #
-#  id             :bigint           not null, primary key
-#  last_synced_at :datetime
-#  syncable_type  :string           not null
-#  created_at     :datetime         not null
-#  updated_at     :datetime         not null
-#  syncable_id    :bigint           not null
+#  id                 :bigint           not null, primary key
+#  last_synced_at     :datetime
+#  syncable_type      :string           not null
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  airtable_record_id :string
+#  syncable_id        :bigint           not null
 #
 # Indexes
 #

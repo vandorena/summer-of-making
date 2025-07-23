@@ -240,6 +240,7 @@ Rails.application.routes.draw do
       post :follow
       delete :unfollow
       patch :ship
+      post :request_recertification
       post :stake_stonks
       delete :unstake_stonks
       patch :update_coordinates
