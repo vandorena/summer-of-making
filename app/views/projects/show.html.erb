@@ -3,9 +3,8 @@
   <%
     project_image = @project_image
     project_title = "#{@project.title} by #{@project.user.display_name}"
-    project_description = strip_tags(@project.description).truncate(300)
+    project_description = "#{strip_tags(@project.description).truncate(300)}" # because for some fucking reason there's no SafeBuffer#lol_nvm_not_actually_html_safe
   %>
-
   <meta property="og:title" content="<%= html_escape(project_title) %>">
   <meta property="og:description" content="<%= html_escape(project_description) %>">
   <meta property="og:image" content="<%= html_escape(project_image) %>">
