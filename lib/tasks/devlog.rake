@@ -43,7 +43,7 @@ namespace :debug do
     # Build API URL
     project_keys = devlog.hackatime_projects_key_snapshot.join(",")
     encoded_project_keys = URI.encode_www_form_component(project_keys)
-    url = "https://hackatime.hackclub.com/api/v1/users/#{devlog.user.slack_id}/stats?filter_by_project=#{encoded_project_keys}&start_date=#{prev_time.iso8601}&end_date=#{devlog.created_at.utc.iso8601}&features=projects"
+    url = "https://hackatime.hackclub.com/api/v1/users/#{devlog.user.slack_id}/stats?filter_by_project=#{encoded_project_keys}&start_date=#{prev_time.iso8601}&end_date=#{devlog.created_at.utc.iso8601}&features=projects&test_param=true"
 
     puts "\nAPI Call Details:"
     puts "  Project keys: #{project_keys}"
@@ -104,7 +104,7 @@ namespace :debug do
     puts "TESTING USER'S OVERALL HACKATIME DATA"
     puts "=" * 50
 
-    general_url = "https://hackatime.hackclub.com/api/v1/users/#{devlog.user.slack_id}/stats?features=projects"
+    general_url = "https://hackatime.hackclub.com/api/v1/users/#{devlog.user.slack_id}/stats?features=projects&test_param=true"
     puts "General stats URL: #{general_url}"
 
     begin

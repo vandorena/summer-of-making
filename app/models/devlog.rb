@@ -94,7 +94,7 @@ class Devlog < ApplicationRecord
       if hackatime_projects_key_snapshot.present?
         project_keys = hackatime_projects_key_snapshot.join(",")
         encoded_project_keys = URI.encode_www_form_component(project_keys)
-        direct_url = "https://hackatime.hackclub.com/api/v1/users/#{user.slack_id}/stats?filter_by_project=#{encoded_project_keys}&start_date=#{prev_time.iso8601}&end_date=#{created_at.utc.iso8601}&features=projects&total_seconds=true&boundary_aware=true"
+        direct_url = "https://hackatime.hackclub.com/api/v1/users/#{user.slack_id}/stats?filter_by_project=#{encoded_project_keys}&start_date=#{prev_time.iso8601}&end_date=#{created_at.utc.iso8601}&features=projects&total_seconds=true&test_param=true"
 
         # rake attach bypass
         headers = { "RACK_ATTACK_BYPASS" => ENV["HACKATIME_BYPASS_KEYS"] }.compact
