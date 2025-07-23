@@ -303,7 +303,7 @@ class Project < ApplicationRecord
         message: "Project must have a banner image (not from a Devlog)."
       },
       previous_payout: {
-        met: latest_ship_certification&.rejected? || unpaid_ship_events_since_last_payout.empty?,
+        met: unpaid_ship_events_since_last_payout.empty?,
         message: "Previous ship event must be paid out before shipping again."
       },
       minimum_time: {
@@ -350,6 +350,19 @@ class Project < ApplicationRecord
     return true if user && (user == self.user || user.is_admin?)
 
     false
+  end
+
+  def can_request_recertification?
+    latest_ship_certification&.rejected? &&
+    ship_events.any? &&
+    !latest_ship_certification.pending?
+  end
+
+  def request_recertification!
+    return false unless can_request_recertification?
+
+    # create a new pending ship certification
+    ship_certifications.create!(judgement: :pending)
   end
 
   def unpaid_ship_events_since_last_payout
