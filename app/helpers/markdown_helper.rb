@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module MarkdownHelper
-  class CustomRender < Redcarpet::Render::HTML
+  class CustomRender < Redcarpet::Render::Safe
     def link(link, title, content)
       "<a href='#{link}' title='#{title}' class='text-nice-blue underline' target='_blank'>#{content}</a>"
     end
@@ -17,18 +17,6 @@ module MarkdownHelper
 
     def codespan(code)
       "<code class='bg-gray-900 px-1 py-1 rounded-sm text-forest text-sm'>#{html_escape(code)}</code>"
-    end
-
-    # https://github.com/vmg/redcarpet/blob/master/lib/redcarpet.rb#L50-L60
-    def html_escape(string)
-      string.gsub(/['&\"<>\/]/, {
-        '&' => '&amp;',
-        '<' => '&lt;',
-        '>' => '&gt;',
-        '"' => '&quot;',
-        "'" => '&#x27;',
-        "/" => '&#x2F;',
-      })
     end
   end
 
