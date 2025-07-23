@@ -23,7 +23,7 @@ module UniqueJob
     def pending_job_exists?(args = nil)
       query = SolidQueue::Job.where(
         class_name: name,
-        status: [ :pending, :running ]
+        finished_at: nil
       )
 
       if args.present?
