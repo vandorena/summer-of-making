@@ -106,6 +106,7 @@ class VotesController < ApplicationController
     projects_with_latest_ship = Project
                                   .joins(:ship_events)
                                   .joins(:ship_certifications)
+                                  .joins(:devlogs)
                                   .includes(ship_events: :payouts)
                                   .where(ship_certifications: { judgement: :approved })
                                   .where.not(user_id: current_user.id)
