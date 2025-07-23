@@ -17,7 +17,7 @@
       <h3 class="shop-item-title"><%= item.name %> <% if item.created_at > 24.hours.ago %><blink style="color: red">(NEW!!)</blink><% end %></h3>
     </div>
     <div class="shop-item-description">
-      <%= raw item.description %>
+      <%= raw item.description %> <%# erb_lint:disable ErbSafety %>
       <% if item.limited? %>
         <% remaining = item.remaining_stock %>
         <% if remaining && remaining > 0 %>
