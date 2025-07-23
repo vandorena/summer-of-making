@@ -92,7 +92,7 @@ class Devlog < ApplicationRecord
 
     begin
       if hackatime_projects_key_snapshot.present?
-        project_keys = hackatime_projects_key_snapshot.join(",")
+        project_keys = project.hackatime_keys.join(",")
         encoded_project_keys = URI.encode_www_form_component(project_keys)
         direct_url = "https://hackatime.hackclub.com/api/v1/users/#{user.slack_id}/stats?filter_by_project=#{encoded_project_keys}&start_date=#{prev_time.iso8601}&end_date=#{created_at.utc.iso8601}&features=projects&total_seconds=true&test_param=true"
 
@@ -126,7 +126,7 @@ class Devlog < ApplicationRecord
             user_id: user_id,
             project_id: project_id,
             created_at: created_at,
-            hackatime_projects: hackatime_projects_key_snapshot
+            hackatime_projects: project.hackatime_keys
           })
           update!(duration_seconds: 0, hackatime_pulled_at: Time.now)
           true
@@ -137,7 +137,7 @@ class Devlog < ApplicationRecord
             user_id: user_id,
             project_id: project_id,
             created_at: created_at,
-            hackatime_projects: hackatime_projects_key_snapshot,
+            hackatime_projects: project.hackatime_keys,
             duration_seconds: duration_seconds
           })
           false
