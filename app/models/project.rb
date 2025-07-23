@@ -149,6 +149,7 @@ class Project < ApplicationRecord
     waveband: "Waveband",
     fixit: "FIX IT!",
     twist: "Twist",
+    reality: "Reality",
     other: "Other"
   }
 
