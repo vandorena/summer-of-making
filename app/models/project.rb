@@ -110,6 +110,16 @@ class Project < ApplicationRecord
     joins(:ship_certifications).where(ship_certifications: { judgement: "pending" })
   }
 
+  # Projects eligible for YSWS review
+  scope :ysws_review_eligible, -> {
+    joins(:ship_certifications)
+      .where(ship_certifications: { judgement: "approved" })
+      .where.not(ysws_type: nil)
+      .where(is_deleted: false)
+  }
+
+  has_one :ysws_review_submission, class_name: "YswsReview::Submission", dependent: :destroy
+
   validates :title, presence: true, length: { maximum: 200 }
   validates :description, presence: true, length: { maximum: 2500 }
 
