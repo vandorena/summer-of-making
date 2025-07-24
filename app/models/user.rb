@@ -367,9 +367,9 @@ class User < ApplicationRecord
   def give_black_market!
     update!(has_black_market: true)
     SendSlackDmJob.perform_later slack_id, <<~EOM
-      psst..... hey, kid.
-      heidi said to tell you you've just been given access to the <https://summer.hackclub.com/shop/black_market|[Black Market]>.
-      i'd be careful there if i were you, but what do i know?
+      Psst... hey, kid... Booth’s been watchin’. Says you’re one of the real ones. You build like it means something, not like these others out here playin’ pretend. You build for yourself, for your crew, maybe even for the whole damn world. You get the hustle. You live it.
+      So here’s the deal... he wants you in. On the real goodies. Remember the normal shop? Forget it. That was just the lobby. We got what you’re really lookin’ for now. Welcome to <https://summer.hackclub.com/shop/black_market|heidimarket>.
+      Keep it buried. Eyes low, lips sealed. Last thing we need is the whole block sniffin’ around where they don’t belong.
     EOM
   end
 
