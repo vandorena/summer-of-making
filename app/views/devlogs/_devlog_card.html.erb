@@ -83,7 +83,7 @@
       <div class="<%= content_margin.present? ? content_margin : '' %>">
         <!-- Update content -->
         <div data-devlog-card-target="content" class="prose max-w-[32em] text-som-dark mb-2 sm:mb-3 text-base sm:text-lg 2xl:text-xl break-words overflow-wrap-anywhere">
-          <%= h(devlog.text) %>
+          <%= devlog.formatted_text %>
         </div>
 
         <!-- Attachments -->
