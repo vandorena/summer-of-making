@@ -4,6 +4,7 @@ body {
   color: #000;
   padding-top: 60px;
   font-family: 'Roboto', 'Arial', sans-serif;
+  margin: 0;
 }
 
 .hidden {
@@ -49,7 +50,7 @@ blink, .blink {
 
 .header-title {
   color: #fff;
-  font-size: 2rem;
+  font-size: 30px;
   font-weight: 700;
   letter-spacing: 2px;
   text-shadow: 0 2px 8px #000a;
@@ -200,8 +201,8 @@ body.no_scroll {
 }
 
 main {
-  padding: 2rem;
-  font-family: sans-serif;
+  padding: 0 10px;
+  margin: 0;
 }
 
 .loader {
@@ -339,9 +340,7 @@ main {
   flex-direction: row;
   align-items: flex-start;
   background: #fff;
-  border-left: 1px solid #d1d1d1;
-  border-right: 1px solid #d1d1d1;
-  border-bottom: 1px solid #d1d1d1;
+  border-bottom: 1px solid #efefed;
   box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
   padding: 9px 12px;
   gap: 16px;
@@ -416,19 +415,18 @@ main {
 }
 
 .shop-item-btn {
-  background: #1A1E23;
+  background: #9B59B6;
   color: #fff;
+  height: 35px;
+  line-height: 35px;
+  font-size: 12px;
+  text-align: center;
+  outline: 0;
+  min-width: 160px;
   border: none;
-  border-radius: 4px;
-  padding: 10px 22px;
-  font-size: 1rem;
-  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s, box-shadow 0.2s;
-  box-shadow: 0 1px 4px 0 rgba(0,0,0,0.08);
-}
-.shop-item-btn:hover:not(:disabled) {
-  background: #23272e;
+  text-decoration: none;
+  margin: 0 5px 5px 0;
 }
 .shop-item-btn.disabled,
 .shop-item-btn:disabled {
