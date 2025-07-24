@@ -6,7 +6,7 @@ class UserHackatimeDataRefreshJob < ApplicationJob
 
   WARNING_THRESHOLD = 9.hours.to_i
   MAXIMUM_THRESHOLD = 10.hours.to_i
-  WARNING_COOLDOWN = 15.minutes.to_i
+  WARNING_COOLDOWN = 2.hours.to_i
 
   def perform
     Rails.logger.tagged("UserHackatimeDataRefreshJob") do
