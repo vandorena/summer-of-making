@@ -137,6 +137,7 @@ class Project < ApplicationRecord
     highway: "Highway",
     jumpstart: "Jumpstart",
     neighborhood: "Neighborhood",
+    railway: "Railway",
     shipwrecked: "Shipwrecked",
     solder: "Solder",
     sprig: "Sprig",
