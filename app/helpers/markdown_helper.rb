@@ -24,7 +24,6 @@ module MarkdownHelper
     return "" if text.blank?
 
     text = text.gsub(/(?<!~)~(?!~)(.*?)(?<!~)~(?!~)/, '~~\1~~')
-    text = text.gsub(/\n{2,}/, "\n<br>\n")
 
     markdown = Redcarpet::Markdown.new(
       CustomRender.new(
