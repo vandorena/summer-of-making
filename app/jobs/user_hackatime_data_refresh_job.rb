@@ -19,9 +19,26 @@ class UserHackatimeDataRefreshJob < ApplicationJob
       user.refresh_hackatime_data_now
 
       user.projects.where(is_deleted: false).each do |project|
-        if should_send_unlogged_warning?(project)
-          send_unlogged_warning(project)
-          warning_count += 1
+        # skip projects without a valid hackatime key
+        next unless project.hackatime_keys.present? &&
+                   project.hackatime_keys.all?(&:present?) &&
+                   user.user_hackatime_data.present?
+
+        begin
+          if should_send_unlogged_warning?(project)
+            send_unlogged_warning(project)
+            warning_count += 1
+          end
+        rescue => e
+          Rails.logger.error "Failed to process unlogged time warning for project #{project.id} (#{project.title}): #{e.message}"
+          Honeybadger.notify(e, context: {
+            job: "UserHackatimeDataRefreshJob",
+            project_id: project.id,
+            project_title: project.title,
+            user_id: user.id,
+            slack_id: user.slack_id,
+            hackatime_keys: project.hackatime_keys
+          })
         end
       end
     end
