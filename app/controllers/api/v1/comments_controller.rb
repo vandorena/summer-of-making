@@ -6,7 +6,22 @@ module Api
       include Pagy::Backend
 
       def index
-        pagy, comments = pagy(Comment.all, items: 20)
+        page = params[:page].to_i
+        if page < 1
+          render json: {
+            error: "Page out of bounds"
+          }, status: :not_found
+          return
+        end
+
+        begin
+          pagy, comments = pagy(Comment.all, items: 20, page: page)
+        rescue Pagy::OverflowError
+          render json: {
+            error: "Page out of bounds"
+          }, status: :not_found
+          return
+        end
 
         @comments = comments.map do |comment|
           {
