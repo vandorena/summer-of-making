@@ -63,7 +63,7 @@ module Api
             y: project.y,
             created_at: project.created_at,
             updated_at: project.updated_at,
-            banner: url_for(project.banner),
+            banner: project.banner.attached? ? url_for(project.banner) : nil,
             followers: project.followers.map { |u| { id: u.id, name: u.display_name } }
           }
         end
@@ -111,7 +111,7 @@ module Api
           y: @project.y,
           created_at: @project.created_at,
           updated_at: @project.updated_at,
-          banner: project.banner.attached? ? url_for(project.banner) : nil,
+          banner: @project.banner.attached? ? url_for(@project.banner) : nil,
           followers: @project.followers.map { |u| { id: u.id, name: u.display_name } }
         }
       end
