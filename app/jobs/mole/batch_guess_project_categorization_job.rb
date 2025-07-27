@@ -34,7 +34,7 @@ class Mole::BatchGuessProjectCategorizationJob < ApplicationJob
     # Find projects with ship events, prioritizing nil cert_type then "other"
     # Only include projects with at least one URL available
     Project.joins(:ship_events)
-           .where(certification_type: [ nil, "other" ])
+           .where(certification_type: [ nil, :cert_other ])
            .where.not(demo_link: "")
            .where.not(repo_link: "")
            .where.not(readme_link: "")
