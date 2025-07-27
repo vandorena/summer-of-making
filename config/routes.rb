@@ -72,6 +72,8 @@
 #                   tutorial_complete_step POST   /tutorial/complete_step(.:format)                                                                 tutorial_progress#complete_step
 #                          api_v1_projects GET    /api/v1/projects(.:format)                                                                        api/v1/projects#index
 #                           api_v1_project GET    /api/v1/projects/:id(.:format)                                                                    api/v1/projects#show
+#                          api_v1_projects GET    /api/v1/users(.:format)                                                                           api/v1/users#index
+#                           api_v1_project GET    /api/v1/users/:id(.:format)                                                                       api/v1/users#show
 #                           api_v1_devlogs GET    /api/v1/devlogs(.:format)                                                                         api/v1/devlogs#index
 #                            api_v1_devlog GET    /api/v1/devlogs/:id(.:format)                                                                     api/v1/devlogs#show
 #                          api_v1_comments GET    /api/v1/comments(.:format)                                                                        api/v1/comments#index
@@ -304,6 +306,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :projects, only: [ :index, :show ]
+      resources :users, only: [ :index, :show ]
       resources :devlogs, only: [ :index, :show ]
       resources :comments, only: [ :index, :show ]
       resources :emotes, only: [ :show ]

@@ -15,7 +15,7 @@ module Api
         end
 
         begin
-          pagy, comments = pagy(Comment.all, items: 20, page: page)
+          pagy, comments = pagy(Comment.all.order(:id), items: 20, page: page) # order by id
         rescue Pagy::OverflowError
           render json: {
             error: "Page out of bounds"
