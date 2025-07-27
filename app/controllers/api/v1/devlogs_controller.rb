@@ -15,7 +15,7 @@ module Api
         end
 
         begin
-          pagy, devlogs = pagy(Devlog.all, items: 20, page: page)
+          pagy, devlogs = pagy(Devlog.all.order(:id), items: 20, page: page) # order by id
         rescue Pagy::OverflowError
           render json: {
             error: "Page out of bounds"
