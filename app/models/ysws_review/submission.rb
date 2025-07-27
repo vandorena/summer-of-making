@@ -70,6 +70,13 @@ class YswsReview::Submission < ApplicationRecord
       "First Name" => "user_first_name",
       "Last Name" => "user_last_name",
       "Email" => "project.user.email",
+      "Address (Line 1)" => "user_address_line_1",
+      "Address (Line 2)" => "user_address_line_2",
+      "City" => "user_city",
+      "State / Province" => "user_state",
+      "ZIP / Postal Code" => "user_postal_code",
+      "Country" => "user_country",
+      "Birthday" => "user_birthday",
       "project" => "project_airtable_record_id"
     }
   end
@@ -190,7 +197,8 @@ class YswsReview::Submission < ApplicationRecord
     total_hours = total_approved_hours
 
     justification = []
-    justification << "This user logged #{total_hours.round(1)} hours in hackatime. "
+
+    justification << "This user logged #{pretty_round(total_hours)} #{pluralize(total_hours, 'hour')} in hackatime. "
 
     if approved_devlogs.size > 1
       justification << "They have #{pluralize(approved_devlogs.size, 'devlog')} to show their work:\n\n"
@@ -202,7 +210,9 @@ class YswsReview::Submission < ApplicationRecord
       approved_devlogs.limit(list_size).each do |devlog|
         approved_hours = devlog.ysws_review_approval.approved_seconds / 3600.0
         devlog_url = "https://summer.hackclub.com/projects/#{project.id}#devlog_#{devlog.id}"
-        devlog_desc = devlog.text.truncate(50, separator: " ")
+        devlog_desc = devlog.text
+                            .gsub(/[\n\r]/, " ")
+                            .truncate(50, separator: " ")
         justification << "- [#{devlog_desc.strip}](#{devlog_url}) (#{approved_hours.round(1)} hrs)\n"
       end
 
@@ -229,6 +239,10 @@ class YswsReview::Submission < ApplicationRecord
   end
 
   private
+
+  def pretty_round(number, precision: 1)
+    NumberFormatting.pretty_round(number, precision: precision)
+  end
 
   def user_identity
     @user_identity ||= project.user.fetch_idv[:identity] || {}
