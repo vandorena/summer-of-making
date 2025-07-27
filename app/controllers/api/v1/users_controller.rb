@@ -38,7 +38,7 @@ module Api
           id: user.id,
           slack_id: user.slack_id,
           display_name: user.display_name,
-          bio: user.user_profile.bio,
+          bio: user.user_profile&.bio,
           projects_count: user.projects.count,
           devlogs_count: user.devlogs.count,
           votes_count: user.votes.count,
@@ -58,7 +58,7 @@ module Api
           created_at: user.created_at,
           updated_at: user.updated_at,
           avatar: user.avatar,
-          custom_css: user.user_profile.custom_css,
+          custom_css: user.user_profile&.custom_css,
         }
       end
         render json: {
@@ -78,7 +78,7 @@ module Api
           id: @user.id,
           slack_id: @user.slack_id,
           display_name: @user.display_name,
-          bio: @user.user_profile.bio,
+          bio: @user.user_profile&.bio,
           projects_count: @user.projects.count,
           devlogs_count: @user.devlogs.count,
           votes_count: @user.votes.count,
@@ -98,7 +98,7 @@ module Api
           created_at: @user.created_at,
           updated_at: @user.updated_at,
           avatar: @user.avatar,
-          custom_css: @user.user_profile.custom_css,
+          custom_css: @user.user_profile&.custom_css,
         }
       end
     end
