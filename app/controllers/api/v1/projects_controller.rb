@@ -11,18 +11,13 @@ module Api
       before_action :authenticate_user! # fucking over the api clients
 
       def index
-        page = params[:page].to_i
-        if page < 1
-          render json: {
-            error: "Page out of bounds"
-          }, status: :not_found
-          return
-        end
-
+        page = Integer(params[:page], exception: false) || 1
+        page = 1 if page < 1
         begin
           pagy, projects = pagy(
             Project.where(is_deleted: false)
-                  .order(:id), # order by id
+                  .includes(:user, :followers, devlogs: [:comments, file_attachment: :blob])
+                  .order(:id),
             items: 20,
             page: page
           )
@@ -39,7 +34,6 @@ module Api
             title: project.title,
             description: project.description,
             category: project.category,
-            demo_link: project.demo_link,
             devlogs_count: project.devlogs_count,
             devlogs: 
               if params[:devlogs] == 'true'
@@ -86,13 +80,12 @@ module Api
       end
 
       def show
-        @project = Project.find(params[:id])
+        @project = Project.includes(:user, :followers, devlogs: [:comments, file_attachment: :blob]).find(params[:id])
         render json: {
           id: @project.id,
           title: @project.title,
           description: @project.description,
           category: @project.category,
-          demo_link: @project.demo_link,
           devlogs_count: @project.devlogs_count,
           devlogs: 
               @project.devlogs.map do |d|
@@ -118,7 +111,7 @@ module Api
           y: @project.y,
           created_at: @project.created_at,
           updated_at: @project.updated_at,
-          banner: url_for(@project.banner),
+          banner: project.banner.attached? ? url_for(project.banner) : nil,
           followers: @project.followers.map { |u| { id: u.id, name: u.display_name } }
         }
       end
