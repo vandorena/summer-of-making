@@ -48,7 +48,7 @@ module Api
           coding_time_seconds_today: user.has_hackatime? ? user.daily_coding_seconds : 0,
           balance: current_user&.has_badge?(:pocket_watcher) ? (user.has_badge?(:offshore_bank_account) ? "Nice try, but they've covered their tracks a little better than that." : user.balance) : "You need to have a pocket watcher badge to view this.",
           badges: user.badges.map { |b|
-            icon = b[:icon].include?('.') ? view_context.image_url(b[:icon]) : b[:icon]
+            icon = b[:icon].include?(".") ? view_context.image_url(b[:icon]) : b[:icon]
             {
               name: b[:name],
               text: b[:flavor_text],
@@ -58,7 +58,7 @@ module Api
           created_at: user.created_at,
           updated_at: user.updated_at,
           avatar: user.avatar,
-          custom_css: user.user_profile&.custom_css,
+          custom_css: user.user_profile&.custom_css
         }
       end
         render json: {
@@ -88,7 +88,7 @@ module Api
           coding_time_seconds_today: @user.has_hackatime? ? @user.daily_coding_seconds : 0,
           balance: current_user&.has_badge?(:pocket_watcher) ? (@user.has_badge?(:offshore_bank_account) ? "Nice try, but they've covered their tracks a little better than that." : @user.balance) : "You need to have a pocket watcher badge to view this.",
           badges: @user.badges.map { |b|
-            icon = b[:icon].include?('.') ? view_context.image_url(b[:icon]) : b[:icon]
+            icon = b[:icon].include?(".") ? view_context.image_url(b[:icon]) : b[:icon]
             {
               name: b[:name],
               text: b[:flavor_text],
@@ -98,7 +98,7 @@ module Api
           created_at: @user.created_at,
           updated_at: @user.updated_at,
           avatar: @user.avatar,
-          custom_css: @user.user_profile&.custom_css,
+          custom_css: @user.user_profile&.custom_css
         }
       end
     end

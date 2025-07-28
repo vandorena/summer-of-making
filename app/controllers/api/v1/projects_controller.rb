@@ -16,7 +16,7 @@ module Api
         begin
           pagy, projects = pagy(
             Project.where(is_deleted: false)
-                  .includes(:user, :followers, devlogs: [:comments, file_attachment: :blob])
+                  .includes(:user, :followers, devlogs: [ :comments, file_attachment: :blob ])
                   .order(:id),
             items: 20,
             page: page
@@ -35,8 +35,8 @@ module Api
             description: project.description,
             category: project.category,
             devlogs_count: project.devlogs_count,
-            devlogs: 
-              if params[:devlogs] == 'true'
+            devlogs:
+              if params[:devlogs] == "true"
                 project.devlogs.map do |d|
                   {
                     id: d.id,
@@ -80,14 +80,14 @@ module Api
       end
 
       def show
-        @project = Project.includes(:user, :followers, devlogs: [:comments, file_attachment: :blob]).find(params[:id])
+        @project = Project.includes(:user, :followers, devlogs: [ :comments, file_attachment: :blob ]).find(params[:id])
         render json: {
           id: @project.id,
           title: @project.title,
           description: @project.description,
           category: @project.category,
           devlogs_count: @project.devlogs_count,
-          devlogs: 
+          devlogs:
               @project.devlogs.map do |d|
                 {
                   id: d.id,
