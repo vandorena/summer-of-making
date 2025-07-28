@@ -7,7 +7,7 @@ class Shop::ProcessLetterMailOrdersJob < ApplicationJob
     # Get all pending_nightly letter mail orders
     letter_mail_orders = ShopOrder.joins(:shop_item)
                                   .where(shop_items: { type: 'ShopItem::LetterMail' })
-                                  .where(aasm_state: 'pending_nightly')
+                                  .where(aasm_state: 'awaiting_periodical_fulfillment')
 
     return if letter_mail_orders.empty?
 
