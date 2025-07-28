@@ -3,8 +3,8 @@ class Shop::KickVerificationLimboOrdersJob < ApplicationJob
 
   def perform(*args)
     orders = ShopOrder.in_verification_limbo.includes(:user)
-
-    orders.each do |order|
+    orders.find_each do |order|
+      puts "Order #{order.id}: #{order.user.verification_status}"
       case order.user.verification_status
       when :verified
         order.user_was_verified
