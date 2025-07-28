@@ -24,6 +24,7 @@
       let dragging = false;
 
       // Make sure this is only initialized once
+      if (!area) return;
       if (area?.dataset?.initialized) return;
       area.dataset.initialized = 'true';
 
