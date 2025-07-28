@@ -65,7 +65,7 @@
     <%# end %>
 
     <% if user_signed_in? %>
-      <% if !mobile_device? %>
+      <% if current_user.tutorial_progress.completed? && !mobile_device? %>
         <div data-controller="todo">
           <button
             data-todo-target="todoButton"
