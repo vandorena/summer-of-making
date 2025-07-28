@@ -9,6 +9,15 @@ class ShopOrdersController < ApplicationController
   end
 
   def show
+    # Fetch letter status if order has external_ref and is from Theseus
+    if @order.external_ref.present? && (@order.shop_item.is_a?(ShopItem::FreeStickers) || @order.shop_item.is_a?(ShopItem::LetterMail))
+      begin
+        @letter_status = TheseusService.get_letter(@order.external_ref)
+      rescue => e
+        Rails.logger.warn "Failed to fetch letter status for order #{@order.id}: #{e.message}"
+        @letter_status = nil
+      end
+    end
   end
 
   def new
