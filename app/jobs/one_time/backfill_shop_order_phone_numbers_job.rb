@@ -4,10 +4,10 @@ class OneTime::BackfillShopOrderPhoneNumbersJob < ApplicationJob
   def perform
     cached_idv = Hash.new { |hash, key| hash[key] = User.find(key).fetch_idv }
 
-    # Find orders without phone numbers in their frozen_address
-    orders_without_phone = ShopOrder.where(
+    # Find orders without phone numbers in their frozen_address, excluding free stickers
+    orders_without_phone = ShopOrder.joins(:shop_item).where(
       "frozen_address IS NOT NULL AND (frozen_address->>'phone_number' IS NULL OR frozen_address->>'phone_number' = '')"
-    ).includes(:user)
+    ).where.not(shop_items: { type: "ShopItem::FreeStickers" }).includes(:user)
 
     Rails.logger.info "Found #{orders_without_phone.count} shop orders without phone numbers"
 
