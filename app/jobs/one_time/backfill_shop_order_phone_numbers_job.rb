@@ -2,6 +2,8 @@ class OneTime::BackfillShopOrderPhoneNumbersJob < ApplicationJob
   queue_as :default
 
   def perform
+    cached_idv = Hash.new { |hash, key| hash[key] = User.find(key).fetch_idv }
+
     # Find orders without phone numbers in their frozen_address
     orders_without_phone = ShopOrder.where(
       "frozen_address IS NOT NULL AND (frozen_address->>'phone_number' IS NULL OR frozen_address->>'phone_number' = '')"
@@ -11,8 +13,7 @@ class OneTime::BackfillShopOrderPhoneNumbersJob < ApplicationJob
 
     orders_without_phone.find_each do |order|
       begin
-        # Fetch IDV data for the user
-        idv_data = order.user.fetch_idv
+        idv_data = cached_idv[order.user.id]
 
         # Extract phone number from the root identity object
         phone_number = idv_data.dig(:identity, :phone_number)
