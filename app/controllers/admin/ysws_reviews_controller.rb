@@ -7,7 +7,8 @@ module Admin
       .left_joins(:devlogs)
       .group("projects.id")
       .select("projects.*,
-               COUNT(DISTINCT devlogs.id) as devlogs_count")
+               COUNT(DISTINCT devlogs.id) as devlogs_count,
+               (SELECT elo_after FROM vote_changes WHERE project_id = projects.id ORDER BY created_at DESC LIMIT 1) as elo_score")
       .includes(:user, :devlogs)
 
     case @filter
@@ -26,10 +27,10 @@ module Admin
       @projects = base.where.not(id: reviewed_project_ids)
     end
 
-    @projects = @projects.order(created_at: :desc)
+    @projects = @projects.order(Arel.sql("elo_score DESC NULLS LAST")).order(created_at: :desc)
 
     # Eager load latest vote changes to avoid N+1
-    project_ids = @projects.pluck(:id)
+    project_ids = @projects.to_a.map(&:id)
     @latest_vote_changes = VoteChange
       .where(project_id: project_ids)
       .where("vote_changes.created_at = (
