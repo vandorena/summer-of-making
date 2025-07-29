@@ -79,3 +79,15 @@ production:
     schedule: every 2 days
     concurrency: 1
     description: "Process pending letter mail orders and send to Theseus som-fulfillment queue"
+
+  airtable_syncable_update:
+    class: AirtableSyncableUpdateJob
+    schedule: every 2 minutes
+    concurrency: 1
+    description: "Sync Airtable records every 2 minutes with single execution limit"
+
+  upload_to_unified_db:
+    class: YswsReview::UploadToUnifiedDbJob
+    schedule: every 5 minutes
+    concurrency: 1
+    description: "Upload approved YSWS from the SoM to the Unified db"
