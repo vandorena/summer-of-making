@@ -183,7 +183,6 @@ class Project < ApplicationRecord
   before_save :filter_hackatime_keys
 
   before_save :remove_duplicate_hackatime_keys
-  before_save :set_default_certification_type
 
   def total_votes
     vote_changes.count
@@ -606,10 +605,6 @@ class Project < ApplicationRecord
   def unlerp(start, stop, value)
     return 0.0 if start == stop
     (value - start) / (stop - start).to_f
-  end
-
-  def set_default_certification_type
-    self.certification_type = :cert_other if certification_type.blank?
   end
 
   private
