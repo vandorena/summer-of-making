@@ -156,9 +156,8 @@ class ProjectsController < ApplicationController
   def my_projects
     @projects = current_user.projects.includes(
       :banner_attachment,
-      :ship_certifications,
-      ship_events: :payouts,
-      devlogs: [ :file_attachment ]
+      { ship_events: :payouts },
+      { devlogs: :file_attachment }
     ).order(created_at: :desc)
   end
 
@@ -650,8 +649,7 @@ class ProjectsController < ApplicationController
   def set_project
     @project = Project.includes(
       {
-        user: [ :user_hackatime_data, :projects ],
-        followers: :projects,
+        user: [ :user_hackatime_data ],
         devlogs: [
           :user,
           { comments: :user },
