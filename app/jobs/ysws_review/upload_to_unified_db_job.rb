@@ -63,13 +63,21 @@ class YswsReview::UploadToUnifiedDbJob < ApplicationJob
     allowed_fields = [
       "Playable URL", "Code URL", "Description", "Email", "First Name", "Last Name",
       "GitHub Username", "Address (Line 1)", "Address (Line 2)", "City",
-      "State / Province", "ZIP / Postal Code", "Country", "Birthday"
+      "State / Province", "ZIP / Postal Code", "Country", "Birthday", "Screenshot"
     ]
 
     mapped_fields = source_fields.select { |field, _value| allowed_fields.include?(field) }
     mapped_fields["Override Hours Spent"] = source_fields["Optional - Override Hours Spent"]
     mapped_fields["Override Hours Spent Justification"] = source_fields["Optional - Override Hours Spent Justification"]
     mapped_fields["YSWS"] = [ "recqBfqSF8s5PcVb8" ]
+
+    # Filter Screenshot attachments to only include url and filename
+    if mapped_fields["Screenshot"].is_a?(Array)
+      mapped_fields["Screenshot"] = mapped_fields["Screenshot"].map do |attachment|
+        { "url" => attachment["url"], "filename" => attachment["filename"] }
+      end
+    end
+
     mapped_fields
   end
 
