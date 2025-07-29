@@ -84,7 +84,10 @@
           <%= addy["line_2"] %><br>
         <% end %>
         <%= addy["city"] %>, <%= addy["state"] %> <%= addy["postal_code"] %><br>
-        <%= addy["country"] %>
+        <%= addy["country"] %><br>
+        <% if addy["phone_number"].present? %>
+          <strong>Phone:</strong> <%= addy["phone_number"] %>
+        <% end %>
       </div>
     <% else %>
       <em style="color: var(--color-muted);">no address provided</em>

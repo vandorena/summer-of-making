@@ -234,7 +234,10 @@
             <%= addy["first_name"] %> <%= addy["last_name"] %><br>
             <small style="color: var(--color-muted);">
               <%= addy["city"] %>, <%= addy["state"] %><br>
-              <%= addy["country"] %>
+              <%= addy["country"] %><br>
+              <% if addy["phone_number"].present? %>
+                <%= addy["phone_number"] %>
+              <% end %>
             </small>
           <% else %>
             <em style="color: var(--color-muted);">nuthing...</em>
