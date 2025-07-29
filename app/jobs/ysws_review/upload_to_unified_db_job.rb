@@ -4,7 +4,7 @@ class YswsReview::UploadToUnifiedDbJob < ApplicationJob
   queue_as :default
 
   def perform
-    # grab 10 projects that haven't been synced yet
+    # First, grab 10 projects that haven't been synced yet and create them
     if new_records_to_upload.any?
       puts "Found #{new_records_to_upload.count} new records to upload"
 
@@ -23,6 +23,35 @@ class YswsReview::UploadToUnifiedDbJob < ApplicationJob
         update_source_records_with_new_ids(created_records)
       else
         puts "No records were created"
+      end
+    end
+
+    # Then, find existing records to update
+    if existing_records_to_update.any?
+      puts "Found #{existing_records_to_update.count} existing records to update"
+
+      # Create update records for the unified DB with proper field mapping
+      records_to_update = existing_records_to_update.map do |record|
+        unified_record = unified_db_table.find(record.fields["Automation - YSWS Record ID"])
+
+        # Update the unified record with new field data
+        map_fields_for_unified_db(record.fields).each do |field, value|
+          unified_record[field] = value
+        end
+
+        unified_record
+      end
+
+      # Update records in unified DB
+      updated_records = unified_db_table.batch_update(records_to_update)
+
+      if updated_records && updated_records.any?
+        puts "Successfully updated #{updated_records.count} records in unified DB"
+
+        # Mark source records as processed
+        mark_existing_records_as_processed
+      else
+        puts "No records were updated"
       end
     end
   end
@@ -93,6 +122,22 @@ class YswsReview::UploadToUnifiedDbJob < ApplicationJob
 
       # Update the original record with the new unified DB record ID
       original_record["Automation - YSWS Record ID"] = created_record.id
+      original_record["upload_to_unified"] = false
+      records_to_update << original_record
+    end
+
+    # Batch update all records at once
+    source_table.batch_update(records_to_update) if records_to_update.any?
+  end
+
+  def mark_existing_records_as_processed
+    # Collect updates for batch operation
+    records_to_update = []
+
+    existing_records_to_update.each do |original_record|
+      puts "Marking record as processed: #{original_record.fields['Automation - YSWS Record ID']}"
+
+      # Mark as no longer needing upload
       original_record["upload_to_unified"] = false
       records_to_update << original_record
     end
