@@ -305,6 +305,7 @@ Rails.application.routes.draw do
   # API routes
   namespace :api do
     namespace :v1 do
+      get "users/me", to: "users#me"
       resources :projects, only: [ :index, :show ]
       resources :users, only: [ :index, :show ]
       resources :devlogs, only: [ :index, :show ]
