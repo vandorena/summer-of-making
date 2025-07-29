@@ -114,7 +114,7 @@ class Project < ApplicationRecord
   scope :ysws_review_eligible, -> {
     joins(:ship_certifications)
       .where(ship_certifications: { judgement: "approved" })
-      .where.not(ysws_type: nil)
+      .where(ysws_type: nil)
       .where(is_deleted: false)
   }
 
