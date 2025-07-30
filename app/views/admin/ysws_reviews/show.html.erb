@@ -22,7 +22,7 @@
     by <%= @project.user.display_name %> • Created <%= @project.created_at.strftime("%B %d, %Y") %>
   </p>
   <p style="margin: 1rem 0;"><%= @project.description %></p>
-  
+
   <!-- Project Links -->
   <div style="display: flex; gap: 1rem; margin: 1rem 0; flex-wrap: wrap;">
     <% if @project.repo_link.present? %>
@@ -41,7 +41,7 @@
       <span class="pill pill-green" style="padding: 0.5rem 1rem;">🎥 Ship Cert Video</span>
     <% end %>
   </div>
-  
+
   <!-- Ship Certification Video -->
   <% if @project.latest_ship_certification&.proof_video&.attached? %>
     <div style="margin: 1rem 0;">
