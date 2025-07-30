@@ -200,7 +200,7 @@ class YswsReview::Submission < ApplicationRecord
 
     justification = []
 
-    justification << "This user logged #{pretty_round(total_hours)} #{pluralize(total_hours, 'hour')} in hackatime. "
+    justification << "This user logged #{pluralize(pretty_round(total_hours), 'hour')} in hackatime. "
 
     if approved_devlogs.size > 1
       justification << "They have #{pluralize(approved_devlogs.size, 'devlog')} to show their work:\n\n"
