@@ -40,6 +40,7 @@ class Devlog < ApplicationRecord
   has_many :timer_sessions, dependent: :nullify
   has_many :likes, as: :likeable, dependent: :destroy
   has_one_attached :file
+  has_one :ysws_review_approval, class_name: "YswsReview::DevlogApproval", dependent: :destroy
 
   validates :text, presence: true
   validate :file_must_be_attached, on: %i[ create ]
