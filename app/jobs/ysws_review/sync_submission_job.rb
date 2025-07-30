@@ -1,5 +1,5 @@
 class YswsReview::SyncSubmissionJob < ApplicationJob
-  queue_as :literally_whenever
+  queue_as :latency_5m
 
   def perform(submission_id)
     submission = YswsReview::Submission.find(submission_id)
