@@ -2,6 +2,8 @@
 
 # This refreshes every user's Hackatime Project data.
 class UserHackatimeDataRefreshJob < ApplicationJob
+  include UniqueJob
+
   queue_as :literally_whenever
 
   WARNING_THRESHOLD = 9.hours.to_i
