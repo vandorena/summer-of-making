@@ -111,7 +111,8 @@ class OneTime::MigrateNeighborhoodDataJob < ApplicationJob
           text: text,
           duration_seconds: 0, # We'll re-calculate this later. I just want to set this to 0 for now
           created_at: post_created_at,
-          hackatime_projects_key_snapshot: hackatime_projects
+          hackatime_projects_key_snapshot: hackatime_projects,
+          is_neighborhood_migrated: true
         )
 
         # download and attach video
