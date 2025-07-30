@@ -95,6 +95,8 @@ class OneTime::MigrateNeighborhoodDataJob < ApplicationJob
         next unless app_name
 
         project = user.projects.find_by(title: app_name)
+        project.hackatime_project_keys = post_data["app__hackatimeProjects__names"] || []
+        project.save!
 
         unless project
           puts "  Project '#{app_name}' not found for user #{slack_id}, skipping devlog #{post_data["ID"]}"
