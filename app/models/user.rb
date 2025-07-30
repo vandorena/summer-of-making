@@ -307,7 +307,27 @@ class User < ApplicationRecord
     end
   end
 
-  def refresh_hackatime_data_now
+  def refresh_hackatime_data_now(cache_duration: 1.minute)
+    Rails.cache.fetch("hackatime_refresh_#{id}", expires_in: cache_duration) do
+      refresh_hackatime_data_now!
+    end
+
+    # Check for notifications with caching to prevent duplicate job queuing
+    notification_cache_key = "hackatime_notifications_checked_#{id}"
+    unless Rails.cache.exist?(notification_cache_key)
+      projects_needing_warnings = check_projects_needing_unlogged_warnings
+      
+      # Only queue job if there are actually projects that need warnings
+      if projects_needing_warnings.any?
+        UserHackatimeNotificationJob.perform_later(id, projects_needing_warnings.map(&:id))
+      end
+      
+      # Cache that we've checked notifications (same duration as data refresh)
+      Rails.cache.write(notification_cache_key, true, expires_in: cache_duration)
+    end
+  end
+
+  def refresh_hackatime_data_now!
     response = fetch_raw_hackatime_stats
     return unless response.success?
 
@@ -331,7 +351,7 @@ class User < ApplicationRecord
 
     update!(has_hackatime_account:, has_hackatime: true)
 
-    Rails.logger.tagged("User.refresh_hackatime_data_now") do
+    Rails.logger.tagged("User.refresh_hackatime_data_now!") do
       Rails.logger.debug("User #{id} (#{slack_id}) total seconds: #{result.dig("data", "total_seconds")}")
     end
 
@@ -350,6 +370,27 @@ class User < ApplicationRecord
 
     stats = user_hackatime_data || build_user_hackatime_data
     stats.update(data: result, last_updated_at: Time.current)
+  end
+
+  def check_projects_needing_unlogged_warnings
+    return [] unless has_hackatime? && user_hackatime_data.present?
+
+    warning_threshold = 9.hours.to_i
+    maximum_threshold = 10.hours.to_i
+
+    eligible_projects = projects.includes(:devlogs)
+                                .where(is_deleted: false)
+                                .where.not(hackatime_project_keys: [ nil, [] ])
+
+    eligible_projects.filter do |project|
+      next false unless project.hackatime_keys.all?(&:present?)
+
+      unlogged_seconds = project.unlogged_time
+      next false unless unlogged_seconds >= warning_threshold && unlogged_seconds < maximum_threshold
+
+      cache_key = "unlogged_time_warning:#{id}:#{project.id}"
+      !Rails.cache.exist?(cache_key)
+    end
   end
 
   def has_hackatime?
