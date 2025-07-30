@@ -162,6 +162,7 @@ class Project < ApplicationRecord
     converge: "Converge",
     grub: "Grub",
     hackaccino: "Hackaccino",
+    hackcraft: "Hackcraft",
     highway: "Highway",
     jumpstart: "Jumpstart",
     neighborhood: "Neighborhood",
@@ -180,7 +181,6 @@ class Project < ApplicationRecord
     twist: "Twist",
     reality: "Reality",
     endpointer: "Endpointer",
-    hackcraft: "Hackcraft",
     other: "Other"
   }
 
