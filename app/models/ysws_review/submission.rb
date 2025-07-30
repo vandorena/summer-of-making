@@ -45,7 +45,7 @@ class YswsReview::Submission < ApplicationRecord
       "First Name" => "user_first_name",
       "Last Name" => "user_last_name",
       "GitHub Username" => "github_username",
-      # "Screenshot" => "banner_attachment_for_airtable", # Skip for now until we implement proper upload
+      "Screenshot" => "banner_attachment_for_airtable",
       "Description" => "project.description",
       "Address (Line 1)" => "user_address_line_1",
       "Address (Line 2)" => "user_address_line_2",
@@ -64,6 +64,7 @@ class YswsReview::Submission < ApplicationRecord
     {
       "Code URL" => "project.repo_link",
       "Playable URL" => "project.demo_link",
+      "Screenshot" => "banner_attachment_for_airtable",
       "Description" => "project.description",
       "Optional - Override Hours Spent" => "total_approved_hours",
       "Optional - Override Hours Spent Justification" => "hours_justification",
@@ -92,9 +93,10 @@ class YswsReview::Submission < ApplicationRecord
   def banner_attachment_for_airtable
     return nil unless project.banner.attached?
 
-    url = Rails.application.routes.url_helpers.rails_blob_url(project.banner, host: "summer.hackclub.com", protocol: "https")
+    url = project.banner.blob.url
     filename = project.banner.filename.to_s
 
+    # This is the format airtable expects for attachment fields
     [ {
       "url" => url,
       "filename" => filename
