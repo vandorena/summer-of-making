@@ -85,4 +85,7 @@ Rails.application.configure do
 
   # dev disable it, we dont need it (hopefully)
   config.middleware.delete Rack::Attack unless ENV["ENABLE_RACK_ATTACK"] == "true"
+
+  # Enable live reload unless explicitly disabled
+  config.rails_live_reload.enabled = true unless ENV["DISABLE_LIVE_RELOAD"]
 end
