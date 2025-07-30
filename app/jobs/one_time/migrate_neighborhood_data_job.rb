@@ -189,11 +189,12 @@ class OneTime::MigrateNeighborhoodDataJob < ApplicationJob
     filename = File.basename(URI.parse(video_url).path)
     filename = "demo_video.mp4" if filename.blank? || !filename.include?(".")
 
-    # active storage
+    # active storage - use cloudflare r2
     devlog.file.attach(
       io: StringIO.new(response.body),
       filename: filename,
-      content_type: response.content_type || "video/mp4"
+      content_type: response.content_type || "video/mp4",
+      service_name: :cloudflare
     )
 
     puts "Successfully attached video: #{filename}"
