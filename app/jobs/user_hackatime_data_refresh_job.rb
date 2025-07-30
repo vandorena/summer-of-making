@@ -46,8 +46,6 @@ class UserHackatimeDataRefreshJob < ApplicationJob
     Rails.logger.tagged("UserHackatimeDataRefreshJob") do
       Rails.logger.info("Ended - sent #{warning_count} unlogged time warnings")
     end
-
-    UserHackatimeDataRefreshJob.perform_later
   end
 
   private
