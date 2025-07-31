@@ -8,7 +8,25 @@ class OneTime::MigrateNeighborhoodDataJob < ApplicationJob
 
   def perform(dry_run = true, slack_id = nil)
     ActiveRecord::Base.transaction do
-      pull_data(slack_id)
+      pull_data
+
+      if slack_id
+        import_data_for(slack_id)
+      else
+        import_data_for_all_users
+      end
+
+      raise ActiveRecord::Rollback if dry_run
+    end
+  end
+
+  def import_only(dry_run = true, slack_id = nil)
+    ActiveRecord::Base.transaction do
+      if slack_id
+        import_data_for(slack_id)
+      else
+        import_data_for_all_users
+      end
 
       raise ActiveRecord::Rollback if dry_run
     end
@@ -16,34 +34,27 @@ class OneTime::MigrateNeighborhoodDataJob < ApplicationJob
 
   private
 
-  def pull_data(target_slack_id = nil)
+  def pull_data
     transfers = cache_with_json("transfers_all.json") do
       cached_records_from("Post Event - Hour Transfers").map { |r| r&.fields }
     end
+
     transfers_for_som = cache_with_json("transfers_for_som.json") do
       transfers.select { |r| r["Which transfer option would you like to go with?"] == "Summer of Making" }
     end
     puts "found #{transfers_for_som.count} hour transfers"
 
-    if target_slack_id
-      slack_ids_for_som = [ target_slack_id ]
-      puts "targeting specific slack_id: #{target_slack_id}"
-    else
-      # for all users
-      slack_ids_for_som = transfers_for_som.map { |r| r["What is your Slack ID?"] }.compact.uniq
-      puts "migrating all #{slack_ids_for_som.count} users"
-    end
-
-    cache_suffix = target_slack_id ? "_#{target_slack_id}" : ""
+    slack_ids_for_som = transfers_for_som.map { |r| r["What is your Slack ID?"] }.compact.uniq
+    puts "found #{slack_ids_for_som.count} users who transferred to SoM"
 
     filter_for_neighbors = slack_ids_for_som.map { |slack_id| "{Slack ID (from slackNeighbor)}='#{slack_id}'" }
-    neighbors = cache_with_json("neighbors#{cache_suffix}.json") do
+    neighbors = cache_with_json("neighbors.json") do
       cached_records_from("neighbors", filter: "OR(#{filter_for_neighbors.join(", ")})").map { |r| r&.fields }
     end
     puts "found #{neighbors.count} neighbors"
 
     filter_for_projects = slack_ids_for_som.map { |slack_id| "{Slack ID (from slackNeighbor) (from neighbors)}='#{slack_id}'" }
-    projects = cache_with_json("projects#{cache_suffix}.json") do
+    projects = cache_with_json("projects.json") do
       cached_records_from("YSWS Project Submission", filter: "OR(#{filter_for_projects.join(", ")})").map { |r| { "id" => r&.id, "fields" => r&.fields } }
     end
     puts "found #{projects.count} projects"
@@ -54,17 +65,40 @@ class OneTime::MigrateNeighborhoodDataJob < ApplicationJob
 
     # these are like devlogs
     filter_for_posts = slack_ids_for_som.map { |slack_id| "{slackId}='#{slack_id}'" }
-    posts = cache_with_json("posts#{cache_suffix}.json") do
+    posts = cache_with_json("posts.json") do
       cached_records_from("Posts", filter: "OR(#{filter_for_posts.join(", ")})").map { |r| r&.fields }
     end
     puts "found #{posts.count} posts"
 
-    filter_for_apps = app_record_ids.map { |app_id| "RECORD_ID()='#{app_id}'" }
-    apps = cache_with_json("apps#{cache_suffix}.json") do
-      cached_records_from("Apps", filter: "OR(#{filter_for_apps.join(", ")})").map { |r| { "id" => r&.id, "fields" => r&.fields } }
+    if app_record_ids.any?
+      filter_for_apps = app_record_ids.map { |app_id| "RECORD_ID()='#{app_id}'" }
+      apps = cache_with_json("apps.json") do
+        cached_records_from("Apps", filter: "OR(#{filter_for_apps.join(", ")})").map { |r| { "id" => r&.id, "fields" => r&.fields } }
+      end
+      puts "found #{apps.count} app records"
+    else
+      puts "no linked apps to fetch"
     end
-    puts "found #{apps.count} app records"
+  end
 
+  def import_data_for(slack_id)
+    puts "Importing data for user: #{slack_id}"
+
+    transfers_for_som = JSON.parse(File.read("transfers_for_som.json"))
+    posts = JSON.parse(File.read("posts.json"))
+    apps = File.exist?("apps.json") ? JSON.parse(File.read("apps.json")) : []
+
+    migrate_existing_user_devlogs(posts, apps, [ slack_id ])
+  end
+
+  def import_data_for_all_users
+    puts "Importing data for all users..."
+
+    transfers_for_som = JSON.parse(File.read("transfers_for_som.json"))
+    posts = JSON.parse(File.read("posts.json"))
+    apps = File.exist?("apps.json") ? JSON.parse(File.read("apps.json")) : []
+
+    slack_ids_for_som = transfers_for_som.map { |r| r["What is your Slack ID?"] }.compact.uniq
     migrate_existing_user_devlogs(posts, apps, slack_ids_for_som)
   end
 
@@ -95,14 +129,15 @@ class OneTime::MigrateNeighborhoodDataJob < ApplicationJob
         next unless app_name
 
         project = user.projects.find_by(title: app_name)
-        project.hackatime_project_keys = post_data["app__hackatimeProjects__names"] || []
-        project.save!
 
         unless project
           puts "  Project '#{app_name}' not found for user #{slack_id}, skipping devlog #{post_data["ID"]}"
           unique_missing_projects.add("#{slack_id}:#{app_name}")
           next
         end
+
+        project.hackatime_project_keys = post_data["app__hackatimeProjects__names"] || []
+        project.save!
 
         post_created_at = Time.parse(post_data["createdAt"]) if post_data["createdAt"]
         text = post_data["description"]
