@@ -84,9 +84,9 @@ class OneTime::MigrateNeighborhoodDataJob < ApplicationJob
   def import_data_for(slack_id)
     puts "Importing data for user: #{slack_id}"
 
-    transfers_for_som = JSON.parse(File.read("transfers_for_som.json"))
-    posts = JSON.parse(File.read("posts.json"))
-    apps = File.exist?("apps.json") ? JSON.parse(File.read("apps.json")) : []
+    transfers_for_som = JSON.parse(File.read("/tmp/transfers_for_som.json"))
+    posts = JSON.parse(File.read("/tmp/posts.json"))
+    apps = File.exist?("/tmp/apps.json") ? JSON.parse(File.read("/tmp/apps.json")) : []
 
     migrate_existing_user_devlogs(posts, apps, [ slack_id ])
   end
@@ -94,9 +94,9 @@ class OneTime::MigrateNeighborhoodDataJob < ApplicationJob
   def import_data_for_all_users
     puts "Importing data for all users..."
 
-    transfers_for_som = JSON.parse(File.read("transfers_for_som.json"))
-    posts = JSON.parse(File.read("posts.json"))
-    apps = File.exist?("apps.json") ? JSON.parse(File.read("apps.json")) : []
+    transfers_for_som = JSON.parse(File.read("/tmp/transfers_for_som.json"))
+    posts = JSON.parse(File.read("/tmp/posts.json"))
+    apps = File.exist?("/tmp/apps.json") ? JSON.parse(File.read("/tmp/apps.json")) : []
 
     slack_ids_for_som = transfers_for_som.map { |r| r["What is your Slack ID?"] }.compact.uniq
     migrate_existing_user_devlogs(posts, apps, slack_ids_for_som)
@@ -174,11 +174,12 @@ class OneTime::MigrateNeighborhoodDataJob < ApplicationJob
   end
 
   def cache_with_json(cache_name, &block)
-    unless File.exist?(cache_name)
+    cache_path = File.join("/tmp", cache_name)
+    unless File.exist?(cache_path)
       results = block.call
-      export_to_json(results, cache_name)
+      export_to_json(results, cache_path)
     end
-    JSON.parse(File.read(cache_name))
+    JSON.parse(File.read(cache_path))
   end
 
   def export_to_json(records, filename)
