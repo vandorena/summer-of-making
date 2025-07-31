@@ -136,12 +136,15 @@ class OneTime::MigrateNeighborhoodDataJob < ApplicationJob
           next
         end
 
-        project.hackatime_project_keys = post_data["app__hackatimeProjects__names"] || []
+        raw_hackatime_projects = post_data["app__hackatimeProjects__names"] || []
+        filtered_hackatime_projects = raw_hackatime_projects.reject { |key| key == "<<LAST_PROJECT>>" || key == "Other" }
+
+        project.hackatime_project_keys = filtered_hackatime_projects
         project.save!
 
         post_created_at = Time.parse(post_data["createdAt"]) if post_data["createdAt"]
         text = post_data["description"]
-        hackatime_projects = post_data["app__hackatimeProjects__names"] || []
+        hackatime_projects = filtered_hackatime_projects
 
         devlog = project.devlogs.build(
           user: user,
