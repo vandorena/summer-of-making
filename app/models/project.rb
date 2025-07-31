@@ -261,7 +261,23 @@ class Project < ApplicationRecord
   end
 
   def unlogged_time
-    [ coding_time - total_seconds_coded, 0 ].max
+    # handling neighbourhood!
+    [ coding_time - som_period_devlog_seconds, 0 ].max
+  end
+
+  def som_period_devlog_seconds
+    som_start = Time.use_zone("America/New_York") { Time.parse("2025-06-16").beginning_of_day }.utc
+    devlogs.where("created_at >= ?", som_start).sum(:duration_seconds)
+  end
+
+  def has_neighborhood_devlogs?
+    som_start = Time.use_zone("America/New_York") { Time.parse("2025-06-16").beginning_of_day }.utc
+    devlogs.where("created_at < ?", som_start).exists?
+  end
+
+  def neighborhood_devlog_seconds
+    som_start = Time.use_zone("America/New_York") { Time.parse("2025-06-16").beginning_of_day }.utc
+    devlogs.where("created_at < ?", som_start).sum(:duration_seconds)
   end
 
   def locked_hackatime_keys
