@@ -46,6 +46,9 @@ module Admin
 
     def create_payout
       parameters = payout_params
+      if parameters[:amount].to_f > 9999
+        return redirect_to(admin_user_path(@user), notice: "fuck you trying to do? cause inflation? thats too much at once!")
+      end
       unless parameters[:reason].present?
         return redirect_to(admin_user_path(@user), notice: "Please provide a reason!")
       end
@@ -223,7 +226,7 @@ module Admin
       begin
         headers = {
           "Authorization" => ENV.fetch("HACKATIME_AUTH_TOKEN"),
-          "RACK_ATTACK_BYPASS" => Rails.application.credentials.hackatime&.ratelimit_bypass_header
+          "RACK_ATTACK_BYPASS" => ENV.fetch("HACKATIME_BYPASS_KEYS")
         }.compact
 
         res = Faraday.get(

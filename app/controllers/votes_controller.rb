@@ -5,8 +5,6 @@ class VotesController < ApplicationController
   before_action :set_projects, only: %i[new]
   before_action :check_identity_verification
 
-  before_action :redirect_to_locked, except: [ :locked ], unless: -> { current_user&.can_vote? }
-
   def new
     @vote = Vote.new
     @user_vote_count = current_user.votes.count
@@ -108,6 +106,7 @@ class VotesController < ApplicationController
     projects_with_latest_ship = Project
                                   .joins(:ship_events)
                                   .joins(:ship_certifications)
+                                  .joins(:devlogs)
                                   .includes(ship_events: :payouts)
                                   .where(ship_certifications: { judgement: :approved })
                                   .where.not(user_id: current_user.id)

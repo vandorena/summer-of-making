@@ -16,12 +16,30 @@
 #  fk_rails_...  (project_id => projects.id)
 #
 class ShipEvent < ApplicationRecord
+  include AirtableSyncable
+
   belongs_to :project
   has_one :ship_event_feedback
   has_many :payouts, as: :payable
 
   after_create :maybe_create_ship_certification
   after_create :award_user_badges
+
+  def self.airtable_table_name
+    "_ship_events"
+  end
+
+  def self.airtable_field_mappings
+    {
+      "duration_seconds" => "seconds_covered",
+      "_projects" => "airtable_project_record_ids"
+    }
+  end
+
+  def airtable_project_record_ids
+    return [] unless project.airtable_synced?
+    [ project.airtable_record_id ]
+  end
 
   def user
     project.user

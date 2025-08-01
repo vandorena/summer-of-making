@@ -5,7 +5,7 @@ class ProjectsController < ApplicationController
   include ViewTrackable
   skip_before_action :verify_authenticity_token, only: [ :check_link ]
   before_action :set_project,
-                only: %i[show edit update follow unfollow ship stake_stonks unstake_stonks destroy update_coordinates unplace_coordinates]
+                only: %i[show edit update follow unfollow ship stake_stonks unstake_stonks destroy update_coordinates unplace_coordinates request_recertification]
   before_action :check_if_shipped, only: %i[edit update]
   before_action :authorize_user, only: [ :destroy ]
   before_action :require_hackatime, only: [ :create ]
@@ -98,6 +98,9 @@ class ProjectsController < ApplicationController
 
     @project_image = pj_image
 
+    # Handle devlog highlighting for direct devlog links
+    @target_devlog_id = params[:devlog_id] if params[:devlog_id].present?
+
     return unless current_user
 
     if current_user == @project.user && current_user.has_hackatime?
@@ -153,8 +156,8 @@ class ProjectsController < ApplicationController
   def my_projects
     @projects = current_user.projects.includes(
       :banner_attachment,
-      ship_events: :payouts,
-      devlogs: [ :file_attachment ]
+      { ship_events: :payouts },
+      { devlogs: :file_attachment }
     ).order(created_at: :desc)
   end
 
@@ -274,6 +277,19 @@ class ProjectsController < ApplicationController
     end
   end
 
+  def request_recertification
+    unless current_user == @project.user
+      redirect_to project_path(@project), alert: "You can only request re-certification for your own project."
+      return
+    end
+
+    if @project.request_recertification!
+      redirect_to project_path(@project), notice: "Re-certification requested! Your project will be reviewed again."
+    else
+      redirect_to project_path(@project), alert: "Cannot request re-certification for this project."
+    end
+  end
+
   # Some AI generated code to check if a link is a valid repo or readme link
   def check_link
     url = params[:url]&.strip&.gsub(/\A"|"\z/, "")
@@ -360,7 +376,7 @@ class ProjectsController < ApplicationController
       end
 
       case response.code.to_i
-      when 200..299
+      when 200..399
         render json: { valid: true }
       when 401, 403
         domain = uri.host
@@ -580,11 +596,15 @@ class ProjectsController < ApplicationController
       payout_count = payouts.size
       payout_sum = payouts.sum(&:amount)
 
-      previous_ship = index > 0 ? ship_events_by_date[index - 1] : nil
-      start_time = previous_ship&.created_at || @project.created_at
-
-      devlogs_count = devlogs_by_date.count do |devlog|
-        devlog.created_at > start_time && devlog.created_at <= ship_event.created_at
+      if index == 0
+        devlogs_count = devlogs_by_date.count do |devlog|
+          devlog.created_at <= ship_event.created_at
+        end
+      else
+        previous_ship = ship_events_by_date[index - 1]
+        devlogs_count = devlogs_by_date.count do |devlog|
+          devlog.created_at > previous_ship.created_at && devlog.created_at <= ship_event.created_at
+        end
       end
 
       ship_event_data[ship_event.id] = {
@@ -633,8 +653,7 @@ class ProjectsController < ApplicationController
   def set_project
     @project = Project.includes(
       {
-        user: [ :user_hackatime_data, :projects ],
-        followers: :projects,
+        user: [ :user_hackatime_data ],
         devlogs: [
           :user,
           { comments: :user },

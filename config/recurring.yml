@@ -10,11 +10,12 @@
 #     schedule: at 5am every day
 
 production:
-  # hourly_hackatime_refresh:
-  #   class: HourlyHackatimeRefreshJob
-  #   queue: default
-  #   schedule: every hour
-  #   description: "Refresh Hackatime stats for all users with Hackatime enabled"
+  15_minutes_hackatime_refresh:
+    class: UserHackatimeDataRefreshJob
+    command: perform_unique
+    queue: default
+    schedule: every 15 minutes
+    description: "Refresh Hackatime stats for all users with Hackatime enabled"
 
   # generate_stonk_reports:
   #   class: GenerateStonkReportJob
@@ -73,3 +74,21 @@ production:
     schedule: every 7 minutes
     concurrency: 1
     description: "CSV-sync non-free-stickers orders into Airtable"
+
+  shop_process_letter_mail_orders:
+    class: Shop::ProcessLetterMailOrdersJob
+    schedule: every 2 days
+    concurrency: 1
+    description: "Process pending letter mail orders and send to Theseus som-fulfillment queue"
+
+  airtable_syncable_update:
+    class: AirtableSyncableUpdateJob
+    schedule: every 2 minutes
+    concurrency: 1
+    description: "Sync Airtable records every 2 minutes with single execution limit"
+
+  upload_to_unified_db:
+    class: YswsReview::UploadToUnifiedDbJob
+    schedule: every 5 minutes
+    concurrency: 1
+    description: "Upload approved YSWS from the SoM to the Unified db"

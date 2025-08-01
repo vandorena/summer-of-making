@@ -51,6 +51,24 @@ class Project < ApplicationRecord
   has_one :stonk_tickler
   has_one_attached :banner
 
+  include AirtableSyncable
+
+  def self.airtable_table_name
+    "_projects"
+  end
+
+  def self.airtable_field_mappings
+    {
+      "_ship_events" => "airtable_ship_event_record_ids"
+    }
+  end
+
+  def airtable_ship_event_record_ids
+    ship_events.joins(:airtable_sync)
+               .where.not(airtable_syncs: { airtable_record_id: nil })
+               .pluck("airtable_syncs.airtable_record_id")
+  end
+
   has_many :ship_certifications
   has_many :readme_certifications
 
@@ -91,6 +109,16 @@ class Project < ApplicationRecord
   scope :pending_certification, -> {
     joins(:ship_certifications).where(ship_certifications: { judgement: "pending" })
   }
+
+  # Projects eligible for YSWS review
+  scope :ysws_review_eligible, -> {
+    joins(:ship_certifications)
+      .where(ship_certifications: { judgement: "approved" })
+      .where(ysws_type: nil)
+      .where(is_deleted: false)
+  }
+
+  has_one :ysws_review_submission, class_name: "YswsReview::Submission", dependent: :destroy
 
   validates :title, presence: true, length: { maximum: 200 }
   validates :description, presence: true, length: { maximum: 2500 }
@@ -134,9 +162,11 @@ class Project < ApplicationRecord
     converge: "Converge",
     grub: "Grub",
     hackaccino: "Hackaccino",
+    hackcraft: "Hackcraft",
     highway: "Highway",
     jumpstart: "Jumpstart",
     neighborhood: "Neighborhood",
+    railway: "Railway",
     shipwrecked: "Shipwrecked",
     solder: "Solder",
     sprig: "Sprig",
@@ -149,6 +179,8 @@ class Project < ApplicationRecord
     waveband: "Waveband",
     fixit: "FIX IT!",
     twist: "Twist",
+    reality: "Reality",
+    endpointer: "Endpointer",
     other: "Other"
   }
 
@@ -163,7 +195,6 @@ class Project < ApplicationRecord
   before_save :filter_hackatime_keys
 
   before_save :remove_duplicate_hackatime_keys
-  before_save :set_default_certification_type
 
   def total_votes
     vote_changes.count
@@ -230,7 +261,20 @@ class Project < ApplicationRecord
   end
 
   def unlogged_time
-    [ coding_time - total_seconds_coded, 0 ].max
+    if has_neighborhood_migrated_devlogs?
+      # for neighborhood projects, get fresh Hackatime data from June 16 to avoid
+      # mismatch with duration_seconds that may include May-June time
+      fresh_som_coding_time = user.user_hackatime_data.fetch_som_period_time(hackatime_keys)
+      result = [ total_seconds_coded - fresh_som_coding_time, 0 ].max
+      result
+    else
+      # std calc for non-neighborhood projects
+      [ coding_time - total_seconds_coded, 0 ].max
+    end
+  end
+
+  def has_neighborhood_migrated_devlogs?
+    devlogs.where(is_neighborhood_migrated: true).exists?
   end
 
   def locked_hackatime_keys
@@ -303,7 +347,7 @@ class Project < ApplicationRecord
         message: "Project must have a banner image (not from a Devlog)."
       },
       previous_payout: {
-        met: latest_ship_certification&.rejected? || unpaid_ship_events_since_last_payout.empty?,
+        met: unpaid_ship_events_since_last_payout.empty?,
         message: "Previous ship event must be paid out before shipping again."
       },
       minimum_time: {
@@ -350,6 +394,19 @@ class Project < ApplicationRecord
     return true if user && (user == self.user || user.is_admin?)
 
     false
+  end
+
+  def can_request_recertification?
+    latest_ship_certification&.rejected? &&
+    ship_events.any? &&
+    !latest_ship_certification.pending?
+  end
+
+  def request_recertification!
+    return false unless can_request_recertification?
+
+    # create a new pending ship certification
+    ship_certifications.create!(judgement: :pending)
   end
 
   def unpaid_ship_events_since_last_payout
@@ -573,10 +630,6 @@ class Project < ApplicationRecord
   def unlerp(start, stop, value)
     return 0.0 if start == stop
     (value - start) / (stop - start).to_f
-  end
-
-  def set_default_certification_type
-    self.certification_type = :cert_other if certification_type.blank?
   end
 
   private

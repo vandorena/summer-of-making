@@ -68,7 +68,7 @@ group :development, :test do
   gem "debug", platforms: %i[mri windows], require: "debug/prelude"
 
   # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
-  gem "brakeman", require: false
+  gem "brakeman", "~> 7.1.0", require: false
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
@@ -89,7 +89,7 @@ group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
 
-  # Auto-reload pages after a code change
+  # Live reload for development [https://github.com/rails/rails_live_reload]
   gem "rails_live_reload"
 
   # For catching N+1 queries and unused eager loading [https://github.com/flyerhzm/bullet]
@@ -160,3 +160,5 @@ gem "rack-attack", "~> 6.7"
 gem "sanitize", "~> 7.0"
 
 gem "activeinsights"
+
+gem "paper_trail"

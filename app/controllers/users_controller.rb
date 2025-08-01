@@ -8,6 +8,9 @@ class UsersController < ApplicationController
 
   def show
     authorize @user
+    if @user.is_banned?
+      redirect_to root_path, alert: "This user has been banned." and return
+    end
     @user.user_profile ||= @user.build_user_profile
 
     # All projects for the sidebar
@@ -81,7 +84,7 @@ class UsersController < ApplicationController
           f.headers["Rack-Attack-Bypass"] = bypass_key
         end
         .post(
-          "https://hk048kcko8cw88coc08800oc.hackatime.selfhosted.hackclub.com/api/internal/can_i_have_a_magic_link_for/#{current_user.slack_id}",
+          "https://hackatime.hackclub.com/api/internal/can_i_have_a_magic_link_for/#{current_user.slack_id}",
           {
             email: current_user.email,
             return_data: {
@@ -146,8 +149,8 @@ class UsersController < ApplicationController
 
     Rails.cache.fetch(cache_key, expires_in: 1.hour) do
       # Get user's devlogs and projects with includes
-      # Include devlogs even if project is nil to allow proper handling in view
       devlogs = @user.devlogs.includes(:project, :user, :comments, :likes, :file_attachment)
+                            .where.not(project: nil)
                             .order(created_at: :desc)
 
       projects = @user.projects.includes(:user, :banner_attachment)

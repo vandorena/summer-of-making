@@ -72,6 +72,8 @@
 #                   tutorial_complete_step POST   /tutorial/complete_step(.:format)                                                                 tutorial_progress#complete_step
 #                          api_v1_projects GET    /api/v1/projects(.:format)                                                                        api/v1/projects#index
 #                           api_v1_project GET    /api/v1/projects/:id(.:format)                                                                    api/v1/projects#show
+#                          api_v1_projects GET    /api/v1/users(.:format)                                                                           api/v1/users#index
+#                           api_v1_project GET    /api/v1/users/:id(.:format)                                                                       api/v1/users#show
 #                           api_v1_devlogs GET    /api/v1/devlogs(.:format)                                                                         api/v1/devlogs#index
 #                            api_v1_devlog GET    /api/v1/devlogs/:id(.:format)                                                                     api/v1/devlogs#show
 #                          api_v1_comments GET    /api/v1/comments(.:format)                                                                        api/v1/comments#index
@@ -240,11 +242,13 @@ Rails.application.routes.draw do
       post :follow
       delete :unfollow
       patch :ship
+      post :request_recertification
       post :stake_stonks
       delete :unstake_stonks
       patch :update_coordinates
       delete :unplace_coordinates
       # patch :recover
+      get "devlog/:devlog_id", action: :show, as: :devlog
     end
   end
 
@@ -301,7 +305,9 @@ Rails.application.routes.draw do
   # API routes
   namespace :api do
     namespace :v1 do
+      get "users/me", to: "users#me"
       resources :projects, only: [ :index, :show ]
+      resources :users, only: [ :index, :show ]
       resources :devlogs, only: [ :index, :show ]
       resources :comments, only: [ :index, :show ]
       resources :emotes, only: [ :show ]
@@ -319,7 +325,7 @@ Rails.application.routes.draw do
   namespace :admin, constraint: AdminConstraint do
     mount MissionControl::Jobs::Engine, at: "jobs"
     mount AhoyCaptain::Engine, at: "ahoy_captain"
-    mount Blazer::Engine, at: "flipper"
+    mount Blazer::Engine, at: "blazer"
     mount Flipper::UI.app(Flipper), at: "flipper"
     # mount_avo
     get "/", to: "static_pages#index", as: :root
@@ -340,6 +346,7 @@ Rails.application.routes.draw do
       end
     end
     resources :readme_certifications, only: [ :index, :edit, :update ]
+    resources :ysws_reviews, only: [ :index, :show, :update ]
     resources :users, only: [ :index, :show ] do
       member do
         post :internal_notes
@@ -380,5 +387,12 @@ Rails.application.routes.draw do
       end
     end
     resources :shop_card_grants, only: [ :index, :show ]
+    resources :caches, path: "cache", only: [ :index ] do
+      member do
+        delete :zap
+      end
+    end
   end
+
+  get "leaderboard", to: "leaderboard#index"
 end

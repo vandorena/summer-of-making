@@ -277,7 +277,7 @@ class User < ApplicationRecord
     result = JSON.parse(response.body)
     return 0 unless result&.dig("data", "status") == "ok"
 
-    result.dig("data", "unique_total_seconds") || result.dig("data", "total_seconds") || 0
+    result.dig("data", "total_seconds")
   rescue => e
     Rails.logger.error("Failed to fetch today's hackatime data: #{e.message}")
     0
@@ -300,10 +300,10 @@ class User < ApplicationRecord
         end_date = Time.parse(to.to_s).utc.freeze
       end
 
-      url = "https://hackatime.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects&start_date=#{start_date}"
+      url = "https://hackatime.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects&start_date=#{start_date}&test_param=true"
       url += "&end_date=#{end_date}" if end_date.present?
 
-      Faraday.get(url, nil, { "RACK_ATTACK_BYPASS" => Rails.application.credentials.hackatime&.ratelimit_bypass_header }.compact)
+      Faraday.get(url, nil, { "RACK_ATTACK_BYPASS" => ENV["HACKATIME_BYPASS_KEYS"] }.compact)
     end
   end
 
@@ -364,20 +364,12 @@ class User < ApplicationRecord
     staked_projects.distinct.count
   end
 
-  def can_vote?
-    is_admin? || Flipper.enabled?(:can_vote_2025_06_28, self)
-  end
-
-  def mark_vote_tester!
-    Flipper.enable(:can_vote_2025_06_28, self)
-  end
-
   def give_black_market!
     update!(has_black_market: true)
     SendSlackDmJob.perform_later slack_id, <<~EOM
-      psst..... hey, kid.
-      heidi said to tell you you've just been given access to the <https://summer.hackclub.com/shop/black_market|[Black Market]>.
-      i'd be careful there if i were you, but what do i know?
+      Psst... hey, kid... Booth’s been watchin’. Says you’re one of the real ones. You build like it means something, not like these others out here playin’ pretend. You build for yourself, for your crew, maybe even for the whole damn world. You get the hustle. You live it.
+      So here’s the deal... he wants you in. On the real goodies. Remember the normal shop? Forget it. That was just the lobby. We got what you’re really lookin’ for now. Welcome to <https://summer.hackclub.com/shop/black_market|heidimarket>.
+      Keep it buried. Eyes low, lips sealed. Last thing we need is the whole block sniffin’ around where they don’t belong.
     EOM
   end
 

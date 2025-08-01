@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_21_143917) do
+
+ActiveRecord::Schema[8.0].define(version: 2025_07_30_182737) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -153,6 +154,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_21_143917) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "airtable_syncs", force: :cascade do |t|
+    t.string "syncable_type", null: false
+    t.bigint "syncable_id", null: false
+    t.datetime "last_synced_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "airtable_record_id"
+    t.index ["last_synced_at"], name: "index_airtable_syncs_on_last_synced_at"
+    t.index ["syncable_type", "syncable_id"], name: "index_airtable_syncs_on_syncable"
+    t.index ["syncable_type", "syncable_id"], name: "index_airtable_syncs_on_syncable_type_and_syncable_id", unique: true
+  end
+
   create_table "blazer_audits", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "query_id"
@@ -243,6 +256,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_21_143917) do
     t.integer "views_count", default: 0, null: false
     t.integer "duration_seconds", default: 0, null: false
     t.jsonb "hackatime_projects_key_snapshot", default: [], null: false
+    t.boolean "is_neighborhood_migrated", default: false, null: false
     t.index ["project_id"], name: "index_devlogs_on_project_id"
     t.index ["user_id"], name: "index_devlogs_on_user_id"
     t.index ["views_count"], name: "index_devlogs_on_views_count"
@@ -256,6 +270,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_21_143917) do
     t.string "user_agent"
     t.string "ref"
     t.datetime "synced_at"
+    t.string "slack_id"
     t.index ["email"], name: "index_email_signups_on_email", unique: true
   end
 
@@ -743,6 +758,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_21_143917) do
     t.boolean "is_banned", default: false
   end
 
+  create_table "versions", force: :cascade do |t|
+    t.string "whodunnit"
+    t.datetime "created_at"
+    t.bigint "item_id", null: false
+    t.string "item_type", null: false
+    t.string "event", null: false
+    t.text "object"
+    t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
+  end
+
   create_table "view_events", force: :cascade do |t|
     t.string "viewable_type", null: false
     t.bigint "viewable_id", null: false
@@ -792,6 +817,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_21_143917) do
     t.bigint "project_2_id"
     t.bigint "ship_event_1_id", null: false
     t.bigint "ship_event_2_id", null: false
+    t.datetime "processed_at"
+    t.text "ai_feedback"
     t.index ["marked_invalid_at"], name: "index_votes_on_marked_invalid_at"
     t.index ["marked_invalid_by_id"], name: "index_votes_on_marked_invalid_by_id"
     t.index ["project_1_id"], name: "index_votes_on_project_1_id"
@@ -801,6 +828,26 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_21_143917) do
     t.index ["status"], name: "index_votes_on_status"
     t.index ["user_id", "ship_event_1_id", "ship_event_2_id"], name: "index_votes_on_user_and_ship_events", unique: true
     t.index ["user_id"], name: "index_votes_on_user_id"
+  end
+
+  create_table "ysws_review_devlog_approvals", force: :cascade do |t|
+    t.bigint "devlog_id", null: false
+    t.bigint "user_id", null: false, comment: "The reviewer who made this approval"
+    t.boolean "approved", null: false
+    t.integer "approved_seconds", comment: "Seconds approved by reviewer (may differ from devlog.duration_seconds)"
+    t.text "notes", comment: "Internal notes from the reviewer"
+    t.datetime "reviewed_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["devlog_id"], name: "index_ysws_review_devlog_approvals_on_devlog_id", unique: true
+    t.index ["user_id"], name: "index_ysws_review_devlog_approvals_on_user_id"
+  end
+
+  create_table "ysws_review_submissions", force: :cascade do |t|
+    t.bigint "project_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id"], name: "index_ysws_review_submissions_on_project_id", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
@@ -853,4 +900,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_21_143917) do
   add_foreign_key "votes", "ship_events", column: "ship_event_2_id"
   add_foreign_key "votes", "users"
   add_foreign_key "votes", "users", column: "marked_invalid_by_id"
+  add_foreign_key "ysws_review_devlog_approvals", "devlogs"
+  add_foreign_key "ysws_review_devlog_approvals", "users"
+  add_foreign_key "ysws_review_submissions", "projects"
 end

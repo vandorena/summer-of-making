@@ -51,7 +51,8 @@ class ShopItem < ApplicationRecord
   MANUAL_FULFILLMENT_TYPES = [
     ShopItem::ThirdPartyPhysical,
     ShopItem::HQMailItem,
-    ShopItem::SpecialFulfillmentItem
+    ShopItem::SpecialFulfillmentItem,
+    ShopItem::LetterMail
   ]
 
   has_one_attached :image do |attachable|

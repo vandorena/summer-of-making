@@ -15,12 +15,12 @@
             loader.classList.add('fade-out');
           }
           document.body.classList.remove("no_scroll")
-        }, 5000 + Math.random()*3783);
+        }, 5000 + Math.random()*3989);
       });
     </script>
     <% end %>
   </head>
-  <body class="no_scroll">
+  <body>
   <% unless current_user&.has_badge?(:preferred_customer) %>
     <div class="loader">
       <div class="inner">
