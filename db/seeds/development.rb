@@ -223,6 +223,13 @@ MockShopItems::SHOP_ITEMS.each do |item_data|
     item.requires_black_market = false
     item.one_per_person_ever = item_data[:one_per_person_ever]
     item.show_in_carousel = item_data[:show_in_carousel]
+    item.enabled = true
+    item.enabled_au = rand < 0.8
+    item.enabled_ca = rand < 0.8
+    item.enabled_eu = rand < 0.9
+    item.enabled_in = rand < 0.8
+    item.enabled_us = rand < 0.8
+    item.enabled_xx = rand < 0.5
 
     item.image.attach(io: get_dummy_image, filename: "image#{SecureRandom.hex(10)}.jpg")
   end
