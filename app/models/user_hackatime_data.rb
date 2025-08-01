@@ -68,9 +68,25 @@ class UserHackatimeData < ApplicationRecord
       .sort_by { |p| p[:name] }
   end
 
+  def fetch_som_period_time(project_keys)
+    Rails.cache.fetch("som_period_time_#{user.id}_#{project_keys.sort.join(',')}", expires_in: 10.seconds) do
+      result = fetch_combined_project_time_with_date(project_keys, "2025-06-16")
+      if result.nil?
+        Rails.logger.warn "Failed to fetch SoM period Hackatime data for user #{user.slack_id} with keys #{project_keys} - using 0"
+        0
+      else
+        result
+      end
+    end
+  end
+
   private
 
   def fetch_combined_project_time(project_keys)
+    fetch_combined_project_time_with_date(project_keys, "2025-06-16")
+  end
+
+  def fetch_combined_project_time_with_date(project_keys, start_date_string)
     return 0 unless user.slack_id.present?
     project_keys_string = project_keys.join(",")
     encoded_project_keys = URI.encode_www_form_component(project_keys_string)
@@ -78,7 +94,7 @@ class UserHackatimeData < ApplicationRecord
     # use utc
     start_time = begin
       Time.use_zone("America/New_York") do
-        Time.parse("2025-06-16").beginning_of_day
+        Time.parse(start_date_string).beginning_of_day
       end
     end.utc
 
