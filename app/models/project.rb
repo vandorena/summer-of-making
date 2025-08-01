@@ -261,23 +261,20 @@ class Project < ApplicationRecord
   end
 
   def unlogged_time
-    # handling neighbourhood!
-    [ coding_time - som_period_devlog_seconds, 0 ].max
+    if has_neighborhood_migrated_devlogs?
+      # for neighborhood projects, get fresh Hackatime data from June 16 to avoid
+      # mismatch with duration_seconds that may include May-June time
+      fresh_som_coding_time = user.user_hackatime_data.fetch_som_period_time(hackatime_keys)
+      result = [ total_seconds_coded - fresh_som_coding_time, 0 ].max
+      result
+    else
+      # std calc for non-neighborhood projects
+      [ coding_time - total_seconds_coded, 0 ].max
+    end
   end
 
-  def som_period_devlog_seconds
-    som_start = Time.use_zone("America/New_York") { Time.parse("2025-06-16").beginning_of_day }.utc
-    devlogs.where("created_at >= ?", som_start).sum(:duration_seconds)
-  end
-
-  def has_neighborhood_devlogs?
-    som_start = Time.use_zone("America/New_York") { Time.parse("2025-06-16").beginning_of_day }.utc
-    devlogs.where("created_at < ?", som_start).exists?
-  end
-
-  def neighborhood_devlog_seconds
-    som_start = Time.use_zone("America/New_York") { Time.parse("2025-06-16").beginning_of_day }.utc
-    devlogs.where("created_at < ?", som_start).sum(:duration_seconds)
+  def has_neighborhood_migrated_devlogs?
+    devlogs.where(is_neighborhood_migrated: true).exists?
   end
 
   def locked_hackatime_keys

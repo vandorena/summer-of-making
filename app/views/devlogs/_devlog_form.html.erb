@@ -48,19 +48,15 @@
                 <% total_hackatime_secs = total_hackatime_seconds % 60 %>
                 <div><span class="font-extrabold">Total Time:</span> <%= "#{total_hackatime_hours}h #{total_hackatime_minutes}m #{total_hackatime_secs}s" %></div>
 
-                <% som_devlog_seconds = @project.som_period_devlog_seconds %>
-                <% total_hours = som_devlog_seconds / 3600 %>
-                <% total_minutes = (som_devlog_seconds % 3600) / 60 %>
-                <% total_seconds = som_devlog_seconds % 60 %>
+                <% total_time = @project.total_seconds_coded %>
+                <% total_hours = total_time / 3600 %>
+                <% total_minutes = (total_time % 3600) / 60 %>
+                <% total_seconds = total_time % 60 %>
                 <div><span class="font-extrabold">Logged Time:</span> <%= "#{total_hours}h #{total_minutes}m #{total_seconds}s" %></div>
 
-                <% if @project.has_neighborhood_devlogs? %>
-                  <% neighborhood_seconds = @project.neighborhood_devlog_seconds %>
-                  <% neighborhood_hours = neighborhood_seconds / 3600 %>
-                  <% neighborhood_minutes = (neighborhood_seconds % 3600) / 60 %>
-                  <% neighborhood_secs = neighborhood_seconds % 60 %>
-                  <div class="text-som-dark text-sm mt-1">
-                    <span class="font-semibold">Additional Time (likely Neighborhood Migration):</span> <%= "#{neighborhood_hours}h #{neighborhood_minutes}m #{neighborhood_secs}s" %> (before June 16)
+                <% if total_time > total_hackatime_seconds %>
+                  <div class="text-som-dark text-sm mt-1 p-2 rounded">
+                    <span class="font-semibold">Neighborhood Migration:</span> Your devlog hours include time from before Summer of Making. Don't worry your payouts and time are secure!
                   </div>
                 <% end %>
 
