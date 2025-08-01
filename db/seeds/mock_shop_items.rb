@@ -271,7 +271,7 @@ module MockShopItems
     {
       name: "family guy seasons 1 & 2 on dvd",
       type: "ShopItem::HQMailItem",
-      description: "signed by zach latta û probably the only such object to exist",
+      description: "signed by zach latta – probably the only such object to exist",
       ticket_cost: 70.00,
       usd_cost: 10.00,
       hacker_score: 5,
@@ -473,7 +473,7 @@ module MockShopItems
     {
       name: "shapez 2",
       type: "ShopItem::ThirdPartyPhysical",
-      description: "Dive into a factory-building game with the focus on just that û building huge space factories!",
+      description: "Dive into a factory-building game with the focus on just that – building huge space factories!",
       ticket_cost: 137.00,
       usd_cost: 25.00,
       hacker_score: 40,
@@ -525,7 +525,7 @@ module MockShopItems
     {
       name: "25 bucks in IKEA credit",
       type: "ShopItem::HCBGrant",
-      description: "get a BL┼VINGAD... or an AFTONSPARV...or a DJUNGELSKOG..or maybe some furniture? idk",
+      description: "get a BLÅVINGAD... or an AFTONSPARV...or a DJUNGELSKOG..or maybe some furniture? idk",
       ticket_cost: 170.00,
       usd_cost: 25.00,
       hacker_score: 15,
