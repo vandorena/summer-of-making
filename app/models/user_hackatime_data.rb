@@ -37,7 +37,7 @@ class UserHackatimeData < ApplicationRecord
       end
     else
       Rails.cache.fetch("project_coding_time_#{project.id}_#{project_keys.sort.join(',')}", expires_in: 30.seconds) do
-        result = fetch_combined_project_time(project_keys)
+        result = fetch_combined_project_time_with_date(project_keys, "2025-06-16")
         if result.nil?
           Rails.logger.warn "Failed to fetch Hackatime data for project #{project.id} with keys #{project_keys} - using 0"
           Honeybadger.notify("UserHackatimeData API failure", context: {
@@ -68,11 +68,12 @@ class UserHackatimeData < ApplicationRecord
       .sort_by { |p| p[:name] }
   end
 
-  def fetch_som_period_time(project_keys)
-    Rails.cache.fetch("som_period_time_#{user.id}_#{project_keys.sort.join(',')}", expires_in: 10.seconds) do
-      result = fetch_combined_project_time_with_date(project_keys, "2025-06-16")
+  def fetch_neighborhood_total_time(project_keys)
+    # for neighbourhood projects we do may 1 thingie
+    Rails.cache.fetch("neighborhood_total_time_#{user.id}_#{project_keys.sort.join(',')}", expires_in: 10.seconds) do
+      result = fetch_combined_project_time_with_date(project_keys, "2025-05-01")
       if result.nil?
-        Rails.logger.warn "Failed to fetch SoM period Hackatime data for user #{user.slack_id} with keys #{project_keys} - using 0"
+        Rails.logger.warn "Failed to fetch neighborhood total Hackatime data for user #{user.slack_id} with keys #{project_keys} - using 0"
         0
       else
         result
@@ -81,10 +82,6 @@ class UserHackatimeData < ApplicationRecord
   end
 
   private
-
-  def fetch_combined_project_time(project_keys)
-    fetch_combined_project_time_with_date(project_keys, "2025-06-16")
-  end
 
   def fetch_combined_project_time_with_date(project_keys, start_date_string)
     return 0 unless user.slack_id.present?

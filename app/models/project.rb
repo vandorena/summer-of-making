@@ -251,26 +251,18 @@ class Project < ApplicationRecord
   def can_post_devlog?(required_seconds = 300)
     return false unless user.has_hackatime? && hackatime_keys.present?
 
-    unlogged_time >= required_seconds
-  end
+    if has_neighborhood_migrated_devlogs?
+      total_hackatime = user.user_hackatime_data&.fetch_neighborhood_total_time(hackatime_keys) || 0
+      unlogged = [ total_hackatime - total_seconds_coded, 0 ].max
+    else
+      unlogged = unlogged_time
+    end
 
-  def time_needed(required_seconds = 300)
-    return required_seconds unless user.has_hackatime?
-
-    [ required_seconds - unlogged_time, 0 ].max
+    unlogged >= required_seconds
   end
 
   def unlogged_time
-    if has_neighborhood_migrated_devlogs?
-      # for neighborhood projects, get fresh Hackatime data from June 16 to avoid
-      # mismatch with duration_seconds that may include May-June time
-      fresh_som_coding_time = user.user_hackatime_data.fetch_som_period_time(hackatime_keys)
-      result = [ total_seconds_coded - fresh_som_coding_time, 0 ].max
-      result
-    else
-      # std calc for non-neighborhood projects
-      [ coding_time - total_seconds_coded, 0 ].max
-    end
+    [ coding_time - total_seconds_coded, 0 ].max
   end
 
   def has_neighborhood_migrated_devlogs?
