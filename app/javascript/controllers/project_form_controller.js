@@ -40,17 +40,16 @@ export default class extends Controller {
   connect() {
     try {
       this.element.setAttribute("novalidate", true);
-      this.dragCounter = 0; // Track drag enter/leave events
-      this.isSubmitting = false; // Prevent duplicate submissions
-      this.isInitialized = false; // Track if controller is fully initialized
-      this.initRetryCount = 0; // Track initialization retries
-      this.maxRetries = 10; // Prevent infinite retry loops
-      this.rulesRetryCount = 0; // Track rules modal content retries
-      this.pendingTimeouts = []; // Track pending timeouts for cleanup
+      this.dragCounter = 0;
+      this.isSubmitting = false;
+      this.isInitialized = false;
+      this.initRetryCount = 0;
+      this.maxRetries = 10;
+      this.rulesRetryCount = 0;
+      this.pendingTimeouts = [];
 
-      // Use requestAnimationFrame to ensure DOM is fully rendered before initialization
       requestAnimationFrame(() => {
-        if (this.element) { // Check if still connected
+        if (this.element) {
           this.initializeController();
         }
       });
@@ -61,26 +60,22 @@ export default class extends Controller {
 
   initializeController() {
     try {
-      // Don't proceed if controller has been disconnected
       if (!this.element) {
         return;
       }
 
-      // Verify critical targets are available before proceeding
       if (!this.verifyCriticalTargets()) {
         if (this.initRetryCount < this.maxRetries) {
           this.initRetryCount++;
           console.warn(`Some critical targets not found during initialization, retrying... (${this.initRetryCount}/${this.maxRetries})`);
           
-          // Retry after a short delay if targets aren't ready
           const timeoutId = setTimeout(() => {
-            // Remove this timeout from pending list
             const index = this.pendingTimeouts.indexOf(timeoutId);
             if (index > -1) {
               this.pendingTimeouts.splice(index, 1);
             }
             
-            if (this.element) { // Check if still connected
+            if (this.element) {
               this.initializeController();
             }
           }, 100);
@@ -92,7 +87,6 @@ export default class extends Controller {
         return;
       }
 
-      // Store bound function reference for proper cleanup
       this.boundHandleHackatimeSelection = this.handleHackatimeSelection.bind(this);
 
       if (this.hasHackatimeSelectTarget) {
@@ -111,14 +105,11 @@ export default class extends Controller {
 
   disconnect() {
     try {
-      // Clean up when controller is removed
       this.isInitialized = false;
       
-      // Reset retry counters
       this.initRetryCount = 0;
       this.rulesRetryCount = 0;
       
-      // Clear any pending timeouts
       if (this.pendingTimeouts) {
         this.pendingTimeouts.forEach(timeoutId => {
           clearTimeout(timeoutId);
@@ -138,7 +129,6 @@ export default class extends Controller {
   }
 
   verifyCriticalTargets() {
-    // Check if essential form targets exist (these are required for basic functionality)
     const criticalTargets = [
       'hasTitleTarget',
       'hasDescriptionTarget'
@@ -154,16 +144,13 @@ export default class extends Controller {
       return false;
     }
 
-    // Check if the rules step has actual content
     const rulesElement = this.rulesStepTarget;
     
-    // Verify the element has children and isn't just empty
     if (!rulesElement.children || rulesElement.children.length === 0) {
       console.warn("Rules step target exists but has no children");
       return false;
     }
 
-    // Check if any visible content exists (not just hidden elements)
     const hasVisibleContent = Array.from(rulesElement.children).some(child => {
       const computedStyle = window.getComputedStyle(child);
       return computedStyle.display !== 'none' && 
@@ -176,7 +163,6 @@ export default class extends Controller {
       return false;
     }
 
-    // Check for essential rules modal elements (like confirmation checkbox)
     if (this.hasRulesConfirmationCheckboxTarget) {
       const checkbox = this.rulesConfirmationCheckboxTarget;
       if (!checkbox.parentElement || !checkbox.parentElement.textContent.trim()) {
@@ -192,7 +178,6 @@ export default class extends Controller {
 
   validateFormFields() {
     try {
-      // Don't validate if controller isn't fully initialized (prevents race conditions on page refresh)
       if (!this.isInitialized || !this.element) {
         console.warn("Form validation attempted before controller initialization");
         return false;
@@ -201,7 +186,6 @@ export default class extends Controller {
       this.clearErrors();
       let isValid = true;
 
-      // Validate title
       if (this.hasTitleTarget && !this.titleTarget.value.trim()) {
         if (this.hasTitleErrorTarget) {
           this.showError(this.titleErrorTarget, "Title is required");
@@ -209,7 +193,6 @@ export default class extends Controller {
         isValid = false;
       }
 
-      // Validate description
       if (this.hasDescriptionTarget && !this.descriptionTarget.value.trim()) {
         if (this.hasDescriptionErrorTarget) {
           this.showError(this.descriptionErrorTarget, "Description is required");
@@ -217,7 +200,6 @@ export default class extends Controller {
         isValid = false;
       }
 
-      // Validate YSWS submission
       if (this.hasYswsSubmissionCheckboxRealTarget && this.yswsSubmissionCheckboxRealTarget.checked) {
         if (this.hasYswsTypeTarget && !this.yswsTypeTarget.value) {
           if (this.hasYswsTypeErrorTarget) {
@@ -227,7 +209,6 @@ export default class extends Controller {
         }
       }
 
-      // Validate URL fields
       const urlFields = [];
       
       if (this.hasReadmeTarget && this.hasReadmeErrorTarget) {
@@ -284,7 +265,6 @@ export default class extends Controller {
         event.preventDefault();
       }
       
-      // Don't proceed if controller isn't fully initialized (prevents blank modal on page refresh)
       if (!this.isInitialized || !this.element) {
         console.warn("showRules attempted before controller initialization");
         return;
@@ -294,7 +274,6 @@ export default class extends Controller {
         return;
       }
 
-      // Validate required targets exist before proceeding
       if (!this.hasProjectFormStepTarget || !this.hasRulesStepTarget) {
         console.error("Required form step targets not found");
         return;
@@ -305,12 +284,10 @@ export default class extends Controller {
         return;
       }
 
-      // Additional check: ensure rules step has actual content
       if (!this.validateRulesStepContent()) {
         if (this.rulesRetryCount < this.maxRetries) {
           this.rulesRetryCount++;
           console.warn(`Rules step content not ready, retrying... (${this.rulesRetryCount}/${this.maxRetries})`);
-          // Retry after a short delay
           const timeoutId = setTimeout(() => {
             const index = this.pendingTimeouts.indexOf(timeoutId);
             if (index > -1) {
@@ -322,11 +299,9 @@ export default class extends Controller {
           return;
         } else {
           console.error("Rules step content failed to load after maximum retries, showing modal anyway to prevent user blocking");
-          // Continue to show the modal anyway to prevent complete blocking
         }
       }
 
-      // Reset retry counter on successful content validation or after max retries
       this.rulesRetryCount = 0;
 
       this.projectFormStepTarget.classList.add("hidden");
@@ -386,10 +361,8 @@ export default class extends Controller {
       event.preventDefault();
     }
     
-    // Reset submission state
     this.isSubmitting = false;
     
-    // Reset retry counters
     this.rulesRetryCount = 0;
     
     if (this.hasRulesConfirmationCheckboxTarget) {
@@ -411,36 +384,31 @@ export default class extends Controller {
       this.submitButtonTarget.classList.add("hidden");
     }
 
-    // Reset create button state
     if (this.hasCreateButtonTarget) {
-      this.createButtonTarget.disabled = true; // Should be disabled until rules are confirmed
+      this.createButtonTarget.disabled = true;
       this.createButtonTarget.textContent = "Create Project";
     }
   }
 
   submitProject(event) {
     try {
-      // Prevent duplicate submissions
       if (this.isSubmitting) {
         event.preventDefault();
         return;
       }
 
-      // Don't proceed if controller isn't initialized or element doesn't exist
       if (!this.isInitialized || !this.element) {
         event.preventDefault();
         console.warn("Submit attempted before controller initialization");
         return;
       }
 
-      // Validate rules confirmation checkbox exists and is checked
       if (!this.hasRulesConfirmationCheckboxTarget || !this.rulesConfirmationCheckboxTarget.checked) {
         event.preventDefault();
         alert("You must agree to the rules and guidelines before proceeding.");
         return;
       }
 
-      // Set submitting flag and disable button
       this.isSubmitting = true;
       
       if (this.hasCreateButtonTarget) {
@@ -451,7 +419,7 @@ export default class extends Controller {
       this.element.submit();
     } catch (error) {
       console.error("Error in submitProject:", error);
-      this.isSubmitting = false; // Reset submission flag on error
+      this.isSubmitting = false;
       if (this.hasCreateButtonTarget) {
         this.createButtonTarget.disabled = false;
         this.createButtonTarget.textContent = "Create Project";
@@ -488,14 +456,12 @@ export default class extends Controller {
 
   clearErrors() {
     try {
-      // Skip if not initialized to prevent race conditions
       if (!this.isInitialized || !this.element) {
         return;
       }
 
       const errorTargets = [];
       
-      // Only add targets that exist
       if (this.hasTitleErrorTarget) errorTargets.push(this.titleErrorTarget);
       if (this.hasDescriptionErrorTarget) errorTargets.push(this.descriptionErrorTarget);
       if (this.hasReadmeErrorTarget) errorTargets.push(this.readmeErrorTarget);
@@ -610,7 +576,6 @@ export default class extends Controller {
       this.yswsSubmissionCheckboxFakeTarget.classList.remove("hidden");
       checkboxContainer.classList.add("checked");
 
-      // Show the YSWS type dropdown
       if (this.hasYswsTypeContainerTarget) {
         this.yswsTypeContainerTarget.classList.remove("hidden");
       }
@@ -618,7 +583,6 @@ export default class extends Controller {
       this.yswsSubmissionCheckboxFakeTarget.classList.add("hidden");
       checkboxContainer.classList.remove("checked");
       
-      // Hide the YSWS type dropdown and clear selection
       if (this.hasYswsTypeContainerTarget) {
         this.yswsTypeContainerTarget.classList.add("hidden");
         if (this.hasYswsTypeTarget) {
@@ -656,7 +620,6 @@ export default class extends Controller {
 
     projectElement.remove();
 
-    // Thanks Cursor for this one. If thou shall remove this code, thou shalt not be able to empty the hackatime_project_keys array.
     if (
       this.hasSelectedProjectsTarget &&
       this.selectedProjectsTarget.children.length === 0
@@ -680,7 +643,6 @@ export default class extends Controller {
     event.preventDefault();
     event.dataTransfer.dropEffect = 'copy';
     
-    // Only apply styles on first drag enter
     if (this.dragCounter === 0) {
       if (this.hasBannerDropZoneTarget) {
         this.bannerDropZoneTarget.classList.add('border-forest', 'bg-forest/10');
@@ -709,7 +671,6 @@ export default class extends Controller {
     
     this.dragCounter--;
     
-    // Only reset styles when completely leaving the drop zone
     if (this.dragCounter <= 0) {
       this.dragCounter = 0;
       
@@ -736,7 +697,6 @@ export default class extends Controller {
   handleDrop(event) {
     event.preventDefault();
     
-    // Reset drag counter and styles
     this.dragCounter = 0;
     
     if (this.hasBannerDropZoneTarget) {
