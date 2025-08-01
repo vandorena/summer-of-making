@@ -114,8 +114,6 @@ puts "(4/9) Creating verified projects..."
     judgement: 1, # approved
     notes: Faker::Lorem.sentence
   )
-
-  ShipEvent.create(project: project)
 end
 
 puts "(5/9) Creating unverified projects..."
@@ -193,6 +191,12 @@ Project.all.each do |project|
 
       devlog.update_column(:comments_count, devlog.comments.count)
     end
+  end
+
+  # We create ship events here, because they have to be made AFTER the devlogs to actually
+  # appear in the vote page.
+  if project.is_shipped
+    ShipEvent.create(project: project)
   end
 end
 
