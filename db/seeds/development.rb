@@ -73,42 +73,7 @@ end
 linked_users = User.where(has_hackatime: true)
 ship_eligible_users = User.where(ysws_verified: true, has_hackatime: true)
 
-puts "(3/9) Creating verified projects..."
-150.times do
-  project = Project.create!(
-    {
-      **random_project_props,
-      user: ship_eligible_users.sample,
-      is_shipped: true
-    }
-  )
-
-  ShipCertification.create!(
-    project: project,
-    reviewer_id: User.where(is_admin: true).first&.id || User.first.id,
-    judgement: 1, # approved
-    notes: Faker::Lorem.sentence
-  )
-end
-
-puts "(4/9) Creating unverified projects..."
-50.times do
-  props = random_project_props
-
-  Project.create!(
-    {
-      **props,
-      readme_link: [ props[:readme_link], nil ].sample,
-      demo_link: [ props[:demo_link], nil ].sample,
-      repo_link: [ props[:repo_link], nil ].sample,
-      rating: 1100, # default rating for unshipped projects
-      is_shipped: false,
-      user: linked_users.sample
-    }
-  )
-end
-
-puts "(5/9) Retrieving dummy stock images..."
+puts "(3/9) Retrieving dummy stock images..."
 
 DUMMY_IMAGE_COUNT = 15
 
@@ -124,6 +89,50 @@ def get_dummy_image
   io = DUMMY_IMAGES.sample.dup
   io.rewind
   io
+end
+
+puts "(4/9) Creating verified projects..."
+150.times do
+  project = Project.create!(
+    {
+      **random_project_props,
+      user: ship_eligible_users.sample,
+      is_shipped: true
+    }
+  )
+
+  project.banner.attach(
+    io: get_dummy_image,
+    filename: "image#{SecureRandom.hex(10)}.jpg",
+    content_type: "image/jpeg"
+  )
+  project.save!
+
+  ShipCertification.create!(
+    project: project,
+    reviewer_id: User.where(is_admin: true).first&.id || User.first.id,
+    judgement: 1, # approved
+    notes: Faker::Lorem.sentence
+  )
+
+  ShipEvent.create(project: project)
+end
+
+puts "(5/9) Creating unverified projects..."
+50.times do
+  props = random_project_props
+
+  Project.create!(
+    {
+      **props,
+      readme_link: [ props[:readme_link], nil ].sample,
+      demo_link: [ props[:demo_link], nil ].sample,
+      repo_link: [ props[:repo_link], nil ].sample,
+      rating: 1100, # default rating for unshipped projects
+      is_shipped: false,
+      user: linked_users.sample
+    }
+  )
 end
 
 puts "(6/9) Creating devlogs..."
@@ -161,7 +170,10 @@ Project.all.each do |project|
         Comment.create!(
           user: User.where.not(id: devlog.user_id).sample,
           devlog: devlog,
-          content: Faker::Lorem.paragraph,
+          content: [
+            Faker::Lorem.paragraphs(number: rand(2..5)).join("\n\n"),
+            Faker::Hacker.say_something_smart
+          ].sample,
           rich_content: {
             type: "doc",
             content: [
