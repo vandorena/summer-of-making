@@ -94,6 +94,9 @@ group :development do
 
   # For catching N+1 queries and unused eager loading [https://github.com/flyerhzm/bullet]
   gem "bullet"
+
+  # To generate mock data with db/seeds/development.rb
+  gem "faker"
 end
 
 group :test do
