@@ -38,95 +38,236 @@ export default class extends Controller {
   ];
 
   connect() {
-    this.element.setAttribute("novalidate", true);
-    this.dragCounter = 0; // Track drag enter/leave events
+    try {
+      this.element.setAttribute("novalidate", true);
+      this.dragCounter = 0;
+      this.isSubmitting = false;
+      this.isInitialized = false;
+      this.initRetryCount = 0;
+      this.maxRetries = 10;
+      this.pendingTimeouts = [];
 
-    if (this.hasHackatimeSelectTarget) {
-      this.hackatimeSelectTarget.addEventListener(
-        "change",
-        this.handleHackatimeSelection.bind(this),
-      );
+      requestAnimationFrame(() => {
+        if (this.element) {
+          this.initializeController();
+        }
+      });
+    } catch (error) {
+      console.error("Error in project form controller connect:", error);
     }
+  }
+
+  initializeController() {
+    try {
+      if (!this.element) {
+        return;
+      }
+
+      if (!this.verifyCriticalTargets()) {
+        if (this.initRetryCount < this.maxRetries) {
+          this.initRetryCount++;
+          console.warn(`Some critical targets not found during initialization, retrying... (${this.initRetryCount}/${this.maxRetries})`);
+          
+          const timeoutId = setTimeout(() => {
+            const index = this.pendingTimeouts.indexOf(timeoutId);
+            if (index > -1) {
+              this.pendingTimeouts.splice(index, 1);
+            }
+            
+            if (this.element) {
+              this.initializeController();
+            }
+          }, 100);
+          
+          this.pendingTimeouts.push(timeoutId);
+        } else {
+          console.error("Failed to initialize project form controller after maximum retries");
+        }
+        return;
+      }
+
+      this.boundHandleHackatimeSelection = this.handleHackatimeSelection.bind(this);
+
+      if (this.hasHackatimeSelectTarget) {
+        this.hackatimeSelectTarget.addEventListener(
+          "change",
+          this.boundHandleHackatimeSelection,
+        );
+      }
+
+      this.isInitialized = true;
+      console.log("Project form controller initialized successfully");
+    } catch (error) {
+      console.error("Error in project form controller initialization:", error);
+    }
+  }
+
+  disconnect() {
+    try {
+      this.isInitialized = false;
+      
+      if (this.pendingTimeouts) {
+        this.pendingTimeouts.forEach(timeoutId => {
+          clearTimeout(timeoutId);
+        });
+        this.pendingTimeouts = [];
+      }
+      
+      if (this.hasHackatimeSelectTarget && this.boundHandleHackatimeSelection) {
+        this.hackatimeSelectTarget.removeEventListener(
+          "change",
+          this.boundHandleHackatimeSelection,
+        );
+      }
+    } catch (error) {
+      console.error("Error in project form controller disconnect:", error);
+    }
+  }
+
+  verifyCriticalTargets() {
+    const criticalTargets = [
+      'hasTitleTarget',
+      'hasDescriptionTarget'
+    ];
+
+    return criticalTargets.every(targetCheck => {
+      return this[targetCheck];
+    });
   }
 
 
 
   validateFormFields() {
-    this.clearErrors();
-    let isValid = true;
+    try {
+      if (!this.isInitialized || !this.element) {
+        console.warn("Form validation attempted before controller initialization");
+        return false;
+      }
 
-    if (!this.titleTarget.value.trim()) {
-      this.showError(this.titleErrorTarget, "Title is required");
-      isValid = false;
-    }
+      this.clearErrors();
+      let isValid = true;
 
-    if (!this.descriptionTarget.value.trim()) {
-      this.showError(this.descriptionErrorTarget, "Description is required");
-      isValid = false;
-    }
-
-    if (this.hasYswsSubmissionCheckboxRealTarget && this.yswsSubmissionCheckboxRealTarget.checked) {
-      if (this.hasYswsTypeTarget && !this.yswsTypeTarget.value) {
-        this.showError(this.yswsTypeErrorTarget, "Please select a YSWS program");
+      if (this.hasTitleTarget && !this.titleTarget.value.trim()) {
+        if (this.hasTitleErrorTarget) {
+          this.showError(this.titleErrorTarget, "Title is required");
+        }
         isValid = false;
       }
-    }
 
-    const urlFields = [
-      {
-        field: this.readmeTarget,
-        error: this.readmeErrorTarget,
-        name: "Readme link",
-      },
-      {
-        field: this.demoTarget,
-        error: this.demoErrorTarget,
-        name: "Demo link",
-      },
-      {
-        field: this.repoTarget,
-        error: this.repoErrorTarget,
-        name: "Repository link",
-      },
-    ];
-
-    urlFields.forEach(({ field, error, name }) => {
-      const value = field.value.trim();
-      if (value && !this.isValidUrl(value)) {
-        this.showError(error, `${name} must be a valid URL`);
+      if (this.hasDescriptionTarget && !this.descriptionTarget.value.trim()) {
+        if (this.hasDescriptionErrorTarget) {
+          this.showError(this.descriptionErrorTarget, "Description is required");
+        }
         isValid = false;
       }
-    });
 
-    if (!isValid) {
-      const firstError = this.element.querySelector(".text-vintage-red");
-      if (firstError) {
-        firstError.scrollIntoView({ behavior: "smooth", block: "center" });
+      if (this.hasYswsSubmissionCheckboxRealTarget && this.yswsSubmissionCheckboxRealTarget.checked) {
+        if (this.hasYswsTypeTarget && !this.yswsTypeTarget.value) {
+          if (this.hasYswsTypeErrorTarget) {
+            this.showError(this.yswsTypeErrorTarget, "Please select a YSWS program");
+          }
+          isValid = false;
+        }
       }
-    }
 
-    return isValid;
+      const urlFields = [];
+      
+      if (this.hasReadmeTarget && this.hasReadmeErrorTarget) {
+        urlFields.push({
+          field: this.readmeTarget,
+          error: this.readmeErrorTarget,
+          name: "Readme link",
+        });
+      }
+      
+      if (this.hasDemoTarget && this.hasDemoErrorTarget) {
+        urlFields.push({
+          field: this.demoTarget,
+          error: this.demoErrorTarget,
+          name: "Demo link",
+        });
+      }
+      
+      if (this.hasRepoTarget && this.hasRepoErrorTarget) {
+        urlFields.push({
+          field: this.repoTarget,
+          error: this.repoErrorTarget,
+          name: "Repository link",
+        });
+      }
+
+      urlFields.forEach(({ field, error, name }) => {
+        if (field && field.value) {
+          const value = field.value.trim();
+          if (value && !this.isValidUrl(value)) {
+            this.showError(error, `${name} must be a valid URL`);
+            isValid = false;
+          }
+        }
+      });
+
+      if (!isValid && this.element) {
+        const firstError = this.element.querySelector(".text-vintage-red");
+        if (firstError) {
+          firstError.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }
+
+      return isValid;
+    } catch (error) {
+      console.error("Error in form validation:", error);
+      return false;
+    }
   }
 
   showRules(event) {
-    if (event) {
-      event.preventDefault();
-    }
-    
-    if (!this.validateFormFields()) {
-      return;
-    }
+    try {
+      if (event) {
+        event.preventDefault();
+      }
+      
+      if (!this.isInitialized || !this.element) {
+        console.warn("showRules attempted before controller initialization");
+        return;
+      }
+      
+      if (!this.validateFormFields()) {
+        return;
+      }
 
-    this.projectFormStepTarget.classList.add("hidden");
-    this.rulesStepTarget.classList.remove("hidden");
-    
-    this.nextButtonTarget.classList.add("hidden");
-    this.submitButtonTarget.classList.remove("hidden");
+      if (!this.hasProjectFormStepTarget || !this.hasRulesStepTarget) {
+        console.error("Required form step targets not found");
+        return;
+      }
+
+      if (!this.hasNextButtonTarget || !this.hasSubmitButtonTarget) {
+        console.error("Required button targets not found");
+        return;
+      }
+
+      this.projectFormStepTarget.classList.add("hidden");
+      this.rulesStepTarget.classList.remove("hidden");
+      
+      this.nextButtonTarget.classList.add("hidden");
+      this.submitButtonTarget.classList.remove("hidden");
+    } catch (error) {
+      console.error("Error in showRules:", error);
+    }
   }
 
   toggleRulesConfirmation(event) {
+    if (!this.hasRulesConfirmationCheckboxFakeTarget) {
+      console.error("Rules confirmation checkbox fake target not found");
+      return;
+    }
+
     const isChecked = event.target.checked;
     const checkboxContainer = this.rulesConfirmationCheckboxFakeTarget.parentElement;
+
+    if (!checkboxContainer) {
+      console.error("Rules confirmation checkbox container not found");
+      return;
+    }
 
     if (isChecked) {
       this.rulesConfirmationCheckboxFakeTarget.classList.remove("hidden");
@@ -161,6 +302,8 @@ export default class extends Controller {
       event.preventDefault();
     }
     
+    this.isSubmitting = false;
+    
     if (this.hasRulesConfirmationCheckboxTarget) {
       this.rulesConfirmationCheckboxTarget.checked = false;
       if (this.hasRulesConfirmationCheckboxFakeTarget) {
@@ -179,16 +322,48 @@ export default class extends Controller {
       this.nextButtonTarget.classList.remove("hidden");
       this.submitButtonTarget.classList.add("hidden");
     }
+
+    if (this.hasCreateButtonTarget) {
+      this.createButtonTarget.disabled = true;
+      this.createButtonTarget.textContent = "Create Project";
+    }
   }
 
   submitProject(event) {
-    if (!this.rulesConfirmationCheckboxTarget.checked) {
-      event.preventDefault();
-      alert("You must agree to the rules and guidelines before proceeding.");
-      return;
-    }
+    try {
+      if (this.isSubmitting) {
+        event.preventDefault();
+        return;
+      }
 
-    this.element.submit();
+      if (!this.isInitialized || !this.element) {
+        event.preventDefault();
+        console.warn("Submit attempted before controller initialization");
+        return;
+      }
+
+      if (!this.hasRulesConfirmationCheckboxTarget || !this.rulesConfirmationCheckboxTarget.checked) {
+        event.preventDefault();
+        alert("You must agree to the rules and guidelines before proceeding.");
+        return;
+      }
+
+      this.isSubmitting = true;
+      
+      if (this.hasCreateButtonTarget) {
+        this.createButtonTarget.disabled = true;
+        this.createButtonTarget.textContent = "Submitting...";
+      }
+
+      this.element.submit();
+    } catch (error) {
+      console.error("Error in submitProject:", error);
+      this.isSubmitting = false;
+      if (this.hasCreateButtonTarget) {
+        this.createButtonTarget.disabled = false;
+        this.createButtonTarget.textContent = "Create Project";
+      }
+    }
   }
 
   isValidUrl(string) {
@@ -201,37 +376,53 @@ export default class extends Controller {
   }
 
   showError(errorElement, message) {
+    if (!errorElement) {
+      console.error("Error element not found when trying to show error:", message);
+      return;
+    }
+    
     errorElement.textContent = message;
     errorElement.classList.remove("hidden");
-    const inputId = errorElement.id.replace("Error", "");
-    const input = document.getElementById(inputId);
-    if (input) {
-      input.classList.add("border-vintage-red");
+    
+    if (errorElement.id) {
+      const inputId = errorElement.id.replace("Error", "");
+      const input = document.getElementById(inputId);
+      if (input) {
+        input.classList.add("border-vintage-red");
+      }
     }
   }
 
   clearErrors() {
-    const errorTargets = [
-      this.titleErrorTarget,
-      this.descriptionErrorTarget,
-      this.readmeErrorTarget,
-      this.demoErrorTarget,
-      this.repoErrorTarget,
-    ];
+    try {
+      if (!this.isInitialized || !this.element) {
+        return;
+      }
 
-    // Add YSWS type error if it exists
-    if (this.hasYswsTypeErrorTarget) {
-      errorTargets.push(this.yswsTypeErrorTarget);
+      const errorTargets = [];
+      
+      if (this.hasTitleErrorTarget) errorTargets.push(this.titleErrorTarget);
+      if (this.hasDescriptionErrorTarget) errorTargets.push(this.descriptionErrorTarget);
+      if (this.hasReadmeErrorTarget) errorTargets.push(this.readmeErrorTarget);
+      if (this.hasDemoErrorTarget) errorTargets.push(this.demoErrorTarget);
+      if (this.hasRepoErrorTarget) errorTargets.push(this.repoErrorTarget);
+      if (this.hasYswsTypeErrorTarget) errorTargets.push(this.yswsTypeErrorTarget);
+
+      errorTargets.forEach((target) => {
+        if (target) {
+          target.textContent = "";
+          target.classList.add("hidden");
+        }
+      });
+
+      this.element.querySelectorAll("input, textarea, select").forEach((el) => {
+        if (el && el.classList) {
+          el.classList.remove("border-vintage-red");
+        }
+      });
+    } catch (error) {
+      console.error("Error in clearErrors:", error);
     }
-
-    errorTargets.forEach((target) => {
-      target.textContent = "";
-      target.classList.add("hidden");
-    });
-
-    this.element.querySelectorAll("input, textarea, select").forEach((el) => {
-      el.classList.remove("border-vintage-red");
-    });
   }
 
   addHackatimeProject(event) {
@@ -284,8 +475,18 @@ export default class extends Controller {
   }
 
   toggleUsedAiCheck() {
+    if (!this.hasUsedAiCheckboxRealTarget || !this.hasUsedAiCheckboxFakeTarget) {
+      console.error("Required AI checkbox targets not found");
+      return;
+    }
+
     const checked = this.usedAiCheckboxRealTarget.checked;
     const checkboxContainer = this.usedAiCheckboxFakeTarget.parentElement;
+
+    if (!checkboxContainer) {
+      console.error("Checkbox container not found");
+      return;
+    }
 
     if (checked) {
       this.usedAiCheckboxFakeTarget.classList.remove("hidden");
@@ -297,14 +498,23 @@ export default class extends Controller {
   }
 
   toggleYswsSubmission() {
+    if (!this.hasYswsSubmissionCheckboxRealTarget || !this.hasYswsSubmissionCheckboxFakeTarget) {
+      console.error("Required YSWS checkbox targets not found");
+      return;
+    }
+
     const checked = this.yswsSubmissionCheckboxRealTarget.checked;
     const checkboxContainer = this.yswsSubmissionCheckboxFakeTarget.parentElement;
+
+    if (!checkboxContainer) {
+      console.error("YSWS checkbox container not found");
+      return;
+    }
 
     if (checked) {
       this.yswsSubmissionCheckboxFakeTarget.classList.remove("hidden");
       checkboxContainer.classList.add("checked");
 
-      // Show the YSWS type dropdown
       if (this.hasYswsTypeContainerTarget) {
         this.yswsTypeContainerTarget.classList.remove("hidden");
       }
@@ -312,7 +522,6 @@ export default class extends Controller {
       this.yswsSubmissionCheckboxFakeTarget.classList.add("hidden");
       checkboxContainer.classList.remove("checked");
       
-      // Hide the YSWS type dropdown and clear selection
       if (this.hasYswsTypeContainerTarget) {
         this.yswsTypeContainerTarget.classList.add("hidden");
         if (this.hasYswsTypeTarget) {
