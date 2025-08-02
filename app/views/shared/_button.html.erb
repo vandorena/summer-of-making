@@ -45,7 +45,7 @@
 <% end %>
 
 <% if local_assigns[:link] %>
-    <%= link_to local_assigns[:link], class: button_class, target: link_target do %>
+    <%= link_to local_assigns[:link], class: button_class, data: local_assigns[:data], target: link_target do %>
         <%= button_content %>
     <% end %>
 <% else %>
