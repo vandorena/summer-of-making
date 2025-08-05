@@ -27,7 +27,7 @@
               <p class="text-gray-400">
                 <%= format_seconds(project.total_seconds_coded) %>
                 <br>
-                <%= project.devlogs_count %> devlogs
+                <%= project.devlogs_count %> <%= "devlog".pluralize(project.devlogs_count) %>
               </p>
 
               <% if project.ship_events.empty? %>
