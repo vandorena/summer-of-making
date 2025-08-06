@@ -617,7 +617,7 @@ class User < ApplicationRecord
       false
     end
   end
-    
+
   def completed_todo?
     devlogs.any? && projects.any? && votes.any? && shop_orders.joins(:shop_item).where.not(shop_items: { type: "ShopItem::FreeStickers" }).any?
   end
