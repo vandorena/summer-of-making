@@ -9,7 +9,7 @@ class CreateUserVoteQueues < ActiveRecord::Migration[8.0]
       t.timestamps
     end
 
-    add_index :user_vote_queues, :user_id, unique: true
+    add_index :user_vote_queues, :user_id, unique: true, name: 'index_user_vote_queues_on_user_id_unique'
     add_index :user_vote_queues, :current_position
     add_index :user_vote_queues, :last_generated_at
   end
