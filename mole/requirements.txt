@@ -4,3 +4,4 @@ browser-use>=0.1.5
 python-dotenv>=1.0.0
 steel-sdk>=0.7.0
 pillow>=10.0.0
+gunicorn>=21.0.0

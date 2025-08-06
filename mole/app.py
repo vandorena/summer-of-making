@@ -9,7 +9,9 @@ import hashlib
 import subprocess
 import json
 import sys
+import logging
 from concurrent.futures import ThreadPoolExecutor
+from functools import wraps
 from flask import Flask, request, jsonify
 from browser_use import Agent
 from dotenv import load_dotenv
@@ -20,7 +22,41 @@ from browser_use import BrowserSession
 
 load_dotenv()
 
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
 app = Flask(__name__)
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max request size
+
+# Configuration from environment
+PORT = int(os.getenv('PORT', 5001))
+HOST = os.getenv('HOST', '0.0.0.0')
+DEBUG_MODE = os.getenv('DEBUG', 'false').lower() == 'true'
+API_KEY = os.getenv('MOLE_API_KEY')  # For endpoint authentication
+GIF_DIR = os.getenv('GIF_DIR', './gifs')
+
+# Authentication decorator
+def require_api_key(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not API_KEY:
+            # If no API key configured, allow access (for development)
+            return f(*args, **kwargs)
+        
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return jsonify({'error': 'Missing or invalid Authorization header'}), 401
+        
+        token = auth_header.split(' ')[1]
+        if token != API_KEY:
+            return jsonify({'error': 'Invalid API key'}), 401
+        
+        return f(*args, **kwargs)
+    return decorated_function
 
 # Worker pool configuration
 MAX_WORKERS = 2  # Use limited workers to stay within Steel session limits
@@ -61,8 +97,9 @@ class BrowserAgent:
         try:
             steel_session = self.steel_client.sessions.create()
             session_id = steel_session.id
-            print(f"Created Steel session {session_id}")
+            logger.info(f"Created Steel session {session_id}")
         except Exception as e:
+            logger.error(f"Failed to create Steel browser session: {str(e)}")
             raise Exception(f"Failed to create Steel browser session: {str(e)}")
         
         # Create CDP URL for Steel browser connection
@@ -133,7 +170,7 @@ class BrowserAgent:
         
         try:
             # Create local GIFs directory for debugging
-            gifs_dir = os.path.join(os.getcwd(), "gifs")
+            gifs_dir = os.path.abspath(GIF_DIR)
             os.makedirs(gifs_dir, exist_ok=True)
             
             session_id = str(uuid.uuid4())
@@ -210,13 +247,9 @@ class BrowserAgent:
                     # Release Steel session using the correct API method
                     self.steel_client.sessions.release(steel_session_id)
                     
-                    # Log cleanup success to a file for debugging
-                    with open('/tmp/mole_cleanup.log', 'a') as f:
-                        f.write(f"Successfully released Steel session {steel_session_id}\n")
+                    logger.info(f"Successfully released Steel session {steel_session_id}")
                 except Exception as cleanup_error:
-                    # Log cleanup error to file for debugging
-                    with open('/tmp/mole_cleanup.log', 'a') as f:
-                        f.write(f"Warning: Failed to cleanup Steel session {steel_session_id}: {cleanup_error}\n")
+                    logger.warning(f"Failed to cleanup Steel session {steel_session_id}: {cleanup_error}")
 
 def run_task_subprocess(job_id, task_prompt, urls, provider, model, api_key):
     """Launch task in separate subprocess for complete isolation"""
@@ -255,8 +288,7 @@ def run_task_subprocess(job_id, task_prompt, urls, provider, model, api_key):
         # Wait for subprocess to complete
         return_code = process.wait()
         
-        # Debug logging
-        print(f"DEBUG: Job {job_id} - Return code: {return_code}")
+        logger.info(f"Job {job_id} completed with return code: {return_code}")
         
         # Read result from file
         if return_code == 0 and os.path.exists(result_path):
@@ -266,13 +298,13 @@ def run_task_subprocess(job_id, task_prompt, urls, provider, model, api_key):
                 jobs[job_id]["status"] = "completed"
                 jobs[job_id]["result"] = result
                 jobs[job_id]["completed_at"] = time.time()
-                print(f"DEBUG: Job {job_id} - Successfully read JSON result from file")
+                logger.info(f"Job {job_id} completed successfully")
             except (json.JSONDecodeError, IOError) as e:
                 # Handle JSON parsing or file reading error
                 jobs[job_id]["status"] = "failed"
                 jobs[job_id]["error"] = f"Failed to read subprocess result: {e}"
                 jobs[job_id]["completed_at"] = time.time()
-                print(f"DEBUG: Job {job_id} - Result file read error: {e}")
+                logger.error(f"Job {job_id} result file read error: {e}")
         else:
             # Handle subprocess error
             error_msg = "No result file created"
@@ -288,7 +320,7 @@ def run_task_subprocess(job_id, task_prompt, urls, provider, model, api_key):
             jobs[job_id]["status"] = "failed"
             jobs[job_id]["error"] = f"Subprocess failed with return code {return_code}. {error_msg}"
             jobs[job_id]["completed_at"] = time.time()
-            print(f"DEBUG: Job {job_id} - Subprocess failed or no result file")
+            logger.error(f"Job {job_id} subprocess failed: {error_msg}")
             
     except Exception as e:
         # Update job with error
@@ -306,6 +338,7 @@ def run_task_subprocess(job_id, task_prompt, urls, provider, model, api_key):
             pass
 
 @app.route('/run', methods=['POST'])
+@require_api_key
 def start_browser_task():
     """Start a browser automation task"""
     data = request.get_json()
@@ -357,6 +390,7 @@ def start_browser_task():
     })
 
 @app.route('/status/<job_id>', methods=['GET'])
+@require_api_key
 def get_job_status(job_id):
     """Get status of a specific job"""
     if job_id not in jobs:
@@ -371,6 +405,7 @@ def get_job_status(job_id):
     return jsonify(job)
 
 @app.route('/jobs', methods=['GET'])
+@require_api_key
 def list_jobs():
     """List all jobs with their status"""
     job_list = []
@@ -403,6 +438,7 @@ def list_jobs():
     })
 
 @app.route('/dashboard')
+@require_api_key
 def dashboard():
     """Web dashboard showing job status"""
     job_list = []
@@ -553,8 +589,7 @@ def health_check():
         # Convert cursor to list to get count and session IDs
         sessions_list = list(steel_sessions.data if hasattr(steel_sessions, 'data') else steel_sessions)
         health_data["steel_sessions"] = {
-            "active_count": len(sessions_list),
-            "sessions": [s.id for s in sessions_list]
+            "active_count": len(sessions_list)
         }
     elif steel_error:
         health_data["steel_sessions"] = {"error": steel_error}
@@ -562,6 +597,7 @@ def health_check():
     return jsonify(health_data)
 
 @app.route('/cleanup-sessions', methods=['POST'])
+@require_api_key
 def cleanup_steel_sessions():
     """Manually clean up all Steel sessions"""
     try:
@@ -656,4 +692,4 @@ if __name__ == '__main__':
     if len(sys.argv) > 1 and sys.argv[1] == "--subprocess":
         subprocess_worker()
     else:
-        app.run(host='0.0.0.0', port=5001, debug=True)
+        app.run(host=HOST, port=PORT, debug=DEBUG_MODE)

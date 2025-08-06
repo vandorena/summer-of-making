@@ -50,4 +50,5 @@ COPY app.py .
 
 EXPOSE 5001 5901 6080
 
-CMD ["/start.sh"]
+# Production command (override in docker-compose for dev)
+CMD ["gunicorn", "--bind", "0.0.0.0:5001", "--workers", "1", "--worker-class", "sync", "--timeout", "300", "app:app"]
