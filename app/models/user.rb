@@ -35,6 +35,7 @@ class User < ApplicationRecord
   has_many :projects
   has_many :devlogs
   has_many :votes
+  has_one :user_vote_queue, dependent: :destroy
   has_many :project_follows
   has_many :followed_projects, through: :project_follows, source: :project
   has_many :timer_sessions
@@ -606,6 +607,15 @@ class User < ApplicationRecord
 
   def award_badges_async!(trigger_event = nil, backfill: false)
     AwardBadgesJob.perform_later(id, trigger_event, backfill)
+  end
+
+  def advance_vote_queue!
+    if user_vote_queue
+      result = user_vote_queue.advance_position!
+      result
+    else
+      false
+    end
   end
 
   private

@@ -2,7 +2,7 @@ class CreateUserVoteQueues < ActiveRecord::Migration[8.0]
   def change
     create_table :user_vote_queues do |t|
       t.references :user, null: false, foreign_key: true
-      t.jsonb :ship_event_pairs, null: false, default: '[]'
+      t.jsonb :ship_event_pairs, null: false, default: []
       t.integer :current_position, null: false, default: 0
       t.datetime :last_generated_at
 
