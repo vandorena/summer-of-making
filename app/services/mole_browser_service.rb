@@ -79,23 +79,17 @@ class MoleBrowserService
 
   def submit_job(task_prompt, urls)
     uri = URI("https://#{MOLE_HOST}/run")
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    http.read_timeout = 30
-    http.open_timeout = 10
 
-    request = Net::HTTP::Post.new(uri)
-    request["Content-Type"] = "application/json"
-    request["Authorization"] = "Bearer #{ENV['MOLE_API_KEY']}"
-    request.body = {
-      task: task_prompt,
-      urls: urls,
-      provider: "anthropic",
-      model: "claude-3-5-haiku-latest",
-      api_key: ENV["ANTHROPIC_API_KEY"]
-    }.to_json
-
-    response = http.request(request)
+    response = make_authenticated_request(uri, Net::HTTP::Post, read_timeout: 30, open_timeout: 10) do |request|
+      request["Content-Type"] = "application/json"
+      request.body = {
+        task: task_prompt,
+        urls: urls,
+        provider: "anthropic",
+        model: "claude-3-5-haiku-latest",
+        api_key: ENV["ANTHROPIC_API_KEY"]
+      }.to_json
+    end
 
     unless response.is_a?(Net::HTTPSuccess)
       Rails.logger.error "Failed to submit mole job: HTTP #{response.code}: #{response.body}"
@@ -119,14 +113,7 @@ class MoleBrowserService
       attempts += 1
 
       uri = URI("https://#{MOLE_HOST}/status/#{job_id}")
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
-      http.read_timeout = 10
-      http.open_timeout = 5
-
-      request = Net::HTTP::Get.new(uri)
-      request["Authorization"] = "Bearer #{ENV['MOLE_API_KEY']}"
-      response = http.request(request)
+      response = make_authenticated_request(uri)
 
       unless response.is_a?(Net::HTTPSuccess)
         return { success: false, error: "Failed to check job status: #{response.code}" }
@@ -158,14 +145,7 @@ class MoleBrowserService
 
   def check_job_status(job_id)
     uri = URI("https://#{MOLE_HOST}/status/#{job_id}")
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    http.read_timeout = 10
-    http.open_timeout = 5
-
-    request = Net::HTTP::Get.new(uri)
-    request["Authorization"] = "Bearer #{ENV['MOLE_API_KEY']}"
-    response = http.request(request)
+    response = make_authenticated_request(uri)
 
     unless response.is_a?(Net::HTTPSuccess)
       Rails.logger.error "Failed to check job status for #{job_id}: #{response.code}"
@@ -182,5 +162,19 @@ class MoleBrowserService
 
   def log_polling_status(job_id, status, attempts)
     puts "Job #{job_id} status: #{status} (attempt #{attempts}/#{@max_attempts})"
+  end
+
+  def make_authenticated_request(uri, request_type = Net::HTTP::Get, read_timeout: 10, open_timeout: 5)
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    http.read_timeout = read_timeout
+    http.open_timeout = open_timeout
+
+    request = request_type.new(uri)
+    request["Authorization"] = "Bearer #{ENV['MOLE_API_KEY']}"
+
+    yield(request) if block_given?
+
+    http.request(request)
   end
 end
