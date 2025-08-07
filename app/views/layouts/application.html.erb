@@ -59,89 +59,146 @@
     <% end %>
   </head>
 
-  <body class="min-h-[100dvh] font-national-park font-bold text-som-dark">
+  <body class="min-h-[100dvh] font-national-park font-bold text-som-dark overflow-hidden">
     <%# admin_tool do %>
       <%# render "shared/stonk_tickler_marquee" %>
     <%# end %>
 
-    <% if user_signed_in? %>
-      <% if current_user.tutorial_progress.completed? && !mobile_device? %>
-        <div data-controller="todo">
-          <button
-            data-todo-target="todoButton"
-            data-action="click->todo#toggleAndComplete"
-            class="bg-[#523A52] hover:bg-[#856185] fixed hidden top-auto bottom-8 right-6 z-50 w-16 h-16 rounded-full md:flex items-center justify-center transition-all duration-200 hover:scale-110 text-white cursor-pointer drop-shadow-md"
-            title="Show todo for this page">
-            <%= inline_svg "icons/clipboard.svg", class: "size-8" %>
-          </button>
-
-          <!-- Todo Modal -->
-          <%= render "tutorial/todo_modal" %>
-
-          <% if !current_page?(campfire_path) && !current_user.tutorial_progress.soft_step_completed?("todo") && current_user.tutorial_progress.completed? && current_user.projects.empty? %>
-            <div class="bg-black/75 absolute inset-0 z-40 text-white cursor-pointer" data-todo-target="overlay" data-action="click->todo#completeAndHideOverlay">
-              <div class="absolute bottom-24 right-24">
-                <p class="text-3xl pr-8 pb-4">Check your todo list here!</p>
-                <%= inline_svg "swirly-arrow.svg", class: "size-52 rotate-90 ml-auto" %>
-              </div>
-            </div>
-          <% end %>
-        </div>
-      <% end %>
-
-      <div>
-        <%= render "tutorial/tutorial" %>
-        <% if current_user.tutorial_progress.should_show_completion_modal? %>
-          <%= render "tutorial/completion_modal" %>
-        <% end %>
-
-        <% if current_page?(map_path) %>
-          <%= yield %>
-        <% else %>
-          <div data-controller="sidebar" data-sidebar-collapsed-value="false">
-            <% if mobile_device? %>
-              <div class="flex flex-col h-[100dvh] box-border p-0">
-                <main class="py-4 px-0 sm:px-4 overflow-y-scroll flex-grow flex-shrink">
-                  <div id="flash-container">
-                    <%= render "shared/flash" %>
-                  </div>
-                  <%= yield %>
-                </main>
-                <%= render "shared/mobile_nav" %>
-              </div>
-            <% else %>
-              <div class="flex flex-col h-[100dvh] box-border p-0">
-                <% if !current_user.has_hackatime? && !current_user.tutorial_progress.completed_at.nil? %>
-                  <div class="w-full bg-vintage-red text-white flex flex-col justify-center py-2">
-                    <p class="text-center">
-                      Your time spent coding is not currently being tracked, therefore you can't create any projects.
-                      <br>
-                      <%= link_to "Connect Hackatime (our coding time tracking thing)", hackatime_auth_redirect_path, class: "underline", target: "_blank" %>
-                    </p>
-                  </div>
-                <% end %>
-
-                <div class="flex h-full min-h-0">
-                  <%= render "shared/sidebar" %>
-                  <main class="overflow-auto w-full" data-sidebar-target="mainContent">
-                    <div id="flash-container">
-                      <%= render "shared/flash" %>
-                    </div>
-                    <%= yield %>
-                  </main>
+    <div class="sinkening-container">
+      <% if user_signed_in? %>
+        <% if current_user.tutorial_progress.completed? && !mobile_device? %>
+          <div data-controller="todo">
+            <button
+              data-todo-target="todoButton"
+              id = "todo-button"
+              data-action="click->todo#toggleAndComplete"
+              class="bg-[#523A52] hover:bg-[#856185] fixed hidden top-auto bottom-8 right-6 z-50 w-16 h-16 rounded-full md:flex items-center justify-center transition-all duration-200 hover:scale-110 text-white cursor-pointer drop-shadow-md sinkening-todo"
+              title="Show todo for this page">
+              <%= inline_svg "icons/clipboard.svg", class: "size-8" %>
+            </button>
+            <!-- Todo Modal -->
+            <%= render "tutorial/todo_modal" %>
+            <% if !current_page?(campfire_path) && !current_user.tutorial_progress.soft_step_completed?("todo") && current_user.tutorial_progress.completed? && current_user.projects.empty? %>
+              <div class="bg-black/75 absolute inset-0 z-40 text-white cursor-pointer" data-todo-target="overlay" data-action="click->todo#completeAndHideOverlay">
+                <div class="absolute bottom-24 right-24">
+                  <p class="text-3xl pr-8 pb-4">Check your todo list here!</p>
+                  <%= inline_svg "swirly-arrow.svg", class: "size-52 rotate-90 ml-auto" %>
                 </div>
               </div>
             <% end %>
           </div>
         <% end %>
-      </div>
-    <% else %>
-      <div id="flash-container">
-        <%= render "shared/flash" %>
-      </div>
-      <%= yield %>
-    <% end %>
+        <div>
+          <%= render "tutorial/tutorial" %>
+          <% if current_user.tutorial_progress.should_show_completion_modal? %>
+            <%= render "tutorial/completion_modal" %>
+          <% end %>
+          <% if current_page?(map_path) %>
+            <%= yield %>
+          <% else %>
+            <div data-controller="sidebar" data-sidebar-collapsed-value="false">
+              <% if mobile_device? %>
+                <div class="flex flex-col h-[100dvh] box-border p-0">
+                  <main class="py-4 px-0 sm:px-4 overflow-y-scroll flex-grow flex-shrink">
+                    <div id="flash-container">
+                      <%= render "shared/flash" %>
+                    </div>
+                    <%= yield %>
+                  </main>
+                  <%= render "shared/mobile_nav" %>
+                </div>
+              <% else %>
+                <div class="flex flex-col h-[100dvh] box-border p-0">
+                  <% if !current_user.has_hackatime? && !current_user.tutorial_progress.completed_at.nil? %>
+                    <div class="w-full bg-vintage-red text-white flex flex-col justify-center py-2">
+                      <p class="text-center">
+                        Your time spent coding is not currently being tracked, therefore you can't create any projects.
+                        <br>
+                        <%= link_to "Connect Hackatime (our coding time tracking thing)", hackatime_auth_redirect_path, class: "underline", target: "_blank" %>
+                      </p>
+                    </div>
+                  <% end %>
+                  <div class="flex h-full min-h-0">
+                    <%= render "shared/sidebar" %>
+                    <main class="overflow-auto w-full" data-sidebar-target="mainContent">
+                      <div id="flash-container">
+                        <%= render "shared/flash" %>
+                      </div>
+                      <%= yield %>
+                    </main>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div id="flash-container">
+          <%= render "shared/flash" %>
+        </div>
+        <%= yield %>
+      <% end %>
+      <div id="modals"></div>
+    </div>
 
-    <div id="modals"></div>
+    <% if Flipper.enabled?(:sinkening, current_user) %>
+      <div class="fixed bottom-0 left-0 right-0 bg-blue-700/50 translate-y-42 sinkening-water z-[100]">
+      </div>
+
+      <% 
+        intensity = SinkeningSetting.current.intensity
+        adjusted_intensity = intensity * intensity
+        rotation_intensity = 6 * adjusted_intensity
+        vertical_intensity = 50 * adjusted_intensity
+        water_rotation_intensity = 5 * adjusted_intensity + 3
+        water_vertical_intensity = 50 * adjusted_intensity
+      %>
+
+      <style>
+        @keyframes water-rock {
+          0% { transform: rotate(-<%= water_rotation_intensity %>deg) translateY(<%= water_vertical_intensity * 0.2 %>px); }
+          15% { transform: rotate(-<%= water_rotation_intensity * 0.5 %>deg) translateY(-<%= water_vertical_intensity * 0.4 %>px); }
+          30% { transform: rotate(<%= water_rotation_intensity * 0.2 %>deg) translateY(-<%= water_vertical_intensity * 0.8 %>px); }
+          45% { transform: rotate(<%= water_rotation_intensity * 0.9 %>deg) translateY(-<%= water_vertical_intensity %>px); }
+          60% { transform: rotate(<%= water_rotation_intensity %>deg) translateY(-<%= water_vertical_intensity * 0.7 %>px); }
+          75% { transform: rotate(<%= water_rotation_intensity * 0.3 %>deg) translateY(-<%= water_vertical_intensity * 0.3 %>px); }
+          90% { transform: rotate(-<%= water_rotation_intensity * 0.4 %>deg) translateY(<%= water_vertical_intensity * 0.1 %>px); }
+          100% { transform: rotate(-<%= water_rotation_intensity %>deg) translateY(<%= water_vertical_intensity * 0.2 %>px); }
+        }
+
+        @keyframes water-drop-fall {
+          0% {
+            top: -10px;
+            opacity: 0;
+          }
+          10% {
+            opacity: 1;
+          }
+          90% {
+            opacity: 1;
+          }
+          100% {
+            top: 100vh;
+            opacity: 0;
+          }
+        }
+        
+        .sinkening-container {
+          transform: rotate(-<%= rotation_intensity %>deg) translateY(<%= vertical_intensity %>px);
+        }
+
+        .sinkening-counter {
+          animation: ocean-rock-counter 30s ease-in-out infinite;
+        }
+
+        .sinkening-water {
+          animation: water-rock 20s ease-in-out -4s infinite;
+          pointer-events: none;
+          width: 150vw;
+          margin-left: -25vw;
+          height: calc(10rem + <%= adjusted_intensity*100 %>vh);
+        }
+      </style>
+    <% end %>
   </body>
 </html>
