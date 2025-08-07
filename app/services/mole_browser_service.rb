@@ -1,5 +1,5 @@
 class MoleBrowserService
-  MOLE_HOST = "100.81.20.86:5001"
+  MOLE_HOST = "https://f4o0g8cgc8ckcogssw88ggsw.a.selfhosted.hackclub.com"
   DEFAULT_TIMEOUT = 300 # 5 minutes
   POLL_INTERVAL = 5 # seconds
 
