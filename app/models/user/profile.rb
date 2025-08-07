@@ -26,7 +26,7 @@ class User::Profile < ApplicationRecord
   validates :custom_css, length: { maximum: 10_000 }, allow_blank: true
   validate :custom_css_requires_badge
   validate :fucking_xss
-  validates_format_of :balloon_color, with: /\A#(?:\h{3}){1,2}\z/
+  validates_format_of :balloon_color, with: /\A#(?:\h{3}){1,2}\z/, allow_blank: true
 
   before_save :clean_css
 
