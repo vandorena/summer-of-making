@@ -80,11 +80,13 @@ class MoleBrowserService
   def submit_job(task_prompt, urls)
     uri = URI("https://#{MOLE_HOST}/run")
     http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
     http.read_timeout = 30
     http.open_timeout = 10
 
     request = Net::HTTP::Post.new(uri)
     request["Content-Type"] = "application/json"
+    request["Authorization"] = "Bearer #{ENV['MOLE_API_KEY']}"
     request.body = {
       task: task_prompt,
       urls: urls,
@@ -118,10 +120,13 @@ class MoleBrowserService
 
       uri = URI("https://#{MOLE_HOST}/status/#{job_id}")
       http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
       http.read_timeout = 10
       http.open_timeout = 5
 
-      response = http.request(Net::HTTP::Get.new(uri))
+      request = Net::HTTP::Get.new(uri)
+      request["Authorization"] = "Bearer #{ENV['MOLE_API_KEY']}"
+      response = http.request(request)
 
       unless response.is_a?(Net::HTTPSuccess)
         return { success: false, error: "Failed to check job status: #{response.code}" }
@@ -154,10 +159,13 @@ class MoleBrowserService
   def check_job_status(job_id)
     uri = URI("https://#{MOLE_HOST}/status/#{job_id}")
     http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
     http.read_timeout = 10
     http.open_timeout = 5
 
-    response = http.request(Net::HTTP::Get.new(uri))
+    request = Net::HTTP::Get.new(uri)
+    request["Authorization"] = "Bearer #{ENV['MOLE_API_KEY']}"
+    response = http.request(request)
 
     unless response.is_a?(Net::HTTPSuccess)
       Rails.logger.error "Failed to check job status for #{job_id}: #{response.code}"
