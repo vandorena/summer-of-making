@@ -1,5 +1,5 @@
 class MoleBrowserService
-  MOLE_HOST = "https://f4o0g8cgc8ckcogssw88ggsw.a.selfhosted.hackclub.com"
+  MOLE_HOST = "f4o0g8cgc8ckcogssw88ggsw.a.selfhosted.hackclub.com"
   DEFAULT_TIMEOUT = 300 # 5 minutes
   POLL_INTERVAL = 5 # seconds
 
@@ -78,7 +78,7 @@ class MoleBrowserService
   private
 
   def submit_job(task_prompt, urls)
-    uri = URI("http://#{MOLE_HOST}/run")
+    uri = URI("https://#{MOLE_HOST}/run")
     http = Net::HTTP.new(uri.host, uri.port)
     http.read_timeout = 30
     http.open_timeout = 10
@@ -116,7 +116,7 @@ class MoleBrowserService
     loop do
       attempts += 1
 
-      uri = URI("http://#{MOLE_HOST}/status/#{job_id}")
+      uri = URI("https://#{MOLE_HOST}/status/#{job_id}")
       http = Net::HTTP.new(uri.host, uri.port)
       http.read_timeout = 10
       http.open_timeout = 5
@@ -152,7 +152,7 @@ class MoleBrowserService
   end
 
   def check_job_status(job_id)
-    uri = URI("http://#{MOLE_HOST}/status/#{job_id}")
+    uri = URI("https://#{MOLE_HOST}/status/#{job_id}")
     http = Net::HTTP.new(uri.host, uri.port)
     http.read_timeout = 10
     http.open_timeout = 5
