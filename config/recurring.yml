@@ -98,3 +98,9 @@ production:
     schedule: every 5 minutes
     concurrency: 1
     description: "Upload approved YSWS from the SoM to the Unified db"
+
+  mole_batch_guess_project_categorization:
+    class: Mole::BatchGuessProjectCategorizationJob
+    schedule: every 12 minutes # 5 times per hour
+    concurrency: 1
+    description: "Batch guess project categorization using Mole service"
