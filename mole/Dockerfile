@@ -1,6 +1,6 @@
 FROM python:3.11-slim
 
-# Install VNC dependencies and Chromium
+# Install VNC dependencies, Chromium, and health check tools
 RUN apt-get update && apt-get install -y \
     chromium \
     chromium-driver \
@@ -8,6 +8,8 @@ RUN apt-get update && apt-get install -y \
     x11vnc \
     fluxbox \
     git \
+    curl \
+    wget \
     && git clone https://github.com/novnc/noVNC.git /opt/noVNC \
     && git clone https://github.com/novnc/websockify.git /opt/noVNC/utils/websockify \
     && rm -rf /var/lib/apt/lists/*
@@ -48,4 +50,5 @@ COPY app.py .
 
 EXPOSE 5001 5901 6080
 
-CMD ["/start.sh"]
+# Production command (override in docker-compose for dev)
+CMD ["gunicorn", "--bind", "0.0.0.0:5001", "--workers", "1", "--worker-class", "sync", "--timeout", "300", "app:app"]
