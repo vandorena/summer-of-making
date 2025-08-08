@@ -458,7 +458,11 @@ class User < ApplicationRecord
   end
 
   def balance
-    payouts.sum(&:amount)
+    if association(:payouts).loaded?
+      payouts.sum(&:amount)
+    else
+      payouts.sum(:amount)
+    end
   end
 
   def ship_events_count
@@ -598,7 +602,12 @@ class User < ApplicationRecord
   end
 
   def has_badge?(badge_key)
-    user_badges.exists?(badge_key: badge_key)
+    # we're preload this in shop items controller
+    if association(:user_badges).loaded?
+      user_badges.any? { |ub| ub.badge_key.to_s == badge_key.to_s }
+    else
+      user_badges.exists?(badge_key: badge_key)
+    end
   end
 
   def award_badges!(backfill: false)

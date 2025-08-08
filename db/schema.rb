@@ -746,6 +746,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_191603) do
     t.datetime "updated_at", null: false
     t.text "custom_css"
     t.boolean "hide_from_logged_out", default: false
+    t.string "balloon_color"
     t.index ["user_id"], name: "index_user_profiles_on_user_id"
   end
 

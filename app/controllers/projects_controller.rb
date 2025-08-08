@@ -87,6 +87,11 @@ class ProjectsController < ApplicationController
     authorize @project, :show?
     track_view(@project)
 
+    if current_user
+      current_user.user_badges.load
+      current_user.payouts.load
+    end
+
     @devlogs = @project.devlogs.sort_by(&:created_at).reverse
     @ship_events = @project.ship_events.sort_by(&:created_at).reverse
     @timeline = (@devlogs + @ship_events).sort_by(&:created_at).reverse
@@ -113,6 +118,16 @@ class ProjectsController < ApplicationController
     end
 
     @user_stonk = @project.stonks.find { |stonk| stonk.user_id == current_user.id }
+
+    # precoomputed liked state for devlogs
+    if @devlogs.any?
+      devlog_ids = @devlogs.map(&:id)
+      @liked_devlog_ids = Like.where(user_id: current_user.id, likeable_type: "Devlog", likeable_id: devlog_ids)
+                               .pluck(:likeable_id)
+                               .to_set
+    else
+      @liked_devlog_ids = Set.new
+    end
   end
 
   def edit
@@ -660,21 +675,22 @@ class ProjectsController < ApplicationController
   def set_project
     @project = Project.includes(
       {
-        user: [ :user_hackatime_data ],
+        user: [ :user_hackatime_data, :user_badges ],
         devlogs: [
-          :user,
+          { user: :user_badges },
           { comments: :user },
-          :file_attachment
+          { file_attachment: :blob }
         ],
         ship_events: [
           :payouts
         ],
         stonks: [
           :user
-        ]
+        ],
+        followers: :projects
       },
-      :banner_attachment,
-      :ship_certifications
+      { banner_attachment: :blob },
+      ship_certifications: [ { proof_video_attachment: :blob } ]
     ).find(params[:id])
   rescue ActiveRecord::RecordNotFound
     deleted_project = Project.with_deleted.find_by(id: params[:id])
