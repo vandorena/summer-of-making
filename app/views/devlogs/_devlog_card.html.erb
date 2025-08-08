@@ -14,7 +14,7 @@
 %>
 
   <%= render layout: "shared/card", locals: { classes: devlog.for_sinkening ? '-rotate-1' : '' } do %>
-    <div class="ml-4 <%= context == 'explore' || context == 'project' ? '' : '' %> <%= container_classes %> <%= 'cursor-pointer' if show_project_navigation %>"
+    <div class="ml-4 z-10 <%= context == 'explore' || context == 'project' ? '' : '' %> <%= container_classes %> <%= 'cursor-pointer' if show_project_navigation %>"
          id="<%= dom_id(devlog) %>"
          data-controller="modal devlog-card"
          data-devlog-card-project-path-value="<%= project_path(devlog.project) if show_project_navigation && devlog.project %>"
@@ -25,13 +25,35 @@
          data-viewable-id="<%= devlog.id %>">
       <% is_new_devlog = @new_devlog_id == devlog.id  %>
       <% if devlog.for_sinkening %>
-          <div class="absolute top-0 right-0 p-2 <%= 'balloon-float-animation' if is_new_devlog %>">🎈</div>
-      <% end %>
+        <%# Show balloon for sinkening devlogs %>
+        <% 
+          intensity = SinkeningSetting.current.intensity
+          adjusted_intensity = intensity * intensity
+          rotation_intensity = 1 + (Flipper.enabled?(:sinkening, current_user) ? 5 * adjusted_intensity + 1 : 0)
+          random_delay = rand(0..6000) # Random delay between 0-6000ms (full animation cycle)
+        %>
+        <div class="absolute top-0 right-0 p-2 z-0 origin-bottom"
+        style="transform: rotate(<%= rotation_intensity %>deg) translateY(calc(-100% + <%= context == 'explore' ? '2' : '0' %>rem)) translateX(<%= context == 'explore' ? '1' : '2' %>rem); color: <%= current_user.user_profile.balloon_color || '#ff6b6b' %>">
+          <%= inline_svg "balloon.svg", height: "10rem", width: "auto", 
+          class: "balloon",
+          style: "animation-delay: -#{random_delay}ms;" %>
+        </div>
 
-      <% if is_new_devlog %>
-        <script>
-          console.log('Newly created devlog:', <%= devlog.id %>);
-        </script>
+        <style>
+          .balloon {
+            transform-origin: bottom;
+            animation: balloon-idle 6s ease-in-out infinite;
+          }
+
+          @keyframes balloon-idle {
+            0%, 100% {
+              transform: rotate(-3deg);
+            }
+            50% {
+              transform: rotate(2deg);
+            }
+          }
+        </style>
       <% end %>
 
       <div class="flex items-center justify-between mb-2 sm:mb-3">
