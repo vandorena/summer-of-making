@@ -142,7 +142,7 @@
     </div>
 
     <% if user_signed_in? && Flipper.enabled?(:sinkening, current_user) %>
-      <div class="">
+      <div class="w-full overflow-clip">
         <div class="fixed bottom-0 left-0 right-0 sinkening-water z-[100] translate-y-8">
           <svg viewBox="0 0 1200 200" class="w-full h-full" preserveAspectRatio="none">
             <path d="M0,200 L0,150 Q100,145 200,150 Q300,155 400,150 Q500,145 600,150 Q700,155 800,150 Q900,145 1000,150 Q1100,155 1200,150 L1200,200 Z" fill="rgba(3, 105, 161, 0.4)"/>
