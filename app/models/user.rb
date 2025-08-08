@@ -602,6 +602,7 @@ class User < ApplicationRecord
   end
 
   def has_badge?(badge_key)
+    # we're preload this in shop items controller
     if association(:user_badges).loaded?
       user_badges.any? { |ub| ub.badge_key.to_s == badge_key.to_s }
     else
