@@ -33,11 +33,36 @@
       border: 2px solid #f59e0b !important;
       transition: all 0.3s ease;
     }
+    
+    .balloon-float-animation {
+      animation: balloon-float 3s ease-in-out;
+    }
+    
+    @keyframes balloon-float {
+      0% {
+        transform: translateY(20px) scale(0.8);
+        opacity: 0;
+      }
+      20% {
+        opacity: 1;
+      }
+      50% {
+        transform: translateY(-10px) scale(1.1);
+      }
+      70% {
+        transform: translateY(-5px) scale(1.05);
+      }
+      100% {
+        transform: translateY(0px) scale(1);
+        opacity: 1;
+      }
+    }
   </style>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       let targetDevlogId = <%= @target_devlog_id.to_json.html_safe %>;
-
+      let newDevlogId = <%= @new_devlog_id.to_json.html_safe %>;
+      
       if (!targetDevlogId && window.location.hash) {
         const hashMatch = window.location.hash.match(/^#devlog_(\d+)$/);
         if (hashMatch) {
@@ -58,6 +83,24 @@
             targetDevlog.classList.remove('devlog-highlight');
           }, 5000);
         }
+      }
+
+      // Handle newly created devlogs (scroll to the specific new devlog)
+      if (newDevlogId) {
+        setTimeout(function() {
+          const newDevlog = document.getElementById('devlog_' + newDevlogId);
+          if (newDevlog) {
+            newDevlog.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Remove balloon animation class after animation completes
+            const balloonElement = newDevlog.querySelector('.balloon-float-animation');
+            if (balloonElement) {
+              setTimeout(function() {
+                balloonElement.classList.remove('balloon-float-animation');
+              }, 3000); // Match animation duration
+            }
+          }
+        }, 200);
       }
     });
   </script>

@@ -13,8 +13,7 @@
   no_parchment ||= false                   # Whether to disable parchment styling
 %>
 
-  <%= render layout: "shared/card" do %>
-
+  <%= render layout: "shared/card", locals: { classes: devlog.for_sinkening ? '-rotate-1' : '' } do %>
     <div class="ml-4 <%= context == 'explore' || context == 'project' ? '' : '' %> <%= container_classes %> <%= 'cursor-pointer' if show_project_navigation %>"
          id="<%= dom_id(devlog) %>"
          data-controller="modal devlog-card"
@@ -24,6 +23,16 @@
          data-action="<%= 'click->devlog-card#navigateToProject' if show_project_navigation %>"
          data-viewable-type="Devlog"
          data-viewable-id="<%= devlog.id %>">
+      <% is_new_devlog = @new_devlog_id == devlog.id  %>
+      <% if devlog.for_sinkening %>
+          <div class="absolute top-0 right-0 p-2 <%= 'balloon-float-animation' if is_new_devlog %>">🎈</div>
+      <% end %>
+
+      <% if is_new_devlog %>
+        <script>
+          console.log('Newly created devlog:', <%= devlog.id %>);
+        </script>
+      <% end %>
 
       <div class="flex items-center justify-between mb-2 sm:mb-3">
         <div class="flex items-center">
