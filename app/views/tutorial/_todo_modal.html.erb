@@ -12,50 +12,50 @@
     <ul class="space-y-2 text-left">
       <li class="flex items-start">
         <div class="flex-shrink-0 h-6 w-6 mt-0.5">
-          <div class="h-5 w-5 border-2 <%= current_user.projects.any? ? 'bg-forest border-forest' : 'border-som-dark' %> flex items-center justify-center">
+          <div class="h-5 w-5 border-2 <%= @todo_flags[:has_projects] ? 'bg-forest border-forest' : 'border-som-dark' %> flex items-center justify-center">
           </div>
         </div>
-        <span class="ml-2 <%= current_user.projects.any? ? 'text-forest' : 'text-som-dark' %>">
+        <span class="ml-2 <%= @todo_flags[:has_projects] ? 'text-forest' : 'text-som-dark' %>">
           Create a project in the <a href="/my_projects" class="text-blue-500 hover:text-blue-700 underline">Projects</a> tab
         </span>
       </li>
 
       <li class="flex items-start">
         <div class="flex-shrink-0 h-6 w-6 mt-0.5">
-          <div class="h-5 w-5 border-2 <%= current_user.devlogs.any? ? 'bg-forest border-forest' : 'border-som-dark' %> flex items-center justify-center">
+          <div class="h-5 w-5 border-2 <%= @todo_flags[:has_devlogs] ? 'bg-forest border-forest' : 'border-som-dark' %> flex items-center justify-center">
           </div>
         </div>
-        <span class="ml-2 <%= current_user.devlogs.any? ? 'text-forest' : 'text-som-dark' %>">
+        <span class="ml-2 <%= @todo_flags[:has_devlogs] ? 'text-forest' : 'text-som-dark' %>">
           Post updates on your devlog as you work
         </span>
       </li>
 
       <li class="flex items-start">
         <div class="flex-shrink-0 h-6 w-6 mt-0.5">
-          <div class="h-5 w-5 border-2 <%= current_user.ship_events.any? ? 'bg-forest border-forest' : 'border-som-dark' %> flex items-center justify-center">
+          <div class="h-5 w-5 border-2 <%= @todo_flags[:has_ship_events] ? 'bg-forest border-forest' : 'border-som-dark' %> flex items-center justify-center">
           </div>
         </div>
-        <span class="ml-2 <%= current_user.ship_events.any? ? 'text-forest' : 'text-som-dark' %>">
+        <span class="ml-2 <%= @todo_flags[:has_ship_events] ? 'text-forest' : 'text-som-dark' %>">
           Ship your project when it is ready for others to experience
         </span>
       </li>
 
       <li class="flex items-start">
         <div class="flex-shrink-0 h-6 w-6 mt-0.5">
-          <div class="h-5 w-5 border-2 <%= current_user.votes.any? ? 'bg-forest border-forest' : 'border-som-dark' %> flex items-center justify-center">
+          <div class="h-5 w-5 border-2 <%= @todo_flags[:has_votes] ? 'bg-forest border-forest' : 'border-som-dark' %> flex items-center justify-center">
           </div>
         </div>
-        <span class="ml-2 <%= current_user.votes.any? ? 'text-forest' : 'text-som-dark' %>">
+        <span class="ml-2 <%= @todo_flags[:has_votes] ? 'text-forest' : 'text-som-dark' %>">
           Vote on other people's projects to receive your shells
         </span>
       </li>
 
       <li class="flex items-start">
         <div class="flex-shrink-0 h-6 w-6 mt-0.5">
-          <div class="h-5 w-5 border-2 <%= current_user.shop_orders.joins(:shop_item).where.not(shop_items: { type: "ShopItem::FreeStickers" }).any? ? 'bg-forest border-forest' : 'border-som-dark' %> flex items-center justify-center">
+          <div class="h-5 w-5 border-2 <%= @todo_flags[:has_non_free_order] ? 'bg-forest border-forest' : 'border-som-dark' %> flex items-center justify-center">
           </div>
         </div>
-        <span class="ml-2 <%= current_user.shop_orders.joins(:shop_item).where.not(shop_items: { type: "ShopItem::FreeStickers" }).any? ? 'text-forest' : 'text-som-dark' %>">
+        <span class="ml-2 <%= @todo_flags[:has_non_free_order] ? 'text-forest' : 'text-som-dark' %>">
           Spend your hard-earned shells in the shop
         </span>
       </li>
