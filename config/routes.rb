@@ -392,6 +392,7 @@ Rails.application.routes.draw do
         delete :zap
       end
     end
+    resources :sinkenings, only: [ :show, :update ], path: "sinkening"
   end
 
   get "leaderboard", to: "leaderboard#index"

@@ -29,6 +29,7 @@
   <%= link_to "global caches", admin_caches_path, class: 'abtn secondary' %>
   <%= link_to admin_ysws_reviews_path, class: 'abtn secondary' do %>
       YSWS reviews <span class="pill"><%= Project.ysws_review_eligible.count %></span>
+  <%= link_to "the sinkening", admin_sinkening_path(SinkeningSetting.current), class: 'abtn secondary' %>
     <% end %>
 </div>
 <div style="margin-top: 0.5em;">
