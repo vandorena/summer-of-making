@@ -56,7 +56,23 @@ class UserVoteQueue < ApplicationRecord
   end
 
   def current_projects
-    current_ship_events.map(&:project)
+    loop do
+      projects = current_ship_events.map(&:project).compact
+
+      # because of scope, this should filter for deleted projects
+      if projects.size < 2
+
+        # check for overflow
+        if current_position + 1 >= ship_event_pairs.length
+          refill_queue!(1)
+        end
+
+        advance_position!
+        next
+      end
+
+      return projects
+    end
   end
 
   # this should never happen - all generated matchups even in the queue should be unique
