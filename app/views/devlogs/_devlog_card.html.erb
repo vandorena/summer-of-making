@@ -140,7 +140,8 @@
         <div class="mt-3 sm:mt-4 flex flex-row items-center justify-left gap-x-4 max-w-prose w-full text-som-dark">
           <!-- Like button -->
           <% if show_likes && user_signed_in? %>
-            <%= render "likes/button", likeable: devlog %>
+            <% liked = defined?(@liked_devlog_ids) ? @liked_devlog_ids.include?(devlog.id) : nil %>
+            <%= render "likes/button", likeable: devlog, liked: liked %>
           <% end %>
 
           <!-- Comment button -->
