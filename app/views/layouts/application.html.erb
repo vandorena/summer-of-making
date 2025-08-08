@@ -155,6 +155,126 @@
         </div>
       </div>
 
+      <audio id="sinkening-wave-music" loop preload="auto" volume="0.1">
+        <source src="<%= asset_path('waves.mp3') %>" type="audio/mpeg">
+      </audio>
+
+      <script>
+        function initializeWaveMusic() {
+          const audio = document.getElementById('sinkening-wave-music');
+          if (!audio) return;
+                    
+          let hasPlayed = false;
+          
+          let fadeOutInterval = null;
+          let fadeInInterval = null;
+          
+          function fadeInAudio(audio, targetVolume = 0.05, duration = 5000) {
+            audio.volume = 0;
+            const steps = 50;
+            const volumeStep = targetVolume / steps;
+            const timeStep = duration / steps;
+            
+            // Clear any existing fade intervals
+            if (fadeOutInterval) clearInterval(fadeOutInterval);
+            if (fadeInInterval) clearInterval(fadeInInterval);
+            
+            let currentStep = 0;
+            fadeInInterval = setInterval(() => {
+              currentStep++;
+              audio.volume = Math.min(volumeStep * currentStep, targetVolume);
+              
+              if (currentStep >= steps) {
+                clearInterval(fadeInInterval);
+                audio.volume = targetVolume;
+                fadeInInterval = null;
+              }
+            }, timeStep);
+          }
+          
+          function fadeOutAudio(audio, duration = 5000) {
+            const currentVolume = audio.volume;
+            const targetVolume = 0.01;
+            const steps = 50;
+            const volumeStep = (currentVolume - targetVolume) / steps;
+            const timeStep = duration / steps;
+            
+            // Clear any existing fade intervals
+            if (fadeOutInterval) clearInterval(fadeOutInterval);
+            if (fadeInInterval) clearInterval(fadeInInterval);
+            
+            let currentStep = 0;
+            fadeOutInterval = setInterval(() => {
+              currentStep++;
+              audio.volume = Math.max(currentVolume - (volumeStep * currentStep), targetVolume);
+              
+              if (currentStep >= steps || audio.volume <= targetVolume) {
+                clearInterval(fadeOutInterval);
+                audio.volume = targetVolume;
+                fadeOutInterval = null;
+              }
+            }, timeStep);
+          }
+          
+          function setupLoopFading(audio) {
+            audio.addEventListener('timeupdate', () => {
+              const duration = audio.duration;
+              const currentTime = audio.currentTime;
+              const fadeOutTime = 6; // Start fade out 6 seconds before end
+              
+              if (duration - currentTime <= fadeOutTime && audio.volume > 0.02 && !fadeOutInterval) {
+                fadeOutAudio(audio, 5000); // 5 second fade out to 0.01
+              }
+              
+              // Detect when audio loops back to beginning and fade in
+              if (currentTime < 0.5 && audio.volume < 0.05) {
+                fadeInAudio(audio, 0.05, 5000);
+              }
+            });
+          }
+          
+          function tryPlayAudio() {
+            if (!hasPlayed && audio) {
+              audio.play().then(() => {
+                hasPlayed = true;
+                setupLoopFading(audio);
+                fadeInAudio(audio);
+              }).catch(() => {
+                // If autoplay fails, set up interaction listeners
+                setupInteractionListeners();
+              });
+            }
+          }
+          
+          function setupInteractionListeners() {
+            const playOnInteraction = () => {
+              if (!hasPlayed && audio) {
+                audio.play().then(() => {
+                  hasPlayed = true;
+                  setupLoopFading(audio);
+                  fadeInAudio(audio);
+                  // Remove listeners once audio starts playing
+                  document.removeEventListener('click', playOnInteraction);
+                  document.removeEventListener('keydown', playOnInteraction);
+                  document.removeEventListener('touchstart', playOnInteraction);
+                }).catch(() => {});
+              }
+            };
+            
+            document.addEventListener('click', playOnInteraction);
+            document.addEventListener('keydown', playOnInteraction);
+            document.addEventListener('touchstart', playOnInteraction);
+          }
+          
+          // Try to play on load
+          tryPlayAudio();
+        }
+        
+        document.addEventListener('DOMContentLoaded', initializeWaveMusic);
+        document.addEventListener('turbo:load', initializeWaveMusic);
+        document.addEventListener('turbo:render', initializeWaveMusic);
+      </script>
+
       <% 
         intensity = SinkeningSetting.current.intensity
         adjusted_intensity = intensity * intensity
