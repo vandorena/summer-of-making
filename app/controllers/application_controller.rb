@@ -78,7 +78,7 @@ class ApplicationController < ActionController::Base
   end
 
   # precompute flags used by tutorial/_todo_modal to avoid pervew queries on every page and avoid hammering the db :heavysob:
-  # the db is like young kartikey and the hammering was from my parents :pf: 
+  # the db is like young kartikey and the hammering was from my parents :pf:
   def compute_todo_flags
     return unless user_signed_in?
 
