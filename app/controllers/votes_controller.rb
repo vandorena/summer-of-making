@@ -106,14 +106,14 @@ class VotesController < ApplicationController
 
     Rails.logger.info("bc js work #{@vote_queue.inspect}")
 
-    @ship_events = @vote_queue.current_ship_events
+    @projects = @vote_queue.current_projects
 
-    if @ship_events.size < 2
+    if @projects.size < 2
       @projects = []
       return
     end
 
-    @projects = @vote_queue.current_projects
+    @ship_events = @vote_queue.current_ship_events
 
     # what in the vibe code did rowan do here before :skulk:
     @project_ai_used = {}
