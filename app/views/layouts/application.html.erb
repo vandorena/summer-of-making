@@ -143,14 +143,14 @@
 
     <% if user_signed_in? && Flipper.enabled?(:sinkening, current_user) %>
       <div class="">
-        <div class="fixed bottom-0 left-0 right-0 sinkening-water z-[100] translate-y-42">
+        <div class="fixed bottom-0 left-0 right-0 sinkening-water z-[100] translate-y-8">
           <svg viewBox="0 0 1200 200" class="w-full h-full" preserveAspectRatio="none">
-            <path d="M0,200 L0,100 Q300,60 600,100 T1200,100 L1200,200 Z" fill="rgba(3, 105, 161, 0.4)"/>
+            <path d="M0,200 L0,150 Q100,145 200,150 Q300,155 400,150 Q500,145 600,150 Q700,155 800,150 Q900,145 1000,150 Q1100,155 1200,150 L1200,200 Z" fill="rgba(3, 105, 161, 0.4)"/>
           </svg>
         </div>
-        <div class="fixed bottom-0 left-0 right-0 sinkening-water-2 z-[100] translate-y-42">
+        <div class="fixed bottom-0 left-0 right-0 sinkening-water-2 z-[100] translate-y-8">
           <svg viewBox="0 0 1200 200" class="w-full h-full" preserveAspectRatio="none">
-            <path d="M0,200 L0,120 Q400,80 800,120 T1200,120 L1200,200 Z" fill="rgba(3, 105, 161, 0.4)"/>
+            <path d="M0,200 L0,160 Q120,155 240,160 Q360,165 480,160 Q600,155 720,160 Q840,165 960,160 Q1080,155 1200,160 L1200,200 Z" fill="rgba(3, 105, 161, 0.4)"/>
           </svg>
         </div>
       </div>
@@ -278,19 +278,19 @@
       <% 
         intensity = SinkeningSetting.current.intensity
         adjusted_intensity = intensity * intensity
-        rotation_intensity = 3 * adjusted_intensity
+        rotation_intensity = 5 * adjusted_intensity + 1
         vertical_intensity = 50 * adjusted_intensity
         water_rotation_intensity = 3 * adjusted_intensity + 2
-        water_vertical_intensity = 30 * adjusted_intensity + 20
+        water_vertical_intensity = 10 * adjusted_intensity + 10
       %>
 
       <style>
         @keyframes water-rock {
-          0% { transform: rotate(-<%= water_rotation_intensity %>deg) translateY(<%= water_vertical_intensity * 0.2 %>px) translateX(-<%= adjusted_intensity * 20 %>px); }
-          40% { transform: rotate(<%= water_rotation_intensity * 0.2 %>deg) translateY(-<%= water_vertical_intensity * 0.8 %>px) translateX(<%= adjusted_intensity * 30 %>px); }
-          45% { transform: rotate(<%= water_rotation_intensity * 0.2 %>deg) translateY(-<%= water_vertical_intensity * 0.8 %>px) translateX(<%= adjusted_intensity * 30 %>px); }
-          95% { transform: rotate(-<%= water_rotation_intensity %>deg) translateY(<%= water_vertical_intensity * 0.2 %>px) translateX(-<%= adjusted_intensity * 20 %>px); }
-          100% { transform: rotate(-<%= water_rotation_intensity %>deg) translateY(<%= water_vertical_intensity * 0.2 %>px) translateX(-<%= adjusted_intensity * 20 %>px); }
+          0% { transform: rotate(-<%= water_rotation_intensity %>deg) translateY(<%= water_vertical_intensity * 0.2 %>px) translateX(-<%= adjusted_intensity * 100 %>px); }
+          40% { transform: rotate(<%= water_rotation_intensity * 0.2 %>deg) translateY(-<%= water_vertical_intensity * 0.8 %>px) translateX(<%= adjusted_intensity * 80 %>px); }
+          45% { transform: rotate(<%= water_rotation_intensity * 0.2 %>deg) translateY(-<%= water_vertical_intensity * 0.8 %>px) translateX(<%= adjusted_intensity * 80 %>px); }
+          95% { transform: rotate(-<%= water_rotation_intensity %>deg) translateY(<%= water_vertical_intensity * 0.2 %>px) translateX(-<%= adjusted_intensity * 100 %>px); }
+          100% { transform: rotate(-<%= water_rotation_intensity %>deg) translateY(<%= water_vertical_intensity * 0.2 %>px) translateX(-<%= adjusted_intensity * 100 %>px); }
         }
         
         .sinkening-container {
@@ -302,7 +302,7 @@
           pointer-events: none;
           width: 150vw;
           margin-left: -25vw;
-          height: calc(30rem + <%= adjusted_intensity*130 %>vh);
+          height: calc(35rem + <%= adjusted_intensity*300 %>vh);
         }
 
         .sinkening-water-2 {
@@ -310,7 +310,7 @@
           pointer-events: none;
           width: 150vw;
           margin-left: -25vw;
-          height: calc(30rem + <%= adjusted_intensity*130 %>vh);
+          height: calc(35rem + <%= adjusted_intensity*300 %>vh);
         }
       </style>
     <% end %>
