@@ -781,6 +781,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_09_223649) do
     t.text "permissions", default: "[]"
     t.jsonb "shenanigans_state", default: {}
     t.boolean "is_banned", default: false
+    t.boolean "fraud_team_member", default: false, null: false
   end
 
   create_table "versions", force: :cascade do |t|
