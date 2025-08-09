@@ -64,7 +64,7 @@ class ApplicationController < ActionController::Base
   end
 
   def user_for_paper_trail = current_impersonator&.id || current_user&.id
-  def info_for_paper_trail = { impersonating: impersonating?, pretending_to_be: current_impersonator && current_user }.compact_blank
+  def info_for_paper_trail = { extra_data: { impersonating: impersonating?, pretending_to_be: current_impersonator && current_user }.compact_blank }
 
   private
 
