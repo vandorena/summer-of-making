@@ -10,7 +10,7 @@ module Admin
     before_action :set_paper_trail_whodunnit
 
     def user_for_paper_trail = current_impersonator || current_user
-    def info_for_paper_trail = { ip: request.remote_ip, user_agent: request.user_agent, impersonating: impersonating?, pretending_to_be: current_impersonator && current_user }.compact_blank
+    def info_for_paper_trail = { ip: request.remote_ip, user_agent: request.user_agent, impersonating: !!current_impersonator, pretending_to_be: current_impersonator && current_user }.compact_blank
 
     layout "admin"
 
