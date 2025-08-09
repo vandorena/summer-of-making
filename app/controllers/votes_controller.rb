@@ -103,10 +103,9 @@ class VotesController < ApplicationController
       queue.save!
       queue.with_lock do
         if queue.queue_exhausted?
-          queue.refill_queue!(UserVoteQueue::REFILL_THRESHOLD)
+          queue.refill_queue!(UserVoteQueue::QUEUE_SIZE)
         end
       end
-      RefillUserVoteQueueJob.perform_unique_with_args(current_user.id)
     end
 
     Rails.logger.info("bc js work #{@vote_queue.inspect}")
