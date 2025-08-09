@@ -371,14 +371,14 @@ class User < ApplicationRecord
     # Get projects that might need warnings
     eligible_projects = projects.includes(:devlogs)
                                .where(is_deleted: false)
-                               .where.not(hackatime_project_keys: [nil, []])
+                               .where.not(hackatime_project_keys: [ nil, [] ])
 
     eligible_projects.each do |project|
       next unless project.hackatime_keys.all?(&:present?)
-      
+
       unlogged_seconds = project.unlogged_time
       next unless unlogged_seconds >= warning_threshold && unlogged_seconds < maximum_threshold
-      
+
       # Check if we haven't sent a warning recently (WARNING_COOLDOWN)
       cache_key = "unlogged_time_warning:#{id}:#{project.id}"
       next if Rails.cache.exist?(cache_key)
@@ -399,7 +399,7 @@ class User < ApplicationRecord
 
   def send_unlogged_warning_async(project, unlogged_seconds, warning_cooldown)
     cache_key = "unlogged_time_warning:#{id}:#{project.id}"
-    
+
     unlogged_hours = (unlogged_seconds / 3600.0).round(1)
     remaining_hours = ((10.hours.to_i - unlogged_seconds) / 3600.0).round(1)
 
@@ -407,7 +407,7 @@ class User < ApplicationRecord
 
     # Send Slack DM asynchronously (non-blocking)
     SendSlackDmJob.perform_later(slack_id, message)
-    
+
     # Set cache to prevent duplicate warnings
     Rails.cache.write(cache_key, Time.current.to_i, expires_in: warning_cooldown)
 
