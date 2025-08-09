@@ -361,27 +361,6 @@ class User < ApplicationRecord
     check_and_send_unlogged_warnings
   end
 
-  def check_projects_needing_unlogged_warnings
-    return [] unless has_hackatime? && user_hackatime_data.present?
-
-    warning_threshold = 9.hours.to_i
-    maximum_threshold = 10.hours.to_i
-
-    eligible_projects = projects.includes(:devlogs)
-                                .where(is_deleted: false)
-                                .where.not(hackatime_project_keys: [ nil, [] ])
-
-    eligible_projects.filter do |project|
-      next false unless project.hackatime_keys.all?(&:present?)
-
-      unlogged_seconds = project.unlogged_time
-      next false unless unlogged_seconds >= warning_threshold && unlogged_seconds < maximum_threshold
-
-      cache_key = "unlogged_time_warning:#{id}:#{project.id}"
-      !Rails.cache.exist?(cache_key)
-    end
-  end
-
   def check_and_send_unlogged_warnings
     return unless has_hackatime? && user_hackatime_data.present?
 
