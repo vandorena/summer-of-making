@@ -63,7 +63,7 @@ class ApplicationController < ActionController::Base
     redirect_to "/" unless current_user && current_user.is_admin?
   end
 
-  def user_for_paper_trail = current_impersonator || current_user
+  def user_for_paper_trail = current_impersonator&.id || current_user&.id
   def info_for_paper_trail = { impersonating: impersonating?, pretending_to_be: current_impersonator && current_user }.compact_blank
 
   private
