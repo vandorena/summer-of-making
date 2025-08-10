@@ -283,7 +283,7 @@ class ProjectsController < ApplicationController
       return
     end
 
-    if ShipEvent.create(project: @project)
+    if ShipEvent.create(project: @project, for_sinkening: Flipper.enabled?(:sinkening, current_user))
       if Flipper.enabled?(:sinkening, current_user)
         @project.update!(is_sinkening_ship: true)
       end

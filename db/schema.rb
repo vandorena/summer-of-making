@@ -434,6 +434,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_07_191603) do
     t.bigint "project_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "for_sinkening", default: false, null: false
     t.index ["project_id"], name: "index_ship_events_on_project_id"
   end
 
