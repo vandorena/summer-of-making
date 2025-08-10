@@ -24,37 +24,6 @@
          data-viewable-type="Devlog"
          data-viewable-id="<%= devlog.id %>">
       <% is_new_devlog = @new_devlog_id == devlog.id  %>
-      <% if devlog.for_sinkening %>
-        <%# Show balloon for sinkening devlogs %>
-        <% 
-          intensity = SinkeningSetting.current.intensity
-          adjusted_intensity = intensity * intensity
-          rotation_intensity = 1 + (Flipper.enabled?(:sinkening, current_user) ? 5 * adjusted_intensity + 1 : 0)
-          random_delay = rand(0..6000) # Random delay between 0-6000ms (full animation cycle)
-        %>
-        <div class="absolute top-0 right-0 p-2 z-0 origin-bottom"
-        style="transform: rotate(<%= rotation_intensity %>deg) translateY(calc(-100% + <%= context == 'explore' ? '2' : '1' %>rem)) translateX(<%= context == 'explore' ? '1' : '2' %>rem); color: <%= devlog.user.user_profile.balloon_color || '#ff6b6b' %>">
-          <%= inline_svg "balloon.svg", height: "10rem", width: "auto", 
-          class: "balloon",
-          style: "animation-delay: -#{random_delay}ms;" %>
-        </div>
-
-        <style>
-          .balloon {
-            transform-origin: bottom;
-            animation: balloon-idle 6s ease-in-out infinite;
-          }
-
-          @keyframes balloon-idle {
-            0%, 100% {
-              transform: rotate(-3deg);
-            }
-            50% {
-              transform: rotate(3deg);
-            }
-          }
-        </style>
-      <% end %>
 
       <div class="flex items-center justify-between mb-2 sm:mb-3">
         <div class="flex items-center">
@@ -217,6 +186,42 @@
         </div>
       <% end %>
     </div>
+
+    <% if devlog.for_sinkening %>
+        <%# Show balloon for sinkening devlogs %>
+        <% 
+          intensity = SinkeningSetting.current.intensity
+          adjusted_intensity = intensity * intensity
+          rotation_intensity = 1 + (Flipper.enabled?(:sinkening, current_user) ? 5 * adjusted_intensity + 1 : 0)
+          random_delay = rand(0..6000) # Random delay between 0-6000ms (full animation cycle)
+        %>
+        <div class="absolute top-0 right-0 p-2 z-0 origin-bottom"
+        style="transform: rotate(<%= rotation_intensity %>deg) translateY(calc(-100% + <%= context == 'explore' ? '2' : '2' %>rem)) translateX(<%= context == 'explore' ? '1' : '1' %>rem); color: <%= devlog.user.user_profile.balloon_color || '#ff6b6b' %>">
+          <%= inline_svg "balloon.svg", height: "10rem", width: "auto", 
+          class: "balloon",
+          style: "animation-delay: -#{random_delay}ms;" %>
+        </div>
+        
+        <div class="absolute -inset-0 rounded-lg"
+        style="background: radial-gradient(circle at 62.814829% 45.688167%, rgb(246, 219, 186), rgb(230, 212, 190))"></div>
+
+        <style>
+          .balloon {
+            transform-origin: bottom;
+            animation: balloon-idle 6s ease-in-out infinite;
+          }
+
+          @keyframes balloon-idle {
+            0%, 100% {
+              transform: rotate(-3deg);
+            }
+            50% {
+              transform: rotate(3deg);
+            }
+          }
+        </style>
+      <% end %>
+
   <% end %>
 
 <!-- Render comment modal based on context -->
