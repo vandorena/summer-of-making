@@ -84,24 +84,6 @@
           }, 5000);
         }
       }
-
-      // Handle newly created devlogs (scroll to the specific new devlog)
-      if (newDevlogId) {
-        setTimeout(function() {
-          const newDevlog = document.getElementById('devlog_' + newDevlogId);
-          if (newDevlog) {
-            newDevlog.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            
-            // Remove balloon animation class after animation completes
-            const balloonElement = newDevlog.querySelector('.balloon-float-animation');
-            if (balloonElement) {
-              setTimeout(function() {
-                balloonElement.classList.remove('balloon-float-animation');
-              }, 3000); // Match animation duration
-            }
-          }
-        }, 200);
-      }
     });
   </script>
 <% end %>
@@ -212,7 +194,7 @@
                     <div class="absolute top-0 right-0 p-2 z-0 origin-bottom"
                     style="transform: rotate(<%= rotation_intensity %>deg) translateY(calc(-100% + 2rem)) translateX(1rem); color: <%= item.user.user_profile.balloon_color || '#ff6b6b' %>">
                       <%= inline_svg "balloon.svg", height: "10rem", width: "auto", 
-                      class: "balloon",
+                      class: "shipevent-balloon",
                       style: "animation-delay: -#{random_delay}ms;" %>
                     </div>
 
@@ -220,16 +202,19 @@
                     style="background: radial-gradient(circle at 62.814829% 45.688167%, rgb(246, 219, 186), rgb(230, 212, 190))"></div>
               
                     <style>
-                      .balloon {
+                      .shipevent-balloon {
                         transform-origin: bottom;
-                        animation: balloon-idle 6s ease-in-out infinite;
+                        animation: shipevent-balloon-idle 6s ease-in-out infinite;
                       }
-                      @keyframes balloon-idle {
-                        0%, 100% {
-                          transform: rotate(-3deg);
+                      @keyframes shipevent-balloon-idle {
+                        0%, 50% {
+                          transform: rotate(0deg);
                         }
-                        50% {
+                        25% {
                           transform: rotate(3deg);
+                        }
+                        75% {
+                          transform: rotate(-3deg);
                         }
                       }
                     </style>

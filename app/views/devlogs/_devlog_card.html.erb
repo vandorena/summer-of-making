@@ -23,7 +23,20 @@
          data-action="<%= 'click->devlog-card#navigateToProject' if show_project_navigation %>"
          data-viewable-type="Devlog"
          data-viewable-id="<%= devlog.id %>">
-      <% is_new_devlog = @new_devlog_id == devlog.id  %>
+      <% show_animation = @new_devlog_id == devlog.id && devlog.for_sinkening %>
+
+      <% if show_animation %>
+        <script>
+          document.addEventListener('DOMContentLoaded', function() {
+            const balloonElement = document.getElementById("<%= dom_id(devlog) %>");
+            if (balloonElement) {
+              setTimeout(function() {
+                balloonElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }, 200);
+            }
+          });
+        </script>
+      <% end %>
 
       <div class="flex items-center justify-between mb-2 sm:mb-3">
         <div class="flex items-center">
@@ -193,30 +206,48 @@
           intensity = SinkeningSetting.current.intensity
           adjusted_intensity = intensity * intensity
           rotation_intensity = 1 + (Flipper.enabled?(:sinkening, current_user) ? 5 * adjusted_intensity + 1 : 0)
-          random_delay = rand(0..6000) # Random delay between 0-6000ms (full animation cycle)
+          random_delay = -rand(0..6000) # Random delay between 0-6000ms (full animation cycle)
         %>
         <div class="absolute top-0 right-0 p-2 z-0 origin-bottom"
         style="transform: rotate(<%= rotation_intensity %>deg) translateY(calc(-100% + <%= context == 'explore' ? '2' : '2' %>rem)) translateX(<%= context == 'explore' ? '1' : '1' %>rem); color: <%= devlog.user.user_profile.balloon_color || '#ff6b6b' %>">
           <%= inline_svg "balloon.svg", height: "10rem", width: "auto", 
-          class: "balloon",
-          style: "animation-delay: -#{random_delay}ms;" %>
+          class: show_animation ? "devlog-balloon-grow" : "devlog-balloon",
+          style: "animation-delay: #{show_animation ? '2000ms, 8000' : random_delay}ms;" 
+          %>
         </div>
         
         <div class="absolute -inset-0 rounded-lg"
         style="background: radial-gradient(circle at 62.814829% 45.688167%, rgb(246, 219, 186), rgb(230, 212, 190))"></div>
 
         <style>
-          .balloon {
+          .devlog-balloon {
             transform-origin: bottom;
-            animation: balloon-idle 6s ease-in-out infinite;
+            animation: devlog-balloon-idle 6s ease-in-out infinite;
           }
 
-          @keyframes balloon-idle {
-            0%, 100% {
-              transform: rotate(-3deg);
+          @keyframes devlog-balloon-idle {
+            0%, 100%% {
+              transform: rotate(3deg);
             }
             50% {
-              transform: rotate(3deg);
+              transform: rotate(-3deg);
+            }
+          }
+
+          .devlog-balloon-grow {
+            transform-origin: bottom;
+            animation: devlog-balloon-grow 6s linear forwards, devlog-balloon-idle 6s ease-in-out 6s infinite;
+          }
+
+          @keyframes devlog-balloon-grow {
+            0% {
+              transform: translateY(20%) scale(0) rotate(0deg);;
+            }
+            70% {
+              transform: translateY(30%) scale(1) rotate(1.5deg);
+            }
+            100%{
+              transform: translateY(0) scale(1) rotate(3deg);
             }
           }
         </style>
