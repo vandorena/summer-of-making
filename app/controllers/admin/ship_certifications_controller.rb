@@ -49,12 +49,6 @@ module Admin
       when "newest_first"
         # Sort by newest submissions first
         @ship_certifications.sort_by { |cert| -cert.created_at.to_i }
-      when "most_dev_time"
-        # Sort by development time (most hours first)
-        @ship_certifications.sort_by { |cert| -cert.devlogs_seconds_total }
-      when "least_dev_time"
-        # Sort by development time (least hours first) 
-        @ship_certifications.sort_by { |cert| cert.devlogs_seconds_total }
       when "most_votes"
         # Sort by user vote count (highest first)
         @ship_certifications.sort_by do |cert|
