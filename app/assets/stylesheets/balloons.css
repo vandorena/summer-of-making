@@ -8,14 +8,14 @@
   transform-origin: 50% 0%;
 }
 
-/* Keep balloons behind sinkening effects but visible */
+/* Keep balloons between background and UI */
 .floating-balloon-container {
-  z-index: 5;
+  z-index: 10;
 }
 
 .floating-balloon-container .balloon-card {
   pointer-events: auto;
-  z-index: 10;
+  z-index: 50;
   position: relative;
   transition: transform 0.1s ease-out;
 }
