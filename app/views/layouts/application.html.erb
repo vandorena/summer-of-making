@@ -141,7 +141,7 @@
       <div id="modals"></div>
     </div>
 
-    <% if user_signed_in? && Flipper.enabled?(:sinkening, current_user) && SinkeningSetting.intensity > 0 %>
+    <% if user_signed_in? && Flipper.enabled?(:sinkening, current_user) && SinkeningSetting.intensity > 0 && !current_page?(map_path) %>
       <div class="w-full overflow-hidden">
         <div class="fixed bottom-0 left-0 right-0 sinkening-water z-[100] translate-y-8">
           <svg viewBox="0 0 1200 200" class="w-full h-full" preserveAspectRatio="none">
