@@ -40,6 +40,8 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class Project < ApplicationRecord
+  has_paper_trail
+
   include PublicActivity::Model
 
   belongs_to :user

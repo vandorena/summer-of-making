@@ -364,8 +364,11 @@ Rails.application.routes.draw do
         post :impersonate
         post :set_hackatime_trust_factor
         post :refresh_hackatime
+        post :grant_fraud_reviewer
+        post :revoke_fraud_reviewer
       end
     end
+    resources :special_access_users, only: [ :index ]
     resources :shop_items
     resources :projects, only: [] do
       member do
