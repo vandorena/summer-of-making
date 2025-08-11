@@ -39,7 +39,7 @@ consumer.subscriptions.create("BalloonsChannel", {
       position: fixed;
       bottom: -200px;
       left: ${randomLeft}px;
-      z-index: 5;
+      z-index: 10;
       pointer-events: none;
       opacity: 0;
     `
@@ -51,25 +51,15 @@ consumer.subscriptions.create("BalloonsChannel", {
       balloonContainer.innerHTML = this.createShipEventBalloon(data)
     }
 
-    // Add balloon knock effect when hovering the balloon (not the card)
+    // Add balloon knock effect when hovering the balloon
     balloonContainer.style.pointerEvents = 'auto'
-    
-    // Add hover effect to balloon body only
-    const balloonBody = balloonContainer.querySelector('.balloon-body')
-    if (balloonBody) {
-      balloonBody.style.cursor = 'pointer'
-      balloonBody.addEventListener('mouseenter', (e) => {
-        this.knockBalloon(balloonContainer)
-      })
-    }
+    balloonContainer.style.cursor = 'pointer'
+    balloonContainer.addEventListener('mouseenter', (e) => {
+      this.knockBalloon(balloonContainer)
+    })
 
-    // Add to page - inside sinkening container if it exists, otherwise to body
-    const sinkeningContainer = document.querySelector('.sinkening-container')
-    if (sinkeningContainer) {
-      sinkeningContainer.appendChild(balloonContainer)
-    } else {
-      document.body.appendChild(balloonContainer)
-    }
+    // Add to page
+    document.body.appendChild(balloonContainer)
 
     // Start floating animation
     this.startFloatingAnimation(balloonContainer)
