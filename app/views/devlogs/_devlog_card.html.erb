@@ -11,9 +11,10 @@
   container_classes ||= ''                 # Additional container classes
   content_margin ||= ''                    # Content margin/padding classes
   no_parchment ||= false                   # Whether to disable parchment styling
+  show_animation = @new_devlog_id == devlog.id && devlog.for_sinkening
 %>
 
-  <%= render layout: "shared/card", locals: { classes: devlog.for_sinkening ? '-rotate-1' : '' } do %>
+  <%= render layout: "shared/card", locals: { classes: devlog.for_sinkening ? "origin-top-right #{show_animation ? 'devlog-card-rotate' : '-rotate-1 '}" : '' } do %>
     <div class="ml-4 z-10 <%= context == 'explore' || context == 'project' ? '' : '' %> <%= container_classes %> <%= 'cursor-pointer' if show_project_navigation %>"
          id="<%= dom_id(devlog) %>"
          data-controller="modal devlog-card"
@@ -23,7 +24,6 @@
          data-action="<%= 'click->devlog-card#navigateToProject' if show_project_navigation %>"
          data-viewable-type="Devlog"
          data-viewable-id="<%= devlog.id %>">
-      <% show_animation = @new_devlog_id == devlog.id && devlog.for_sinkening %>
 
       <% if show_animation %>
         <script>
@@ -210,10 +210,12 @@
         %>
         <div class="absolute top-0 right-0 p-2 z-0 origin-bottom"
         style="transform: rotate(<%= rotation_intensity %>deg) translateY(calc(-100% + <%= context == 'explore' ? '2' : '2' %>rem)) translateX(<%= context == 'explore' ? '1' : '1' %>rem); color: <%= devlog.user.user_profile.balloon_color || '#ff6b6b' %>">
-          <%= inline_svg "balloon.svg", height: "10rem", width: "auto", 
-          class: show_animation ? "devlog-balloon-grow" : "devlog-balloon",
-          style: "animation-delay: #{show_animation ? '2000ms, 8000' : random_delay}ms;" 
-          %>
+          <div class="devlog-card-rotate-counter">
+            <%= inline_svg "balloon.svg", height: "10rem", width: "auto",
+            class: show_animation ? "devlog-balloon-grow" : "devlog-balloon",
+            style: "animation-delay: #{show_animation ? '2000ms, 8000' : random_delay}ms;"
+            %>
+          </div>
         </div>
         
         <div class="absolute -inset-0 rounded-lg"
@@ -236,7 +238,7 @@
 
           .devlog-balloon-grow {
             transform-origin: bottom;
-            animation: devlog-balloon-grow 6s linear forwards, devlog-balloon-idle 6s ease-in-out 6s infinite;
+            animation: devlog-balloon-grow 6s linear forwards, devlog-balloon-idle 6s ease-in-out 8s infinite;
           }
 
           @keyframes devlog-balloon-grow {
@@ -248,6 +250,34 @@
             }
             100%{
               transform: translateY(0) scale(1) rotate(3deg);
+            }
+          }
+
+          .devlog-card-rotate {
+            transform-origin: top right;
+            animation: devlog-card-rotate 8.5s cubic-bezier(0.64, 0, 0.78, 0) forwards
+          }
+
+          @keyframes devlog-card-rotate {
+            0%, 88.2% {
+              transform: rotate(0deg);
+            }
+            100% {
+              transform: rotate(-1deg);
+            }
+          }
+
+          .devlog-card-rotate-counter {
+            transform-origin: bottom;
+            animation: devlog-card-rotate-counter 8.5s cubic-bezier(0.64, 0, 0.78, 0) forwards
+          }
+
+          @keyframes devlog-card-rotate-counter {
+            0%, 88.2% {
+              transform: rotate(0deg);
+            }
+            100% {
+              transform: rotate(1deg);
             }
           }
         </style>
