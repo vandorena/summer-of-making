@@ -28,7 +28,7 @@
       <% if show_animation %>
         <script>
           document.addEventListener('DOMContentLoaded', function() {
-            const balloonElement = document.getElementById("<%= dom_id(devlog) %>");
+            const balloonElement = document.getElementById(<%== dom_id(devlog).to_json %>);
             if (balloonElement) {
               setTimeout(function() {
                 balloonElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -202,7 +202,7 @@
 
     <% if devlog.for_sinkening %>
         <%# Show balloon for sinkening devlogs %>
-        <% 
+        <%
           intensity = SinkeningSetting.current.intensity
           adjusted_intensity = intensity * intensity
           rotation_intensity = 1 + (Flipper.enabled?(:sinkening, current_user) ? 5 * adjusted_intensity + 1 : 0)
@@ -213,11 +213,10 @@
           <div class="devlog-card-rotate-counter">
             <%= inline_svg "balloon.svg", height: "10rem", width: "auto",
             class: show_animation ? "devlog-balloon-grow" : "devlog-balloon",
-            style: "animation-delay: #{show_animation ? '2000ms, 8000' : random_delay}ms;"
-            %>
+            style: "animation-delay: #{show_animation ? '2000ms, 8000' : random_delay}ms;" %>
           </div>
         </div>
-        
+
         <div class="absolute -inset-0 rounded-lg"
         style="background: radial-gradient(circle at 62.814829% 45.688167%, rgb(246, 219, 186), rgb(230, 212, 190))"></div>
 
