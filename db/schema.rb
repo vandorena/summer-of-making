@@ -248,14 +248,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_09_223649) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "last_hackatime_time"
+    t.integer "seconds_coded"
     t.integer "likes_count", default: 0, null: false
     t.integer "comments_count", default: 0, null: false
-    t.integer "seconds_coded"
     t.datetime "hackatime_pulled_at"
     t.integer "views_count", default: 0, null: false
     t.integer "duration_seconds", default: 0, null: false
     t.jsonb "hackatime_projects_key_snapshot", default: [], null: false
     t.boolean "is_neighborhood_migrated", default: false, null: false
+    t.boolean "for_sinkening", default: false, null: false
     t.index ["project_id"], name: "index_devlogs_on_project_id"
     t.index ["user_id"], name: "index_devlogs_on_user_id"
     t.index ["views_count"], name: "index_devlogs_on_views_count"
@@ -378,6 +379,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_09_223649) do
     t.integer "views_count", default: 0, null: false
     t.float "x"
     t.float "y"
+    t.boolean "is_sinkening_ship"
     t.index ["is_shipped"], name: "index_projects_on_is_shipped"
     t.index ["user_id"], name: "index_projects_on_user_id"
     t.index ["views_count"], name: "index_projects_on_views_count"
@@ -432,6 +434,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_09_223649) do
     t.bigint "project_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "for_sinkening", default: false, null: false
     t.index ["project_id"], name: "index_ship_events_on_project_id"
   end
 
@@ -519,6 +522,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_09_223649) do
     t.datetime "updated_at", null: false
     t.index ["theseus_package_id"], name: "index_shop_warehouse_packages_on_theseus_package_id", unique: true
     t.index ["user_id"], name: "index_shop_warehouse_packages_on_user_id"
+  end
+
+  create_table "sinkening_settings", force: :cascade do |t|
+    t.float "intensity"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "slack_emotes", force: :cascade do |t|

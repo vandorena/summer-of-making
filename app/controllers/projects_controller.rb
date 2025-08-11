@@ -106,6 +106,9 @@ class ProjectsController < ApplicationController
     # Handle devlog highlighting for direct devlog links
     @target_devlog_id = params[:devlog_id] if params[:devlog_id].present?
 
+    # ID of newly created devlog for balloon animation
+    @new_devlog_id = flash[:new_devlog_id] if flash[:new_devlog_id].present?
+
     return unless current_user
 
     if current_user == @project.user && current_user.has_hackatime?
@@ -292,7 +295,11 @@ class ProjectsController < ApplicationController
       return
     end
 
-    if ShipEvent.create(project: @project)
+    if ShipEvent.create(project: @project, for_sinkening: Flipper.enabled?(:sinkening, current_user))
+      if Flipper.enabled?(:sinkening, current_user)
+        @project.update!(is_sinkening_ship: true)
+      end
+
       is_first_ship = current_user.projects.joins(:ship_events).count == 1
       ahoy.track "tutorial_step_first_project_shipped", user_id: current_user.id, project_id: @project.id, is_first_ship: is_first_ship
       redirect_to project_path(@project), notice: "Your project has been shipped!"

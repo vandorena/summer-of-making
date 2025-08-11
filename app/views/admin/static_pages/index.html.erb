@@ -52,6 +52,7 @@
       <%= link_to admin_ysws_reviews_path, class: 'abtn secondary' do %>
           YSWS reviews <span class="pill"><%= Project.ysws_review_eligible.count %></span>
         <% end %>
+      <%= link_to "the sinkening", admin_sinkening_path(SinkeningSetting.current), class: 'abtn secondary' %>
     <% end %>
   <% end %>
 </div>
