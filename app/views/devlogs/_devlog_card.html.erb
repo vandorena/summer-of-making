@@ -209,7 +209,7 @@
           random_delay = -rand(0..6000) # Random delay between 0-6000ms (full animation cycle)
         %>
         <div class="absolute top-0 right-0 p-2 z-0 origin-bottom"
-        style="transform: rotate(<%= rotation_intensity %>deg) translateY(calc(-100% + <%= context == 'explore' ? '2' : '2' %>rem)) translateX(<%= context == 'explore' ? '1' : '1' %>rem); color: <%= devlog.user.user_profile.balloon_color || '#ff6b6b' %>">
+        style="transform: rotate(<%= rotation_intensity %>deg) translateY(calc(-100% + <%= context == 'explore' ? '2' : '2' %>rem)) translateX(<%= context == 'explore' ? '1' : '1' %>rem); color: <%= devlog.user.user_profile&.balloon_color || '#ff6b6b' %>">
           <div class="devlog-card-rotate-counter">
             <%= inline_svg "balloon.svg", height: "10rem", width: "auto",
             class: show_animation ? "devlog-balloon-grow" : "devlog-balloon",
