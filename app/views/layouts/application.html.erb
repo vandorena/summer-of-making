@@ -79,9 +79,9 @@
             <!-- Todo Modal -->
             <%= render "tutorial/todo_modal" %>
             <% if !current_page?(campfire_path) && !current_user.tutorial_progress.soft_step_completed?("todo") && current_user.tutorial_progress.completed? && current_user.projects.empty? %>
-              <div class="bg-black/75 absolute inset-0 z-40 text-white cursor-pointer" data-todo-target="overlay" data-action="click->todo#completeAndHideOverlay">
+              <div class="absolute inset-0 z-40 text-white cursor-pointer bg-black/75" data-todo-target="overlay" data-action="click->todo#completeAndHideOverlay">
                 <div class="absolute bottom-24 right-24">
-                  <p class="text-3xl pr-8 pb-4">Check your todo list here!</p>
+                  <p class="pb-4 pr-8 text-3xl">Check your todo list here!</p>
                   <%= inline_svg "swirly-arrow.svg", class: "size-52 rotate-90 ml-auto" %>
                 </div>
               </div>
@@ -99,7 +99,7 @@
             <div data-controller="sidebar" data-sidebar-collapsed-value="false">
               <% if mobile_device? %>
                 <div class="flex flex-col h-[100dvh] box-border p-0">
-                  <main class="py-4 px-0 sm:px-4 overflow-y-scroll flex-grow flex-shrink">
+                  <main class="flex-grow flex-shrink px-0 py-4 overflow-y-scroll sm:px-4">
                     <div id="flash-container">
                       <%= render "shared/flash" %>
                     </div>
@@ -110,7 +110,7 @@
               <% else %>
                 <div class="flex flex-col h-[100dvh] box-border p-0">
                   <% if !current_user.has_hackatime? && !current_user.tutorial_progress.completed_at.nil? %>
-                    <div class="w-full bg-vintage-red text-white flex flex-col justify-center py-2">
+                    <div class="flex flex-col justify-center w-full py-2 text-white bg-vintage-red">
                       <p class="text-center">
                         Your time spent coding is not currently being tracked, therefore you can't create any projects.
                         <br>
@@ -120,7 +120,7 @@
                   <% end %>
                   <div class="flex h-full min-h-0">
                     <%= render "shared/sidebar" %>
-                    <main class="overflow-auto w-full" data-sidebar-target="mainContent">
+                    <main class="w-full overflow-auto" data-sidebar-target="mainContent">
                       <div id="flash-container">
                         <%= render "shared/flash" %>
                       </div>
