@@ -21,4 +21,8 @@ class SinkeningSetting < ApplicationRecord
   def self.set_intensity(value)
     self.current.update!(intensity: value)
   end
+
+  def self.story_url
+    self.current.slack_story_url.presence || ENV["SOM_BALLOON_STORY_URL"].presence || "https://hackclub.slack.com/archives/C090B3T9R9R"
+  end
 end
