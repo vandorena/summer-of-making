@@ -2,10 +2,11 @@
 #
 # Table name: sinkening_settings
 #
-#  id         :bigint           not null, primary key
-#  intensity  :float
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id              :bigint           not null, primary key
+#  intensity       :float
+#  slack_story_url :string
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
 #
 class SinkeningSetting < ApplicationRecord
   validates :intensity, presence: true, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 10 }
