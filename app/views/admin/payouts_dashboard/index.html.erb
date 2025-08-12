@@ -148,8 +148,12 @@
     <div class="kpi-value"><%= number_with_delimiter(@total_ship_events) %></div>
   </div>
   <div class="kpi-card">
-    <div class="kpi-label">total unpaid ship events</div>
+    <div class="kpi-label">unpaid ship events (no payouts yet)</div>
     <div class="kpi-value"><%= number_with_delimiter(@total_unpaid_ship_events) %></div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">escrow-pending ship events</div>
+    <div class="kpi-value"><%= number_with_delimiter(@escrow_pending_ship_events) %></div>
   </div>
   <div class="kpi-card">
     <div class="kpi-label">rough next ship date</div>
