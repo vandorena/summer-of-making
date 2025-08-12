@@ -13,7 +13,7 @@
 #  hackatime_project_keys :string           default([]), is an Array
 #  is_deleted             :boolean          default(FALSE)
 #  is_shipped             :boolean          default(FALSE)
-#  is_sinkening_ship      :boolean
+#  is_sinkening_ship      :boolean          default(FALSE)
 #  rating                 :integer
 #  readme_link            :string
 #  repo_link              :string
@@ -488,7 +488,7 @@ class Project < ApplicationRecord
 
       reason = "Payout#{" recalculation" if ship.payouts.count > 0} for #{title}'s #{ship.created_at} ship."
 
-      payout = Payout.create!(amount: current_payout_difference, payable: ship, user:, reason:)
+      payout = Payout.create!(amount: current_payout_difference, payable: ship, user:, reason:, escrowed: !user.has_met_voting_requirement?)
 
       puts "PAYOUTCREASED(#{payout.id}) ship.id:#{ship.id} min:#{min} max:#{max} rating_at_vote_count:#{current_rating} pc:#{pc} mult:#{mult} hours:#{hours} amount:#{amount} current_payout_sum:#{current_payout_sum} current_payout_difference:#{current_payout_difference}"
     end
@@ -558,7 +558,7 @@ class Project < ApplicationRecord
 
       reason = "Payout#{" recalculation" if ship.payouts.count > 0} for #{title}'s #{ship.created_at} ship."
 
-      payout = Payout.create!(amount: current_payout_difference, payable: ship, user:, reason:)
+      payout = Payout.create!(amount: current_payout_difference, payable: ship, user:, reason:, escrowed: !user.has_met_voting_requirement?)
 
       puts "PAYOUTCREASED(#{payout.id}) ship.id:#{ship.id} min:#{min} max:#{max} rating_at_vote_count:#{current_rating} pc:#{pc} mult:#{mult} hours:#{hours} amount:#{amount} current_payout_sum:#{current_payout_sum} current_payout_difference:#{current_payout_difference}"
     end

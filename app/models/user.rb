@@ -467,10 +467,25 @@ class User < ApplicationRecord
 
   def balance
     if association(:payouts).loaded?
-      payouts.sum(&:amount)
+      payouts.reject(&:escrowed).sum(&:amount)
     else
-      payouts.sum(:amount)
+      payouts.where(escrowed: false).sum(:amount)
     end
+  end
+
+  def votes_required_for_release
+    ship_events_count * 20
+  end
+
+  def has_met_voting_requirement?
+    votes.count >= votes_required_for_release
+  end
+
+  def release_escrowed_payouts_if_eligible!
+    return false unless has_met_voting_requirement?
+
+    updated = payouts.where(escrowed: true).update_all(escrowed: false)
+    updated > 0
   end
 
   def ship_events_count
