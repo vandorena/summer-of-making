@@ -489,10 +489,7 @@ class User < ApplicationRecord
   end
 
   def ship_events_count
-    projects.joins(:ship_events)
-            .left_joins(ship_events: :payouts)
-            .distinct
-            .size
+    projects.joins(:ship_events).count("ship_events.id")
   end
 
   # Avo backtraces
