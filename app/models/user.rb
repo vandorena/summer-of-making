@@ -473,6 +473,18 @@ class User < ApplicationRecord
     end
   end
 
+  def escrowed_balance
+    if association(:payouts).loaded?
+      payouts.select(&:escrowed).sum(&:amount)
+    else
+      payouts.where(escrowed: true).sum(:amount)
+    end
+  end
+
+  def total_shells
+    balance + escrowed_balance
+  end
+
   def votes_required_for_release
     ship_events_count * 20
   end
