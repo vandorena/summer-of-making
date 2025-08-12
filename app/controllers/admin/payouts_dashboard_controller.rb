@@ -120,7 +120,12 @@ module Admin
 
       @total_ship_events = ShipEvent.count
       released_ship_event_ids = Payout.where(payable_type: "ShipEvent", escrowed: false).distinct.pluck(:payable_id)
-      @total_unpaid_ship_events = ShipEvent.where.not(id: released_ship_event_ids).count
+      any_payout_ship_event_ids = Payout.where(payable_type: "ShipEvent").distinct.pluck(:payable_id)
+
+      @total_unpaid_ship_events = ShipEvent.where.not(id: any_payout_ship_event_ids).count
+
+      escrowed_only_ship_event_ids = (Payout.where(payable_type: "ShipEvent", escrowed: true).distinct.pluck(:payable_id) - released_ship_event_ids)
+      @escrow_pending_ship_events = ShipEvent.where(id: escrowed_only_ship_event_ids).count
 
       last_paid_payout = Payout.where(payable_type: "ShipEvent", escrowed: false)
                                .order(created_at: :desc)
