@@ -169,6 +169,7 @@ class Project < ApplicationRecord
     highway: "Highway",
     jumpstart: "Jumpstart",
     neighborhood: "Neighborhood",
+    cmdk: "cmd + k",
     railway: "Railway",
     shipwrecked: "Shipwrecked",
     solder: "Solder",
