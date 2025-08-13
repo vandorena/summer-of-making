@@ -80,10 +80,11 @@ class User < ApplicationRecord
   scope :search, ->(query) {
     return all if query.blank?
 
-    query = "%#{query}%"
+    fuzzy_query = "%#{query}%".downcase
+    query = query.downcase
     where(
-      "first_name ILIKE ? OR last_name ILIKE ? OR email ILIKE ? OR slack_id ILIKE ? OR display_name ILIKE ? OR identity_vault_id ILIKE ?",
-      query, query, query, query, query, query
+      "LOWER(first_name) ILIKE ? OR LOWER(last_name) ILIKE ? OR LOWER(email) ILIKE ? OR LOWER(slack_id) = ? OR LOWER(display_name) ILIKE ? OR identity_vault_id = ? OR LOWER(CONCAT(first_name, ' ', last_name)) ILIKE ?",
+      fuzzy_query, fuzzy_query, fuzzy_query, query, fuzzy_query, query, fuzzy_query
     )
   }
 
