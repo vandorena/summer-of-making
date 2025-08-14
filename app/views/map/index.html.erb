@@ -16,7 +16,7 @@
                     dragover->map#handleDragOver
                     drop->map#handleDrop">
     <%= image_tag Flipper.enabled?(:map_volcano, current_user) ? "map_volcano.png" : "map_colored.jpg",
-        class: "w-full h-full object-cover pointer-events-none select-none",
+        class: "w-full h-full object-contain pointer-events-none select-none",
         alt: "The Map",
         data: { map_target: "image" } %>
     <div data-map-target="pointsContainer" class="absolute inset-0"></div>
