@@ -8,6 +8,7 @@
 #  ai_feedback           :text
 #  explanation           :text             not null
 #  invalid_reason        :text
+#  is_low_quality        :boolean          default(FALSE), not null
 #  marked_invalid_at     :datetime
 #  music_played          :boolean
 #  processed_at          :datetime
