@@ -4,6 +4,7 @@ class VotesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_projects, only: %i[new]
   before_action :check_identity_verification
+  before_action :set_tracking, only: %i[track_demo track_repo]
 
   def new
     @vote = Vote.new
@@ -43,6 +44,19 @@ class VotesController < ApplicationController
     @vote.ship_event_1_id = ship_event_1_id
     @vote.ship_event_2_id = ship_event_2_id
 
+    # we should have done this from the start but it's time when this is excuted - started_at
+    if verification_result[:valid]
+      payload = verification_result[:payload]
+      if payload && payload["timestamp"].present?
+        begin
+          started_at = Time.at(payload["timestamp"].to_i)
+          @vote.time_spent_voting_ms = ((Time.current - started_at) * 1000).to_i.clamp(0, 86_400_000)
+        rescue StandardError
+          @vote.time_spent_voting_ms = nil
+        end
+      end
+    end
+
     # Backward compatibility
     @vote.project_1_id = @ship_events[0].project.id
     @vote.project_2_id = @ship_events[1].project.id
@@ -58,7 +72,23 @@ class VotesController < ApplicationController
     end
 
     if @vote.save
+      begin
+        pair_key = "#{@vote.ship_event_1_id}-#{@vote.ship_event_2_id}"
+        clicks = session.dig(:voting_clicks, pair_key)
+        if clicks.present?
+          @vote.update_columns(
+            project_1_demo_opened: clicks["project_1_demo_opened"],
+            project_1_repo_opened: clicks["project_1_repo_opened"],
+            project_2_demo_opened: clicks["project_2_demo_opened"],
+            project_2_repo_opened: clicks["project_2_repo_opened"]
+          )
+          session[:voting_clicks].delete(pair_key)
+        end
+      rescue StandardError => e
+        Rails.logger.warn("Failed to apply voting click analytics: #{e.message}")
+      end
       current_user.advance_vote_queue!
+      session.delete(:current_vote_signature)
 
       vote_result = if @vote.winning_project_id.nil?
                      "Tie vote submitted!"
@@ -70,6 +100,14 @@ class VotesController < ApplicationController
     else
       redirect_to new_vote_path, alert: @vote.errors.full_messages.join(", ")
     end
+  end
+
+  def track_demo
+    track_and_redirect!("demo")
+  end
+
+  def track_repo
+    track_and_redirect!("repo")
   end
 
   def locked
@@ -86,6 +124,67 @@ class VotesController < ApplicationController
   end
 
   private
+
+  def set_tracking
+    position = params[:position].to_i
+    unless [ 1, 2 ].include?(position)
+      redirect_to new_vote_path, alert: "Invalid link" and return
+    end
+
+    queue = current_user.user_vote_queue
+    ship_events = queue&.current_ship_events || []
+    if ship_events.size != 2
+      redirect_to new_vote_path, alert: "Voting pair unavailable" and return
+    end
+
+    signature = session[:current_vote_signature]
+    unless signature.present?
+      redirect_to new_vote_path, alert: "Missing signature" and return
+    end
+    verification = VoteSignatureService.verify_signature_with_ship_events(
+      signature,
+      ship_events[0].id,
+      ship_events[1].id,
+      current_user.id
+    )
+    unless verification[:valid]
+      redirect_to new_vote_path, alert: "Invalid or expired link" and return
+    end
+
+    @project_index = position
+    @project = ship_events[position - 1].project
+  end
+
+  def record_voting_click_for_current_pair!(link_type, project_index)
+    return unless current_user&.user_vote_queue
+
+    ship_events = current_user.user_vote_queue.current_ship_events
+    return if ship_events.size != 2
+
+    se_ids = [ ship_events[0].id, ship_events[1].id ].sort
+    pair_key = "#{se_ids[0]}-#{se_ids[1]}"
+    session[:voting_clicks] ||= {}
+    session[:voting_clicks][pair_key] ||= {
+      "project_1_demo_opened" => false,
+      "project_1_repo_opened" => false,
+      "project_2_demo_opened" => false,
+      "project_2_repo_opened" => false
+    }
+
+    field = "project_#{project_index}_#{link_type}_opened"
+    session[:voting_clicks][pair_key][field] = true
+  end
+
+  def track_and_redirect!(link_type)
+    authorize @project, :show?
+    record_voting_click_for_current_pair!(link_type, @project_index)
+    target_url = case link_type
+    when "demo" then @project.demo_link
+    when "repo" then @project.repo_link
+    else nil
+    end
+    redirect_to(target_url.presence || project_path(@project), allow_other_host: true)
+  end
 
   def redirect_to_locked
     redirect_to locked_votes_path
@@ -129,13 +228,11 @@ class VotesController < ApplicationController
     end
 
     @vote_signature = @vote_queue.generate_current_signature
+    session[:current_vote_signature] = @vote_signature
   end
 
   def vote_params
     params.expect(vote: %i[winning_project_id explanation
-                           project_1_demo_opened project_1_repo_opened
-                           project_2_demo_opened project_2_repo_opened
-                           time_spent_voting_ms music_played
                            ship_event_1_id ship_event_2_id signature])
   end
 end

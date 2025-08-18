@@ -3,21 +3,13 @@
   class: "space-y-6",
   data: {
     controller: "form",
-    action: "submit->form#preventDoubleSubmission",
-    "data-analytics-form": ""
+    action: "submit->form#preventDoubleSubmission"
   }) do |f| %>
 
   <%# Ship event IDs and signature for secure voting %>
   <%= f.hidden_field :ship_event_1_id, value: @ship_events&.first&.id %>
   <%= f.hidden_field :ship_event_2_id, value: @ship_events&.last&.id %>
   <%= f.hidden_field :signature, value: @vote_signature %>
-
-  <%= f.hidden_field :project_1_demo_opened, value: false, data: { voting_steps_target: "project1DemoOpenedInput" } %>
-  <%= f.hidden_field :project_1_repo_opened, value: false, data: { voting_steps_target: "project1RepoOpenedInput" } %>
-  <%= f.hidden_field :project_2_demo_opened, value: false, data: { voting_steps_target: "project2DemoOpenedInput" } %>
-  <%= f.hidden_field :project_2_repo_opened, value: false, data: { voting_steps_target: "project2RepoOpenedInput" } %>
-  <%= f.hidden_field :time_spent_voting_ms, value: 0, data: { voting_steps_target: "timeSpentVotingInput" } %>
-  <%= f.hidden_field :music_played, value: false, data: { voting_steps_target: "musicPlayedInput" } %>
 
   <div class="text-center">
     <h2 class="text-md sm:text-md md:text-lg lg:text-2xl mb-6 sm:mb-8 text-center">
