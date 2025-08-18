@@ -410,23 +410,7 @@ class Project < ApplicationRecord
                                                       .left_joins(:payouts)
                                                       .where(payouts: { id: nil })
   end
-
-  def calculate_payout
-    vote_count = VoteChange.where(project: self).maximum(:project_vote_count)
-    min, max = VoteChange.cumulative_elo_range_for_vote_count(vote_count)
-
-    pc = unlerp(min, max, rating)
-
-    mult = Payout.calculate_multiplier pc
-
-    puts "mult", mult
-
-    hours = Devlog.where(project: self).capped_duration_seconds.fdiv(3600)
-    puts "hours", hours
-
-    payout = hours * mult
-  end
-
+  
   def issue_genesis_payouts
     project_vote_count = VoteChange.where(project: self).count
 
