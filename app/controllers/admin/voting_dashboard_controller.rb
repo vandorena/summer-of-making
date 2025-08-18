@@ -30,7 +30,7 @@ module Admin
         @rating_max = ratings.max
 
         mean = ratings.sum.to_f / @ratings_count
-        variance = ratings.sum { |r| (r - mean) ** 2 } / [@ratings_count, 1].max.to_f
+        variance = ratings.sum { |r| (r - mean) ** 2 } / [ @ratings_count, 1 ].max.to_f
         stddev = Math.sqrt(variance)
         stddev = 1.0 if stddev.zero?
         @rating_mean = mean
@@ -39,7 +39,7 @@ module Admin
         sturges_bins = (Math.log2(@ratings_count).ceil + 1).clamp(5, 60)
         @rating_bins = (params[:bins] || sturges_bins).to_i.clamp(5, 100)
         span = (@rating_max - @rating_min).to_f
-        bin_width = [span / @rating_bins, 1.0].max
+        bin_width = [ span / @rating_bins, 1.0 ].max
         @rating_bin_width = bin_width
         @rating_bin_edges = Array.new(@rating_bins + 1) { |i| (@rating_min + i * bin_width).round }
 
