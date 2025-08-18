@@ -410,7 +410,7 @@ class Project < ApplicationRecord
                                                       .left_joins(:payouts)
                                                       .where(payouts: { id: nil })
   end
-  
+
   def issue_genesis_payouts
     project_vote_count = VoteChange.where(project: self).count
 
@@ -626,6 +626,7 @@ class Project < ApplicationRecord
     converted_url = self.class.convert_github_blob_to_raw(url)
     send("#{field}=", converted_url) if converted_url != url
   end
+
 
   def self.convert_github_blob_to_raw(url)
     return url if url.blank?
