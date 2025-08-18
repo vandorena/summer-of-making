@@ -421,7 +421,7 @@ class Project < ApplicationRecord
 
     puts "mult", mult
 
-    hours = devlogs.sum(:duration_seconds).fdiv(3600)
+    hours = Devlog.where(project: self).capped_duration_seconds.fdiv(3600)
     puts "hours", hours
 
     payout = hours * mult
