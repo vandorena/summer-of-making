@@ -34,6 +34,117 @@
     <% end %>
   <% end %>
 
+  <!-- Todo list -->
+  <% if current_user.tutorial_progress.completed? %>
+    <div class="mb-8">
+      <%= render "shared/card" do %>
+        <div class="text-som-dark flex flex-col xl:flex-row space-y-5 xl:space-y-0">
+          <div>
+            <div class="flex items-start justify-between mb-2 flex-col">
+              <h2 class="text-xl">Todo list:</h2>
+              <p>Follow me to get started!</p>
+            </div>
+
+            <ul class="space-y-2 text-left">
+              <li class="flex items-start">
+                <div class="flex-shrink-0 h-6 w-6 mt-0.5">
+                  <div class="h-5 w-5 border-2 <%= current_user.tutorial_video_seen? ? 'bg-forest border-forest' : 'border-som-dark' %> flex items-center justify-center">
+                  </div>
+                </div>
+                <span class="ml-2 <%= current_user.projects.any? ? 'text-forest' : 'text-som-dark' %>">
+                  Watch the <a href="http://localhost:3000/onboarding.mp4" class="text-blue-500 hover:text-blue-700 underline">Introduction Video</a>
+                </span>
+              </li>
+
+              <li class="flex items-start">
+                <div class="flex-shrink-0 h-6 w-6 mt-0.5">
+                  <div class="h-5 w-5 border-2 <%= current_user.projects.any? ? 'bg-forest border-forest' : 'border-som-dark' %> flex items-center justify-center">
+                  </div>
+                </div>
+                <span class="ml-2 <%= current_user.projects.any? ? 'text-forest' : 'text-som-dark' %>">
+                  Create a project in the <a href="/my_projects" class="text-blue-500 hover:text-blue-700 underline">Projects</a> tab
+                </span>
+              </li>
+
+              <li class="flex items-start">
+                <div class="flex-shrink-0 h-6 w-6 mt-0.5">
+                  <div class="h-5 w-5 border-2 <%= current_user.devlogs.any? ? 'bg-forest border-forest' : 'border-som-dark' %> flex items-center justify-center">
+                  </div>
+                </div>
+                <span class="ml-2 <%= current_user.devlogs.any? ? 'text-forest' : 'text-som-dark' %>">
+                  Post updates on your devlog as you work
+                </span>
+              </li>
+
+              <li class="flex items-start">
+                <div class="flex-shrink-0 h-6 w-6 mt-0.5">
+                  <div class="h-5 w-5 border-2 <%= current_user.ship_events.any? ? 'bg-forest border-forest' : 'border-som-dark' %> flex items-center justify-center">
+                  </div>
+                </div>
+                <span class="ml-2 <%= current_user.ship_events.any? ? 'text-forest' : 'text-som-dark' %>">
+                  Ship your project when it is ready for others to experience
+                </span>
+              </li>
+
+              <li class="flex items-start">
+                <div class="flex-shrink-0 h-6 w-6 mt-0.5">
+                  <div class="h-5 w-5 border-2 <%= current_user.votes.any? ? 'bg-forest border-forest' : 'border-som-dark' %> flex items-center justify-center">
+                  </div>
+                </div>
+                <span class="ml-2 <%= current_user.votes.any? ? 'text-forest' : 'text-som-dark' %>">
+                  Vote on other people's projects to receive your shells
+                </span>
+              </li>
+
+              <li class="flex items-start">
+                <div class="flex-shrink-0 h-6 w-6 mt-0.5">
+                  <div class="h-5 w-5 border-2 <%= current_user.shop_orders.joins(:shop_item).where.not(shop_items: { type: "ShopItem::FreeStickers" }).any? ? 'bg-forest border-forest' : 'border-som-dark' %> flex items-center justify-center">
+                  </div>
+                </div>
+                <span class="ml-2 <%= current_user.shop_orders.joins(:shop_item).where.not(shop_items: { type: "ShopItem::FreeStickers" }).any? ? 'text-forest' : 'text-som-dark' %>">
+                  Spend your hard-earned shells in the shop
+                </span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="grow flex relative">
+            <div class="h-auto xl:h-full w-full max-w-lg xl:w-auto xl:ml-auto aspect-video relative">
+              <video id="onboarding" class="absolute inset-0 overflow-clip rounded-md" style="box-sizing: border-box;" src="/onboarding.mp4" poster="/onboarding_poster.png" controls title="Onboarding tutorial video">
+              </video>
+            </div>
+          </div>
+        </div>
+
+        <script>
+          function initializeOnboardingVideo() {
+            const video = document.querySelector("video#onboarding");
+            const mascot = document.getElementById("onboarding-mascot");
+            const callout = document.getElementById("onboarding-callout");
+
+            if (!video || !mascot || !callout) return;
+
+            function playOnboarding() {
+              video.play();
+              mascot.style.display = "none";
+              callout.style.display = "none";
+            }
+
+            mascot.addEventListener("click", playOnboarding);
+            callout.addEventListener("click", playOnboarding);
+            video.addEventListener("play", function() {
+              mascot.style.display = "none";
+              callout.style.display = "none";
+            });
+          }
+
+          document.addEventListener("DOMContentLoaded", initializeOnboardingVideo);
+          document.addEventListener("turbo:load", initializeOnboardingVideo);
+        </script>
+      <% end %>
+    </div>
+  <% end %>
+
   <!-- Hackatime Dashboard Section -->
   <% if current_user.tutorial_progress.completed? && @account_status[:hackatime_setup] %>
     <div class="mb-8 color-forest">
@@ -312,104 +423,6 @@
         </div>
       </div>
     <% end %>
-
-    <!-- Summer of Making Steps -->
-    <div class="mb-8">
-      <%= render "shared/card" do %>
-        <div class="text-som-dark flex flex-col xl:flex-row space-y-5 xl:space-y-0">
-          <div>
-            <div class="flex items-center justify-between mb-4">
-              <h2 class="text-xl">Todo list:</h2>
-            </div>
-
-            <ul class="space-y-2 text-left">
-              <li class="flex items-start">
-                <div class="flex-shrink-0 h-6 w-6 mt-0.5">
-                  <div class="h-5 w-5 border-2 <%= current_user.projects.any? ? 'bg-forest border-forest' : 'border-som-dark' %> flex items-center justify-center">
-                  </div>
-                </div>
-                <span class="ml-2 <%= current_user.projects.any? ? 'text-forest' : 'text-som-dark' %>">
-                  Create a project in the <a href="/my_projects" class="text-blue-500 hover:text-blue-700 underline">Projects</a> tab
-                </span>
-              </li>
-
-              <li class="flex items-start">
-                <div class="flex-shrink-0 h-6 w-6 mt-0.5">
-                  <div class="h-5 w-5 border-2 <%= current_user.devlogs.any? ? 'bg-forest border-forest' : 'border-som-dark' %> flex items-center justify-center">
-                  </div>
-                </div>
-                <span class="ml-2 <%= current_user.devlogs.any? ? 'text-forest' : 'text-som-dark' %>">
-                  Post updates on your devlog as you work
-                </span>
-              </li>
-
-              <li class="flex items-start">
-                <div class="flex-shrink-0 h-6 w-6 mt-0.5">
-                  <div class="h-5 w-5 border-2 <%= current_user.ship_events.any? ? 'bg-forest border-forest' : 'border-som-dark' %> flex items-center justify-center">
-                  </div>
-                </div>
-                <span class="ml-2 <%= current_user.ship_events.any? ? 'text-forest' : 'text-som-dark' %>">
-                  Ship your project when it is ready for others to experience
-                </span>
-              </li>
-
-              <li class="flex items-start">
-                <div class="flex-shrink-0 h-6 w-6 mt-0.5">
-                  <div class="h-5 w-5 border-2 <%= current_user.votes.any? ? 'bg-forest border-forest' : 'border-som-dark' %> flex items-center justify-center">
-                  </div>
-                </div>
-                <span class="ml-2 <%= current_user.votes.any? ? 'text-forest' : 'text-som-dark' %>">
-                  Vote on other people's projects to receive your shells
-                </span>
-              </li>
-
-              <li class="flex items-start">
-                <div class="flex-shrink-0 h-6 w-6 mt-0.5">
-                  <div class="h-5 w-5 border-2 <%= current_user.shop_orders.joins(:shop_item).where.not(shop_items: { type: "ShopItem::FreeStickers" }).any? ? 'bg-forest border-forest' : 'border-som-dark' %> flex items-center justify-center">
-                  </div>
-                </div>
-                <span class="ml-2 <%= current_user.shop_orders.joins(:shop_item).where.not(shop_items: { type: "ShopItem::FreeStickers" }).any? ? 'text-forest' : 'text-som-dark' %>">
-                  Spend your hard-earned shells in the shop
-                </span>
-              </li>
-            </ul>
-          </div>
-
-          <div class="grow flex relative">
-            <div class="h-auto xl:h-full w-full max-w-lg xl:w-auto xl:ml-auto aspect-video relative">
-              <video id="onboarding" class="absolute inset-0 overflow-clip rounded-md" style="box-sizing: border-box;" src="/onboarding.mp4" poster="/onboarding_poster.png" controls title="Onboarding tutorial video">
-              </video>
-            </div>
-          </div>
-        </div>
-
-        <script>
-          function initializeOnboardingVideo() {
-            const video = document.querySelector("video#onboarding");
-            const mascot = document.getElementById("onboarding-mascot");
-            const callout = document.getElementById("onboarding-callout");
-
-            if (!video || !mascot || !callout) return;
-
-            function playOnboarding() {
-              video.play();
-              mascot.style.display = "none";
-              callout.style.display = "none";
-            }
-
-            mascot.addEventListener("click", playOnboarding);
-            callout.addEventListener("click", playOnboarding);
-            video.addEventListener("play", function() {
-              mascot.style.display = "none";
-              callout.style.display = "none";
-            });
-          }
-
-          document.addEventListener("DOMContentLoaded", initializeOnboardingVideo);
-          document.addEventListener("turbo:load", initializeOnboardingVideo);
-        </script>
-      <% end %>
-    </div>
 
     <!-- Account Status Section -->
     <% if current_verification_status == :not_linked || current_verification_status == :needs_resubmission || current_verification_status == :pending || current_verification_status == :ineligible || !@account_status[:hackatime_projects] %>
