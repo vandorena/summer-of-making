@@ -142,15 +142,21 @@
                           <%= inline_svg("icons/ship.svg", class: "w-6 h-6") %>
                           Ship <%= ship_data[:position] %>
                       </p>
-                      <p class="mb-6">
-                        <%= pluralize(ship_data[:payout_count], "payout") %> of
-                        <picture class="inline-block w-6 h-6 flex-shrink-0">
-                          <source srcset="/shell.avif" type="image/avif">
-                          <source srcset="/shell.webp" type="image/webp">
-                          <img src="/shell.png" class="inline-block w-6 h-6" alt="shell" loading="lazy">
-                        </picture>
-                        <%= ship_data[:payout_sum] %> shells
-                      </p>
+                      <% if ship_data[:payout_count].positive? %>
+                        <p class="mb-6">
+                          <%= pluralize(ship_data[:payout_count], "payout") %> of
+                          <picture class="inline-block w-6 h-6 flex-shrink-0">
+                            <source srcset="/shell.avif" type="image/avif">
+                            <source srcset="/shell.webp" type="image/webp">
+                            <img src="/shell.png" class="inline-block w-6 h-6" alt="shell" loading="lazy">
+                          </picture>
+                          <%= ship_data[:payout_sum] %> shells
+                        </p>
+                      <% else %>
+                        <p class="mb-6">
+                          This ship is currently being voted on by the community. Check back later!
+                        </p>
+                      <% end %>
                       <div class="flex items-center">
                         <% if item.user.avatar.present? %>
                           <img src="<%= item.user.avatar %>" alt="<%= item.user.display_name %>" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3" loading="lazy">
