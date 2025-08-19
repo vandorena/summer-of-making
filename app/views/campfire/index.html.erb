@@ -7,7 +7,7 @@
     </div>
   </div>
 
-  <% if !current_user.tutorial_progress.completed? %>
+  <% if current_user.tutorial_progress.completed? %>
     <div class="mb-8">
       <%= render "shared/definition",
         term: "⚠️ THE SUMMER OF MAKING HAS BEEN EXTENDED! 🏝️",
