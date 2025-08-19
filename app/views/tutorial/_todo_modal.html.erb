@@ -18,7 +18,7 @@
           <div class="h-5 w-5 border-2 <%= current_user.tutorial_video_seen? ? 'bg-forest border-forest' : 'border-som-dark' %> flex items-center justify-center">
           </div>
         </div>
-        <span class="ml-2 <%= current_user.projects.any? ? 'text-forest' : 'text-som-dark' %>">
+        <span class="ml-2 <%= current_user.tutorial_video_seen? ? 'text-forest' : 'text-som-dark' %>">
           Watch the <a href="http://localhost:3000/onboarding.mp4" class="text-blue-500 hover:text-blue-700 underline">Introduction Video</a>
         </span>
       </li>
