@@ -74,7 +74,8 @@
             </div>
           <% else %>
             <p class="text-lg mb-4">
-              Today you have logged <span data-hackatime-dashboard-target="todayTime"><%= current_user.format_seconds(@hackatime_dashboard[:today_time]) %></span> of coding time, and overall you have logged <span data-hackatime-dashboard-target="totalTime"><%= current_user.format_seconds(@hackatime_dashboard[:total_time]) %></span>.
+              Today you have logged <span data-hackatime-dashboard-target="todayTime"><%= current_user.format_seconds(@hackatime_dashboard[:today_time]) %></span> of coding time, and overall you have logged <span data-hackatime-dashboard-target="totalTime"><%= current_user.format_seconds(@hackatime_dashboard[:total_time]) %></span>.<br>
+              It may take up to 10 minutes for Hackatime data to show up here.
             </p>
             <p class="text-sm sm:text-sm md:text-md lg:text-md xl:text-lg">
               You will need to post a devlog <span class="text-[#E65A42]">after 10 hours of work</span> before you can log more time!
@@ -170,7 +171,8 @@
               </picture>,
               with up to 30x bonuses based on community votes!
               <br><br>
-              Make sure <span class="text-[#E65A42]">all your code editors</span> are connected to Hackatime. You can't get shells without it!
+              Make sure <span class="text-[#E65A42]">all your code editors</span> are connected to Hackatime. You can't get shells without it!<br>
+              It may take up to 10 minutes for Hackatime data to show up here.
             </p>
             <% if @account_status[:hackatime_projects] %>
               <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800" data-hackatime-status-target="status">
