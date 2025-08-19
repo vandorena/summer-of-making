@@ -92,7 +92,7 @@
                   </div>
                 </div>
                 <span class="ml-2 <%= current_user.votes.any? ? 'text-forest' : 'text-som-dark' %>">
-                  Vote on other people's projects to receive your shells
+                  <a href="<%= new_vote_path %>" class="text-blue-500 hover:text-blue-700 underline">Vote</a> on other people's projects to receive your shells
                 </span>
               </li>
 
@@ -102,7 +102,7 @@
                   </div>
                 </div>
                 <span class="ml-2 <%= current_user.shop_orders.joins(:shop_item).where.not(shop_items: { type: "ShopItem::FreeStickers" }).any? ? 'text-forest' : 'text-som-dark' %>">
-                  Spend your hard-earned shells in the shop
+                  Spend your hard-earned shells in the <a href="<%= shop_path %>" class="text-blue-500 hover:text-blue-700 underline">shop</a>
                 </span>
               </li>
             </ul>
