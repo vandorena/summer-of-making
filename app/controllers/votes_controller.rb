@@ -2,6 +2,7 @@
 
 class VotesController < ApplicationController
   before_action :authenticate_user!
+  before_action :ensure_voting_not_paused, only: %i[new create]
   before_action :set_projects, only: %i[new]
   before_action :check_identity_verification
   before_action :set_tracking, only: %i[track_demo track_repo]
@@ -133,6 +134,12 @@ class VotesController < ApplicationController
   end
 
   private
+
+  def ensure_voting_not_paused
+    if defined?(Flipper) && Flipper.enabled?(:voting_paused)
+      redirect_to locked_votes_path, alert: "Voting is temporarily paused. Please try again later." and return
+    end
+  end
 
   def set_tracking
     position = params[:position].to_i
