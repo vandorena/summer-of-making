@@ -491,7 +491,7 @@ class User < ApplicationRecord
   end
 
   def has_met_voting_requirement?
-    votes.count >= votes_required_for_release
+    votes.active.count >= votes_required_for_release
   end
 
   def release_escrowed_payouts_if_eligible!

@@ -100,7 +100,7 @@ module Admin
       holder_user_ids = @escrow_holders.map { |(user_data, _)| user_data[0] }
       users_for_holders = User.where(id: holder_user_ids).includes(:votes, projects: :ship_events)
       @votes_needed_by_user_id = users_for_holders.to_h do |u|
-        remaining = [ u.votes_required_for_release - u.votes.count, 0 ].max
+        remaining = [ u.votes_required_for_release - u.votes.active.count, 0 ].max
         [ u.id, remaining ]
       end
 
@@ -114,7 +114,7 @@ module Admin
       @total_votes_needed = 0
       if escrow_user_ids.any?
         User.where(id: escrow_user_ids).find_each do |u|
-          @total_votes_needed += [ u.votes_required_for_release - u.votes.count, 0 ].max
+          @total_votes_needed += [ u.votes_required_for_release - u.votes.active.count, 0 ].max
         end
       end
 

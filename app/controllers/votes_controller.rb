@@ -9,7 +9,7 @@ class VotesController < ApplicationController
 
   def new
     @vote = Vote.new
-    @user_vote_count = current_user.votes.count
+    @user_vote_count = current_user.votes.active.count
   end
 
   def create

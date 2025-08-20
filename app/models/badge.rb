@@ -42,7 +42,7 @@ class Badge
       flavor_text: "vote 100 times.",
       icon: "i_voted.png",
       color: "border-green-500 bg-green-500/10 text-green-800",
-      criteria: ->(user) { user.votes.count >= 100 }
+      criteria: ->(user) { user.votes.active.count >= 100 }
     },
     graphic_design_is_my_passion: {
       name: "Graphic Design is My Passion",

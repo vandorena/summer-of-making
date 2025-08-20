@@ -158,9 +158,9 @@
                             This ship is currently being voted on by the community. Check back later!
                           </p>
                         <% end %>
-                        <% if (20 * current_user.ship_events_count) - current_user.votes.size > 0 %>
+                        <% if (20 * current_user.ship_events_count) - current_user.votes.active.count > 0 %>
                           <p class="">
-                            You <%= ship_data[:payout_count].positive? ? '' : 'also ' %>need to vote <%= pluralize((20 * current_user.ship_events_count) - current_user.votes.size, 'more time') %> on others' ships to get your shells!
+                            You <%= ship_data[:payout_count].positive? ? '' : 'also ' %>need to vote <%= pluralize((20 * current_user.ship_events_count) - current_user.votes.active.count, 'more time') %> on others' ships to get your shells!
                             <a href="<%= new_vote_path %>" class="underline text-blue-700 hover:text-blue-800">Start voting</a>.
                           </p>
                         <% end %>

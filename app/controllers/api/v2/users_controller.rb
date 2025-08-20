@@ -59,7 +59,7 @@ module Api
           bio: user.user_profile&.bio,
           projects_count: user.projects.size,
           devlogs_count: user.devlogs.count,
-          votes_count: user.votes.count,
+          votes_count: user.votes.active.count,
           projects: user.projects.map { |p|
             { id: p.id, title: p.title, devlogs_count: p.devlogs.count, created_at: p.created_at }
           },
