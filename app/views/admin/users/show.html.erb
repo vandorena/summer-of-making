@@ -588,9 +588,9 @@
         <% desc = "conditionally enabled" %>
         <% end %>
         <span style="color: <%= color %>">
-          <abbr title="<%= desc %>">G</abbr>
+          <abbr title="<%= desc %>">[<%= desc.first %>]</abbr>
         </span>
-        <a href="/admin/flipper/features/<%= flag.name %>" target="_blank">M</a> <br>
+        <a href="/admin/flipper/features/<%= flag.name %>" target="_blank"><small>🔗</small></a> <br>
         this user: <i><%= user_enabled ? "enabled" : "disabled" %><% if global %>, because it's on for everyone<% end %></i>
         <% unless global %>
           <%= button_to user_enabled ? "flip off" : "flip on", flip_admin_user_path(@user, flag: flag.name, state: !user_enabled), class: "abtn small", style: "margin-top: 0.5em;" %>
