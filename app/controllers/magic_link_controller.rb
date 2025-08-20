@@ -15,7 +15,7 @@ class MagicLinkController < ApplicationController
         slack_id: slack_id,
         params: params.to_unsafe_h
       }
-    #  Honeybadger.notify("No EmailSignup found for #{email}", context: error_info)
+      # Honeybadger.notify("No EmailSignup found for #{email}", context: error_info)
       return render json: {
         success: false,
         error: "No email sign up found for #{email}. Give it another go?",
@@ -37,7 +37,7 @@ class MagicLinkController < ApplicationController
         }.to_json)
       end
     rescue StandardError => e
-     # Honeybadger.notify(e)
+      # Honeybadger.notify(e)
       user = User.find_by(email: email)
     end
 
