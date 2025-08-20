@@ -4,7 +4,7 @@
   data: {
     turbo: false,
     controller: "form",
-    action: "submit->form#preventDoubleSubmission"
+    action: "submit->form#validateAndPreventDoubleSubmission"
   }) do |f| %>
 
   <%# Ship event IDs and signature for secure voting %>
@@ -65,7 +65,8 @@
       class: "som-horizontal-input w-full rounded-lg resize-none focus:ring-2 focus:ring-nice-blue focus:border-nice-blue transition-colors #{'border-vintage-red' if vote.errors[:explanation].any?}",
       rows: 4,
       required: true,
-      minlength: 20,
+      minlength: 100,
+      data: { form_target: "explanation" },
       placeholder: "Tell us why you made this choice..." %>
 
     <% if vote.errors[:explanation].any? %>
@@ -73,12 +74,15 @@
         <%= vote.errors[:explanation].join(", ") %>
       </div>
     <% end %>
+
+    <div class="text-sm mt-1" data-form-target="counter"></div>
   </div>
 
   <div class="flex justify-center items-center w-full">
     <%= render "shared/button",
         text: "Submit Vote",
         type: :submit,
+        classes: "opacity-75 cursor-not-allowed pointer-events-none",
         data: { form_target: "submitButton" } %>
   </div>
 <% end %>
