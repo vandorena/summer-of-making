@@ -108,9 +108,9 @@ namespace :votes do
 
         if (processed + skipped) % progress_every == 0
           elapsed = Time.current - started_at
-          rate = (processed + skipped) / [elapsed, 0.001].max
-          remaining = [total - (processed + skipped), 0].max
-          eta_sec = remaining / [rate, 0.001].max
+          rate = (processed + skipped) / [ elapsed, 0.001 ].max
+          remaining = [ total - (processed + skipped), 0 ].max
+          eta_sec = remaining / [ rate, 0.001 ].max
           eta_str = Time.at(eta_sec).utc.strftime("%H:%M:%S")
           puts "[ELO] Progress: #{processed + skipped}/#{total} (processed=#{processed}, skipped=#{skipped}) | rate=#{rate.round(1)}/s | ETA=#{eta_str}"
         end
