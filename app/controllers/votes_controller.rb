@@ -136,8 +136,13 @@ class VotesController < ApplicationController
   private
 
   def ensure_voting_not_paused
-    if defined?(Flipper) && Flipper.enabled?(:voting_paused)
-      redirect_to locked_votes_path, alert: "Voting is temporarily paused. Please try again later." and return
+    if defined?(Flipper)
+      if Flipper.enabled?(:lock_voting, current_user)
+        redirect_to locked_votes_path, alert: "Your voting access has been temporarily disabled due to too many low-quality votes." and return
+      end
+      if Flipper.enabled?(:voting_paused)
+        redirect_to locked_votes_path, alert: "Voting is temporarily paused. Please try again later." and return
+      end
     end
   end
 
