@@ -164,13 +164,15 @@
                             <%= ship_data[:escrow_sum] %> shells are in escrow pending your voting.
                           </p>
                         <% else %>
-                          <p class="">
-                            This ship is currently being voted on by the community. Check back later!
-                          </p>
+                          <% if @latest_ship_certification&.approved? %>
+                            <p class="">
+                              This ship is currently being voted on by the community. Check back later!
+                            </p>
+                          <% end %>
                         <% end %>
-                        <% if (20 * current_user.ship_events_count) - current_user.votes.active.count > 0 %>
+                        <% if current_user && ship_data[:escrow_count].to_i.positive? && ((20 * current_user.ship_events_count) - current_user.votes.active.count > 0) %>
                           <p class="">
-                            You <%= (ship_data[:payout_count].positive? || ship_data[:escrow_count].to_i.positive?) ? '' : 'also ' %>need to vote <%= pluralize((20 * current_user.ship_events_count) - current_user.votes.active.count, 'more time') %> on others' ships to get your shells!
+                            You need to vote <%= pluralize((20 * current_user.ship_events_count) - current_user.votes.active.count, 'more time') %> on others' ships to get your shells!
                             <a href="<%= new_vote_path %>" class="underline text-blue-700 hover:text-blue-800">Start voting</a>.
                           </p>
                         <% end %>
