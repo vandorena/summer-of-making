@@ -153,6 +153,16 @@
                             </picture>
                             <%= ship_data[:payout_sum] %> shells
                           </p>
+                        <% elsif ship_data[:escrow_count].to_i.positive? %>
+                          <p class="">
+                            <%= pluralize(ship_data[:escrow_count], "payout") %> totaling
+                            <picture class="inline-block w-6 h-6 flex-shrink-0">
+                              <source srcset="/shell.avif" type="image/avif">
+                              <source srcset="/shell.webp" type="image/webp">
+                              <img src="/shell.png" class="inline-block w-6 h-6" alt="shell" loading="lazy">
+                            </picture>
+                            <%= ship_data[:escrow_sum] %> shells are in escrow pending your voting.
+                          </p>
                         <% else %>
                           <p class="">
                             This ship is currently being voted on by the community. Check back later!
@@ -160,7 +170,7 @@
                         <% end %>
                         <% if (20 * current_user.ship_events_count) - current_user.votes.active.count > 0 %>
                           <p class="">
-                            You <%= ship_data[:payout_count].positive? ? '' : 'also ' %>need to vote <%= pluralize((20 * current_user.ship_events_count) - current_user.votes.active.count, 'more time') %> on others' ships to get your shells!
+                            You <%= (ship_data[:payout_count].positive? || ship_data[:escrow_count].to_i.positive?) ? '' : 'also ' %>need to vote <%= pluralize((20 * current_user.ship_events_count) - current_user.votes.active.count, 'more time') %> on others' ships to get your shells!
                             <a href="<%= new_vote_path %>" class="underline text-blue-700 hover:text-blue-800">Start voting</a>.
                           </p>
                         <% end %>
