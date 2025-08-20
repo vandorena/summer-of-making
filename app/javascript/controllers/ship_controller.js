@@ -18,10 +18,14 @@ export default class extends Controller {
     "statusText",
     "linkStatus",
     "confirmCheckbox",
+    "whatIsAShipVideo"
   ];
 
   connect() {
     this.escapeHandler = this.escapeHandler.bind(this);
+    this.whatIsAShipVideo = new Vimeo.Player(this.whatIsAShipVideoTarget);
+    this.whatIsAShipVideoPaused = false;
+
     document.addEventListener("keydown", this.escapeHandler);
 
     if (this.hasNo404CheckboxTarget && this.hasSubmitButtonTarget) {
@@ -35,6 +39,15 @@ export default class extends Controller {
 
   open() {
     this.modalTarget.classList.remove("hidden");
+
+    if (this.whatIsAShipVideoPaused) {
+      setTimeout(() => {
+        this.whatIsAShipVideo.play();
+      }, 100);
+
+      this.whatIsAShipVideoPaused = false;
+    }
+
     document.body.classList.add("overflow-hidden");
 
     this.showPage(1);
@@ -46,6 +59,13 @@ export default class extends Controller {
   }
 
   close() {
+    (async () => {
+      await this.whatIsAShipVideo.setCurrentTime(0);
+      await this.whatIsAShipVideo.pause();
+    })();
+
+    this.whatIsAShipVideoPaused = true;
+
     this.modalTarget.classList.add("hidden");
     document.body.classList.remove("overflow-hidden");
   }
