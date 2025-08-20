@@ -388,6 +388,7 @@ Rails.application.routes.draw do
         post :refresh_hackatime
         post :grant_fraud_reviewer
         post :revoke_fraud_reviewer
+        post :flip
       end
     end
     resources :special_access_users, only: [ :index ]
