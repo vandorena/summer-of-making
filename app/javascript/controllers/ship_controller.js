@@ -24,7 +24,6 @@ export default class extends Controller {
   connect() {
     this.escapeHandler = this.escapeHandler.bind(this);
     this.whatIsAShipVideo = new Vimeo.Player(this.whatIsAShipVideoTarget);
-    this.whatIsAShipVideoPaused = false;
 
     document.addEventListener("keydown", this.escapeHandler);
 
@@ -40,13 +39,7 @@ export default class extends Controller {
   open() {
     this.modalTarget.classList.remove("hidden");
 
-    if (this.whatIsAShipVideoPaused) {
-      setTimeout(() => {
-        this.whatIsAShipVideo.play();
-      }, 100);
-
-      this.whatIsAShipVideoPaused = false;
-    }
+    // this.whatIsAShipVideo.play();
 
     document.body.classList.add("overflow-hidden");
 
