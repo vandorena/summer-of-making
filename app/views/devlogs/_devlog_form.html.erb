@@ -90,7 +90,8 @@
               w-full p-2 border-2 border-som-bright focus:outline-none focus:border-som-dark text-base
               md:text-lg 2xl:text-xl rounded-md transition-colors
             }.squish,
-            rows: 4, required: true %>
+            rows: 4, required: true,
+            data: { form_target: "devlogText" } %>
         </div>
 
         <div class="space-y-1.5 md:space-y-2">
@@ -104,6 +105,7 @@
           <p class="text-sm text-gray-600">Supports images, audio, video, and GIFs (Required)</p>
         </div>
 
+        <%= f.hidden_field :project_id, value: @project.id, data: { form_target: "projectId" } %>
         <div class="flex justify-end space-x-4 pt-6">
           <%=
             render "shared/button",
