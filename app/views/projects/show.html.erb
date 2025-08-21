@@ -170,7 +170,7 @@
                             </p>
                           <% end %>
                         <% end %>
-                        <% if current_user && ship_data[:escrow_count].to_i.positive? %>
+                        <% if current_user && current_user == item.user && ship_data[:escrow_count].to_i.positive? %>
                           <% required = current_user.votes_required_for_release %>
                           <% remaining = [ required - current_user.votes.active.count, 0 ].max %>
                           <% if remaining > 0 %>
