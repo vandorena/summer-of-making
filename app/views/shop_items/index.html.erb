@@ -150,8 +150,8 @@
               <%= render partial: "raffle_card" %>
             <% end %>
             <% sorted_items.each do |item| %>
-              <% if Flipper.enabled?(:enable_shop_balloons, current_user) && item.is_a?(ShopItem::SinkeningBalloons) %>
-                <% if current_user.sinkening_participation? %>
+              <% if item.is_a?(ShopItem::SinkeningBalloons) %>
+                <% if Flipper.enabled?(:enable_shop_balloons, current_user) && current_user.sinkening_participation? %>
                   <%= render partial: "item", locals: { item: } %>
                 <% end %>
               <% else %>
