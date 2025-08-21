@@ -8,6 +8,29 @@ export default class extends Controller {
     this.currentTrack = null
     this.isPlaying = false
     this.musicHasPlayed = false
+
+    const storedPref = localStorage.getItem('journeyMusicEnabled')
+    const shouldAutoPlay = storedPref !== 'false'
+    if (shouldAutoPlay) {
+      const savedTrackName = localStorage.getItem('journeyMusicTrack')
+      let startIndex = null
+      if (savedTrackName) {
+        const arr = Array.from(this.tracks)
+        startIndex = arr.findIndex(t => t.dataset.trackName === savedTrackName)
+        if (startIndex < 0) startIndex = null
+      }
+      try {
+        this.playMusic(startIndex)
+      } catch (_) {
+        this._setupInteractionAutoplay(startIndex)
+      }
+      if (this.currentTrack && this.currentTrack.play) {
+        const p = this.currentTrack.play()
+        if (p && typeof p.catch === 'function') {
+          p.catch(() => this._setupInteractionAutoplay(startIndex))
+        }
+      }
+    }
   }
   
   toggleMusic() {
@@ -83,5 +106,19 @@ export default class extends Controller {
       this.currentTrack.pause()
       this.currentTrack = null
     }
+  }
+
+  _setupInteractionAutoplay(startIndex) {
+    const handler = () => {
+      try {
+        this.playMusic(startIndex)
+      } catch (_) {}
+      document.removeEventListener('click', handler)
+      document.removeEventListener('keydown', handler)
+      document.removeEventListener('touchstart', handler)
+    }
+    document.addEventListener('click', handler)
+    document.addEventListener('keydown', handler)
+    document.addEventListener('touchstart', handler)
   }
 } 
