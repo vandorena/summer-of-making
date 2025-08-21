@@ -49,7 +49,7 @@ class Shop::WarehousePackage < ApplicationRecord
     end
 
     # Create consistent idempotency key based on orders being fulfilled
-    order_ids = shop_orders.order(:id).pluck(:id).join('-')
+    order_ids = shop_orders.order(:id).pluck(:id).join("-")
     idempotency_key = "som25_warehouse_package_#{Rails.env}_#{user_id}_#{order_ids}"
 
     retries = 0
@@ -77,7 +77,7 @@ class Shop::WarehousePackage < ApplicationRecord
     rescue Faraday::BadRequestError => e
       # Check if this is an idempotency error from Theseus
       body = e.response&.dig(:body)
-      
+
       # Parse the JSON response body to check for idempotency error
       is_idempotency_error = false
       if body.is_a?(String)
@@ -88,7 +88,7 @@ class Shop::WarehousePackage < ApplicationRecord
           # Not JSON, continue with generic error handling
         end
       end
-      
+
       if is_idempotency_error
         # Package was created on Theseus but we never got the ID back
         Rails.logger.error "Idempotency error for warehouse package #{id}: package exists on Theseus but we don't have the ID"
@@ -103,7 +103,7 @@ class Shop::WarehousePackage < ApplicationRecord
         update!(theseus_package_id: "MANUAL_FIXUP_NEEDED_#{idempotency_key}")
         return # Don't raise, let the job complete
       end
-      
+
       Rails.logger.error "Bad request sending warehouse package #{id} to Theseus: #{e.message}"
       raise
     rescue => e
