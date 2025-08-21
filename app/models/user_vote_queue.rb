@@ -79,6 +79,12 @@ class UserVoteQueue < ApplicationRecord
         next
       end
 
+      # ensure total time covered for each project is greater than 0 seconds #ai hearbeats yoinked
+      if zero_total_time_covered?(ship_events)
+        advance_position!
+        next
+      end
+
       return projects
     end
   end
@@ -162,6 +168,18 @@ class UserVoteQueue < ApplicationRecord
 
   def both_paid?(ship_events)
     ship_events.all? { |se| se.payouts.exists? }
+  end
+
+  def zero_total_time_covered?(ship_events)
+    ids = ship_events.map(&:id)
+    totals_by_ship_event = Devlog
+      .joins("INNER JOIN ship_events ON devlogs.project_id = ship_events.project_id")
+      .where(ship_events: { id: ids })
+      .where("devlogs.created_at <= ship_events.created_at")
+      .group("ship_events.id")
+      .sum(:duration_seconds)
+
+    ship_events.any? { |se| (totals_by_ship_event[se.id] || 0) <= 0 }
   end
 
   def generate_matchup
