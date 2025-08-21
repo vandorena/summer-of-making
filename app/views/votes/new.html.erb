@@ -1,8 +1,6 @@
 <% content_for :head do %>
-  <%= preload_link_tag asset_path("peaceful_glade.mp3"), as: :audio %>
-  <%= preload_link_tag asset_path("luce.wav"), as: :audio %>
-  <%= preload_link_tag asset_path("viscosity.wav"), as: :audio %>
-  <%= preload_link_tag asset_path("meowmeow.wav"), as: :audio %>
+  <%= preload_link_tag asset_path("allhailasc.mp3"), as: :audio %>
+  <%= preload_link_tag asset_path("the_stash.mp3"), as: :audio %>
 
   <% if @projects.present? && @ship_events.present? %>
     <% @projects.each_with_index do |project, index| %>
@@ -228,10 +226,8 @@
     <%= image_tag "journeypheusmusic.png", alt: "Toggle Music", class: "w-full h-full object-contain" %>
 
     <div data-music-target="audioTracks" class="hidden">
-      <%= audio_tag "peaceful_glade.mp3", class: "music-track", data: { track_name: "peaceful_glade" } %>
-      <%= audio_tag "luce.wav", class: "music-track", data: { track_name: "luce" } %>
-      <%= audio_tag "viscosity.wav", class: "music-track", data: { track_name: "viscosity" } %>
-      <%= audio_tag "meowmeow.wav", class: "music-track", data: { track_name: "meowmeow" } %>
+      <%= audio_tag "allhailasc.mp3", class: "music-track", data: { track_name: "allhailasc" } %>
+      <%= audio_tag "the_stash.mp3", class: "music-track", data: { track_name: "the_stash" } %>
     </div>
   </button>
 </div>
