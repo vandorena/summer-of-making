@@ -9,10 +9,10 @@ export default class extends Controller {
     this.isPlaying = false
     this.musicHasPlayed = false
 
-    const storedPref = localStorage.getItem('journeyMusicEnabled')
+    const storedPref = localStorage.getItem('summerofmakingmusic')
     const shouldAutoPlay = storedPref !== 'false'
     if (shouldAutoPlay) {
-      const savedTrackName = localStorage.getItem('journeyMusicTrack')
+      const savedTrackName = localStorage.getItem('summerofmakingmusicTrack')
       let startIndex = null
       if (savedTrackName) {
         const arr = Array.from(this.tracks)
@@ -75,8 +75,8 @@ export default class extends Controller {
     }
     
     const trackName = this.currentTrack.dataset.trackName
-    localStorage.setItem('journeyMusicEnabled', 'true')
-    localStorage.setItem('journeyMusicTrack', trackName)
+    localStorage.setItem('summerofmakingmusic', 'true')
+    localStorage.setItem('summerofmakingmusicTrack', trackName)
   }
   
   playNextTrack() {
@@ -97,7 +97,7 @@ export default class extends Controller {
     } else {
       this.element.classList.remove('music-playing')
     }
-    localStorage.setItem('journeyMusicEnabled', 'false')
+    localStorage.setItem('summerofmakingmusic', 'false')
   }
   
   disconnect() {
