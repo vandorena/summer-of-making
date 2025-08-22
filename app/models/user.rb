@@ -492,7 +492,7 @@ class User < ApplicationRecord
       .where(ship_certifications: { judgement: ShipCertification.judgements[:approved] })
       .where.not(id: Payout.released.where(payable_type: "ShipEvent").select(:payable_id))
       .count("ship_events.id")
-    approved_count * 20
+    [ approved_count, 1 ].min * 20
   end
 
   def has_met_voting_requirement?
