@@ -56,6 +56,8 @@ class UserVoteQueue < ApplicationRecord
   end
 
   def current_projects
+    voted_se_ids = user.votes.active.distinct.pluck(:ship_event_1_id, :ship_event_2_id).flatten.compact
+
     loop do
       ship_events = current_ship_events
       projects = ship_events.map(&:project).compact
@@ -68,6 +70,13 @@ class UserVoteQueue < ApplicationRecord
           refill_queue!(1)
         end
 
+        advance_position!
+        next
+      end
+
+      # skip if either ship event in the pair has already been voted on by the user
+      if current_pair && (voted_se_ids.include?(current_pair[0]) || voted_se_ids.include?(current_pair[1]))
+        next if replace_current_pair!
         advance_position!
         next
       end
@@ -183,10 +192,7 @@ class UserVoteQueue < ApplicationRecord
   end
 
   def generate_matchup
-    voted_ship_event_ids = user.votes
-                              .joins(vote_changes: { project: :ship_events })
-                              .distinct
-                              .pluck("ship_events.id")
+    voted_ship_event_ids = user.votes.active.distinct.pluck(:ship_event_1_id, :ship_event_2_id).flatten.compact
 
     projects_with_latest_ship = Project
                                   .joins(:ship_events)
