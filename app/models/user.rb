@@ -511,6 +511,7 @@ class User < ApplicationRecord
   end
 
   def release_escrowed_payouts_if_eligible!
+    # NOTE Aug 23, 2025 IST: Escrow is deprecated for new payouts.
     return false unless has_met_voting_requirement?
 
     updated = payouts.where(escrowed: true).update_all(escrowed: false)
