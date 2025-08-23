@@ -98,7 +98,7 @@
   <% end %>
   <% more_votes_required = current_user.remaining_votes_to_ship %>
   <% if more_votes_required > 0 %>
-    <p class="text-center text-nice-blue text-lg mb-6">You need <%= pluralize(more_votes_required, "more vote") %> since your last ship.</p>
+    <p class="text-center text-nice-blue text-lg mb-6">You need <%= pluralize(more_votes_required, "more vote") %> since your last ship to release your shells.</p>
   <% end %>
 
   <% if @projects.size < 2 %>
