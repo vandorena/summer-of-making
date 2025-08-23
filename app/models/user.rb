@@ -499,6 +499,17 @@ class User < ApplicationRecord
     votes.active.count >= votes_required_for_release
   end
 
+  def votes_since_last_ship_count
+    last_ship_time = ship_events.order(:created_at).last&.created_at
+    scope = votes.active
+    scope = scope.where("created_at > ?", last_ship_time) if last_ship_time
+    scope.count
+  end
+
+  def remaining_votes_to_ship
+    [ 20 - votes_since_last_ship_count, 0 ].max
+  end
+
   def release_escrowed_payouts_if_eligible!
     return false unless has_met_voting_requirement?
 

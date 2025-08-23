@@ -96,9 +96,9 @@
       document.addEventListener('turbo:render', initializeVoteRejectedModal);
     </script>
   <% end %>
-  <% more_votes_required = current_user.votes_required_for_release - @user_vote_count %>
+  <% more_votes_required = current_user.remaining_votes_to_ship %>
   <% if more_votes_required > 0 %>
-    <p class="text-center text-nice-blue text-lg mb-6">You need to vote <%= pluralize(more_votes_required, "more time") %>!</p>
+    <p class="text-center text-nice-blue text-lg mb-6">You need <%= pluralize(more_votes_required, "more vote") %> since your last ship.</p>
   <% end %>
 
   <% if @projects.size < 2 %>
