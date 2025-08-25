@@ -165,6 +165,16 @@ class UsersController < ApplicationController
       # Add projects with type marker
       projects.each { |project| combined_activities << { type: :project, item: project, created_at: project.created_at } }
 
+      # Add project improvements if viewing own profile
+      if current_user == @user
+        improvements = ProjectImprovement.includes(:project, :ship_certification)
+                                        .joins(:project)
+                                        .where(projects: { user: @user })
+                                        .order(created_at: :desc)
+        
+        improvements.each { |improvement| combined_activities << { type: :project_improvement, item: improvement, created_at: improvement.created_at } }
+      end
+
       # Add user joined activity
       combined_activities << { type: :user_joined, item: @user, created_at: @user.created_at }
 

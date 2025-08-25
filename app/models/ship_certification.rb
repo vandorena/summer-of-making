@@ -28,6 +28,7 @@ class ShipCertification < ApplicationRecord
   validates :reviewer, presence: true, unless: -> { pending? }
   belongs_to :project
   has_many :devlogs, through: :project
+  has_many :project_improvements
   has_one_attached :proof_video, dependent: :destroy
 
   after_commit :schedule_video_conversion, if: :should_convert_video?
