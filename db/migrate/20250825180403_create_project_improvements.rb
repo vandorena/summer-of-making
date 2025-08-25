@@ -11,7 +11,7 @@ class CreateProjectImprovements < ActiveRecord::Migration[8.0]
 
       t.timestamps
     end
-    
-    add_index :project_improvements, [:project_id, :status]
+
+    add_index :project_improvements, [ :project_id, :status ]
   end
 end

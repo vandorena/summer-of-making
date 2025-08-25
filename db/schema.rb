@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_18_122349) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_25_180403) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -357,6 +357,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_18_122349) do
     t.index ["project_id"], name: "index_project_follows_on_project_id"
     t.index ["user_id", "project_id"], name: "index_project_follows_on_user_id_and_project_id", unique: true
     t.index ["user_id"], name: "index_project_follows_on_user_id"
+  end
+
+  create_table "project_improvements", force: :cascade do |t|
+    t.bigint "project_id", null: false
+    t.bigint "ship_certification_id", null: false
+    t.text "description"
+    t.string "proof_link"
+    t.integer "status", default: 0
+    t.integer "shell_reward", default: 0
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id", "status"], name: "index_project_improvements_on_project_id_and_status"
+    t.index ["project_id"], name: "index_project_improvements_on_project_id"
+    t.index ["ship_certification_id"], name: "index_project_improvements_on_ship_certification_id"
   end
 
   create_table "projects", force: :cascade do |t|
@@ -903,6 +918,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_18_122349) do
   add_foreign_key "magic_links", "users"
   add_foreign_key "project_follows", "projects"
   add_foreign_key "project_follows", "users"
+  add_foreign_key "project_improvements", "projects"
+  add_foreign_key "project_improvements", "ship_certifications"
   add_foreign_key "projects", "users"
   add_foreign_key "readme_certifications", "projects"
   add_foreign_key "readme_certifications", "users", column: "reviewer_id"

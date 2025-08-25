@@ -206,7 +206,7 @@ Rails.application.routes.draw do
   get "/auth/failure", to: "sessions#failure"
   delete "/logout", to: "sessions#destroy", as: :logout
   delete "/stop_impersonating", to: "sessions#stop_impersonating", as: :stop_impersonating
-  
+
   # Development auto-login (only available in development)
   if Rails.env.development?
     get "/auth/dev_login", to: "sessions#auto_login_dev", as: :dev_auto_login

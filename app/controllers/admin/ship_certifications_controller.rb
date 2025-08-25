@@ -150,7 +150,7 @@ module Admin
             description: params[:improvement_suggestion].strip
           )
         end
-        
+
         redirect_to admin_ship_certifications_path, notice: "Ship certification updated successfully."
       else
         render :edit, status: :unprocessable_entity

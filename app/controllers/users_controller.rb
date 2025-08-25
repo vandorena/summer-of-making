@@ -171,7 +171,7 @@ class UsersController < ApplicationController
                                         .joins(:project)
                                         .where(projects: { user: @user })
                                         .order(created_at: :desc)
-        
+
         improvements.each { |improvement| combined_activities << { type: :project_improvement, item: improvement, created_at: improvement.created_at } }
       end
 
