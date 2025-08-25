@@ -130,8 +130,6 @@
             <div class="grow-1">
               <% if item.is_a? Devlog %>
                 <%= render "devlogs/devlog", devlog: item %>
-              <% elsif item.is_a? ProjectImprovement %>
-                <%= render "project_improvements/improvement", improvement: item %>
               <% elsif item.is_a? ShipEvent %>
                 <%= render layout: "shared/card", locals: { padding: "lg", classes: (item.for_sinkening ? '-rotate-1' : '') } do %>
                   <div class="z-10">
