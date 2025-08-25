@@ -69,11 +69,14 @@ class Devlog < ApplicationRecord
 
   # ie. Project.first.devlogs.capped_duration_seconds
   scope :capped_duration_seconds, lambda {
-    cap_date = Time.new(2025, 7, 19)
+    cap_date = Time.new(2025, 7, 19).utc
+    cap_seconds = 10.hours.to_i
     where.not(duration_seconds: nil)
-      .sum(
-        "CASE WHEN created_at >= '#{cap_date.utc.to_s(:db)}' THEN LEAST(duration_seconds, #{10.hours.to_i}) ELSE duration_seconds END"
-      )
+      .sum([
+        "CASE WHEN created_at >= ? THEN LEAST(duration_seconds, ?) ELSE duration_seconds END",
+        cap_date,
+        cap_seconds
+      ])
   }
 
   def recalculate_seconds_coded
