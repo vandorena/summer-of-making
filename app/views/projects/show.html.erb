@@ -134,26 +134,28 @@
                 <% reviewer = item.ship_certification.reviewer %>
                 <%= render layout: "shared/card", locals: { padding: "lg", classes: "bg-blue-50 border-blue-200" } do %>
                   <div class="z-10">
-                    <div class="flex items-center mb-3">
-                      <% if reviewer&.avatar.present? %>
-                        <img src="<%= reviewer.avatar %>" alt="<%= reviewer.display_name %>" class="w-10 h-10 rounded-full mr-3" loading="lazy">
-                      <% else %>
-                        <div class="w-10 h-10 rounded-full mr-3 bg-blue-100 flex items-center justify-center">
-                          <span class="text-blue-600 text-lg">💡</span>
+                    <div class="flex items-center justify-between mb-3">
+                      <div class="flex items-center">
+                        <% if reviewer&.avatar.present? %>
+                          <img src="<%= reviewer.avatar %>" alt="<%= reviewer.display_name %>" class="w-10 h-10 rounded-full mr-3" loading="lazy">
+                        <% else %>
+                          <div class="w-10 h-10 rounded-full mr-3 bg-blue-100 flex items-center justify-center">
+                            <span class="text-blue-600 text-lg">💡</span>
+                          </div>
+                        <% end %>
+                        <div>
+                          <p class="font-extrabold text-base sm:text-lg 2xl:text-xl mb-1 flex items-center gap-2 text-blue-800">
+                            Shipwright Feedback
+                          </p>
+                          <p class="text-som-detail text-xs sm:text-sm 2xl:text-base">
+                            <% if reviewer %>
+                              from <%= reviewer.display_name %>
+                            <% else %>
+                              from Shipwright
+                            <% end %>
+                            • <%= time_ago_in_words(item.created_at) %> ago
+                          </p>
                         </div>
-                      <% end %>
-                      <div>
-                        <p class="font-extrabold text-base sm:text-lg 2xl:text-xl mb-1 flex items-center gap-2 text-blue-800">
-                          Shipwright Feedback
-                        </p>
-                        <p class="text-som-detail text-xs sm:text-sm 2xl:text-base">
-                          <% if reviewer %>
-                            from <%= reviewer.display_name %>
-                          <% else %>
-                            from Shipwright
-                          <% end %>
-                          • <%= time_ago_in_words(item.created_at) %> ago
-                        </p>
                       </div>
                     </div>
                     
@@ -175,7 +177,7 @@
                       <% elsif item.pending? %>
                         <div class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
                           <p class="text-amber-800 text-sm">
-                            Consider implementing this suggestion to improve your project!
+                            This is expert advice from your shipwright, click <%= reviewer.display_name %>'s avatar to check out his projects
                           </p>
                         </div>
                       <% end %>
