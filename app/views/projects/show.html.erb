@@ -137,9 +137,11 @@
                     <div class="flex items-center justify-between mb-3">
                       <div class="flex items-center">
                         <% if reviewer&.avatar.present? %>
-                          <img src="<%= reviewer.avatar %>" alt="<%= reviewer.display_name %>" class="w-10 h-10 rounded-full mr-3" loading="lazy">
+                          <a href="<%= user_path(reviewer) %>" class="flex-shrink-0">
+                            <img src="<%= reviewer.avatar %>" alt="<%= reviewer.display_name %>" class="w-10 h-10 rounded-full mr-3 hover:ring-2 hover:ring-blue-300 transition-all cursor-pointer" loading="lazy">
+                          </a>
                         <% else %>
-                          <div class="w-10 h-10 rounded-full mr-3 bg-blue-100 flex items-center justify-center">
+                          <div class="w-10 h-10 rounded-full mr-3 bg-blue-100 flex items-center justify-center flex-shrink-0">
                             <span class="text-blue-600 text-lg">💡</span>
                           </div>
                         <% end %>
