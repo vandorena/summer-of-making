@@ -95,11 +95,11 @@ class ProjectsController < ApplicationController
     @devlogs = @project.devlogs.sort_by(&:created_at).reverse
     @ship_events = @project.ship_events.sort_by(&:created_at).reverse
 
-    # Include project improvements in timeline for project owner only
+    # Include shipwright advice in timeline for project owner only
     timeline_items = [ @devlogs, @ship_events ]
     if current_user == @project.user
-      @project_improvements = @project.project_improvements.includes(:ship_certification).sort_by(&:created_at).reverse
-      timeline_items << @project_improvements
+      @shipwright_advices = @project.shipwright_advices.includes(:ship_certification).sort_by(&:created_at).reverse
+      timeline_items << @shipwright_advices
     end
 
     @timeline = timeline_items.flatten.sort_by(&:created_at).reverse

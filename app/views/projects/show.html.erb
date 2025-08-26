@@ -130,7 +130,7 @@
             <div class="grow-1">
               <% if item.is_a? Devlog %>
                 <%= render "devlogs/devlog", devlog: item %>
-              <% elsif item.is_a? ProjectImprovement %>
+              <% elsif item.is_a? ShipwrightAdvice %>
                 <% reviewer = item.ship_certification.reviewer %>
                 <%= render layout: "shared/card", locals: { padding: "lg", classes: "bg-blue-50 border-blue-200" } do %>
                   <div class="z-10">

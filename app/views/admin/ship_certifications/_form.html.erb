@@ -33,13 +33,13 @@
 
   <div class="field">
     <%= f.label :notes, nil, style: 'color: var(--color-muted); font-weight: 600;' %>
-    <%= f.text_area :notes, rows: 4, style: 'padding:0.7em 1em; border-radius:7px; border:1px solid var(--color-border); background:var(--color-darker); color:var(--color-text); font-size:1em; margin-bottom:0.2em; min-height:100px; resize:vertical;' %>
+    <%= f.text_area :notes, rows: 4, placeholder: "why did you give that judgement?", style: 'padding:0.7em 1em; border-radius:7px; border:1px solid var(--color-border); background:var(--color-darker); color:var(--color-text); font-size:1em; margin-bottom:0.2em; min-height:100px; resize:vertical;' %>
   </div>
 
   <div class="field">
-    <label style="color: var(--color-muted); font-weight: 600;">Improvement Suggestion</label>
-    <textarea name="improvement_suggestion" rows="3" placeholder="Add a friendly peer suggestion to help them improve their project..." style="padding:0.7em 1em; border-radius:7px; border:1px solid var(--color-border); background:var(--color-darker); color:var(--color-text); font-size:1em; margin-bottom:0.2em; min-height:80px; resize:vertical; width: 100%; box-sizing: border-box;"></textarea>
-    <small style="color: var(--color-muted); font-style: italic;">This will appear in the participant's activity feed as a helpful suggestion from a peer.</small>
+    <label style="color: var(--color-muted); font-weight: 600;">Frinedly Suggestion</label>
+    <textarea name="improvement_suggestion" rows="3" placeholder="Add a friendly suggestion to help them improve their project..." style="padding:0.7em 1em; border-radius:7px; border:1px solid var(--color-border); background:var(--color-darker); color:var(--color-text); font-size:1em; margin-bottom:0.2em; min-height:80px; resize:vertical; width: 100%; box-sizing: border-box;"></textarea>
+    <small style="color: var(--color-muted); font-style: italic;">This will appear in the author's activity feed, author's can view projects you've built</small>
   </div>
 
   <div class="field">

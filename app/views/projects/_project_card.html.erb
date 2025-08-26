@@ -291,7 +291,7 @@
               </div>
             <% end %>
 
-            <% shipwright_feedback = @project.project_improvements.joins(:ship_certification).where(ship_certifications: { id: @latest_ship_certification.id }) %>
+            <% shipwright_feedback = @project.shipwright_advices.joins(:ship_certification).where(ship_certifications: { id: @latest_ship_certification.id }) %>
             <% if shipwright_feedback.any? %>
               <div class="bg-blue-50/50 border border-blue-200/50 rounded-lg p-3 mb-4">
                 <p class="font-medium text-sm mb-3 flex items-center gap-2 text-blue-800">

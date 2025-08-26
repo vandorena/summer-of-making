@@ -144,7 +144,7 @@ module Admin
       if @ship_certification.update(ship_certification_params)
         # Create improvement suggestion if provided
         if params[:improvement_suggestion].present?
-          ProjectImprovement.create!(
+          ShipwrightAdvice.create!(
             project: @ship_certification.project,
             ship_certification: @ship_certification,
             description: params[:improvement_suggestion].strip
