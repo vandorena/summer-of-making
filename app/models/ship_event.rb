@@ -63,10 +63,14 @@ class ShipEvent < ApplicationRecord
     devlogs_since_last.capped_duration_seconds
   end
   # this is the hours covered by the ship event, not the total hours up to the ship event
+  # When should we start capping
+  CAP_HOURS = 10
+  CAP_DATE = Time.new(2025, 7, 19)
+
   def hours_covered
     hours = seconds_covered.fdiv(3600)
-    if created_at >= Time.new(2025, 7, 19)
-      [ hours, 10 ].min
+    if created_at >= CAP_DATE
+      [ hours, CAP_HOURS ].min
     else
       hours
     end
