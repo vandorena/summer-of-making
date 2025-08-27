@@ -56,13 +56,13 @@ class ShipwrightAdvice < ApplicationRecord
       )
 
       # Create payout for the improvement
-      Payout.create!(
-        user: project.user,
-        amount: shell_amount,
-        reason: "Improvement completed for '#{project.title}': #{description.truncate(50)}",
-        payable: self,
-        escrowed: false
-      )
+      # Payout.create!(
+      #   user: project.user,
+      #   amount: shell_amount,
+      #   reason: "Improvement completed for '#{project.title}': #{description.truncate(50)}",
+      #   payable: self,
+      #   escrowed: false
+      # )
 
       update!(status: :rewarded)
     end
