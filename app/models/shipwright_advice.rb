@@ -25,7 +25,7 @@
 #  fk_rails_...  (ship_certification_id => ship_certifications.id)
 #
 class ShipwrightAdvice < ApplicationRecord
-  self.table_name = 'project_improvements'
+  self.table_name = "project_improvements"
   belongs_to :project
   belongs_to :ship_certification
 
