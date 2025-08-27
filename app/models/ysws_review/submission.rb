@@ -23,7 +23,7 @@ class YswsReview::Submission < ApplicationRecord
   include ActionView::Helpers::TextHelper  # For pluralize method
 
   belongs_to :project
-  belongs_to :reviewer, class_name: 'User'
+  belongs_to :reviewer, class_name: "User"
   validates :project, uniqueness: true
 
   airtable_table_name "ysws_submission"
