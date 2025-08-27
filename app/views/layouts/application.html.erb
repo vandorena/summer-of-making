@@ -75,13 +75,16 @@
 
     <div class="sinkening-container">
       <% if user_signed_in? %>
+
+        <%= render "new_tutorial/tutorial" %>
+
         <% if current_user.tutorial_progress.completed? && !mobile_device? %>
           <div data-controller="todo">
             <button
               data-todo-target="todoButton"
               id="todo-button"
               data-action="click->todo#toggleAndComplete"
-              class="bg-[#523A52] hover:bg-[#856185] fixed hidden top-auto bottom-8 right-6 z-50 w-16 h-16 rounded-full md:flex items-center justify-center transition-all duration-200 hover:scale-110 text-white cursor-pointer drop-shadow-md sinkening-todo"
+              class="bg-[#bcb0bc] hover:bg-[#856185] fixed hidden top-auto bottom-8 right-6 z-50 w-16 h-16 rounded-full md:flex items-center justify-center transition-all duration-200 hover:scale-110 text-white cursor-pointer drop-shadow-md sinkening-todo"
               title="Show todo for this page">
               <%= inline_svg "icons/clipboard.svg", class: "size-8" %>
             </button>

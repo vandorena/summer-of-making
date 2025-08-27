@@ -1,0 +1,88 @@
+<div data-controller="new-tutorial"
+     data-new-tutorial-display-name-value="<%= h(current_user.display_name) %>"> 
+    <div class="absolute inset-0 bg-black/50 z-50"
+         data-new-tutorial-target="background"></div>
+    <div class="absolute left-5 right-5 bottom-16 z-50">
+        <div class="flex justify-center w-full">
+            <div class="flex flex-col max-w-2xl grow" data-new-tutorial-target="dialogue">
+                <picture class="ml-auto new-tutorial-character-slide-face-in">
+                    <img src="<%= asset_path('orpheusyap1.png') %>" alt="Explorpheus" class="h-50 -mb-2">
+                </picture>
+                <div class="relative rounded-lg shadow-2xl border border-[#7c4a331a] min-h-30 p-5 text-2xl new-tutorial-slide-fade-in" style="background: radial-gradient(circle at 43.330392% 44.289383%, rgb(246, 219, 186), rgb(230, 212, 190));">
+                    <p class="absolute -top-5 right-8 px-2 py-1 bg-som-dark text-orange-100 rounded-lg text-base">Explorpheus</p>
+                    <div class="flex justify-center items-center text-center h-full">
+                        <p data-new-tutorial-target="text" >Psst! Hey there! <span class="new-tutorial-shake"><%= current_user.display_name || "Hey" %>!</span></p>
+                    </div>
+                    <p class="absolute text-sm -bottom-6 text-orange-100 left-3">Click anywhere to continue...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @media (prefers-reduced-motion: no-preference) {
+        .new-tutorial-shake {
+            display: inline-block;
+            animation: shake 0.25s ease-in-out infinite;
+        }
+
+        @keyframes shake {
+            0%   { transform: translate(0) rotate(0deg); }
+            25%  { transform: translate(-1px, 1px) rotate(1deg); }
+            50%  { transform: translate(1px, -1px) rotate(-1deg); }
+            75%  { transform: translate(-1px, -1px) rotate(1deg); }
+            100% { transform: translate(0) rotate(0deg); }
+        }
+
+        .new-tutorial-slide-fade-in {
+            animation: slide-fade-in 0.5s ease-out forwards;
+        }
+
+        @keyframes slide-fade-in {
+            0% {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .new-tutorial-character-slide-face-in {
+            animation: character-slide-fade-in 0.75s ease-out forwards;
+        }
+
+        @keyframes character-slide-fade-in {
+            0%, 67% {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .new-tutorial-bling {
+            position: relative;
+            background: linear-gradient(120deg, #4b2e19 20%, #7c5a3a 45%, #c8a97e 50%, #7c5a3a 55%, #4b2e19 80%);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+            animation: shiny-effect 3s linear infinite;
+        }
+
+        @keyframes shiny-effect {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: 0 0;
+            }
+        }
+    }
+</style>
