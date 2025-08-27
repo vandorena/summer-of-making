@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_18_122349) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_24_190238) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -437,6 +437,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_18_122349) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "for_sinkening", default: false, null: false
+    t.boolean "excluded_from_pool", default: false, null: false
     t.index ["project_id"], name: "index_ship_events_on_project_id"
   end
 
