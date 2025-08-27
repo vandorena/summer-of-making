@@ -96,7 +96,7 @@ module Admin
     submission.save!
 
     # Sync to Airtable immediately after approval
-    YswsReview::SyncSubmissionJob.perform_now(submission.id)
+    YswsReview::SyncSubmissionJob.perform_later(submission.id)
 
     redirect_to admin_ysws_reviews_path, notice: "Project review completed successfully"
   rescue ActiveRecord::RecordInvalid => e
