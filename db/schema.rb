@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_25_180403) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_27_155940) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -359,21 +359,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_25_180403) do
     t.index ["user_id"], name: "index_project_follows_on_user_id"
   end
 
-  create_table "project_improvements", force: :cascade do |t|
-    t.bigint "project_id", null: false
-    t.bigint "ship_certification_id", null: false
-    t.text "description"
-    t.string "proof_link"
-    t.integer "status", default: 0
-    t.integer "shell_reward", default: 0
-    t.datetime "completed_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["project_id", "status"], name: "index_project_improvements_on_project_id_and_status"
-    t.index ["project_id"], name: "index_project_improvements_on_project_id"
-    t.index ["ship_certification_id"], name: "index_project_improvements_on_ship_certification_id"
-  end
-
   create_table "projects", force: :cascade do |t|
     t.string "title"
     t.text "description"
@@ -453,6 +438,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_25_180403) do
     t.datetime "updated_at", null: false
     t.boolean "for_sinkening", default: false, null: false
     t.index ["project_id"], name: "index_ship_events_on_project_id"
+  end
+
+  create_table "shipwright_advices", force: :cascade do |t|
+    t.bigint "project_id", null: false
+    t.bigint "ship_certification_id", null: false
+    t.text "description"
+    t.string "proof_link"
+    t.integer "status", default: 0
+    t.integer "shell_reward", default: 0
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id", "status"], name: "index_shipwright_advices_on_project_id_and_status"
+    t.index ["project_id"], name: "index_shipwright_advices_on_project_id"
+    t.index ["ship_certification_id"], name: "index_shipwright_advices_on_ship_certification_id"
   end
 
   create_table "shop_card_grants", force: :cascade do |t|
@@ -918,8 +918,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_25_180403) do
   add_foreign_key "magic_links", "users"
   add_foreign_key "project_follows", "projects"
   add_foreign_key "project_follows", "users"
-  add_foreign_key "project_improvements", "projects"
-  add_foreign_key "project_improvements", "ship_certifications"
   add_foreign_key "projects", "users"
   add_foreign_key "readme_certifications", "projects"
   add_foreign_key "readme_certifications", "users", column: "reviewer_id"
@@ -928,6 +926,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_25_180403) do
   add_foreign_key "ship_certifications", "users", column: "reviewer_id"
   add_foreign_key "ship_event_feedbacks", "ship_events"
   add_foreign_key "ship_events", "projects"
+  add_foreign_key "shipwright_advices", "projects"
+  add_foreign_key "shipwright_advices", "ship_certifications"
   add_foreign_key "shop_card_grants", "shop_items"
   add_foreign_key "shop_card_grants", "users"
   add_foreign_key "shop_orders", "shop_card_grants"

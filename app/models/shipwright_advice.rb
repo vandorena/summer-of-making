@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: project_improvements
+# Table name: shipwright_advices
 #
 #  id                    :bigint           not null, primary key
 #  completed_at          :datetime
@@ -15,9 +15,9 @@
 #
 # Indexes
 #
-#  index_project_improvements_on_project_id             (project_id)
-#  index_project_improvements_on_project_id_and_status  (project_id,status)
-#  index_project_improvements_on_ship_certification_id  (ship_certification_id)
+#  index_shipwright_advices_on_project_id             (project_id)
+#  index_shipwright_advices_on_project_id_and_status  (project_id,status)
+#  index_shipwright_advices_on_ship_certification_id  (ship_certification_id)
 #
 # Foreign Keys
 #
@@ -25,7 +25,6 @@
 #  fk_rails_...  (ship_certification_id => ship_certifications.id)
 #
 class ShipwrightAdvice < ApplicationRecord
-  self.table_name = "project_improvements"
   belongs_to :project
   belongs_to :ship_certification
 
