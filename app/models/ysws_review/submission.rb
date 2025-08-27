@@ -2,28 +2,28 @@
 #
 # Table name: ysws_review_submissions
 #
-#  id         :bigint           not null, primary key
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  project_id :bigint           not null
-#  user_id    :bigint           not null
+#  id          :bigint           not null, primary key
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#  project_id  :bigint           not null
+#  reviewer_id :bigint           not null
 #
 # Indexes
 #
-#  index_ysws_review_submissions_on_project_id  (project_id) UNIQUE
-#  index_ysws_review_submissions_on_user_id     (user_id)
+#  index_ysws_review_submissions_on_project_id   (project_id) UNIQUE
+#  index_ysws_review_submissions_on_reviewer_id  (reviewer_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (project_id => projects.id)
-#  fk_rails_...  (user_id => users.id)
+#  fk_rails_...  (reviewer_id => users.id)
 #
 class YswsReview::Submission < ApplicationRecord
   include AirtableSyncable
   include ActionView::Helpers::TextHelper  # For pluralize method
 
   belongs_to :project
-  belongs_to :user  # The reviewer who submitted this review
+  belongs_to :reviewer, class_name: 'User'
   validates :project, uniqueness: true
 
   airtable_table_name "ysws_submission"
@@ -60,6 +60,7 @@ class YswsReview::Submission < ApplicationRecord
       "Birthday" => "user_birthday",
       "Optional - Override Hours Spent" => "total_approved_hours",
       "Optional - Override Hours Spent Justification" => "hours_justification",
+      "Reviewer" => "reviewer_display_name",
       "project" => "project_airtable_record_id"
     }
   end
@@ -82,6 +83,7 @@ class YswsReview::Submission < ApplicationRecord
       "ZIP / Postal Code" => "user_postal_code",
       "Country" => "user_country",
       "Birthday" => "user_birthday",
+      "Reviewer" => "reviewer_display_name",
       "project" => "project_airtable_record_id"
     }
   end
@@ -114,6 +116,10 @@ class YswsReview::Submission < ApplicationRecord
 
   def user_last_name
     user_identity[:last_name]
+  end
+
+  def reviewer_display_name
+    reviewer&.display_name
   end
 
   def github_username

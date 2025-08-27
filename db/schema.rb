@@ -889,9 +889,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_27_192404) do
     t.bigint "project_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
+    t.bigint "reviewer_id", null: false
     t.index ["project_id"], name: "index_ysws_review_submissions_on_project_id", unique: true
-    t.index ["user_id"], name: "index_ysws_review_submissions_on_user_id"
+    t.index ["reviewer_id"], name: "index_ysws_review_submissions_on_reviewer_id"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
@@ -950,5 +950,5 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_27_192404) do
   add_foreign_key "ysws_review_devlog_approvals", "devlogs"
   add_foreign_key "ysws_review_devlog_approvals", "users"
   add_foreign_key "ysws_review_submissions", "projects"
-  add_foreign_key "ysws_review_submissions", "users"
+  add_foreign_key "ysws_review_submissions", "users", column: "reviewer_id"
 end
