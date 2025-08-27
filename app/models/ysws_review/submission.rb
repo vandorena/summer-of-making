@@ -6,20 +6,24 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  project_id :bigint           not null
+#  user_id    :bigint           not null
 #
 # Indexes
 #
 #  index_ysws_review_submissions_on_project_id  (project_id) UNIQUE
+#  index_ysws_review_submissions_on_user_id     (user_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (project_id => projects.id)
+#  fk_rails_...  (user_id => users.id)
 #
 class YswsReview::Submission < ApplicationRecord
   include AirtableSyncable
   include ActionView::Helpers::TextHelper  # For pluralize method
 
   belongs_to :project
+  belongs_to :user  # The reviewer who submitted this review
   validates :project, uniqueness: true
 
   airtable_table_name "ysws_submission"
@@ -231,6 +235,8 @@ class YswsReview::Submission < ApplicationRecord
       justification << " and recorded themselves using it (click 'ship certified' to see the video)" if project.ship_certifications.approved.first&.proof_video&.attached?
       justification << "."
     end
+
+    justification << "\n\nThese hours were reviewed by #{user.display_name}."
 
     justification.join
   end

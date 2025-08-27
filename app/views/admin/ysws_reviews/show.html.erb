@@ -19,6 +19,9 @@
   </h1>
   <p style="color: var(--color-text-muted); margin: 0.5rem 0;">
     by <%= @project.user.display_name %> • Created <%= @project.created_at.strftime("%B %d, %Y") %>
+    <% if @project.ysws_review_submission&.user %>
+      • Reviewed by <%= @project.ysws_review_submission.user.display_name %>
+    <% end %>
   </p>
   <p style="margin: 1rem 0;"><%= @project.description %></p>
 
