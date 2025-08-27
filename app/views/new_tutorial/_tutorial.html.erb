@@ -1,8 +1,22 @@
 <div data-controller="new-tutorial"
      data-new-tutorial-display-name-value="<%= h(current_user.display_name) %>"> 
-    <div class="absolute inset-0 bg-black/50 z-50"
-         data-new-tutorial-target="background"></div>
-    <div class="absolute left-5 right-5 bottom-16 z-50">
+    <div class="absolute inset-0 z-50"
+         data-new-tutorial-target="background">
+         <svg width="100%" height="100%">
+            <defs>
+                    <!-- The filter region is very large to ensure the blur is never clipped, regardless of rect size/position -->
+                    <filter id="soft-edge" x="-10000" y="-10000" width="20000" height="20000" filterUnits="userSpaceOnUse">
+                        <feGaussianBlur stdDeviation="10" result="blur"/>
+                    </filter>
+                    <mask id="mask" x="0" y="0" width="100%" height="100%">
+                        <rect x="0" y="0" width="100%" height="100%" fill="#fff"/>
+                        <rect x="0" y="0" rx="0" ry="0" width="0" height="0" data-new-tutorial-target="focus" filter="url(#soft-edge)"/>
+                    </mask>
+            </defs>
+            <rect x="0" y="0" width="100%" height="100%" mask="url(#mask)" fill-opacity="0.75"/>    
+        </svg>
+    </div>
+    <div class="absolute left-5 right-5 bottom-16 z-50 select-none">
         <div class="flex justify-center w-full">
             <div class="flex flex-col max-w-2xl grow" data-new-tutorial-target="dialogue">
                 <picture class="ml-auto new-tutorial-character-slide-face-in">
