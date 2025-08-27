@@ -24,6 +24,8 @@ export default class extends Controller {
       `Awesome! Let's dive a bit deeper!`,
 
       // step by step flow - video skips this part
+      `Check out this video!`,
+      `I'll walk you through what this is about!`,
       `Come up with a cool project idea. Make it something you've always wanted to build.`,
       `Start building! Track how much time you spent with Hackatime.`,
       `As you build, post <span class="new-tutorial-shake">devlogs</span>! They're mini updates on your progress.`,
@@ -63,6 +65,8 @@ export default class extends Controller {
       '',
       '',
       '',
+      '',
+      '',
 
       // hackatime
       ''
@@ -85,6 +89,8 @@ export default class extends Controller {
       {},
 
       // step by step flow
+      {video: '/onboarding.mp4', skip: 21},
+      {},
       {},
       {},
       {},
@@ -98,6 +104,7 @@ export default class extends Controller {
       // hackatime
       {}
     ]
+
     this.progress = 0;
     this.initialDelay = 750;
     this.nextDelay = 500;
