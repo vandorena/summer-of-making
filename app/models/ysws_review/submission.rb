@@ -242,7 +242,7 @@ class YswsReview::Submission < ApplicationRecord
       justification << "."
     end
 
-    justification << "\n\nThese hours were reviewed by #{user.display_name}."
+    justification << "\n\nThese hours were reviewed by #{reviewer.display_name}."
 
     justification.join
   end

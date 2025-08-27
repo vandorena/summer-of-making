@@ -92,7 +92,7 @@ module Admin
 
     # Create or update the YSWS submission record
     submission = @project.ysws_review_submission || @project.build_ysws_review_submission
-    submission.user ||= current_user
+    submission.reviewer ||= current_user
     submission.save!
 
     # Sync to Airtable immediately after approval
