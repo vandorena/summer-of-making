@@ -528,7 +528,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_24_190238) do
   end
 
   create_table "sinkening_settings", force: :cascade do |t|
-    t.float "intensity"
+    t.float "intensity", default: 1.0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "slack_story_url"
