@@ -14,10 +14,27 @@ module Admin
 
       project_ids = @reported.keys.compact
       @projects = Project.where(id: project_ids).includes(:user, :ship_events)
+
+      # get all reasons
+      @project_reports = {}
+      project_ids.each do |project_id|
+        project_reports = FraudReport.unresolved.where(suspect_type: "Project", suspect_id: project_id).where("reason LIKE ?", "LOW_QUALITY:%").includes(:reporter)
+        ship_reports = FraudReport.unresolved.where("reason LIKE ?", "LOW_QUALITY:%").joins("JOIN ship_events ON ship_events.id = fraud_reports.suspect_id").where(ship_events: { project_id: project_id }).includes(:reporter)
+
+        all_reports = project_reports.to_a + ship_reports.to_a
+        @project_reports[project_id] = all_reports.sort_by(&:created_at)
+      end
     end
 
     def mark_low_quality
       project = Project.find(params[:project_id])
+      reason = params[:reason]
+
+      if reason.blank?
+        redirect_to admin_low_quality_dashboard_index_path, alert: "Reason is required when marking as low quality."
+        return
+      end
+
       # minimum payout only if no payout exists for latest ship
       ship = project.ship_events.order(:created_at).last
       if ship.present? && ship.payouts.none?
@@ -33,8 +50,11 @@ module Admin
 
       if project.user&.slack_id.present?
         message = <<~EOT
-        Thanks for shipping! After review, this ship didn’t meet our voting quality bar.
-        We issued a minimum payout if there wasn’t already one. Keep building – you can ship again anytime.
+        Thanks for shipping! After review, this ship didn't meet our voting quality bar.
+
+        **Shipwright Feedback:** #{reason}
+
+        We issued a minimum payout if there wasn't already one. Keep building – you can ship again anytime.
         EOT
         SendSlackDmJob.perform_later(project.user.slack_id, message)
       end
