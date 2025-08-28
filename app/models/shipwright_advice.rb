@@ -52,7 +52,7 @@ class ShipwrightAdvice < ApplicationRecord
         status: :completed,
         proof_link: proof_link,
         completed_at: Time.current,
-        shell_reward: shell_amount
+        # shell_reward: shell_amount
       )
 
       # Create payout for the improvement
@@ -64,7 +64,7 @@ class ShipwrightAdvice < ApplicationRecord
       #   escrowed: false
       # )
 
-      update!(status: :rewarded)
+      # update!(status: :rewarded)
     end
 
     true
