@@ -47,6 +47,7 @@ module Admin
       end
 
       FraudReport.where(suspect_type: "Project", suspect_id: project.id, resolved: false).update_all(resolved: true)
+      FraudReport.where(suspect_type: "ShipEvent").joins("JOIN ship_events ON ship_events.id = fraud_reports.suspect_id").where(ship_events: { project_id: project.id }, resolved: false).update_all(resolved: true)
 
       if project.user&.slack_id.present?
         message = <<~EOT
