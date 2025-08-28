@@ -889,7 +889,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_27_192404) do
     t.bigint "project_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "reviewer_id", null: false
+    t.bigint "reviewer_id"
     t.index ["project_id"], name: "index_ysws_review_submissions_on_project_id", unique: true
     t.index ["reviewer_id"], name: "index_ysws_review_submissions_on_reviewer_id"
   end
