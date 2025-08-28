@@ -103,7 +103,7 @@
           <div class="flex flex-row items-center gap-3 md:gap-4">
             <% if policy(@project).can_follow_or_report? %>
               <%= render "projects/follow_button", project: @project %>
-              <%= render "projects/report_button", project: @project %>
+              <%= render "shared/report", suspect: @project %>
             <% end %>
             <% if policy(@project).can_see_actions? %>
               <%= render "projects/ship_button", project: @project %>

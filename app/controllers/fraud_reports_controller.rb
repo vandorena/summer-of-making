@@ -34,6 +34,8 @@ class FraudReportsController < ApplicationController
         fraud_report.update_column(:reason, "AI_UNDECLARED: #{fraud_report.reason.to_s.strip}")
       when "low_quality"
         fraud_report.update_column(:reason, "LOW_QUALITY: #{fraud_report.reason.to_s.strip}")
+      when "demo_does_not_work"
+        fraud_report.update_column(:reason, "DEMO_DOES_NOT_WORK: #{fraud_report.reason.to_s.strip}")
       else # other
         fraud_report.update_column(:reason, "OTHER: #{fraud_report.reason.to_s.strip}")
       end
