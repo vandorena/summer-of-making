@@ -4,8 +4,7 @@ module Admin
     skip_before_action :authenticate_admin!
 
     def index
-      # 1 for test, 3 for prod
-      @threshold = 3
+      @threshold = 1
       proj_counts = FraudReport.unresolved.where(suspect_type: "Project").where("reason LIKE ?", "LOW_QUALITY:%").group(:suspect_id).count
       se_counts = FraudReport.unresolved.where(suspect_type: "ShipEvent").where("reason LIKE ?", "LOW_QUALITY:%").group(:suspect_id).count
       se_project_map = ShipEvent.where(id: se_counts.keys).pluck(:id, :project_id).to_h
