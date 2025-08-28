@@ -381,7 +381,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_27_192404) do
     t.integer "views_count", default: 0, null: false
     t.float "x"
     t.float "y"
-    t.boolean "is_sinkening_ship", default: false
+    t.boolean "is_sinkening_ship"
     t.index ["is_shipped"], name: "index_projects_on_is_shipped"
     t.index ["user_id"], name: "index_projects_on_user_id"
     t.index ["views_count"], name: "index_projects_on_views_count"
@@ -439,6 +439,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_27_192404) do
     t.boolean "for_sinkening", default: false, null: false
     t.boolean "excluded_from_pool", default: false, null: false
     t.index ["project_id"], name: "index_ship_events_on_project_id"
+  end
+
+  create_table "shipwright_advices", force: :cascade do |t|
+    t.bigint "project_id", null: false
+    t.bigint "ship_certification_id", null: false
+    t.text "description"
+    t.string "proof_link"
+    t.integer "status", default: 0
+    t.integer "shell_reward", default: 0
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id", "status"], name: "index_shipwright_advices_on_project_id_and_status"
+    t.index ["project_id"], name: "index_shipwright_advices_on_project_id"
+    t.index ["ship_certification_id"], name: "index_shipwright_advices_on_ship_certification_id"
   end
 
   create_table "shop_card_grants", force: :cascade do |t|
@@ -528,7 +543,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_27_192404) do
   end
 
   create_table "sinkening_settings", force: :cascade do |t|
-    t.float "intensity", default: 1.0
+    t.float "intensity"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "slack_story_url"
@@ -914,6 +929,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_27_192404) do
   add_foreign_key "ship_certifications", "users", column: "reviewer_id"
   add_foreign_key "ship_event_feedbacks", "ship_events"
   add_foreign_key "ship_events", "projects"
+  add_foreign_key "shipwright_advices", "projects"
+  add_foreign_key "shipwright_advices", "ship_certifications"
   add_foreign_key "shop_card_grants", "shop_items"
   add_foreign_key "shop_card_grants", "users"
   add_foreign_key "shop_orders", "shop_card_grants"
