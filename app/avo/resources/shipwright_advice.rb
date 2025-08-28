@@ -10,7 +10,6 @@ class Avo::Resources::ShipwrightAdvice < Avo::BaseResource
     field :project, as: :belongs_to
     field :ship_certification, as: :belongs_to
     field :description, as: :textarea
-    field :proof_link, as: :text
     field :status, as: :number
     field :shell_reward, as: :number
     field :completed_at, as: :date_time

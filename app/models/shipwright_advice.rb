@@ -35,8 +35,6 @@ class ShipwrightAdvice < ApplicationRecord
   }
 
   validates :description, presence: true
-  validates :proof_link, presence: true, if: :completed?
-  validates :proof_link, format: { with: /\A(?:https?:\/\/).*\z/i, message: "must be a valid HTTP or HTTPS URL" }, allow_blank: true
 
   scope :for_user, ->(user) { joins(:project).where(projects: { user: user }) }
 
@@ -44,17 +42,16 @@ class ShipwrightAdvice < ApplicationRecord
     pending?
   end
 
-  def complete!(proof_link, shell_amount = 10)
+  def complete!
     return false unless can_be_completed?
 
     transaction do
       update!(
         status: :completed,
-        proof_link: proof_link,
-        completed_at: Time.current,
-        # shell_reward: shell_amount
+        completed_at: Time.current
       )
 
+      # Removed payout and proof_link logic
       # Create payout for the improvement
       # Payout.create!(
       #   user: project.user,

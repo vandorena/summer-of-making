@@ -315,10 +315,9 @@
                             from <%= reviewer&.display_name || "Shipwright" %>
                           </p>
                           <p class="text-sm text-gray-800"><%= improvement.description %></p>
-                          <% if improvement.completed? && improvement.proof_link.present? %>
+                          <% if improvement.completed? %>
                             <div class="mt-2 text-xs">
                               <span class="text-green-600">✓ Addressed</span>
-                              <a href="<%= improvement.proof_link %>" target="_blank" class="text-blue-600 hover:text-blue-800 underline ml-2">View</a>
                             </div>
                           <% elsif improvement.pending? %>
                             <div class="mt-2 text-xs text-amber-600">
