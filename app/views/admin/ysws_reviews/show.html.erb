@@ -245,7 +245,7 @@
     <p style="margin: 0 0 1.5rem 0; color: var(--color-text-muted);">
       Select the reason(s) why this project needs to be returned to the ship certifier:
     </p>
-    
+
     <%= form_with url: return_to_certifier_admin_ysws_review_path(@project), method: :patch, local: true, id: 'return-form' do |f| %>
       <div style="margin-bottom: 1.5rem;">
         <% ShipCertification::YSWS_FEEDBACK_REASONS.each do |reason| %>
