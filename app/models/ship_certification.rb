@@ -49,19 +49,19 @@ class ShipCertification < ApplicationRecord
   }
 
   YSWS_FEEDBACK_REASONS = [
-    'functionality_not_demonstrated',
-    'unclear_project_demonstration',
-    'technical_issues_in_video',
-    'insufficient_proof_of_functionality',
-    'other_certification_issues'
+    "functionality_not_demonstrated",
+    "unclear_project_demonstration",
+    "technical_issues_in_video",
+    "insufficient_proof_of_functionality",
+    "other_certification_issues"
   ].freeze
 
   YSWS_FEEDBACK_REASON_LABELS = {
-    'functionality_not_demonstrated' => 'Functionality not clearly demonstrated',
-    'unclear_project_demonstration' => 'Unclear or confusing project demonstration',
-    'technical_issues_in_video' => 'Technical issues in the certification video',
-    'insufficient_proof_of_functionality' => 'Insufficient proof that project works',
-    'other_certification_issues' => 'Other certification-related issues'
+    "functionality_not_demonstrated" => "Functionality not clearly demonstrated",
+    "unclear_project_demonstration" => "Unclear or confusing project demonstration",
+    "technical_issues_in_video" => "Technical issues in the certification video",
+    "insufficient_proof_of_functionality" => "Insufficient proof that project works",
+    "other_certification_issues" => "Other certification-related issues"
   }.freeze
 
   def ysws_returned?

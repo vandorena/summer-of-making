@@ -106,7 +106,7 @@ module Admin
   def return_to_certifier
     @project = Project.find(params[:id])
     feedback_reasons = params[:feedback_reasons] || []
-    
+
     ship_certification = @project.latest_ship_certification
     if ship_certification
       ship_certification.update!(
@@ -115,7 +115,7 @@ module Admin
         ysws_returned_at: Time.current,
         judgement: :pending  # Reset to pending for re-review
       )
-      
+
       redirect_to admin_ysws_reviews_path, notice: "Project returned to ship certifier with feedback"
     else
       redirect_to admin_ysws_reviews_path, alert: "No ship certification found for this project"
