@@ -11,8 +11,8 @@ class FraudReportsController < ApplicationController
 
     # must be in the current voting pair
     if fraud_report.suspect_type == "ShipEvent"
-      current_ids = current_user.user_vote_queue&.current_ship_events&.map(&:id) || []
-      unless current_ids.include?(fraud_report.suspect_id)
+      current_pair = current_user.user_vote_queue&.current_pair || []
+      unless current_pair.include?(fraud_report.suspect_id)
         flash[:alert] = "Invalid report target."
         redirect_to request.referer || root_path
         return
@@ -70,7 +70,8 @@ class FraudReportsController < ApplicationController
 
       # advance the vote queue if this report was filed from the voting page
       if fraud_report.suspect_type == "ShipEvent"
-        if current_user.user_vote_queue&.current_ship_events&.map(&:id)&.include?(fraud_report.suspect_id)
+        current_pair = current_user.user_vote_queue&.current_pair || []
+        if current_pair.include?(fraud_report.suspect_id)
           current_user.advance_vote_queue!
           advanced = true
         end
