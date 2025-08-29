@@ -66,6 +66,8 @@ module Admin
     def mark_ok
       project = Project.find(params[:project_id])
       FraudReport.where(suspect_type: "Project", suspect_id: project.id, resolved: false).update_all(resolved: true)
+      FraudReport.where(suspect_type: "ShipEvent").joins("JOIN ship_events ON ship_events.id = fraud_reports.suspect_id").where(ship_events: { project_id: project.id }, resolved: false).update_all(resolved: true)
+
       redirect_to admin_low_quality_dashboard_index_path, notice: "Marked OK and cleared reports."
     end
 
