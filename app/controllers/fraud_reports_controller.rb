@@ -40,6 +40,8 @@ class FraudReportsController < ApplicationController
         fraud_report.update_column(:reason, "OTHER: #{fraud_report.reason.to_s.strip}")
       end
 
+      fraud_report.update_column(:category, kind.to_s)
+
       # only dm the first time and auto-exclude after 3 low-quality reports
       if fraud_report.reason.to_s.start_with?("LOW_QUALITY:")
         c = FraudReport.unresolved.where(suspect_type: fraud_report.suspect_type, suspect_id: fraud_report.suspect_id).count
