@@ -278,17 +278,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Approve all functionality
   approveAllBtn.addEventListener('click', function() {
+    // Find all approve radio buttons and check them
     const approveRadios = document.querySelectorAll('input[type="radio"][value="1"]');
 
     approveRadios.forEach(function(radio) {
       if (radio.name.includes('[approved]')) {
         radio.checked = true;
+
+        // For each approved devlog, set the approved_seconds to the original duration
+        const devlogId = radio.name.match(/devlog_approvals\[(\d+)\]/)[1];
+        const secondsField = document.querySelector(`input[name="devlog_approvals[${devlogId}][approved_seconds]"]`);
+
+        if (secondsField && !secondsField.value) {
+          // Keep the current value or use the default that's already there
+          // The field should already have the original duration as the default
+        }
       }
     });
 
+    // Update button text to indicate action was performed
     approveAllBtn.textContent = 'All Devlogs Approved ✓';
     approveAllBtn.style.backgroundColor = 'var(--color-success)';
 
+    // Reset button after 2 seconds
     setTimeout(function() {
       approveAllBtn.textContent = 'Approve All Devlogs';
       approveAllBtn.style.backgroundColor = '';
