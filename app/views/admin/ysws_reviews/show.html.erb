@@ -23,7 +23,6 @@
       • YSWS reviewed by <%= @project.ysws_review_submission.reviewer.display_name %>
     <% end %>
   </p>
-  
   <% if @project.latest_ship_certification&.reviewer %>
     <div style="margin: 1rem 0; padding: 1rem; background: var(--color-success-subtle); border: 2px solid var(--color-success); border-radius: 8px;">
       <h3 style="margin: 0; color: var(--color-success-dark); font-size: 1.4em; display: flex; align-items: center; gap: 0.5rem;">
