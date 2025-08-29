@@ -2,30 +2,36 @@
 #
 # Table name: ship_certifications
 #
-#  id          :bigint           not null, primary key
-#  judgement   :integer          default("pending"), not null
-#  notes       :text
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
-#  project_id  :bigint           not null
-#  reviewer_id :bigint
+#  id                    :bigint           not null, primary key
+#  judgement             :integer          default("pending"), not null
+#  notes                 :text
+#  ysws_feedback_reasons :text
+#  ysws_returned_at      :datetime
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  project_id            :bigint           not null
+#  reviewer_id           :bigint
+#  ysws_returned_by_id   :bigint
 #
 # Indexes
 #
 #  index_ship_certifications_on_project_id                (project_id)
 #  index_ship_certifications_on_project_id_and_judgement  (project_id,judgement)
 #  index_ship_certifications_on_reviewer_id               (reviewer_id)
+#  index_ship_certifications_on_ysws_returned_by_id       (ysws_returned_by_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (project_id => projects.id)
 #  fk_rails_...  (reviewer_id => users.id)
+#  fk_rails_...  (ysws_returned_by_id => users.id)
 #
 class ShipCertification < ApplicationRecord
   has_paper_trail
 
   belongs_to :reviewer, class_name: "User", optional: true
   validates :reviewer, presence: true, unless: -> { pending? }
+  belongs_to :ysws_returned_by, class_name: "User", optional: true
   belongs_to :project
   has_many :devlogs, through: :project
   has_many :shipwright_advices, class_name: "ShipwrightAdvice"
