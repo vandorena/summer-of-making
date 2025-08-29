@@ -73,12 +73,42 @@ function getNewTutorialIntroDialogue(params = {}) {
       x: 0, y: 0, width: 30, height: 30, radius: 10, preventAdvance: true
     },
     {
-      text: "Let's create your first project",
-      checkpoint: 'hackatime-installed'
+      text: "Let's head over to the shop to purchase your first item!",
+      checkpoint: 'hackatime-installed',
+      focus: `new-tutorial-shop`,
+      x: 0, y: 0, width: 30, height: 30, radius: 10, preventAdvance: true 
     }
   ];
 }
 
 function getNewTutorialShipDialogue(params = {}) {
+  return [
+    { text: "I see you're trying to ship your project!" },
+    { text: "But first, what even is a ship???" },
+    { 
+      text: "Check out this video!",
+      video: "/ship.mp4", skip: 14
+    },
 
+    // skipped if watched video
+    { text: "That's okay, I'll explain it to you here." },
+    { text: `A <strong>project</strong> is something you build.` },
+    { text: `A <strong>shipped project</strong> is something you build and present to the world.` },
+    { text: `A <strong>ship</strong> is a <strong>milestone</strong> where a project becomes real to somebody else.` },
+    { text: `Shipped projects must be presentable and functional for the world to see.` },
+    { text: `Websites must be deployed, games need to need to be easily playable, CLIs need to be published as packages...`},
+    { text: `You get the idea!` },
+    { text: `Presentation matters! Your README must explain your project and its features.` },
+    { text: `If something in the README, it must actually exist.`},
+    { text: `Also, make sure you credit work from others, this includes AI.`},
+    { text: `The Hack Club community votes for ships based off of their creativity, technicality, and presentation.`},
+    { text: `But before your ships can be voted on, the Shipwrights will certify that it's ready!` },
+    { text: `They'll help you to make sure your project can do well in voting!` },
+
+    // cta
+    { 
+      text: `Once you feel that you're ready, click the ship button to ship it!`,
+      checkpoint: 'ship'
+    }
+  ]
 }

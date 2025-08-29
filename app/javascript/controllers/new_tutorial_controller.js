@@ -62,6 +62,26 @@ export default class extends Controller {
     this.videoTarget.addEventListener("timeupdate", () => this.updateVideoProgress());
   }
 
+  startShipScene() {
+    this.start("ship");
+  }
+
+  end() {
+    if (this.scene == "ship") {
+      location.reload();
+    } else {
+      console.log("Ending new tutorial:", this.scene);
+      this.containerTarget.classList.remove("bg-fade-in");
+      this.containerTarget.classList.add("bg-fade-out");
+
+      setTimeout(() => {
+        this.containerTarget.style.display = "none";
+        this.containerTarget.classList.remove("bg-fade-out");
+        this.containerTarget.classList.add("bg-fade-in");
+      }, 250);
+    }
+  }
+
   updateElements(params = {}) {
     let was_advance = params.was_advance ?? true;
     let previous = params.previous ?? this.progress - 1;
@@ -245,12 +265,11 @@ export default class extends Controller {
           }
         }
         this.dialogue[this.progress] = attributes;
-
       }
 
       this.updateElements({previous: previous});
     } else {
-      console.log("No more steps to advance.");
+      this.end();
     }
   }
 

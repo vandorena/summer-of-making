@@ -1,14 +1,10 @@
 <%= javascript_include_tag "new_tutorial_data" %>
 
 <div
-  data-controller="new-tutorial"
-  data-new-tutorial-display-name-value="<%= h(current_user.display_name) %>"
-  data-new-tutorial-hackatime-condition-value="<%= h(current_user.has_hackatime_account?) %>"
-  data-new-tutorial-current-path-value="<%= h(request.path) %>"
   data-new-tutorial-target="container"
   style="display: none"
 >
-  <div class="absolute inset-0 z-50" data-new-tutorial-target="background">
+  <div class="absolute inset-0 z-50 bg-fade-in" data-new-tutorial-target="background">
     <svg width="100%" height="100%">
       <defs>
         <!-- The filter region is very large to ensure the blur is never clipped, regardless of rect size/position -->
@@ -132,6 +128,32 @@
 
 <style>
   @media (prefers-reduced-motion: no-preference) {
+    .bg-fade-in {
+      animation: bg-fade-in 0.25s ease-out forwards;
+    }
+
+    @keyframes bg-fade-in {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+
+    .bg-fade-out {
+      animation: bg-fade-out 0.25s ease-in forwards;
+    }
+
+    @keyframes bg-fade-out {
+      0% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+
     .new-tutorial-shake {
       display: inline-block;
       animation: new-tutorial-shake 0.25s ease-in-out infinite;
