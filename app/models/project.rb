@@ -75,6 +75,7 @@ class Project < ApplicationRecord
 
   has_many :ship_certifications
   has_many :readme_certifications
+  has_many :shipwright_advices, class_name: "ShipwrightAdvice"
 
   has_many :won_votes, class_name: "Vote", foreign_key: "winning_project_id"
   has_many :vote_changes, dependent: :destroy
