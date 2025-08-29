@@ -1,87 +1,52 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["text", "background", "dialogue", "focus", "video", "videoContainer", "videoHint", "avatar", "hint"]
+  static targets = ["container", "text", "background", "dialogue", "focus", "video", "videoContainer", "videoHint", "avatar", "hint"]
   static values = {
     displayName: String,
-    scene: String
+    scene: String,
+    hackatimeCondition: Boolean,
+    checkpoint: String,
+    currentPath: String
   }
 
   connect() {
-    this.dialogue = [
-      // intro
-      `Psst! Hey there! <span class="new-tutorial-shake">${this.displayNameValue || "Hey"}!</span>`,
-      `Welcome to the... <span class="new-tutorial-shake">SUMMER OF MAKING!!!</span>`,
-      `Oh... I don't believe I've introduced myself.<br>I'm Explorpheus!`,
-      `I'm here to guide you through everything you need to know to start shipping and earning <span class="new-tutorial-bling">prizes</span>`,
-      
-      // campfire
-      `You're currently at the Campfire! This is where the latest news is shared!`,
-      `You should check back here every once in a while! There's always so much happening on the island!`,
+    if (this.currentPathValue == "/campfire") {
+      this.start("intro")
+    }
+  }
 
-      // currency
-      `Shells are our currency here. You can get so much cool stuff with them, but to get 'em, you gotta...`,
-      `<span class="new-tutorial-shake">Build cool projects and ship them!</span>`,
-      `Awesome! Let's dive a bit deeper!`,
-      `Check out this video!`,
+  disconnect() {
+    this.backgroundTarget.removeEventListener("click", () => this.advance());
+    this.dialogueTarget.removeEventListener("click", () => this.advance());
+    window.removeEventListener("resize", () => this.updateElements({was_advance: false}));
+    document.removeEventListener("scroll", () => this.updateElements({was_advance: false}));
+    this.videoTarget.removeEventListener("timeupdate", () => this.updateVideoProgress());
 
-      // step-by-step - skipped if watched video
-      `I'll walk you through what this is about!`,
-      `1. Come up with a cool project idea. Make it something you've always wanted to build.`,
-      `2. Start building! Track how much time you spent with Hackatime.`,
-      `3. As you build, post <span class="new-tutorial-shake">devlogs</span>! They're mini updates on your progress.`,
-      `4. Once it's ready, <span class="new-tutorial-shake">ship it</span> to the world! It doesn't have to be perfect. A MVP is okay!`,
-      `5. Our shipwrights will make sure your project is working. They'll give you feedback!`,
-      `6. Your project will then be voted on by the community. You'll vote on others' projects as well.`,
-      `7. You'll earn shells depending on the number of votes and how long you've worked on your project.`,
-      `8. You can spend these shells in our shop for awesome prizes!`,
-      `Alright, that was quite the ramble...`,
+    // stop video
+    this.videoTarget.pause();
 
-      // hackatime
-      `Don't worry if this is confusing, I'll walk you through each step`
-    ];
+    if (this.containerTarget) {
+      this.containerTarget.style.display = "none";
+    }
+  }
 
-    // x, y, width, height are offsets
-    this.stepAttributes = [
-      // intro
-      {},
-      {},
-      {},
-      {},
+  start(scene = this.sceneValue, checkpoint = this.checkpointValue) {
+    if (this.containerTarget) {
+      this.containerTarget.style.display = "";
+    }
 
-      // campfire
-      {focus: 'new-tutorial-campfire-title', x: 0, y: 10, width: 50, height: -50, radius: 20},
-      {focus: 'new-tutorial-campfire-title', x: 0, y: 10, width: 50, height: -50, radius: 20},
+    this.scene = scene;
+    this.startingCheckpoint = checkpoint;
+    this.startingProgress = this.startingCheckpoint ? getNewTutorialCheckpointStep(this.scene, this.startingCheckpoint) : 0;
+    console.log("Starting new tutorial scene:", this.scene, "and values: ", {displayName: this.displayNameValue, hackatimeCondition: this.hackatimeConditionValue, checkpoint: this.checkpointValue, startingProgress: this.startingProgress, currentPath: this.currentPathValue});
 
-      // currency
-      {},
-      {},
-      {},
+    this.dialogue = getNewTutorialDialogue(this.scene, { displayName: this.displayNameValue });
 
-      // step by step flow
-      {video: '/onboarding.mp4', skip: 20},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
-
-      // hackatime
-      {}
-    ]
-
-    this.progress = 0;
+    this.progress = this.startingProgress;
     this.initialDelay = 750;
     this.nextDelay = 500;
     this.lastClickedNext = Date.now();
-    this.textTarget.innerHTML = this.dialogue[this.progress];
-    const attributes = this.stepAttributes[this.progress];
-    this.focusedElement = attributes.focus ? document.getElementById(attributes.focus) : null;
 
     this.updateElements();
 
@@ -97,28 +62,20 @@ export default class extends Controller {
     this.videoTarget.addEventListener("timeupdate", () => this.updateVideoProgress());
   }
 
-  disconnect() {
-    this.backgroundTarget.removeEventListener("click", () => this.advance());
-    this.dialogueTarget.removeEventListener("click", () => this.advance());
-    window.removeEventListener("resize", () => this.updateElements({was_advance: false}));
-    document.removeEventListener("scroll", () => this.updateElements({was_advance: false}));
-    this.videoTarget.removeEventListener("timeupdate", () => this.updateVideoProgress());
-
-    // stop video
-    this.videoTarget.pause();
-  }
-
   updateElements(params = {}) {
     let was_advance = params.was_advance ?? true;
     let previous = params.previous ?? this.progress - 1;
 
-    const attributes = this.stepAttributes[this.progress];
-    const prevAttributes = this.stepAttributes[previous] || {};
+    const attributes = this.dialogue[this.progress];
+    const prevAttributes = this.dialogue[previous] || {};
+    
+    this.textTarget.innerHTML = attributes.text || "";
 
+    console.debug("Updating elements:", {was_advance, previous, focusedElement: this.focusedElement, attributes});
+
+    // focus/spotlight
     this.focusedElement = attributes.focus ? document.getElementById(attributes.focus) : null;
-    this.textTarget.innerHTML = this.dialogue[this.progress];
-
-    console.log("Updating elements:", {was_advance, previous, focusedElement: this.focusedElement, attributes});
+    this.focusedOtherElements = attributes.focusOther ? attributes.focusOther.map(id => document.getElementById(id)).filter(el => el) : [];
     if (this.focusedElement) {
       const rect = this.focusedElement.getBoundingClientRect();
       this.dialogueFocus = {
@@ -135,6 +92,14 @@ export default class extends Controller {
       this.dialogueFocus.height += (attributes.height ?? 0);
       this.dialogueFocus.radius += (attributes.radius ?? 0);
       this.dialogueFocus.z = attributes.z ?? true;
+
+      if (this.dialogueFocus.z) {
+        this.focusedElement.style.zIndex = 100;
+        this.focusedOtherElements.forEach(el => el.style.zIndex = 99);
+      } else {
+        this.focusedElement.style.zIndex = "";
+        this.focusedOtherElements.forEach(el => el.style.zIndex = "");
+      }
     } else {
       this.dialogueFocus = {
         x: 0,
@@ -146,12 +111,35 @@ export default class extends Controller {
       };
       if (prevAttributes.focus) {
         const prevFocusElement = document.getElementById(prevAttributes.focus);
+        const prevOtherFocusElements = prevAttributes.focusOther ? prevAttributes.focusOther.map(id => document.getElementById(id)).filter(el => el) : [];
         if (prevFocusElement) {
           prevFocusElement.style.zIndex = "";
         }
+        prevOtherFocusElements.forEach(el => el.style.zIndex = ""); 
       }
     }
+    this.focusTarget.setAttribute("x", this.dialogueFocus.x);
+    this.focusTarget.setAttribute("y", this.dialogueFocus.y);
+    this.focusTarget.setAttribute("width", this.dialogueFocus.width);
+    this.focusTarget.setAttribute("height", this.dialogueFocus.height);
+    this.focusTarget.setAttribute("rx", this.dialogueFocus.radius);
+    this.focusTarget.setAttribute("ry", this.dialogueFocus.radius);
 
+    if (this.focusedElement) {
+      if (this.dialogueFocus.z) {
+        this.focusedElement.style.zIndex = 100;
+      } else {
+        this.focusedElement.style.zIndex = "";
+        this.focusedOtherElements.forEach(el => el.style.zIndex = "");
+      }
+    }
+    if (this.dialogueFocus.z) {
+      this.focusedOtherElements.forEach(el => el.style.zIndex = 99);
+    } else {
+      this.focusedOtherElements.forEach(el => el.style.zIndex = "");
+    }
+
+    // video
     if (attributes.video) {
       this.videoTarget.style.display = "";
       this.videoContainerTarget.style.display = "";
@@ -195,24 +183,16 @@ export default class extends Controller {
       }
     }
 
-    this.focusTarget.setAttribute("x", this.dialogueFocus.x);
-    this.focusTarget.setAttribute("y", this.dialogueFocus.y);
-    this.focusTarget.setAttribute("width", this.dialogueFocus.width);
-    this.focusTarget.setAttribute("height", this.dialogueFocus.height);
-    this.focusTarget.setAttribute("rx", this.dialogueFocus.radius);
-    this.focusTarget.setAttribute("ry", this.dialogueFocus.radius);
-
-    if (this.focusedElement) {
-      if (this.dialogueFocus.z) {
-        this.focusedElement.style.zIndex = 100;
-      } else {
-        this.focusedElement.style.zIndex = "";
-      }
+    // prevent advance
+    if (attributes.preventAdvance) {
+      this.hintTarget.style.display = "none";
+    } else {
+      this.hintTarget.style.display = "";
     }
   }
 
   updateVideoProgress() {
-    const attributes = this.stepAttributes[this.progress] || {};
+    const attributes = this.dialogue[this.progress] || {};
     if (attributes.video) {
       const video = this.videoTarget;
       const progress = video.currentTime / video.duration;
@@ -220,7 +200,7 @@ export default class extends Controller {
       
       this.updateElements({was_advance: false});
 
-      console.log(`Video progress: ${progress * 100}%`);
+      console.debug(`Video progress: ${progress * 100}%`);
     }
   }
 
@@ -231,10 +211,10 @@ export default class extends Controller {
   advance(params = {}) {
     let force = params.force ?? false;
     let skipped = params.skipped ?? false;
-    const attributes = this.stepAttributes[this.progress] || {};
+    const attributes = this.dialogue[this.progress] || {};
 
     if (!force) {
-      if (attributes.video && this.videoProgress < 0.95) {
+      if (attributes.video && this.videoProgress < 0.95 || attributes.preventAdvance) {
         console.log("Advancing is disabled");
         return;
       }
@@ -249,16 +229,34 @@ export default class extends Controller {
 
     let previous = this.progress;
     if (attributes.video && attributes.skip && !skipped) {
-      this.progress = attributes.skip;
+      this.progress += attributes.skip;
     } else {
       this.progress++;
     }
 
     console.log(`Advancing to step: ${this.progress}`);
     if (this.progress < this.dialogue.length) {
+      let attributes = this.dialogue[this.progress] || {};
+      if (attributes.condition) {
+        if (this.processConditions(attributes.condition)) {
+          attributes = {...attributes, ...attributes.alt};
+          if (attributes.skip) {
+            this.progress += attributes.skip;
+          }
+        }
+        this.dialogue[this.progress] = attributes;
+
+      }
+
       this.updateElements({previous: previous});
     } else {
       console.log("No more steps to advance.");
+    }
+  }
+
+  processConditions(condition) {
+    if (condition == "hackatime") {
+      return this.hackatimeConditionValue;
     }
   }
 }
