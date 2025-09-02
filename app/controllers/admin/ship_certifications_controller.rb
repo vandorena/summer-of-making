@@ -226,14 +226,16 @@ module Admin
     end
 
     def calc_avg_turnaround
-      pc = ShipCertification
-        .where.not(judgement: :pending)
-        .where("ship_certifications.updated_at > ship_certifications.created_at")
+      pending_certs = ShipCertification
+        .where(judgement: :pending)
+        .joins(:project)
+        .where(projects: { is_deleted: false })
 
-      return nil if pc.empty?
+      return nil if pending_certs.empty?
 
-      total_time = pc.sum { |cert| cert.updated_at - cert.created_at }
-      avg_sec = total_time / pc.count
+      current_time = Time.current
+      total_time = pending_certs.sum { |cert| current_time - cert.created_at }
+      avg_sec = total_time / pending_certs.count
 
       {
         s: avg_sec,
