@@ -60,7 +60,17 @@ class Shop::WarehousePackage < ApplicationRecord
         tags: [ "summer-of-making", "som-warehouse-prize" ],
         recipient_email: user.email,
         user_facing_title: "Summer of Making – #{headline.join ', '}",
-        idempotency_key: idempotency_key
+        idempotency_key:,
+        metadata: {
+          som_user: user.id,
+          orders: shop_orders.map do |order|
+            {
+              id: order.id,
+              item_name: order.shop_item.name,
+              quantity: order.quantity
+            }
+          end
+        }
       })
       ap response
       update!(theseus_package_id: response.dig("warehouse_order", "id"))

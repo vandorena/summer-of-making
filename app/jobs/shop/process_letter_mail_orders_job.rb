@@ -37,7 +37,17 @@ class Shop::ProcessLetterMailOrdersJob < ApplicationJob
           recipient_email: user.email,
           address: frozen_address,
           rubber_stamps: rubber_stamps,
-          idempotency_key: "som25_letter_mail_#{Rails.env}_#{generate_coalesced_key(orders)}"
+          idempotency_key: "som25_letter_mail_#{Rails.env}_#{generate_coalesced_key(orders)}",
+          metadata: {
+            som_user: user.id,
+            orders: orders.map do |order|
+              {
+                id: order.id,
+                item_name: order.item.name,
+                quantity: order.quantity
+              }
+            end
+          }
         }
       )
     rescue Faraday::BadRequestError => e
