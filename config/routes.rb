@@ -306,6 +306,7 @@ Rails.application.routes.draw do
 
   post "tutorial/complete_step", to: "tutorial_progress#complete_step"
   post "tutorial/complete_soft_tutorial_step", to: "tutorial_progress#complete_soft_step", as: :complete_soft_tutorial_step
+  post "tutorial/complete_new_tutorial_step", to: "tutorial_progress#complete_new_step", as: :complete_new_tutorial_step
 
   get "/payouts", to: "payouts#index"
 
