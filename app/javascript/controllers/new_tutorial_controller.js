@@ -314,9 +314,7 @@ export default class extends Controller {
     }
   }
 
-  async processConditions(condition) {
-    if (condition == "hackatime") {
-      await this.hackatimeConditionValue;
+      return this.hackatimeConditionValue;
     }
   }
 
