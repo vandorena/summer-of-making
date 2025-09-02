@@ -7,11 +7,13 @@ export default class extends Controller {
     scene: String,
     hackatimeCondition: Boolean,
     checkpoint: String,
-    currentPath: String
+    currentPath: String,
+    newTutorialProgress: Object
   }
 
   connect() {
     if (this.currentPathValue == "/campfire") {
+      return // disable intro scene for now
       this.start("intro")
     }
   }
@@ -82,12 +84,16 @@ export default class extends Controller {
     }
   }
 
-  updateElements(params = {}) {
+  async updateElements(params = {}) {
     let was_advance = params.was_advance ?? true;
     let previous = params.previous ?? this.progress - 1;
 
     const attributes = this.dialogue[this.progress];
     const prevAttributes = this.dialogue[previous] || {};
+
+    if (attributes.checkpoint) {
+      await this.processCheckpoint(attributes.checkpoint);
+    }
     
     this.textTarget.innerHTML = attributes.text || "";
 
@@ -254,7 +260,7 @@ export default class extends Controller {
       this.progress++;
     }
 
-    console.log(`Advancing to step: ${this.progress}`);
+    console.log(`Advancing to step: ${this.progress} (previous: ${previous})`);
     if (this.progress < this.dialogue.length) {
       let attributes = this.dialogue[this.progress] || {};
       if (attributes.condition) {
@@ -269,13 +275,53 @@ export default class extends Controller {
 
       this.updateElements({previous: previous});
     } else {
-      this.end();
+      this.progress = this.dialogue.length;
+      // run only once
+      if (previous < this.progress) {
+        this.end();
+      }
     }
   }
 
-  processConditions(condition) {
+  async processConditions(condition) {
     if (condition == "hackatime") {
-      return this.hackatimeConditionValue;
+      await this.hackatimeConditionValue;
     }
+  }
+
+  async processCheckpoint(checkpoint) {
+    if (checkpoint == "ship") {
+      await this.completeStep("ship");
+    }
+  }
+
+  isStepCompleted(step) {
+    const progress = this.newTutorialProgressValue || {};
+    return progress[step] && progress[step].completed_at;
+  }
+
+  async completeStep(stepName) {
+    console.log(`Marking new tutorial step complete: ${stepName}`);
+    const response = await fetch('/tutorial/complete_new_tutorial_step', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+      },
+      body: JSON.stringify({
+        step_name: stepName
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Update the local JavaScript object
+    const progress = this.newTutorialProgressValue || {};
+    progress[stepName] = { completed_at: new Date().toISOString() };
+    this.newTutorialProgressValue = progress;
+
+    return true;
   }
 }
