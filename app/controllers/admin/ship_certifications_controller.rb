@@ -133,10 +133,6 @@ module Admin
         .count
     end
 
-    def show
-      @ship_certification = ShipCertification.includes(project: [ :user, :ship_events ]).find(params[:id])
-    end
-
     def edit
       @ship_certification = ShipCertification.includes(project: [ :user, :ship_events ]).find(params[:id])
       @ship_certification.reviewer = current_user if @ship_certification.reviewer.nil?

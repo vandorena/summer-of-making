@@ -373,7 +373,7 @@ Rails.application.routes.draw do
         patch :unresolve
       end
     end
-    resources :ship_certifications, only: [ :index, :show, :edit, :update ] do
+    resources :ship_certifications, only: [ :index, :edit, :update ] do
       collection do
         get :logs
       end
