@@ -30,9 +30,9 @@ class UserVoteQueue < ApplicationRecord
 
   validates :current_position, presence: true, numericality: { greater_than_or_equal_to: 0 }
 
-  QUEUE_SIZE = 15
+  QUEUE_SIZE = 1
   # do note that we trigger a refill job if we hit the refill threshold not when we have depelted the queue
-  REFILL_THRESHOLD = 5
+  REFILL_THRESHOLD = 0
 
   scope :needs_refill, -> {
     where("jsonb_array_length(ship_event_pairs) - current_position <= ?", REFILL_THRESHOLD)
@@ -80,7 +80,7 @@ class UserVoteQueue < ApplicationRecord
       if projects.size < 2
 
         # check for overflow
-        if current_position + 1 >= ship_event_pairs.length
+        if current_position + 1 >= ship_event_pairs.length && false
           refill_queue!(1)
         end
 
@@ -103,7 +103,7 @@ class UserVoteQueue < ApplicationRecord
       end
 
       # ensure total time covered for each project is greater than 0 seconds #ai hearbeats yoinked
-      if zero_total_time_covered?(ship_events)
+      if zero_total_time_covered?(ship_events) && false
         advance_position!
         next
       end
@@ -211,7 +211,10 @@ class UserVoteQueue < ApplicationRecord
     ship_events.any? { |se| (totals_by_ship_event[se.id] || 0) <= 0 }
   end
 
-  def generate_matchup
+  def generate_matchup_new
+    # log to console
+    Rails.logger.info "Generating matchup for user #{user.id}"
+    return
     voted_ship_event_ids = user.votes.distinct.pluck(:ship_event_1_id, :ship_event_2_id).flatten.compact
 
     projects_with_latest_ship = Project
@@ -374,7 +377,7 @@ class UserVoteQueue < ApplicationRecord
 
     used_ship_event_ids = ship_event_pairs.each_with_index.flat_map { |p, idx| idx == current_position ? [] : p }.to_set
 
-    10.times do
+    1.times do
       pair = generate_matchup
       next unless pair
       next if used_ship_event_ids.include?(pair[0]) || used_ship_event_ids.include?(pair[1])

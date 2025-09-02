@@ -5,6 +5,10 @@ function getNewTutorialDialogue(scene = "intro", params = {}) {
         return getNewTutorialIntroDialogue(params);
     } else if (scene === "ship") {
         return getNewTutorialShipDialogue(params);
+    } else if (scene === "to_vote") {
+        return getNewTutorialToVoteDialogue(params);
+    } else if (scene === "vote") {
+        return getNewTutorialVoteDialogue(params);
     }
 }
 
@@ -109,6 +113,105 @@ function getNewTutorialShipDialogue(params = {}) {
     { 
       text: `Once you feel that you're ready, click the ship button to ship it!`,
       checkpoint: 'ship'
+    }
+  ]
+}
+
+function getNewTutorialToVoteDialogue(params = {}) {
+  return [
+    { text: `<span class="new-tutorial-shake">Congrats on shipping your project!!</span>` },
+    { text: "The Shipwrights are on their way to inspect your ship." },
+    {
+      text: "They're pretty fast, but be patient! It might take a little while."
+    },
+
+    // cta to vote
+    { text: "Now it's time to vote!" },
+    { text: "For every ship, you need to vote at least 20 times." },
+    { 
+      text: "Let's head over to the voting page",
+      focus: `new-tutorial-vote`,
+      x: 0, y: 0, width: 30, height: 30, radius: 10, preventAdvance: true,
+      pointerNone: true
+    }
+  ]
+}
+
+function getNewTutorialVoteDialogue(params = {}) {
+  return [
+    { text: "Welcome to voting!!" },
+    { text: "Each vote is a matchup between two projects." },
+    { 
+      text: "Try the demo for each...",
+      focus: `new-tutorial-vote-demo`,
+      x: 0, y: 0, width: 30, height: 30, radius: 10, z: false
+    },
+    { 
+      text: "And read the devlogs!",
+      focus: `new-tutorial-vote-devlogs`,
+      x: 0, y: 0, width: 30, height: 30, radius: 10, z: false
+    },
+    {
+      text: "Pick a winner based on creativity, technicality, and storytelling."
+    },
+    {
+      text: "Then, make a decision and write a few sentences about your choice.",
+      action: "voteScrollEnd",
+      focus: `new-tutorial-vote-decision`,
+      x: 0, y: 0, width: 50, height: 50, radius: 10, z: false
+    },
+    {
+      text: "Every vote matters, so be sure to vote thoughtfully!",
+      focus: `new-tutorial-vote-decision`,
+      x: 0, y: 0, width: 50, height: 50, radius: 10, z: false
+    },
+    { 
+      text: "Low quality or randomly voting will be met with consequences.",
+      focus: `new-tutorial-vote-decision`,
+      x: 0, y: 0, width: 50, height: 50, radius: 10, z: false
+    },
+    {
+      text: "If a project's demo doesn't work, or feels low effort. Use the report feature.",
+      action: "voteScrollStart",
+      focus: `new-tutorial-vote-report`,
+      x: 0, y: 0, width: 30, height: 30, radius: 10, z: false
+    },
+    {
+      text: "Our shipwrights will take a closer look.",
+      focus: `new-tutorial-vote-report`,
+      x: 0, y: 0, width: 30, height: 30, radius: 10, z: false
+    },
+    {
+      text: "Please keep in mind that projects are never perfect.",
+      focus: `new-tutorial-vote-report`,
+      x: 0, y: 0, width: 30, height: 30, radius: 10, z: false
+    },
+    {
+      text: "Projects can be simple, but they must demonstrate effort and creativity.",
+      focus: `new-tutorial-vote-report`,
+      x: 0, y: 0, width: 30, height: 30, radius: 10, z: false
+    },
+    {
+      text: "Examples of low-effort are: copying a tutorial, AI generating the entire project...",
+      focus: `new-tutorial-vote-report`,
+      x: 0, y: 0, width: 30, height: 30, radius: 10, z: false
+    },
+    {
+      text: "Or basic apps like todo lists without meaningful improvements.",
+      focus: `new-tutorial-vote-report`,
+      x: 0, y: 0, width: 30, height: 30, radius: 10, z: false
+    },
+    {
+      text: "While you vote, other people will cast votes on your project too.",
+    },
+    {
+      text: "Once you and your project are done with voting, you'll get your shells!"
+    },
+    {
+      text: "The more votes for your project, the more shells you'll earn!"
+    },
+    {
+      text: "That's enough yap for now. Get voting!"
     }
   ]
 }

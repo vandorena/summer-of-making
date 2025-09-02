@@ -11,23 +11,26 @@
           modal_type: "certification"
         } %>
   <% else %>
-    <% render "shared/button",
-        text: "Ship It!",
-        kind: "primary",
-        icon: "ship.svg",
-        data: {
-          controller: "modal",
-          action: "modal#open",
-          modal_id: "#{project.id}",
-          modal_type: "is_shipped"
-        } %>
-    <%= render "shared/button",
-        text: "Ship It!",
-        kind: "primary",
-        icon: "ship.svg",
-        data: {
-          action: "new-tutorial#startShipScene",
-        } %>
+    <% if !Flipper.enabled?(:new_onboarding_ship, current_user) || current_user&.tutorial_progress&.new_tutorial_step_completed?(:ship) %>
+      <%= render "shared/button",
+          text: "Ship It!",
+          kind: "primary",
+          icon: "ship.svg",
+          data: {
+            controller: "modal",
+            action: "modal#open",
+            modal_id: "#{project.id}",
+            modal_type: "is_shipped"
+          } %>
+    <% else %>
+      <%= render "shared/button",
+          text: "Ship It!",
+          kind: "primary",
+          icon: "ship.svg",
+          data: {
+            action: "new-tutorial#startShipScene",
+          } %>
+    <% end %>
   <% end %>
 <% else %>
   <%= render "shared/button",

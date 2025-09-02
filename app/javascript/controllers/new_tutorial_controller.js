@@ -16,6 +16,16 @@ export default class extends Controller {
       return // disable intro scene for now
       this.start("intro")
     }
+    if (this.currentPathValue.startsWith("/projects")) {
+      if (this.isStepCompleted("ship") && !this.isStepCompleted("vote")) {
+        this.start("to_vote");
+      }
+    }
+    if (this.currentPathValue == "/votes/new") {
+      if (!this.isStepCompleted("vote")) {
+        this.start("vote");
+      }
+    }
   }
 
   disconnect() {
@@ -71,17 +81,20 @@ export default class extends Controller {
   end() {
     if (this.scene == "ship") {
       location.reload();
-    } else {
-      console.log("Ending new tutorial:", this.scene);
-      this.containerTarget.classList.remove("bg-fade-in");
-      this.containerTarget.classList.add("bg-fade-out");
+      return;
+    } 
+    // if (this.scene == "vote") {
+    //   this.completeStep("vote");
+    // }
+    console.log("Ending new tutorial:", this.scene);
+    this.containerTarget.classList.remove("bg-fade-in");
+    this.containerTarget.classList.add("bg-fade-out");
 
-      setTimeout(() => {
-        this.containerTarget.style.display = "none";
-        this.containerTarget.classList.remove("bg-fade-out");
-        this.containerTarget.classList.add("bg-fade-in");
-      }, 250);
-    }
+    setTimeout(() => {
+      this.containerTarget.style.display = "none";
+      this.containerTarget.classList.remove("bg-fade-out");
+      this.containerTarget.classList.add("bg-fade-in");
+    }, 250);
   }
 
   async updateElements(params = {}) {
@@ -93,6 +106,10 @@ export default class extends Controller {
 
     if (attributes.checkpoint) {
       await this.processCheckpoint(attributes.checkpoint);
+    }
+
+    if (was_advance && attributes.action) {
+      this.processAction(attributes.action);
     }
     
     this.textTarget.innerHTML = attributes.text || "";
@@ -209,6 +226,12 @@ export default class extends Controller {
       }
     }
 
+    if (attributes.pointerNone) {
+      this.backgroundTarget.style.pointerEvents = "none";
+    } else {
+      this.backgroundTarget.style.pointerEvents = "";
+    }
+
     // prevent advance
     if (attributes.preventAdvance) {
       this.hintTarget.style.display = "none";
@@ -292,6 +315,43 @@ export default class extends Controller {
   async processCheckpoint(checkpoint) {
     if (checkpoint == "ship") {
       await this.completeStep("ship");
+    }
+  }
+
+  processAction(action) {
+    console.log("Processing action:", action);
+    if (action == "voteScrollEnd") {
+      const voteContainer = document.getElementById("new-tutorial-vote-container");
+      if (voteContainer) {
+        voteContainer.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'end' // Align bottom of element with bottom of viewport
+        });
+
+        const interval = setInterval(() => {
+          this.updateElements({was_advance: false});
+        }, 10);
+
+        setTimeout(() => {
+          clearInterval(interval);
+        }, 1000);
+      }
+    } else if (action == "voteScrollStart") {
+      const voteContainer = document.getElementById("new-tutorial-vote-container");
+      if (voteContainer) {
+        voteContainer.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start'
+        });
+
+        const interval = setInterval(() => {
+          this.updateElements({was_advance: false});
+        }, 10);
+
+        setTimeout(() => {
+          clearInterval(interval);
+        }, 1000);
+      }
     }
   }
 
