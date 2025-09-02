@@ -133,6 +133,10 @@ module Admin
         .count
     end
 
+    def show
+      @ship_certification = ShipCertification.includes(project: [ :user, :ship_events ]).find(params[:id])
+    end
+
     def edit
       @ship_certification = ShipCertification.includes(project: [ :user, :ship_events ]).find(params[:id])
       @ship_certification.reviewer = current_user if @ship_certification.reviewer.nil?
@@ -195,33 +199,33 @@ module Admin
 
     def validate_certification_requirements
       errors = []
-      
+
       # Check if all required checkboxes are checked
       unless params[:checked_demo] == "1" || params[:checked_demo] == "on"
         errors << 'Check "I looked at the demo"'
       end
-      
+
       unless params[:checked_repo] == "1" || params[:checked_repo] == "on"
         errors << 'Check "I looked at the repo"'
       end
-      
+
       unless params[:checked_description] == "1" || params[:checked_description] == "on"
         errors << 'Check "I looked at the description"'
       end
-      
+
       # Check if status is not pending
-      if params[:ship_certification][:judgement] == 'pending'
+      if params[:ship_certification][:judgement] == "pending"
         errors << 'Change status from "pending" to approved or rejected'
       end
-      
+
       # Check if proof video is uploaded (either new upload or existing)
       has_new_video = params[:ship_certification][:proof_video].present?
       has_existing_video = @ship_certification.proof_video.attached?
-      
+
       unless has_new_video || has_existing_video
-        errors << 'Upload a proof video'
+        errors << "Upload a proof video"
       end
-      
+
       errors
     end
 
