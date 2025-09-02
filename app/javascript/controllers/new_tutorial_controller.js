@@ -18,9 +18,6 @@ export default class extends Controller {
       return;
     }
     
-    if (this.currentPathValue == "/campfire") {
-      return // disable intro scene for now
-      this.start("intro")
     }
     if (this.currentPathValue.startsWith("/projects")) {
       if (this.isStepCompleted("ship") && !this.isStepCompleted("vote")) {
@@ -317,9 +314,7 @@ export default class extends Controller {
     }
   }
 
-  async processConditions(condition) {
-    if (condition == "hackatime") {
-      await this.hackatimeConditionValue;
+      return this.hackatimeConditionValue;
     }
   }
 
