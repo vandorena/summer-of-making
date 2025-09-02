@@ -8,10 +8,16 @@ export default class extends Controller {
     hackatimeCondition: Boolean,
     checkpoint: String,
     currentPath: String,
-    newTutorialProgress: Object
+    newTutorialProgress: Object,
+    newOnboardingEnabled: Boolean
   }
 
   connect() {
+    // Don't start tutorial if new onboarding is not enabled for this user
+    if (!this.newOnboardingEnabledValue) {
+      return;
+    }
+    
     if (this.currentPathValue == "/campfire") {
       return // disable intro scene for now
       this.start("intro")
@@ -75,6 +81,11 @@ export default class extends Controller {
   }
 
   startShipScene() {
+    // Don't start tutorial if new onboarding is not enabled for this user
+    if (!this.newOnboardingEnabledValue) {
+      return;
+    }
+    
     this.start("ship");
   }
 
