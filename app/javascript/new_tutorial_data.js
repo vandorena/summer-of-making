@@ -103,7 +103,7 @@ function getNewTutorialShipDialogue(params = {}) {
     { text: `Websites must be deployed, games need to need to be easily playable, CLIs need to be published as packages...`},
     { text: `You get the idea!` },
     { text: `Presentation matters! Your README must explain your project and its features.` },
-    { text: `If something in the README, it must actually exist.`},
+    { text: `If something is mentioned in the README, it must actually exist.`},
     { text: `Also, make sure you credit work from others, this includes AI.`},
     { text: `The Hack Club community votes for ships based off of their creativity, technicality, and presentation.`},
     { text: `But before your ships can be voted on, the Shipwrights will certify that it's ready!` },
