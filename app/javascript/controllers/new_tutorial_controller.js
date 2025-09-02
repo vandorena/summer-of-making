@@ -16,9 +16,7 @@ export default class extends Controller {
     // Don't start tutorial if new onboarding is not enabled for this user
     if (!this.newOnboardingEnabledValue) {
       return;
-    }
-    
-    }
+    // (removed orphaned closing brace)
     if (this.currentPathValue.startsWith("/projects")) {
       if (this.isStepCompleted("ship") && !this.isStepCompleted("vote")) {
         this.start("to_vote");
