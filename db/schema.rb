@@ -10,7 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema[8.0].define(version: 2025_08_29_193720) do
+=======
+ActiveRecord::Schema[8.0].define(version: 2025_09_02_012459) do
+>>>>>>> origin/main
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -389,6 +393,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_29_193720) do
     t.float "x"
     t.float "y"
     t.boolean "is_sinkening_ship"
+    t.string "ai_explanation"
     t.index ["is_shipped"], name: "index_projects_on_is_shipped"
     t.index ["user_id"], name: "index_projects_on_user_id"
     t.index ["views_count"], name: "index_projects_on_views_count"
@@ -747,6 +752,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_29_193720) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.jsonb "soft_tutorial_steps", default: {}, null: false
+    t.jsonb "new_tutorial_progress", default: {}, null: false
     t.index ["user_id"], name: "index_tutorial_progresses_on_user_id"
   end
 

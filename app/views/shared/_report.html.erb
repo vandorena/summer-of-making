@@ -1,13 +1,19 @@
+<%
+  button_id = local_assigns[:id]
+%>
+
 <% if current_user && FraudReport.already_reported_by?(current_user, suspect) %>
   <%= render "shared/button",
       text: "Already Reported",
       icon: "flag.svg",
       classes: "opacity-75 cursor-not-allowed pointer-events-none",
-      title: "You have already reported this #{suspect.class.name.downcase}" %>
+      title: "You have already reported this #{suspect.class.name.downcase}",
+      id: button_id %>
 <% else %>
   <%= render "shared/button",
       text: "Report",
       icon: "flag.svg",
+      id: button_id,
       data: {
         controller: "modal",
         action: "click->modal#open",
@@ -29,7 +35,7 @@
     id: "report-modal-#{suspect.class.name.downcase}-#{suspect.id}",
     title: "Report #{modal_title}?",
     max_width: "max-w-2xl" do %>
-  <%= form_with model: FraudReport.new, url: fraud_reports_path, method: :post, local: true do |form| %>
+  <%= form_with model: FraudReport.new, url: fraud_reports_path, method: :post, data: { turbo: false }, local: true do |form| %>
     <%= form.hidden_field :suspect_type, value: suspect.class.name %>
     <%= form.hidden_field :suspect_id, value: suspect.id %>
 

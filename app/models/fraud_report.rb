@@ -33,11 +33,15 @@ class FraudReport < ApplicationRecord
 
   belongs_to :suspect, polymorphic: true
   belongs_to :reporter, class_name: "User", foreign_key: "user_id"
+  belongs_to :resolver, class_name: "User", foreign_key: "resolved_by_id", optional: true
 
   validates :user_id, uniqueness: { scope: [ :suspect_type, :suspect_id ], message: "You have already reported this project" }
 
   scope :resolved, -> { where(resolved: true) }
   scope :unresolved, -> { where(resolved: false) }
+  scope :low_quality_category, -> {
+    where("(category = ?) OR (reason LIKE ?)", "low_quality", "LOW_QUALITY:%")
+  }
 
   def self.already_reported_by?(user, suspect)
     exists?(
@@ -47,11 +51,11 @@ class FraudReport < ApplicationRecord
     )
   end
 
-  def resolve!
-    update!(resolved: true)
+  def resolve!(user: nil, outcome: nil, message: nil)
+    update!(resolved: true, resolved_at: Time.current, resolved_by_id: user&.id, resolved_outcome: outcome, resolved_message: message)
   end
 
   def unresolve!
-    update!(resolved: false)
+    update!(resolved: false, resolved_at: nil, resolved_by_id: nil)
   end
 end
