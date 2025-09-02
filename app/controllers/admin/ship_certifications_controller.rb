@@ -141,6 +141,16 @@ module Admin
     def update
       @ship_certification = ShipCertification.find(params[:id])
 
+      # Validate form requirements
+      validation_errors = validate_certification_requirements
+
+      if validation_errors.any?
+        @ship_certification.errors.add(:base, "Please complete all requirements:")
+        validation_errors.each { |error| @ship_certification.errors.add(:base, "• #{error}") }
+        render :edit, status: :unprocessable_entity
+        return
+      end
+
       if @ship_certification.update(ship_certification_params)
         # Create improvement suggestion if provided
         if params[:improvement_suggestion].present?
@@ -183,15 +193,49 @@ module Admin
 
     private
 
+    def validate_certification_requirements
+      errors = []
+
+      # Check if all required checkboxes are checked
+      unless params[:checked_demo] == "1" || params[:checked_demo] == "on"
+        errors << 'Check "I looked at the demo"'
+      end
+
+      unless params[:checked_repo] == "1" || params[:checked_repo] == "on"
+        errors << 'Check "I looked at the repo"'
+      end
+
+      unless params[:checked_description] == "1" || params[:checked_description] == "on"
+        errors << 'Check "I looked at the description"'
+      end
+
+      # Check if status is not pending
+      if params[:ship_certification][:judgement] == "pending"
+        errors << 'Change status from "pending" to approved or rejected'
+      end
+
+      # Check if proof video is uploaded (either new upload or existing)
+      has_new_video = params[:ship_certification][:proof_video].present?
+      has_existing_video = @ship_certification.proof_video.attached?
+
+      unless has_new_video || has_existing_video
+        errors << "Upload a proof video"
+      end
+
+      errors
+    end
+
     def calc_avg_turnaround
-      pc = ShipCertification
-        .where.not(judgement: :pending)
-        .where("ship_certifications.updated_at > ship_certifications.created_at")
+      pending_certs = ShipCertification
+        .where(judgement: :pending)
+        .joins(:project)
+        .where(projects: { is_deleted: false })
 
-      return nil if pc.empty?
+      return nil if pending_certs.empty?
 
-      total_time = pc.sum { |cert| cert.updated_at - cert.created_at }
-      avg_sec = total_time / pc.count
+      current_time = Time.current
+      total_time = pending_certs.sum { |cert| current_time - cert.created_at }
+      avg_sec = total_time / pending_certs.count
 
       {
         s: avg_sec,
