@@ -17,7 +17,9 @@ class Shop::ProcessLetterMailOrdersJob < ApplicationJob
     end
 
     grouped_orders.each do |(user_id, frozen_address), orders|
-      process_coalesced_orders(orders, frozen_address)
+      Honeybadger.context(letter_mail_orders: orders.pluck(:id)) do
+        process_coalesced_orders(orders, frozen_address)
+      end
     end
   end
 
