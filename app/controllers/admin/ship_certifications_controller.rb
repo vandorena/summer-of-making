@@ -141,6 +141,16 @@ module Admin
     def update
       @ship_certification = ShipCertification.find(params[:id])
 
+      # Validate form requirements
+      validation_errors = validate_certification_requirements
+
+      if validation_errors.any?
+        @ship_certification.errors.add(:base, "Please complete all requirements:")
+        validation_errors.each { |error| @ship_certification.errors.add(:base, "• #{error}") }
+        render :edit, status: :unprocessable_entity
+        return
+      end
+
       if @ship_certification.update(ship_certification_params)
         # Create improvement suggestion if provided
         if params[:improvement_suggestion].present?
@@ -182,6 +192,38 @@ module Admin
     end
 
     private
+
+    def validate_certification_requirements
+      errors = []
+      
+      # Check if all required checkboxes are checked
+      unless params[:checked_demo] == "1" || params[:checked_demo] == "on"
+        errors << 'Check "I looked at the demo"'
+      end
+      
+      unless params[:checked_repo] == "1" || params[:checked_repo] == "on"
+        errors << 'Check "I looked at the repo"'
+      end
+      
+      unless params[:checked_description] == "1" || params[:checked_description] == "on"
+        errors << 'Check "I looked at the description"'
+      end
+      
+      # Check if status is not pending
+      if params[:ship_certification][:judgement] == 'pending'
+        errors << 'Change status from "pending" to approved or rejected'
+      end
+      
+      # Check if proof video is uploaded (either new upload or existing)
+      has_new_video = params[:ship_certification][:proof_video].present?
+      has_existing_video = @ship_certification.proof_video.attached?
+      
+      unless has_new_video || has_existing_video
+        errors << 'Upload a proof video'
+      end
+      
+      errors
+    end
 
     def calc_avg_turnaround
       pc = ShipCertification
