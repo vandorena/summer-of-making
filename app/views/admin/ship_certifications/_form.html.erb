@@ -73,9 +73,10 @@
   </div>
 
   <div class="actions">
-    <%= f.submit "Update Ship Certification", class: 'abtn small' %>
+    <%= f.submit "Update Ship Certification", class: 'abtn small', id: 'submit-certification' %>
   </div>
 <% end %>
+
 
 <script>
 function updateJudgement(value) {
@@ -127,6 +128,31 @@ document.addEventListener('DOMContentLoaded', function() {
   validateForm();
 });
 
+function showValidationPopup(missingRequirements) {
+  const popup = document.getElementById('validation-popup');
+  const list = document.getElementById('validation-list');
+  
+  list.innerHTML = '';
+  missingRequirements.forEach(requirement => {
+    const li = document.createElement('li');
+    li.textContent = requirement;
+    li.style.marginBottom = '0.3em';
+    list.appendChild(li);
+  });
+  
+  popup.style.display = 'block';
+  
+  setTimeout(() => {
+    hideValidationPopup();
+  }, 8000);
+}
+
+function hideValidationPopup() {
+  const popup = document.getElementById('validation-popup');
+  popup.style.display = 'none';
+}
+
+
 function handleFormSubmit(event) {
   const approvalStatus = document.getElementById('approval_status').value;
   const demoChecked = document.querySelector('input[name="checked_demo"]').checked;
@@ -135,21 +161,27 @@ function handleFormSubmit(event) {
   const videoField = document.querySelector('input[type="file"]');
   const hasVideo = videoField.files.length > 0 || document.querySelector('a[href*="proof_video"]');
   
-  if (!demoChecked || !repoChecked || !descriptionChecked) {
-    event.preventDefault();
-    alert('Please check all requirement checkboxes before submitting.');
-    return false;
-  }
+  const missingRequirements = [];
   
+  if (!demoChecked) {
+    missingRequirements.push('Check "I looked at the demo"');
+  }
+  if (!repoChecked) {
+    missingRequirements.push('Check "I looked at the repo"');
+  }
+  if (!descriptionChecked) {
+    missingRequirements.push('Check "I looked at the description"');
+  }
   if (approvalStatus === 'pending') {
-    event.preventDefault();
-    alert('Please change the status from pending before submitting.');
-    return false;
+    missingRequirements.push('Change status from "pending" to approved or rejected');
+  }
+  if (!hasVideo) {
+    missingRequirements.push('Upload a proof video');
   }
   
-  if (!hasVideo) {
+  if (missingRequirements.length > 0) {
     event.preventDefault();
-    alert('Please upload a proof video before submitting.');
+    showValidationPopup(missingRequirements);
     return false;
   }
   
