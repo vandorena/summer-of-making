@@ -314,8 +314,8 @@ export default class extends Controller {
     }
   }
 
-      return this.hackatimeConditionValue;
-    }
+  getHackatimeCondition() {
+    return this.hackatimeConditionValue;
   }
 
   async processCheckpoint(checkpoint) {
