@@ -34,8 +34,6 @@
       <p><strong>Presidential Approval Rate:</strong> <span style="font-weight: bold;"><%= ((@total_approved.to_f / (@total_approved + @total_rejected)) * 100).round(1) %>%</span></p>
     <% end %>
     <% if @avg_turnaround %>
-
-      <!--      this is what i need-->
       <p><strong>Avg Queue Time:</strong>
         <span style="font-weight: bold;">
           <% if @avg_turnaround[:d] > 0 %>
