@@ -26,7 +26,7 @@ class TutorialProgress < ApplicationRecord
 
   TUTORIAL_STEPS = %w[hackatime_connected identity_verified free_stickers_ordered].freeze
   SOFT_TUTORIAL_STEPS = %w[campfire explore my_projects vote shop todo].freeze
-  NEW_TUTORIAL_PROGRESS = %w[hackatime identity free_stickers ship vote].freeze
+  NEW_TUTORIAL_PROGRESS = %w[hackatime identity free_stickers ship shipped vote].freeze
 
   after_initialize :setup_default_progress, if: :new_record?
   after_initialize :auto_backfill_new_tutorial_steps!, unless: :new_record?
@@ -120,6 +120,9 @@ class TutorialProgress < ApplicationRecord
     if user&.ship_events&.any?
       unless new_tutorial_step_completed?("ship")
         complete_new_tutorial_step!("ship")
+      end
+      unless new_tutorial_step_completed?("shipped")
+        complete_new_tutorial_step!("shipped")
       end
     end
 

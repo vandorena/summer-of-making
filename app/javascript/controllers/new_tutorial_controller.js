@@ -18,7 +18,7 @@ export default class extends Controller {
       return;
     }
     if (this.currentPathValue.startsWith("/projects")) {
-      if (this.isStepCompleted("ship") && !this.isStepCompleted("vote")) {
+      if (this.isStepCompleted("shipped") && !this.isStepCompleted("vote")) {
         this.start("to_vote");
       }
     }
