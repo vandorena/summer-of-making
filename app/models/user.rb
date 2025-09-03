@@ -534,7 +534,7 @@ class User < ApplicationRecord
   end
 
   def can_ship_by_votes?
-    ship_credits > 0 || votes_since_last_ship_count >= 20
+    ship_credits > 0 || votes_since_last_ship_count >= 20 || remaining_votes_to_ship == 0
   end
 
   # Avo backtraces
