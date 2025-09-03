@@ -89,9 +89,9 @@ export default class extends Controller {
       location.reload();
       return;
     } 
-    // if (this.scene == "vote") {
-    //   this.completeStep("vote");
-    // }
+    if (this.scene == "vote") {
+      this.completeStep("vote");
+    }
     console.log("Ending new tutorial:", this.scene);
     this.containerTarget.classList.remove("bg-fade-in");
     this.containerTarget.classList.add("bg-fade-out");

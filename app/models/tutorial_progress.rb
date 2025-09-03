@@ -126,11 +126,11 @@ class TutorialProgress < ApplicationRecord
       end
     end
 
-    if user&.votes&.any?
-      unless new_tutorial_step_completed?("vote")
-        complete_new_tutorial_step!("vote")
-      end
-    end
+    # if user&.votes&.any? || user&.fraud_reports&.any?
+    #   unless new_tutorial_step_completed?("vote")
+    #     complete_new_tutorial_step!("vote")
+    #   end
+    # end
   end
 
   private
