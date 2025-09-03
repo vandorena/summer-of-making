@@ -151,11 +151,13 @@ module Admin
         .map do |stat|
           name = stat.display_name
           email = stat.email
+          total_earned = stat.review_count.to_i * 0.5
           total_paid = stat.total_paid.to_f
+          total_owed = [total_earned - total_paid, 0].max
           pending_amount = stat.pending_amount.to_f
           review_count = stat.review_count.to_i
           shells_per_review = 0.5
-          [ name, email, total_paid, shells_per_review, pending_amount ]
+          [ name, email, total_owed, shells_per_review, pending_amount ]
         end
     end
 
