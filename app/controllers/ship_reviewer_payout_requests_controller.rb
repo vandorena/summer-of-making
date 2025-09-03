@@ -3,9 +3,9 @@ class ShipReviewerPayoutRequestsController < ApplicationController
 
   def create
     result = ShipReviewerPayoutService.request_payout(current_user)
-    
+
     if result[:success]
-      redirect_back(fallback_location: admin_ship_certifications_path, 
+      redirect_back(fallback_location: admin_ship_certifications_path,
                    notice: "Payout request submitted! Amount: #{result[:request].amount} shells for #{result[:request].decisions_count} decisions.")
     else
       redirect_back(fallback_location: admin_ship_certifications_path,

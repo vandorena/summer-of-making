@@ -28,14 +28,14 @@ class ShipReviewerPayoutService
     # Count decisions made by this reviewer since the payout system was implemented
     # Only count decisions made after today (when this feature went live)
     feature_launch_date = Date.current.beginning_of_day
-    
+
     total_decisions = ShipCertification
       .unscoped
       .joins(:project)
       .where(reviewer: reviewer)
       .where.not(judgement: :pending)
-      .where('ship_certifications.updated_at > ship_certifications.created_at')
-      .where('ship_certifications.updated_at >= ?', feature_launch_date)
+      .where("ship_certifications.updated_at > ship_certifications.created_at")
+      .where("ship_certifications.updated_at >= ?", feature_launch_date)
       .where(projects: { is_deleted: false })
       .count
 
