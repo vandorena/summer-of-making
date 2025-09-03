@@ -15,9 +15,9 @@
 #
 # Indexes
 #
-#  index_project_languages_on_last_synced_at  (last_synced_at)
-#  index_project_languages_on_project_id      (project_id)
-#  index_project_languages_on_status          (status)
+#  index_project_languages_on_last_synced_at     (last_synced_at)
+#  index_project_languages_on_project_id_unique  (project_id) UNIQUE
+#  index_project_languages_on_status             (status)
 #
 # Foreign Keys
 #
