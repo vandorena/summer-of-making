@@ -26,8 +26,8 @@ class ShipReviewerPayoutService
 
   def self.count_unpaid_decisions(reviewer)
     # Count decisions made by this reviewer since the payout system was implemented
-    # Only count decisions made after today (when this feature went live)
-    feature_launch_date = Date.current.beginning_of_day
+    # Only count decisions made after September 3, 2025 (when this feature went live)
+    feature_launch_date = Date.new(2025, 9, 3).beginning_of_day
 
     total_decisions = ShipCertification
       .unscoped

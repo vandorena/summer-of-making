@@ -27,18 +27,16 @@
 #
 one:
   reviewer: one
-  amount: 9.99
+  amount: 0.5
   status: 1
   requested_at: 2025-09-03 09:35:53
   approved_at: 2025-09-03 09:35:53
   approved_by: one
-  decisions_count: 1
+  decisions_count: 2
 
 two:
   reviewer: two
-  amount: 9.99
-  status: 1
-  requested_at: 2025-09-03 09:35:53
-  approved_at: 2025-09-03 09:35:53
-  approved_by: two
-  decisions_count: 1
+  amount: 1.0
+  status: 0
+  requested_at: 2025-09-03 10:00:00
+  decisions_count: 4
