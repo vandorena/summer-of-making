@@ -24,7 +24,7 @@ class SyncProjectLanguagesJob < ApplicationJob
 
   def process_projects_in_parallel(projects)
     Rails.logger.info "Starting #{projects.count} threads for parallel processing"
-    
+
     threads = projects.map do |project|
       Thread.new do
         sync_project_languages(project)
