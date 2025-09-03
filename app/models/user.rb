@@ -509,8 +509,8 @@ class User < ApplicationRecord
   end
 
   def remaining_votes_to_ship
+    return 0 if can_ship_by_votes?
     available = [ votes.active.count - (ship_events.count * 20), 0 ].max
-    return 0 if available >= 20
     [ 20 - available, 0 ].max
   end
 
