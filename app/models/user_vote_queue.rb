@@ -34,7 +34,7 @@ class UserVoteQueue < ApplicationRecord
   # do note that we trigger a refill job if we hit the refill threshold not when we have depelted the queue
   REFILL_THRESHOLD = 5
 
-  TUTORIAL_PAIR = [ 1, 2 ].freeze # Replace with actual ship event IDs
+  TUTORIAL_PAIR = [ 6310, 2984 ].freeze # Replace with actual ship event IDs
 
   scope :needs_refill, -> {
     where("jsonb_array_length(ship_event_pairs) - current_position <= ?", REFILL_THRESHOLD)
