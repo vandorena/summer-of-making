@@ -509,8 +509,12 @@ class User < ApplicationRecord
   end
 
   def remaining_votes_to_ship
-    return 0 if ship_credits > 0
-    [ 20 - votes_since_last_ship_count, 0 ].max
+    if ship_events.any?
+      return 0 if ship_credits > 0
+      [ 20 - votes_since_last_ship_count, 0 ].max
+    else
+      0
+    end
   end
 
   def release_escrowed_payouts_if_eligible!
