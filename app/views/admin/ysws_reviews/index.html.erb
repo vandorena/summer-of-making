@@ -20,16 +20,31 @@
     <p><strong>Total Eligible:</strong> <span class="pill pill-dark"><%= @total_all %></span></p>
   </div>
 </div>
-<div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
-  <%= link_to "Pending", admin_ysws_reviews_path(filter: "pending"),
-      class: "pill #{'pill-yellow' if @filter == 'pending'} #{'pill-gray' unless @filter == 'pending'}",
-      style: "text-decoration: none; padding: 0.5rem 1rem;" %>
-  <%= link_to "Reviewed", admin_ysws_reviews_path(filter: "reviewed"),
-      class: "pill #{'pill-green' if @filter == 'reviewed'} #{'pill-gray' unless @filter == 'reviewed'}",
-      style: "text-decoration: none; padding: 0.5rem 1rem;" %>
-  <%= link_to "All", admin_ysws_reviews_path(filter: "all"),
-      class: "pill #{'pill-dark' if @filter == 'all'} #{'pill-gray' unless @filter == 'all'}",
-      style: "text-decoration: none; padding: 0.5rem 1rem;" %>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+  <div style="display: flex; gap: 1rem;">
+    <%= link_to "Pending", admin_ysws_reviews_path(filter: "pending", sort_by: @sort_by),
+        class: "pill #{'pill-yellow' if @filter == 'pending'} #{'pill-gray' unless @filter == 'pending'}",
+        style: "text-decoration: none; padding: 0.5rem 1rem;" %>
+    <%= link_to "Reviewed", admin_ysws_reviews_path(filter: "reviewed", sort_by: @sort_by),
+        class: "pill #{'pill-green' if @filter == 'reviewed'} #{'pill-gray' unless @filter == 'reviewed'}",
+        style: "text-decoration: none; padding: 0.5rem 1rem;" %>
+    <%= link_to "All", admin_ysws_reviews_path(filter: "all", sort_by: @sort_by),
+        class: "pill #{'pill-dark' if @filter == 'all'} #{'pill-gray' unless @filter == 'all'}",
+        style: "text-decoration: none; padding: 0.5rem 1rem;" %>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 0.5rem;">
+    <label for="sort-dropdown" style="font-size: 0.9em; color: var(--color-text-muted);">Sort by:</label>
+    <select id="sort-dropdown"
+            onchange="window.location.href = '<%= admin_ysws_reviews_path(filter: @filter) %>' + '&sort_by=' + this.value"
+            style="padding: 0.25rem 0.5rem; border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-card); color: var(--color-text); font-size: 0.9em;">
+      <option value="elo_desc" <%= 'selected' if @sort_by == 'elo_desc' %>>ELO Score (High to Low)</option>
+      <option value="elo_asc" <%= 'selected' if @sort_by == 'elo_asc' %>>ELO Score (Low to High)</option>
+      <option value="created_desc" <%= 'selected' if @sort_by == 'created_desc' %>>Created Date (Newest First)</option>
+      <option value="created_asc" <%= 'selected' if @sort_by == 'created_asc' %>>Created Date (Oldest First)</option>
+      <option value="random" <%= 'selected' if @sort_by == 'random' %>>Random</option>
+    </select>
+  </div>
 </div>
 <div style="background: var(--color-card); border-radius: 8px; overflow: hidden;">
   <% if @projects.any? %>

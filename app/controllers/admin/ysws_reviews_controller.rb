@@ -2,6 +2,7 @@ module Admin
   class YswsReviewsController < ApplicationController
   def index
     @filter = params[:filter] || "pending"
+    @sort_by = params[:sort_by] || "random"
 
     base = Project.ysws_review_eligible
       .left_joins(:devlogs)
@@ -28,7 +29,21 @@ module Admin
       @projects = base.where.not(id: reviewed_project_ids)
     end
 
-    @projects = @projects.order(Arel.sql("elo_score DESC NULLS LAST")).order(created_at: :desc)
+    # Apply sorting
+    case @sort_by
+    when "random"
+      @projects = @projects.order(Arel.sql("RANDOM()"))
+    when "created_asc"
+      @projects = @projects.order(created_at: :asc)
+    when "created_desc"
+      @projects = @projects.order(created_at: :desc)
+    when "elo_asc"
+      @projects = @projects.order(Arel.sql("elo_score ASC NULLS LAST"))
+    when "elo_desc"
+      @projects = @projects.order(Arel.sql("elo_score DESC NULLS LAST"))
+    else
+      @projects = @projects.order(Arel.sql("elo_score DESC NULLS LAST")).order(created_at: :desc)
+    end
 
     # Eager load latest vote changes to avoid N+1
     project_ids = @projects.to_a.map(&:id)
