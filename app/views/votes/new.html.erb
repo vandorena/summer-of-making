@@ -96,9 +96,36 @@
       document.addEventListener('turbo:render', initializeVoteRejectedModal);
     </script>
   <% end %>
-  <% more_votes_required = current_user.remaining_votes_to_ship %>
-  <% if more_votes_required > 0 %>
-    <p class="text-center text-nice-blue text-lg mb-6">You need <%= pluralize(more_votes_required, "more vote") %> since your last ship to release your shells.</p>
+  <% progress = current_user.votes_since_last_ship_count %>
+  <% remaining = current_user.remaining_votes_to_ship %>
+  <% total = progress + remaining %>
+  <% percent = total.positive? ? ((progress.to_f / total) * 100).round : 0 %>
+  <% credits = current_user.ship_credits %>
+  <% if credits > 0 %>
+    <div class="bg-[#F6DBBA] rounded-2xl p-3 md:p-4 mb-6 text-center">
+      <% extra_rollover = [current_user.votes.active.count - 20 * (current_user.ship_events.count + 1), 0].max %>
+      <div class="flex items-center justify-center gap-2 mb-1">
+        <%= inline_svg "icons/ship.svg", class: "w-5 h-5 text-forest" %>
+        <p class="text-forest text-base md:text-lg font-medium">You're ready to ship!</p>
+      </div>
+      <p class="text-som-detail text-xs md:text-sm"><%= pluralize(extra_rollover, 'extra vote') %> will roll over to your next ship.</p>
+    </div>
+  <% elsif remaining > 0 %>
+    <div class=" bg-[#F6DBBA] rounded-2xl p-3 md:p-4 mb-6">
+      <div class="text-center mb-2">
+        <div class="flex items-center justify-center gap-2">
+          <%= inline_svg "icons/ship.svg", class: "w-5 h-5 text-forest" %>
+          <p class="text-som-dark text-base md:text-lg font-medium">You need <%= pluralize(remaining, "more vote") %> to ship</p>
+        </div>
+        <p class="text-som-detail text-xs md:text-sm mt-1">Each ship needs 20 votes; extra votes count toward your next ship.</p>
+      </div>
+      <div class="mx-auto max-w-md">
+        <div class="h-3 bg-white/60 rounded-full border border-[#E4DCC6] overflow-hidden">
+          <div class="h-full bg-forest transition-all duration-300" style="width: <%= percent %>%"></div>
+        </div>
+        <p class="mt-1 text-center text-som-detail text-xs md:text-sm"><%= progress %>/<%= total %> votes</p>
+      </div>
+    </div>
   <% end %>
 
   <% if @projects.size < 2 %>

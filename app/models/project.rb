@@ -345,7 +345,7 @@ class Project < ApplicationRecord
         message: "You must have at least one devlog #{ship_events.count > 0 ? "since the last ship" : ""}"
       },
       voting_quota: {
-        met: user.remaining_votes_to_ship == 0,
+        met: user.can_ship_by_votes?,
         message: "You must vote #{user.remaining_votes_to_ship} more times to ship."
       },
       repo_link: {

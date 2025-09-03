@@ -339,7 +339,6 @@ class User < ApplicationRecord
 
       url = "https://hackatime.hackclub.com/api/v1/users/#{slack_id}/stats?features=projects&start_date=#{start_date}&test_param=true"
       url += "&end_date=#{end_date}" if end_date.present?
-
       Faraday.get(url, nil, { "RACK_ATTACK_BYPASS" => ENV["HACKATIME_BYPASS_KEYS"] }.compact)
     end
   end
@@ -510,11 +509,8 @@ class User < ApplicationRecord
   end
 
   def remaining_votes_to_ship
-    if ship_events.any?
-      [ 20 - votes_since_last_ship_count, 0 ].max
-    else
-      0
-    end
+    return 0 if ship_credits > 0
+    [ 20 - votes_since_last_ship_count, 0 ].max
   end
 
   def release_escrowed_payouts_if_eligible!
@@ -523,6 +519,18 @@ class User < ApplicationRecord
 
     updated = payouts.where(escrowed: true).update_all(escrowed: false)
     updated > 0
+  end
+
+  # Roll Over Votes
+  def ship_credits
+    total_votes = votes.active.count
+    ships_made = ship_events.count
+    credits = (total_votes / 20) - ships_made
+    [ credits, 0 ].max
+  end
+
+  def can_ship_by_votes?
+    ship_credits > 0 || votes_since_last_ship_count >= 20
   end
 
   # Avo backtraces
