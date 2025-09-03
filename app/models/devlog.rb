@@ -9,6 +9,7 @@ require "cgi"
 #  id                              :bigint           not null, primary key
 #  attachment                      :string
 #  comments_count                  :integer          default(0), not null
+#  deleted_at                      :datetime
 #  duration_seconds                :integer          default(0), not null
 #  for_sinkening                   :boolean          default(FALSE), not null
 #  hackatime_projects_key_snapshot :jsonb            not null
@@ -26,6 +27,7 @@ require "cgi"
 #
 # Indexes
 #
+#  index_devlogs_on_deleted_at   (deleted_at)
 #  index_devlogs_on_project_id   (project_id)
 #  index_devlogs_on_user_id      (user_id)
 #  index_devlogs_on_views_count  (views_count)
@@ -45,6 +47,11 @@ class Devlog < ApplicationRecord
   has_one_attached :file
   has_one :ysws_review_approval, class_name: "YswsReview::DevlogApproval", dependent: :destroy
 
+  # even tho nora says to not use default_scope, imma use it here and create uh unexpected behavior!
+  default_scope { where(deleted_at: nil) }
+
+  scope :with_deleted, -> { unscope(where: :deleted_at) }
+
   validates :text, presence: true
   validate :file_must_be_attached, on: %i[ create ]
 
@@ -56,6 +63,7 @@ class Devlog < ApplicationRecord
   after_commit :notify_followers_and_stakers, on: :create
   after_commit :recalculate_devlogs_if_new_key_used, on: :create
   after_destroy_commit :recalculate_project_devlogs
+  after_update_commit :recalculate_project_devlogs, if: :saved_change_to_deleted_at?
 
   def formatted_text
     ApplicationController.helpers.markdown(text)
@@ -169,6 +177,35 @@ class Devlog < ApplicationRecord
       )
 
       false
+    end
+  end
+
+  # uh, dawg no deletion if covered by a ship
+
+  def covered_by_ship_event?
+    return false unless project
+
+    next_ship = project.ship_events.where("created_at > ?", created_at).order(:created_at).first
+    return false unless next_ship
+
+    prev_ship = project.ship_events.where("created_at < ?", next_ship.created_at).order(:created_at).last
+
+    if prev_ship
+      created_at > prev_ship.created_at && created_at < next_ship.created_at
+    else
+      created_at < next_ship.created_at
+    end
+  end
+
+  def soft_delete!
+    return if deleted_at.present?
+
+    transaction do
+      update!(deleted_at: Time.current)
+      if project_id
+        # keep counter cache in sync for soft-deleted devlogs
+        Project.with_deleted.where(id: project_id).update_all("devlogs_count = GREATEST(devlogs_count - 1, 0)")
+      end
     end
   end
 
