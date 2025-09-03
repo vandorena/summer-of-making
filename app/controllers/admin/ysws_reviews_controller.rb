@@ -8,8 +8,9 @@ module Admin
       .group("projects.id")
       .select("projects.*,
                COUNT(DISTINCT devlogs.id) as devlogs_count,
+               COALESCE(SUM(devlogs.duration_seconds), 0) as total_seconds_coded,
                (SELECT elo_after FROM vote_changes WHERE project_id = projects.id ORDER BY created_at DESC LIMIT 1) as elo_score")
-      .includes(:user, :devlogs, ship_certifications: :reviewer)
+      .includes(:user, :devlogs, :project_language, ship_certifications: :reviewer)
 
     case @filter
     when "pending"
@@ -101,6 +102,25 @@ module Admin
     redirect_to admin_ysws_reviews_path, notice: "Project review completed successfully"
   rescue ActiveRecord::RecordInvalid => e
     redirect_to admin_ysws_review_path(@project), alert: "Error saving review: #{e.message}"
+  end
+
+  def return_to_certifier
+    @project = Project.find(params[:id])
+    feedback_reasons = params[:feedback_reasons] || []
+
+    ship_certification = @project.latest_ship_certification
+    if ship_certification
+      ship_certification.update!(
+        ysws_feedback_reasons: feedback_reasons.to_json,
+        ysws_returned_by: current_user,
+        ysws_returned_at: Time.current,
+        judgement: :pending  # Reset to pending for re-review
+      )
+
+      redirect_to admin_ysws_reviews_path, notice: "Project returned to ship certifier with feedback"
+    else
+      redirect_to admin_ysws_reviews_path, alert: "No ship certification found for this project"
+    end
   end
   end
 end

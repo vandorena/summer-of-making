@@ -5,6 +5,7 @@
 # Table name: projects
 #
 #  id                     :bigint           not null, primary key
+#  ai_explanation         :string
 #  category               :string
 #  certification_type     :integer
 #  demo_link              :string
@@ -13,7 +14,7 @@
 #  hackatime_project_keys :string           default([]), is an Array
 #  is_deleted             :boolean          default(FALSE)
 #  is_shipped             :boolean          default(FALSE)
-#  is_sinkening_ship      :boolean          default(FALSE)
+#  is_sinkening_ship      :boolean
 #  rating                 :integer
 #  readme_link            :string
 #  repo_link              :string
@@ -79,6 +80,8 @@ class Project < ApplicationRecord
   has_many :won_votes, class_name: "Vote", foreign_key: "winning_project_id"
   has_many :vote_changes, dependent: :destroy
 
+  has_one :project_language, dependent: :destroy
+
   has_many :timer_sessions
 
   coordinate_min = 0
@@ -112,6 +115,24 @@ class Project < ApplicationRecord
 
   scope :pending_certification, -> {
     joins(:ship_certifications).where(ship_certifications: { judgement: "pending" })
+  }
+
+  # Projects that need GitHub language stats syncing
+  scope :needs_language_sync, -> {
+    where.not(repo_link: [ nil, "" ])
+      .left_joins(:project_language)
+      .where(
+        "project_languages.id IS NULL OR " \
+        "project_languages.status IN (?) OR " \
+        "(project_languages.status = ? AND project_languages.last_synced_at < ?)",
+        [ ProjectLanguage.statuses[:pending], ProjectLanguage.statuses[:failed] ],
+        ProjectLanguage.statuses[:synced],
+        1.day.ago
+      )
+      .order(
+        Arel.sql("CASE WHEN project_languages.id IS NULL THEN 0 ELSE 1 END"),
+        Arel.sql("project_languages.last_synced_at ASC NULLS FIRST")
+      )
   }
 
   # Projects eligible for YSWS review

@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_27_192404) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_03_002638) do
+
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -298,6 +299,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_27_192404) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "resolved", default: false, null: false
+    t.datetime "resolved_at"
+    t.bigint "resolved_by_id"
+    t.string "category"
+    t.string "resolved_outcome"
+    t.text "resolved_message"
+    t.index ["category"], name: "index_fraud_reports_on_category"
+    t.index ["resolved_by_id"], name: "index_fraud_reports_on_resolved_by_id"
     t.index ["user_id", "suspect_type", "suspect_id"], name: "index_fraud_reports_on_user_and_suspect", unique: true
     t.index ["user_id"], name: "index_fraud_reports_on_user_id"
   end
@@ -359,6 +367,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_27_192404) do
     t.index ["user_id"], name: "index_project_follows_on_user_id"
   end
 
+  create_table "project_languages", force: :cascade do |t|
+    t.bigint "project_id", null: false
+    t.json "language_stats", default: {}, null: false
+    t.integer "status", default: 0, null: false
+    t.text "error_message"
+    t.datetime "last_synced_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["last_synced_at"], name: "index_project_languages_on_last_synced_at"
+    t.index ["project_id"], name: "index_project_languages_on_project_id_unique", unique: true
+    t.index ["status"], name: "index_project_languages_on_status"
+  end
+
   create_table "projects", force: :cascade do |t|
     t.string "title"
     t.text "description"
@@ -382,6 +403,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_27_192404) do
     t.float "x"
     t.float "y"
     t.boolean "is_sinkening_ship"
+    t.string "ai_explanation"
     t.index ["is_shipped"], name: "index_projects_on_is_shipped"
     t.index ["user_id"], name: "index_projects_on_user_id"
     t.index ["views_count"], name: "index_projects_on_views_count"
@@ -419,9 +441,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_27_192404) do
     t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "ysws_feedback_reasons"
+    t.bigint "ysws_returned_by_id"
+    t.datetime "ysws_returned_at"
     t.index ["project_id", "judgement"], name: "index_ship_certifications_on_project_id_and_judgement"
     t.index ["project_id"], name: "index_ship_certifications_on_project_id"
     t.index ["reviewer_id"], name: "index_ship_certifications_on_reviewer_id"
+    t.index ["ysws_returned_by_id"], name: "index_ship_certifications_on_ysws_returned_by_id"
   end
 
   create_table "ship_event_feedbacks", force: :cascade do |t|
@@ -736,6 +762,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_27_192404) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.jsonb "soft_tutorial_steps", default: {}, null: false
+    t.jsonb "new_tutorial_progress", default: {}, null: false
     t.index ["user_id"], name: "index_tutorial_progresses_on_user_id"
   end
 
@@ -904,7 +931,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_27_192404) do
     t.bigint "project_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "reviewer_id"
+    t.bigint "reviewer_id", null: false
     t.index ["project_id"], name: "index_ysws_review_submissions_on_project_id", unique: true
     t.index ["reviewer_id"], name: "index_ysws_review_submissions_on_reviewer_id"
   end
@@ -916,17 +943,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_27_192404) do
   add_foreign_key "devlogs", "projects"
   add_foreign_key "devlogs", "users"
   add_foreign_key "fraud_reports", "users"
+  add_foreign_key "fraud_reports", "users", column: "resolved_by_id"
   add_foreign_key "hackatime_projects", "users"
   add_foreign_key "likes", "users"
   add_foreign_key "magic_links", "users"
   add_foreign_key "project_follows", "projects"
   add_foreign_key "project_follows", "users"
+  add_foreign_key "project_languages", "projects"
   add_foreign_key "projects", "users"
   add_foreign_key "readme_certifications", "projects"
   add_foreign_key "readme_certifications", "users", column: "reviewer_id"
   add_foreign_key "readme_checks", "projects"
   add_foreign_key "ship_certifications", "projects"
   add_foreign_key "ship_certifications", "users", column: "reviewer_id"
+  add_foreign_key "ship_certifications", "users", column: "ysws_returned_by_id"
   add_foreign_key "ship_event_feedbacks", "ship_events"
   add_foreign_key "ship_events", "projects"
   add_foreign_key "shipwright_advices", "projects"

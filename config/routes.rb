@@ -277,7 +277,7 @@ Rails.application.routes.draw do
         post :buy, to: "shop_orders#create", as: :checkout
       end
     end
-    resources :shop_orders, path: :orders, except: %i[edit update new]
+    resources :shop_orders, path: :orders, except: %i[new]
   end
 
   resources :users, only: [ :show ] do
@@ -306,6 +306,7 @@ Rails.application.routes.draw do
 
   post "tutorial/complete_step", to: "tutorial_progress#complete_step"
   post "tutorial/complete_soft_tutorial_step", to: "tutorial_progress#complete_soft_step", as: :complete_soft_tutorial_step
+  post "tutorial/complete_new_tutorial_step", to: "tutorial_progress#complete_new_step", as: :complete_new_tutorial_step
 
   get "/payouts", to: "payouts#index"
 
@@ -348,6 +349,7 @@ Rails.application.routes.draw do
   post "track_view", to: "view_tracking#create"
 
   get "/gork", to: "static_pages#gork"
+  get "/s", to: "static_pages#s", as: :stt
 
   namespace :admin, constraint: AdminConstraint do
     mount MissionControl::Jobs::Engine, at: "jobs"
@@ -379,7 +381,11 @@ Rails.application.routes.draw do
       end
     end
     resources :readme_certifications, only: [ :index, :edit, :update ]
-    resources :ysws_reviews, only: [ :index, :show, :update ]
+    resources :ysws_reviews, only: [ :index, :show, :update ] do
+      member do
+        patch :return_to_certifier
+      end
+    end
     resources :users, only: [ :index, :show ] do
       member do
         post :internal_notes
@@ -426,6 +432,7 @@ Rails.application.routes.draw do
       end
     end
     resources :shop_card_grants, only: [ :index, :show ]
+    resources :fulfillment_dashboard, only: [ :index ]
     resources :caches, path: "cache", only: [ :index ] do
       member do
         delete :zap

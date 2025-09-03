@@ -73,10 +73,9 @@
   </div>
 
   <div class="actions">
-    <%= f.submit "Update Ship Certification", class: 'abtn small' %>
+    <%= f.submit "Update Ship Certification", class: 'abtn small', id: 'submit-certification' %>
   </div>
 <% end %>
-
 <script>
 function updateJudgement(value) {
   const judgementField = document.getElementById('ship_certification_judgement');
