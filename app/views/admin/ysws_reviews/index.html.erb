@@ -36,7 +36,7 @@
   <div style="display: flex; align-items: center; gap: 0.5rem;">
     <label for="sort-dropdown" style="font-size: 0.9em; color: var(--color-text-muted);">Sort by:</label>
     <select id="sort-dropdown"
-            onchange="window.location.href = '<%= admin_ysws_reviews_path(filter: @filter) %>' + '&sort_by=' + this.value"
+            onchange="window.location.href = <%= admin_ysws_reviews_path(filter: @filter).to_json %> + '&sort_by=' + this.value"
             style="padding: 0.25rem 0.5rem; border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-card); color: var(--color-text); font-size: 0.9em;">
       <option value="elo_desc" <%= 'selected' if @sort_by == 'elo_desc' %>>ELO Score (High to Low)</option>
       <option value="elo_asc" <%= 'selected' if @sort_by == 'elo_asc' %>>ELO Score (Low to High)</option>
