@@ -41,7 +41,7 @@
                     style: "border: none; padding: 0.3rem 0.8rem; cursor: pointer;",
                     confirm: "Approve payout of #{request.amount} shells to #{request.reviewer.display_name || request.reviewer.email}?" %>
                 <%= button_to "Reject", reject_admin_ship_reviewer_payout_request_path(request),
-                    method: :patch, 
+                    method: :patch,
                     class: "pill pill-red",
                     style: "border: none; padding: 0.3rem 0.8rem; cursor: pointer;",
                     confirm: "Reject this payout request?" %>
