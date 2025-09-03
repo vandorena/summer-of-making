@@ -99,12 +99,15 @@
   <% end %>
   <% progress = current_user.votes_since_last_ship_count %>
   <% remaining = current_user.remaining_votes_to_ship %>
-  <% display_done = [ 20 - remaining, 0 ].max %>
+  <% total_active = Vote.active.where(user_id: current_user.id).count %>
+  <% ships = current_user.ship_events.count %>
+  <% available = [ [ progress, total_active - (ships * 20) ].max, 0 ].max %>
+  <% display_done = [ available, 20 ].min %>
   <% percent = ((display_done.to_f / 20) * 100).round %>
   <% credits = current_user.ship_credits %>
   <% if credits > 0 %>
     <div class="bg-[#F6DBBA] rounded-2xl p-3 md:p-4 mb-6 text-center">
-      <% extra_rollover = [current_user.votes.active.count - 20 * (current_user.ship_events.count + 1), 0].max %>
+      <% extra_rollover = [ available - 20, 0 ].max %>
       <div class="flex items-center justify-center gap-2 mb-1">
         <%= inline_svg "icons/ship.svg", class: "w-5 h-5 text-forest" %>
         <p class="text-forest text-base md:text-lg font-medium">You're ready to ship!</p>
