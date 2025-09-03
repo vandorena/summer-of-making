@@ -509,12 +509,9 @@ class User < ApplicationRecord
   end
 
   def remaining_votes_to_ship
-    if ship_events.any?
-      return 0 if ship_credits > 0
-      [ 20 - votes_since_last_ship_count, 0 ].max
-    else
-      0
-    end
+    return 0 if can_ship_by_votes?
+    available = [ votes.active.count - (ship_events.count * 20), 0 ].max
+    [ 20 - available, 0 ].max
   end
 
   def release_escrowed_payouts_if_eligible!
@@ -527,14 +524,13 @@ class User < ApplicationRecord
 
   # Roll Over Votes
   def ship_credits
-    total_votes = votes.active.count
-    ships_made = ship_events.count
-    credits = (total_votes / 20) - ships_made
-    [ credits, 0 ].max
+    available = [ votes.active.count - (ship_events.count * 20), 0 ].max
+    available / 20
   end
 
   def can_ship_by_votes?
-    ship_credits > 0 || votes_since_last_ship_count >= 20 || remaining_votes_to_ship == 0
+    return true if ship_events.count == 0
+    [ votes.active.count - (ship_events.count * 20), 0 ].max >= 20
   end
 
   # Avo backtraces

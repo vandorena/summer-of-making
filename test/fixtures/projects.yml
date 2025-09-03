@@ -5,7 +5,6 @@
 # Table name: projects
 #
 #  id                     :bigint           not null, primary key
-#  ai_explanation         :string
 #  category               :string
 #  certification_type     :integer
 #  demo_link              :string

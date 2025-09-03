@@ -1,6 +1,7 @@
 <% content_for :head do %>
   <%= preload_link_tag asset_path("allhailasc.mp3"), as: :audio %>
   <%= preload_link_tag asset_path("the_stash.mp3"), as: :audio %>
+  <%= preload_link_tag asset_path("compassloading.gif"), as: :image %>
 
   <% if @projects.present? && @ship_events.present? %>
     <% @projects.each_with_index do |project, index| %>
@@ -98,8 +99,8 @@
   <% end %>
   <% progress = current_user.votes_since_last_ship_count %>
   <% remaining = current_user.remaining_votes_to_ship %>
-  <% total = progress + remaining %>
-  <% percent = total.positive? ? ((progress.to_f / total) * 100).round : 0 %>
+  <% display_done = [ 20 - remaining, 0 ].max %>
+  <% percent = ((display_done.to_f / 20) * 100).round %>
   <% credits = current_user.ship_credits %>
   <% if credits > 0 %>
     <div class="bg-[#F6DBBA] rounded-2xl p-3 md:p-4 mb-6 text-center">
@@ -123,7 +124,7 @@
         <div class="h-3 bg-white/60 rounded-full border border-[#E4DCC6] overflow-hidden">
           <div class="h-full bg-forest transition-all duration-300" style="width: <%= percent %>%"></div>
         </div>
-        <p class="mt-1 text-center text-som-detail text-xs md:text-sm"><%= progress %>/<%= total %> votes</p>
+        <p class="mt-1 text-center text-som-detail text-xs md:text-sm"><%= display_done %>/20 votes</p>
       </div>
     </div>
   <% end %>
@@ -240,6 +241,31 @@
       </div>
     </div>
   <% end %>
+</div>
+
+<div id="vote-loading-overlay" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+  <div class="bg-[#F6DBBA] rounded-2xl px-8 py-5 flex flex-col items-center gap-3 shadow-lg">
+    <%= image_tag "compassloading.gif", alt: "Loading", class: "w-14 h-14 md:w-20 md:h-20 lg:w-28 lg:h-28 2xl:w-36 2xl:h-36" %>
+    <p class="text-som-dark text-sm lg:text-base 2xl:text-lg">Loading…</p>
+  </div>
+  <script>
+    (function() {
+      var overlay = document.getElementById('vote-loading-overlay');
+      if (!overlay) return;
+
+      function hideOverlay() {
+        if (!overlay) return;
+        overlay.classList.add('hidden');
+      }
+
+      window.addEventListener('load', hideOverlay);
+      document.addEventListener('turbo:render', hideOverlay);
+      document.addEventListener('turbo:load', hideOverlay);
+
+      // auto-hide after 45 in case smth is fucked up, lol
+      setTimeout(hideOverlay, 45000);
+    })();
+  </script>
 </div>
 
 <div id="journey-music" data-turbo-permanent data-controller="music" class="fixed -bottom-28 sm:-bottom-32 -right-12 max-sm:mb-[140px]">

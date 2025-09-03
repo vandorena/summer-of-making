@@ -18,7 +18,20 @@ module Admin
       @reported = merged.select { |_, c| c >= @threshold }
 
       project_ids = @reported.keys.compact
-      @projects = Project.where(id: project_ids).includes(:user, :ship_events)
+      @projects = Project.where(id: project_ids).includes(:user, ship_events: :payouts).to_a
+
+      @latest_ship_by_project = {}
+      @latest_ship_has_payout = {}
+      @projects.each do |project|
+        latest_ship = project.ship_events.max_by(&:created_at)
+        @latest_ship_by_project[project.id] = latest_ship
+        @latest_ship_has_payout[project.id] = latest_ship.present? && latest_ship.payouts.any?
+      end
+
+      # srt so projects with NO payout on latest ship appear first, then by report count desc
+      @projects.sort_by! do |project|
+        [ (@latest_ship_has_payout[project.id] ? 1 : 0), -(@reported[project.id] || 0) ]
+      end
 
       # get all reasons
       @project_reports = {}
@@ -42,12 +55,14 @@ module Admin
 
       # minimum payout only if no payout exists for latest ship
       ship = project.ship_events.order(:created_at).last
+      issued_min_payout = false
       if ship.present? && ship.payouts.none?
         hours = ship.hours_covered
         min_multiplier = 1.0
         amount = (min_multiplier * hours).ceil
         if amount > 0
           Payout.create!(amount: amount, payable: ship, user: project.user, reason: "Minimum payout (low-quality)", escrowed: false)
+          issued_min_payout = true
         end
       end
 
@@ -55,14 +70,12 @@ module Admin
       FraudReport.where(suspect_type: "ShipEvent").joins("JOIN ship_events ON ship_events.id = fraud_reports.suspect_id").where(ship_events: { project_id: project.id }, resolved: false).update_all(resolved: true, resolved_at: Time.current, resolved_by_id: current_user.id, resolved_outcome: "low_quality", resolved_message: reason)
 
       if project.user&.slack_id.present?
-        message = <<~EOT
-        Thanks for shipping! After review, this ship didn't meet our voting quality bar.
-
-        **Shipwright Feedback:** #{reason}
-
-        We issued a minimum payout if there wasn't already one. Keep building – you can ship again anytime.
-        EOT
-        SendSlackDmJob.perform_later(project.user.slack_id, message)
+        parts = []
+        parts << "Thanks for shipping! After review, this ship didn't meet our voting quality bar."
+        parts << "Shipwright Feedback: #{reason}"
+        parts << "We issued a minimum payout since there wasn't already one." if issued_min_payout
+        parts << "Keep building – you can ship again anytime."
+        SendSlackDmJob.perform_later(project.user.slack_id, parts.join("\n\n"))
       end
 
       redirect_to admin_low_quality_dashboard_index_path, notice: "Marked as low-quality and handled payouts/DMs."
