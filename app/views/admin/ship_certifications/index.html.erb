@@ -124,6 +124,32 @@
         <p>nuthing here!</p>
       <% end %>
     </div>
+    <button id="p" class="abtn small">payment stats?</button>
+    <div id="payments" style="display: none; margin-top: 1rem;">
+      <p style="margin-bottom: 0.5rem; font-size: 0.95em; color: var(--color-primary);">Payment Stats (Shells per Review)</p>
+      <% if @payment_stats.any? %>
+        <table style="width: 100%; font-size: 0.9rem;">
+          <thead>
+            <tr>
+              <th style="text-align: left;">Shipwright</th>
+              <th style="text-align: right;">Total Paid (Shells)</th>
+              <th style="text-align: right;">Shells per Review</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @payment_stats.each do |name, email, total_paid, shells_per_review| %>
+              <tr>
+                <td><%= name || email %></td>
+                <td style="text-align: right;"><%= total_paid %></td>
+                <td style="text-align: right;"><%= shells_per_review %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <p>nuthing here!</p>
+      <% end %>
+    </div>
     <script>
       document.addEventListener('DOMContentLoaded', function() {
         var a = document.getElementById('a');
@@ -142,6 +168,17 @@
           c.style.display = 'block';
           sd.style.display = 'none';
           d.style.display = 'none';
+        });
+        var p = document.getElementById('p');
+        var payments = document.getElementById('payments');
+        p.addEventListener('click', function() {
+          b.style.display = 'none';
+          c.style.display = 'none';
+          d.style.display = 'none';
+          a.style.display = 'none';
+          sd.style.display = 'none';
+          p.style.display = 'none';
+          payments.style.display = 'block';
         });
       });
     </script>
