@@ -46,6 +46,7 @@
             </p>
             <div style="display: flex; gap: 1rem; font-size: 0.9em;">
               <span><strong>ELO:</strong> <%= @latest_vote_changes[project.id]&.elo_after || "N/A" %></span>
+              <span><strong>Time Coded:</strong> <%= format_seconds(project.total_seconds_coded) %></span>
               <span><strong>Created:</strong> <%= project.created_at.strftime("%b %d, %Y") %></span>
             </div>
           </div>

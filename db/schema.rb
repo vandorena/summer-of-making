@@ -379,6 +379,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_012459) do
     t.index ["user_id"], name: "index_project_follows_on_user_id"
   end
 
+  create_table "project_languages", force: :cascade do |t|
+    t.bigint "project_id", null: false
+    t.json "language_stats", default: {}, null: false
+    t.integer "status", default: 0, null: false
+    t.text "error_message"
+    t.datetime "last_synced_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["last_synced_at"], name: "index_project_languages_on_last_synced_at"
+    t.index ["project_id"], name: "index_project_languages_on_project_id"
+    t.index ["status"], name: "index_project_languages_on_status"
+  end
+
   create_table "projects", force: :cascade do |t|
     t.string "title"
     t.text "description"
@@ -947,6 +960,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_012459) do
   add_foreign_key "magic_links", "users"
   add_foreign_key "project_follows", "projects"
   add_foreign_key "project_follows", "users"
+  add_foreign_key "project_languages", "projects"
   add_foreign_key "projects", "users"
   add_foreign_key "readme_certifications", "projects"
   add_foreign_key "readme_certifications", "users", column: "reviewer_id"
