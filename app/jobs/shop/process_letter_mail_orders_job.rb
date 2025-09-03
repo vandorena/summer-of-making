@@ -45,7 +45,7 @@ class Shop::ProcessLetterMailOrdersJob < ApplicationJob
             orders: orders.map do |order|
               {
                 id: order.id,
-                item_name: order.item.name,
+                item_name: order.shop_item.name,
                 quantity: order.quantity
               }
             end
