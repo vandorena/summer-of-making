@@ -79,6 +79,8 @@ class Project < ApplicationRecord
   has_many :won_votes, class_name: "Vote", foreign_key: "winning_project_id"
   has_many :vote_changes, dependent: :destroy
 
+  has_one :project_language, dependent: :destroy
+
   has_many :timer_sessions
 
   coordinate_min = 0
@@ -112,6 +114,20 @@ class Project < ApplicationRecord
 
   scope :pending_certification, -> {
     joins(:ship_certifications).where(ship_certifications: { judgement: "pending" })
+  }
+
+  # Projects that need GitHub language stats syncing
+  scope :needs_language_sync, -> {
+    where.not(repo_link: [ nil, "" ])
+      .left_joins(:project_language)
+      .where(
+        "project_languages.id IS NULL OR " \
+        "project_languages.status IN (?) OR " \
+        "(project_languages.status = ? AND project_languages.last_synced_at < ?)",
+        [ ProjectLanguage.statuses[:pending], ProjectLanguage.statuses[:failed] ],
+        ProjectLanguage.statuses[:synced],
+        1.day.ago
+      )
   }
 
   # Projects eligible for YSWS review
