@@ -105,7 +105,7 @@
   <% display_done = [ available, 20 ].min %>
   <% percent = ((display_done.to_f / 20) * 100).round %>
   <% credits = current_user.ship_credits %>
-  <% if credits > 0 %>
+  <% if remaining == 0 %>
     <div class="bg-[#F6DBBA] rounded-2xl p-3 md:p-4 mb-6 text-center">
       <% extra_rollover = [ available - 20, 0 ].max %>
       <div class="flex items-center justify-center gap-2 mb-1">
