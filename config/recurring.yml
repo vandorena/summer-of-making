@@ -117,3 +117,9 @@ production:
     schedule: every 12 minutes # 5 times per hour
     concurrency: 1
     description: "Batch guess project categorization using Mole service"
+
+  sync_project_languages:
+    class: SyncProjectLanguagesJob
+    schedule: every 5 minutes
+    concurrency: 1
+    description: "Sync GitHub language stats for projects under review"

@@ -10,7 +10,7 @@ module Admin
                COUNT(DISTINCT devlogs.id) as devlogs_count,
                COALESCE(SUM(devlogs.duration_seconds), 0) as total_seconds_coded,
                (SELECT elo_after FROM vote_changes WHERE project_id = projects.id ORDER BY created_at DESC LIMIT 1) as elo_score")
-      .includes(:user, :devlogs, ship_certifications: :reviewer)
+      .includes(:user, :devlogs, :project_language, ship_certifications: :reviewer)
 
     case @filter
     when "pending"
