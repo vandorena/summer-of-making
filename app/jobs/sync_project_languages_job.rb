@@ -5,47 +5,96 @@ class SyncProjectLanguagesJob < ApplicationJob
     Rails.logger.info "Starting ProjectLanguages sync job"
 
     # Find projects that need language syncing using the scope
-    projects_to_sync = Project.needs_language_sync.limit(10)
+    projects_to_sync = Project.needs_language_sync.limit(10).to_a
 
     Rails.logger.info "Found #{projects_to_sync.count} projects to sync"
 
-    projects_to_sync.find_each do |project|
-      sync_project_languages(project)
-    rescue StandardError => e
-      Rails.logger.error "Failed to sync languages for project #{project.id}: #{e.message}"
-    end
+    return if projects_to_sync.empty?
+
+    # Process all projects in parallel
+    sync_results = process_projects_in_parallel(projects_to_sync)
+
+    # Perform batch upsert
+    batch_upsert_project_languages(sync_results)
 
     Rails.logger.info "Completed ProjectLanguages sync job"
   end
 
   private
 
+  def process_projects_in_parallel(projects)
+    threads = projects.map do |project|
+      Thread.new do
+        sync_project_languages(project)
+      end
+    end
+
+    threads.map(&:value).compact
+  end
+
   def sync_project_languages(project)
-    return unless project.repo_link.present?
+    return nil unless project.repo_link.present?
 
     owner, repo = extract_github_info(project.repo_link)
-    return unless owner && repo
-
-    # Find or create ProjectLanguage record
-    project_language = ProjectLanguage.find_or_create_by(project: project) do |pl|
-      pl.status = :pending
-      pl.language_stats = {}
-    end
+    return nil unless owner && repo
 
     begin
       github_service = GithubProxyService.new
       language_stats = github_service.get_repository_languages(owner, repo)
 
-      project_language.mark_sync_success!(language_stats)
       Rails.logger.info "Successfully synced languages for project #{project.id}: #{language_stats.keys.join(', ')}"
+
+      {
+        project_id: project.id,
+        status: :synced,
+        language_stats: language_stats,
+        error_message: nil,
+        last_synced_at: Time.current
+      }
     rescue GithubProxyService::GithubProxyError => e
-      project_language.mark_sync_failed!(e.message)
       Rails.logger.warn "GitHub API error for project #{project.id}: #{e.message}"
+
+      {
+        project_id: project.id,
+        status: :failed,
+        language_stats: {},
+        error_message: e.message,
+        last_synced_at: Time.current
+      }
     rescue StandardError => e
-      project_language.mark_sync_failed!(e.message)
       Rails.logger.error "Unexpected error syncing project #{project.id}: #{e.message}"
-      raise e
+
+      {
+        project_id: project.id,
+        status: :failed,
+        language_stats: {},
+        error_message: e.message,
+        last_synced_at: Time.current
+      }
     end
+  end
+
+  def batch_upsert_project_languages(sync_results)
+    return if sync_results.empty?
+
+    upsert_data = sync_results.map do |result|
+      {
+        project_id: result[:project_id],
+        status: result[:status],
+        language_stats: result[:language_stats],
+        error_message: result[:error_message],
+        last_synced_at: result[:last_synced_at],
+        created_at: Time.current
+      }
+    end
+
+    ProjectLanguage.upsert_all(
+      upsert_data,
+      unique_by: :project_id,
+      update_only: [ :status, :error_message, :last_synced_at ]
+    )
+
+    Rails.logger.info "Batch upserted #{upsert_data.count} project language records"
   end
 
   def extract_github_info(repo_link)
