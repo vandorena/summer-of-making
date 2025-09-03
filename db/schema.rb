@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_03_002638) do
-
+ActiveRecord::Schema[8.0].define(version: 2025_09_03_133553) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -403,7 +402,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_03_002638) do
     t.float "x"
     t.float "y"
     t.boolean "is_sinkening_ship"
-    t.string "ai_explanation"
     t.index ["is_shipped"], name: "index_projects_on_is_shipped"
     t.index ["user_id"], name: "index_projects_on_user_id"
     t.index ["views_count"], name: "index_projects_on_views_count"
@@ -465,6 +463,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_03_002638) do
     t.boolean "for_sinkening", default: false, null: false
     t.boolean "excluded_from_pool", default: false, null: false
     t.index ["project_id"], name: "index_ship_events_on_project_id"
+  end
+
+  create_table "ship_reviewer_payout_requests", force: :cascade do |t|
+    t.bigint "reviewer_id", null: false
+    t.decimal "amount"
+    t.integer "status"
+    t.datetime "requested_at"
+    t.datetime "approved_at"
+    t.bigint "approved_by_id"
+    t.integer "decisions_count"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["approved_by_id"], name: "index_ship_reviewer_payout_requests_on_approved_by_id"
+    t.index ["reviewer_id"], name: "index_ship_reviewer_payout_requests_on_reviewer_id"
   end
 
   create_table "shipwright_advices", force: :cascade do |t|
@@ -931,7 +943,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_03_002638) do
     t.bigint "project_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "reviewer_id", null: false
+    t.bigint "reviewer_id"
     t.index ["project_id"], name: "index_ysws_review_submissions_on_project_id", unique: true
     t.index ["reviewer_id"], name: "index_ysws_review_submissions_on_reviewer_id"
   end
@@ -959,6 +971,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_03_002638) do
   add_foreign_key "ship_certifications", "users", column: "ysws_returned_by_id"
   add_foreign_key "ship_event_feedbacks", "ship_events"
   add_foreign_key "ship_events", "projects"
+  add_foreign_key "ship_reviewer_payout_requests", "users", column: "approved_by_id"
+  add_foreign_key "ship_reviewer_payout_requests", "users", column: "reviewer_id"
   add_foreign_key "shipwright_advices", "projects"
   add_foreign_key "shipwright_advices", "ship_certifications"
   add_foreign_key "shop_card_grants", "shop_items"
