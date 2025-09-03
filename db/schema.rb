@@ -10,8 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_02_000001) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_02_012459) do
+  create_schema "auth"
+  create_schema "extensions"
+  create_schema "graphql"
+  create_schema "graphql_public"
+  create_schema "pgbouncer"
+  create_schema "pgsodium"
+  create_schema "realtime"
+  create_schema "storage"
+  create_schema "vault"
+
   # These are extensions that must be enabled in order to support this database
+  enable_extension "extensions.pg_stat_statements"
+  enable_extension "extensions.pgcrypto"
+  enable_extension "extensions.uuid-ossp"
   enable_extension "pg_catalog.plpgsql"
 
   create_table "active_insights_jobs", force: :cascade do |t|
@@ -248,9 +261,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_000001) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "last_hackatime_time"
-    t.integer "seconds_coded"
     t.integer "likes_count", default: 0, null: false
     t.integer "comments_count", default: 0, null: false
+    t.integer "seconds_coded"
     t.datetime "hackatime_pulled_at"
     t.integer "views_count", default: 0, null: false
     t.integer "duration_seconds", default: 0, null: false
@@ -298,6 +311,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_000001) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "resolved", default: false, null: false
+    t.datetime "resolved_at"
+    t.bigint "resolved_by_id"
+    t.string "category"
+    t.string "resolved_outcome"
+    t.text "resolved_message"
+    t.index ["category"], name: "index_fraud_reports_on_category"
+    t.index ["resolved_by_id"], name: "index_fraud_reports_on_resolved_by_id"
     t.index ["user_id", "suspect_type", "suspect_id"], name: "index_fraud_reports_on_user_and_suspect", unique: true
     t.index ["user_id"], name: "index_fraud_reports_on_user_id"
   end
@@ -394,7 +414,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_000001) do
     t.integer "views_count", default: 0, null: false
     t.float "x"
     t.float "y"
-    t.boolean "is_sinkening_ship"
+    t.boolean "is_sinkening_ship", default: false
     t.index ["is_shipped"], name: "index_projects_on_is_shipped"
     t.index ["user_id"], name: "index_projects_on_user_id"
     t.index ["views_count"], name: "index_projects_on_views_count"
@@ -432,9 +452,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_000001) do
     t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "ysws_feedback_reasons"
+    t.bigint "ysws_returned_by_id"
+    t.datetime "ysws_returned_at"
     t.index ["project_id", "judgement"], name: "index_ship_certifications_on_project_id_and_judgement"
     t.index ["project_id"], name: "index_ship_certifications_on_project_id"
     t.index ["reviewer_id"], name: "index_ship_certifications_on_reviewer_id"
+    t.index ["ysws_returned_by_id"], name: "index_ship_certifications_on_ysws_returned_by_id"
   end
 
   create_table "ship_event_feedbacks", force: :cascade do |t|
@@ -556,7 +580,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_000001) do
   end
 
   create_table "sinkening_settings", force: :cascade do |t|
-    t.float "intensity"
+    t.float "intensity", default: 1.0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "slack_story_url"
@@ -749,6 +773,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_000001) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.jsonb "soft_tutorial_steps", default: {}, null: false
+    t.jsonb "new_tutorial_progress", default: {}, null: false
     t.index ["user_id"], name: "index_tutorial_progresses_on_user_id"
   end
 
@@ -902,10 +927,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_000001) do
 
   create_table "ysws_review_devlog_approvals", force: :cascade do |t|
     t.bigint "devlog_id", null: false
-    t.bigint "user_id", null: false, comment: "The reviewer who made this approval"
+    t.bigint "user_id", null: false
     t.boolean "approved", null: false
-    t.integer "approved_seconds", comment: "Seconds approved by reviewer (may differ from devlog.duration_seconds)"
-    t.text "notes", comment: "Internal notes from the reviewer"
+    t.integer "approved_seconds"
+    t.text "notes"
     t.datetime "reviewed_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -929,6 +954,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_000001) do
   add_foreign_key "devlogs", "projects"
   add_foreign_key "devlogs", "users"
   add_foreign_key "fraud_reports", "users"
+  add_foreign_key "fraud_reports", "users", column: "resolved_by_id"
   add_foreign_key "hackatime_projects", "users"
   add_foreign_key "likes", "users"
   add_foreign_key "magic_links", "users"
@@ -941,6 +967,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_000001) do
   add_foreign_key "readme_checks", "projects"
   add_foreign_key "ship_certifications", "projects"
   add_foreign_key "ship_certifications", "users", column: "reviewer_id"
+  add_foreign_key "ship_certifications", "users", column: "ysws_returned_by_id"
   add_foreign_key "ship_event_feedbacks", "ship_events"
   add_foreign_key "ship_events", "projects"
   add_foreign_key "shipwright_advices", "projects"

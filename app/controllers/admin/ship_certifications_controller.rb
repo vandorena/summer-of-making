@@ -32,6 +32,8 @@ module Admin
         @ship_certifications = base.approved
       when "rejected"
         @ship_certifications = base.rejected
+      when "returned"
+        @ship_certifications = base.where.not(ysws_returned_at: nil)
       when "pending"
         @ship_certifications = base.pending
       when "all"
@@ -71,6 +73,7 @@ module Admin
       @total_approved = base.approved.count
       @total_rejected = base.rejected.count
       @total_pending = base.pending.count
+      @total_returned = base.where.not(ysws_returned_at: nil).count
       @avg_turnaround = calc_avg_turnaround
 
       category_base = ShipCertification.joins(:project).where(projects: { is_deleted: false })
@@ -131,6 +134,10 @@ module Admin
         .where("ship_certifications.created_at >= ?", 24.hours.ago)
         .joins(:project).where(projects: { is_deleted: false })
         .count
+
+      # Load ysws_returned_by users for the filtered certifications to avoid N+1 queries
+      returned_by_ids = @ship_certifications.map(&:ysws_returned_by_id).compact.uniq
+      @returned_by_users = User.where(id: returned_by_ids).index_by(&:id) if returned_by_ids.any?
     end
 
     def edit
@@ -140,6 +147,16 @@ module Admin
 
     def update
       @ship_certification = ShipCertification.find(params[:id])
+
+      # Validate form requirements
+      validation_errors = validate_certification_requirements
+
+      if validation_errors.any?
+        @ship_certification.errors.add(:base, "Please complete all requirements:")
+        validation_errors.each { |error| @ship_certification.errors.add(:base, "• #{error}") }
+        render :edit, status: :unprocessable_entity
+        return
+      end
 
       if @ship_certification.update(ship_certification_params)
         # Create improvement suggestion if provided
@@ -183,15 +200,49 @@ module Admin
 
     private
 
+    def validate_certification_requirements
+      errors = []
+
+      # Check if all required checkboxes are checked
+      unless params[:checked_demo] == "1" || params[:checked_demo] == "on"
+        errors << 'Check "I looked at the demo"'
+      end
+
+      unless params[:checked_repo] == "1" || params[:checked_repo] == "on"
+        errors << 'Check "I looked at the repo"'
+      end
+
+      unless params[:checked_description] == "1" || params[:checked_description] == "on"
+        errors << 'Check "I looked at the description"'
+      end
+
+      # Check if status is not pending
+      if params[:ship_certification][:judgement] == "pending"
+        errors << 'Change status from "pending" to approved or rejected'
+      end
+
+      # Check if proof video is uploaded (either new upload or existing)
+      has_new_video = params[:ship_certification][:proof_video].present?
+      has_existing_video = @ship_certification.proof_video.attached?
+
+      unless has_new_video || has_existing_video
+        errors << "Upload a proof video"
+      end
+
+      errors
+    end
+
     def calc_avg_turnaround
-      pc = ShipCertification
-        .where.not(judgement: :pending)
-        .where("ship_certifications.updated_at > ship_certifications.created_at")
+      pending_certs = ShipCertification
+        .where(judgement: :pending)
+        .joins(:project)
+        .where(projects: { is_deleted: false })
 
-      return nil if pc.empty?
+      return nil if pending_certs.empty?
 
-      total_time = pc.sum { |cert| cert.updated_at - cert.created_at }
-      avg_sec = total_time / pc.count
+      current_time = Time.current
+      total_time = pending_certs.sum { |cert| current_time - cert.created_at }
+      avg_sec = total_time / pending_certs.count
 
       {
         s: avg_sec,
