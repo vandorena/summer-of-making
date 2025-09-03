@@ -1,10 +1,8 @@
 <body class="adash" style="background: var(--color-background); color: var(--color-text); min-height: 100vh; padding: 2rem;">
-
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
   <h1>Ship Reviewer Payout Requests</h1>
   <%= link_to "← Back to Ship Certifications", admin_ship_certifications_path, class: "pill pill-gray", style: "text-decoration: none; padding: 0.5rem 1rem;" %>
 </div>
-
 <% if @pending_requests.any? %>
   <div style="background: var(--color-card); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
     <h2 style="color: #FFB347;">Pending Requests</h2>
@@ -58,7 +56,6 @@
     <p style="color: var(--color-text-muted);">All caught up! No payout requests awaiting approval.</p>
   </div>
 <% end %>
-
 <div style="background: var(--color-card); padding: 1.5rem; border-radius: 8px;">
   <h2>Recent Requests</h2>
   <% if @recent_requests.any? %>
