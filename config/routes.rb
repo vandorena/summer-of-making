@@ -309,7 +309,7 @@ Rails.application.routes.draw do
   post "tutorial/complete_new_tutorial_step", to: "tutorial_progress#complete_new_step", as: :complete_new_tutorial_step
 
   get "/payouts", to: "payouts#index"
-  resources :ship_reviewer_payout_requests, only: [:create, :index]
+  resources :ship_reviewer_payout_requests, only: [ :create, :index ]
 
   # API routes
   namespace :api do

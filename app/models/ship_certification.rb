@@ -103,5 +103,4 @@ class ShipCertification < ApplicationRecord
     # Schedule notification with 5-minute delay to prevent misclick notifications
     ShipCertificationJudgmentNotificationJob.set(wait: 5.minutes).perform_later(id, old_judgment, new_judgment)
   end
-
 end
