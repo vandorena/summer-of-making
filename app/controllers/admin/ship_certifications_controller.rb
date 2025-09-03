@@ -154,7 +154,7 @@ module Admin
           total_paid = stat.total_paid.to_f
           pending_amount = stat.pending_amount.to_f
           review_count = stat.review_count.to_i
-          shells_per_review = review_count > 0 ? (total_paid / review_count).round(2) : 0.0
+          shells_per_review = 0.5
           [ name, email, total_paid, shells_per_review, pending_amount ]
         end
     end
