@@ -23,20 +23,47 @@ class SyncProjectLanguagesJob < ApplicationJob
   private
 
   def process_projects_in_parallel(projects)
+    Rails.logger.info "Starting #{projects.count} threads for parallel processing"
+
     threads = projects.map do |project|
       Thread.new do
         sync_project_languages(project)
+      rescue StandardError => e
+        Rails.logger.error "Thread failed for project #{project.id}: #{e.message}"
+        Rails.logger.error e.backtrace.join("\n")
+        nil
       end
     end
 
+    Rails.logger.info "All threads created, waiting for completion..."
     threads.map(&:value).compact
   end
 
   def sync_project_languages(project)
-    return nil unless project.repo_link.present?
+    unless project.repo_link.present?
+      Rails.logger.warn "Project #{project.id} has no repo_link, skipping"
+      return {
+        project_id: project.id,
+        status: :failed,
+        language_stats: {},
+        error_message: "No repository link provided",
+        last_synced_at: Time.current
+      }
+    end
 
     owner, repo = extract_github_info(project.repo_link)
-    return nil unless owner && repo
+    unless owner && repo
+      Rails.logger.warn "Project #{project.id} has invalid repo format: #{project.repo_link}"
+      return {
+        project_id: project.id,
+        status: :failed,
+        language_stats: {},
+        error_message: "Invalid GitHub repository URL format: #{project.repo_link}",
+        last_synced_at: Time.current
+      }
+    end
+
+    Rails.logger.info "Making request for project #{project.id}: #{owner}/#{repo}"
 
     begin
       github_service = GithubProxyService.new
