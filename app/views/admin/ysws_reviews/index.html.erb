@@ -68,7 +68,7 @@
               <div style="margin-top: 0.5rem; font-size: 0.85em;">
                 <strong>Languages:</strong>
                 <% project.project_language.language_percentages.sort_by { |lang, pct| -pct }.first(3).each_with_index do |(language, percentage), index| %>
-                  <span class="pill pill-gray" style="font-size: 0.7em; margin-left: 0.25rem;">
+                  <span class="pill <%= "#{language.gsub(/[^A-Za-z0-9]/, '-')}-bg" %>" style="font-size: 0.7em; margin-left: 0.25rem; color: white; text-shadow: 1px 1px 1px rgba(0,0,0,0.5);">
                     <%= language %> (<%= percentage %>%)
                   </span>
                 <% end %>
