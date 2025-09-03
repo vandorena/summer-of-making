@@ -129,6 +129,10 @@ class Project < ApplicationRecord
         ProjectLanguage.statuses[:synced],
         1.day.ago
       )
+      .order(
+        Arel.sql("CASE WHEN project_languages.id IS NULL THEN 0 ELSE 1 END"),
+        Arel.sql("project_languages.last_synced_at ASC NULLS FIRST")
+      )
   }
 
   # Projects eligible for YSWS review
