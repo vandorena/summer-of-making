@@ -21,6 +21,10 @@
   <div style="display: flex; gap: 1rem;">
     <%= link_to "View Logs", logs_admin_ship_certifications_path, class: "pill pill-gray", style: "text-decoration: none; padding: 0.5rem 1rem;" %>
     <%= link_to "Low Quality Dashboard", admin_low_quality_dashboard_index_path, class: "pill pill-gray", style: "text-decoration: none; padding: 0.5rem 1rem;" %>
+    <%= link_to "Payout Requests", admin_ship_reviewer_payout_requests_path, class: "pill pill-blue", style: "text-decoration: none; padding: 0.5rem 1rem;" %>
+    <% if current_user&.admin_or_ship_certifier? && ShipReviewerPayoutService.can_request_payout?(current_user) %>
+      <%= button_to "Request Payout", ship_reviewer_payout_requests_path, method: :post, class: "pill pill-green", style: "border: none; text-decoration: none; padding: 0.5rem 1rem; cursor: pointer;" %>
+    <% end %>
   </div>
 </div>
 
@@ -134,14 +138,30 @@
               <th style="text-align: left;">Shipwright</th>
               <th style="text-align: right;">Total Paid (Shells)</th>
               <th style="text-align: right;">Shells per Review</th>
+              <th style="text-align: center;">Actions</th>
             </tr>
           </thead>
           <tbody>
-            <% @payment_stats.each do |name, email, total_paid, shells_per_review| %>
+            <% @payment_stats.each do |name, email, total_paid, shells_per_review, pending_amount| %>
+              <% reviewer = User.find_by(display_name: name) || User.find_by(email: email) %>
               <tr>
-                <td><%= name || email %></td>
+                <td>
+                  <%= name || email %>
+                  <% if pending_amount > 0 %>
+                    <br><small style="color: #FFB347;">+<%= pending_amount %> pending</small>
+                  <% end %>
+                </td>
                 <td style="text-align: right;"><%= total_paid %></td>
                 <td style="text-align: right;"><%= shells_per_review %></td>
+                <td style="text-align: center;">
+                  <% if reviewer == current_user && ShipReviewerPayoutService.can_request_payout?(current_user) %>
+                    <%= button_to "Request Payout", ship_reviewer_payout_requests_path, method: :post, class: "pill pill-green", style: "border: none; padding: 0.3rem 0.6rem; cursor: pointer; font-size: 0.8rem;" %>
+                  <% elsif reviewer == current_user %>
+                    <small style="color: var(--color-text-muted);">Not eligible</small>
+                  <% else %>
+                    <span style="color: var(--color-text-muted);">-</span>
+                  <% end %>
+                </td>
               </tr>
             <% end %>
           </tbody>

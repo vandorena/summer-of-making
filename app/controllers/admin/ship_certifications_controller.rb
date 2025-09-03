@@ -138,6 +138,25 @@ module Admin
       # Load ysws_returned_by users for the filtered certifications to avoid N+1 queries
       returned_by_ids = @ship_certifications.map(&:ysws_returned_by_id).compact.uniq
       @returned_by_users = User.where(id: returned_by_ids).index_by(&:id) if returned_by_ids.any?
+
+      # Calculate payment stats for reviewers including pending requests
+      @payment_stats = User.joins("INNER JOIN ship_certifications ON users.id = ship_certifications.reviewer_id")
+        .joins("LEFT JOIN payouts ON users.id = payouts.user_id AND payouts.reason LIKE 'Ship certification review payment:%'")
+        .joins("LEFT JOIN ship_reviewer_payout_requests ON users.id = ship_reviewer_payout_requests.reviewer_id")
+        .where.not(ship_certifications: { reviewer_id: nil })
+        .group("users.id", "users.display_name", "users.email")
+        .select("users.display_name", "users.email", "COUNT(DISTINCT ship_certifications.id) as review_count", "COALESCE(SUM(payouts.amount), 0) as total_paid", "COALESCE(SUM(CASE WHEN ship_reviewer_payout_requests.status = 0 THEN ship_reviewer_payout_requests.amount ELSE 0 END), 0) as pending_amount")
+        .order("total_paid DESC")
+        .limit(20)
+        .map do |stat|
+          name = stat.display_name
+          email = stat.email
+          total_paid = stat.total_paid.to_f
+          pending_amount = stat.pending_amount.to_f
+          review_count = stat.review_count.to_i
+          shells_per_review = review_count > 0 ? (total_paid / review_count).round(2) : 0.0
+          [name, email, total_paid, shells_per_review, pending_amount]
+        end
     end
 
     def edit
