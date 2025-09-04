@@ -106,7 +106,6 @@ module Admin
       # Determine approval status from checkboxes
       is_approved = approval_params[:approved] == "1"
       is_rejected = approval_params[:rejected] == "1"
-      
       # If both are checked or neither is checked, use approved (default behavior)
       final_approved = is_approved || !is_rejected
 
