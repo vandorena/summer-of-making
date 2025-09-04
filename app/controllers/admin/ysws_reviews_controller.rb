@@ -96,9 +96,16 @@ module Admin
       approval = devlog.ysws_review_approval ||
                 devlog.build_ysws_review_approval(user: current_user)
 
+      # Convert minutes to seconds for storage
+      approved_seconds = if approval_params[:approved_minutes].present?
+        approval_params[:approved_minutes].to_i * 60
+      else
+        approval_params[:approved_seconds].to_i
+      end
+
       approval.assign_attributes(
         approved: approval_params[:approved] == "1",
-        approved_seconds: approval_params[:approved_seconds].to_i,
+        approved_seconds: approved_seconds,
         notes: approval_params[:notes],
         reviewed_at: Time.current
       )
