@@ -613,7 +613,7 @@ class User < ApplicationRecord
 
     # rapid identify theft
     if Rails.env.development? && ENV["BYPASS_IDV"] == "true"
-      notify_xyz_on_verified
+      notify_xyz_on_verified unless ysws_verified?
       update(ysws_verified: true) unless ysws_verified?
       return :verified
     end
@@ -627,7 +627,7 @@ class User < ApplicationRecord
       :needs_resubmission
     when "verified"
       if idv_data[:ysws_eligible]
-        notify_xyz_on_verified
+        notify_xyz_on_verified unless ysws_verified?
         update(ysws_verified: true) unless ysws_verified?
         :verified
       else
