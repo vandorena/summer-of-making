@@ -30,7 +30,11 @@
             <td>
               <div style="display: flex; align-items: center; gap: 12px;">
                 <div style="width: 48px; height: 48px; overflow: hidden; border-radius: 0;">
-                  <%= image_tag project.banner, style: "width: 100%; height: 100%; object-fit: cover;" %>
+                  <% if project.banner.attached? %>
+                    <%= image_tag project.banner, style: "width: 100%; height: 100%; object-fit: cover;" %>
+                  <% else %>
+                    <div style="width: 100%; height: 100%; background: rgba(228, 220, 198, 0.15); display: flex; align-items: center; justify-content: center; color: #E4DCC6; font-size: 10px; text-transform: uppercase;">No image</div>
+                  <% end %>
                 </div>
                 <div>
                   <div style="font-weight: 600; color: #ffffff;">

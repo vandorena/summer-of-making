@@ -510,7 +510,7 @@ class User < ApplicationRecord
 
   def remaining_votes_to_ship
     return 0 if can_ship_by_votes?
-    available = [ votes.active.count - (ship_events.count * 20), 0 ].max
+    available = [ [ votes_since_last_ship_count, votes.active.count - (ship_events.count * 20) ].max, 0 ].max
     [ 20 - available, 0 ].max
   end
 
@@ -524,13 +524,14 @@ class User < ApplicationRecord
 
   # Roll Over Votes
   def ship_credits
-    available = [ votes.active.count - (ship_events.count * 20), 0 ].max
-    available / 20
+    t = (votes.active.count / 20)
+    credits = t - ship_events.count
+    [ credits, 0 ].max
   end
 
   def can_ship_by_votes?
     return true if ship_events.count == 0
-    [ votes.active.count - (ship_events.count * 20), 0 ].max >= 20
+    ship_credits > 0 || votes_since_last_ship_count >= 20
   end
 
   # Avo backtraces
@@ -612,7 +613,7 @@ class User < ApplicationRecord
 
     # rapid identify theft
     if Rails.env.development? && ENV["BYPASS_IDV"] == "true"
-      notify_xyz_on_verified
+      notify_xyz_on_verified unless ysws_verified?
       update(ysws_verified: true) unless ysws_verified?
       return :verified
     end
@@ -626,7 +627,7 @@ class User < ApplicationRecord
       :needs_resubmission
     when "verified"
       if idv_data[:ysws_eligible]
-        notify_xyz_on_verified
+        notify_xyz_on_verified unless ysws_verified?
         update(ysws_verified: true) unless ysws_verified?
         :verified
       else

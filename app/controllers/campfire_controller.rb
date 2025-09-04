@@ -110,7 +110,7 @@ class CampfireController < ApplicationController
       current_user.tutorial_progress.complete_step!("hackatime_connected")
     end
 
-    if current_user.identity_vault_id.present? && current_user.verification_status != :ineligible && !current_user.tutorial_progress.step_completed?("identity_verified")
+    if current_user.identity_vault_id.present? && current_verification_status != :ineligible && !current_user.tutorial_progress.step_completed?("identity_verified")
       current_user.tutorial_progress.complete_step!("identity_verified")
     end
 

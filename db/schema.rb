@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_03_133553) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_03_171043) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -257,6 +257,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_03_133553) do
     t.jsonb "hackatime_projects_key_snapshot", default: [], null: false
     t.boolean "is_neighborhood_migrated", default: false, null: false
     t.boolean "for_sinkening", default: false, null: false
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_devlogs_on_deleted_at"
     t.index ["project_id"], name: "index_devlogs_on_project_id"
     t.index ["user_id"], name: "index_devlogs_on_user_id"
     t.index ["views_count"], name: "index_devlogs_on_views_count"
