@@ -194,7 +194,6 @@
               <div style="margin-bottom: 1rem;">
                 <%= form.label "devlog_approvals_#{devlog.id}_approved_seconds", "Approved Seconds:",
                     style: "display: block; margin-bottom: 0.5rem; font-weight: bold;" %>
-                
                 <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem;">
                   <%= form.number_field "devlog_approvals[#{devlog.id}][approved_seconds]",
                       value: devlog.ysws_review_approval&.approved_seconds || devlog.duration_seconds || 0,
@@ -204,13 +203,13 @@
 
                 <div style="display: flex; gap: 0.25rem; flex-wrap: wrap; margin-bottom: 0.5rem;">
                   <button type="button" class="pill pill-orange" style="font-size: 0.7em; padding: 0.25rem 0.5rem; cursor: pointer; border: none;"
-                          onclick="adjustTime(<%= devlog.id %>, 'half')">50%</button>
+                          onclick="adjustTime(<%= devlog.id.to_json %>, 'half')">50%</button>
                   <button type="button" class="pill pill-orange" style="font-size: 0.7em; padding: 0.25rem 0.5rem; cursor: pointer; border: none;"
-                          onclick="adjustTime(<%= devlog.id %>, 'quarter')">25%</button>
+                          onclick="adjustTime(<%= devlog.id.to_json %>, 'quarter')">25%</button>
                   <button type="button" class="pill pill-red" style="font-size: 0.7em; padding: 0.25rem 0.5rem; cursor: pointer; border: none;"
-                          onclick="adjustTime(<%= devlog.id %>, 'minus30')">-30min</button>
+                          onclick="adjustTime(<%= devlog.id.to_json %>, 'minus30')">-30min</button>
                   <button type="button" class="pill pill-red" style="font-size: 0.7em; padding: 0.25rem 0.5rem; cursor: pointer; border: none;"
-                          onclick="adjustTime(<%= devlog.id %>, 'minus1hr')">-1hr</button>
+                          onclick="adjustTime(<%= devlog.id.to_json %>, 'minus1hr')">-1hr</button>
                 </div>
               </div>
 
