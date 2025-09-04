@@ -70,19 +70,19 @@ module Admin
     @grouped_devlogs = {}
 
     @ship_events.each do |ship_event|
-      @grouped_devlogs[ship_event] = ship_event.devlogs_since_last.includes(:ysws_review_approval).order(:created_at)
+      @grouped_devlogs[ship_event] = ship_event.devlogs_since_last.includes(:ysws_review_approval, :file_attachment).order(:created_at)
     end
 
     # Handle devlogs after the last ship event (if any)
     if @ship_events.any?
       last_ship_date = @ship_events.last.created_at
-      devlogs_after_last_ship = @project.devlogs.where("created_at > ?", last_ship_date).includes(:ysws_review_approval).order(:created_at)
+      devlogs_after_last_ship = @project.devlogs.where("created_at > ?", last_ship_date).includes(:ysws_review_approval, :file_attachment).order(:created_at)
       if devlogs_after_last_ship.any?
         @grouped_devlogs[nil] = devlogs_after_last_ship
       end
     else
       # No ship events, show all devlogs
-      @grouped_devlogs[nil] = @project.devlogs.includes(:ysws_review_approval).order(:created_at)
+      @grouped_devlogs[nil] = @project.devlogs.includes(:ysws_review_approval, :file_attachment).order(:created_at)
     end
   end
 
