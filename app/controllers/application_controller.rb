@@ -34,7 +34,17 @@ class ApplicationController < ActionController::Base
   end
 
   def current_verification_status
-    @current_verification_status ||= current_user&.verification_status
+    return @current_verification_status if defined?(@current_verification_status)
+
+    # cache the verif status for n seconds
+    if current_user
+      cache_key = "current_verification_status/#{current_user.id}"
+      @current_verification_status = Rails.cache.fetch(cache_key, expires_in: 60.seconds) do
+        current_user.verification_status
+      end
+    else
+      @current_verification_status = nil
+    end
   end
 
   def user_signed_in?
