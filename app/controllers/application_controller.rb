@@ -94,7 +94,7 @@ class ApplicationController < ActionController::Base
       current_user.refresh_hackatime_data_now
     end
   end
-  
+
   def track_page_view
     ahoy.track "$view", {
       controller: params[:controller],
