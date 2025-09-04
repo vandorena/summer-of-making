@@ -101,9 +101,13 @@ module Admin
       end
       @no_type_count = no_type_base.where(projects: { certification_type: [ nil ] }).count
 
+      # Calculate this week's Sunday in EST
+      est_zone = ActiveSupport::TimeZone.new("America/New_York")
+      current_est = Time.current.in_time_zone(est_zone)
+      week_start = current_est.beginning_of_week(:sunday)
       @leaderboard_week = User.joins("INNER JOIN ship_certifications ON users.id = ship_certifications.reviewer_id")
         .where.not(ship_certifications: { reviewer_id: nil })
-        .where("ship_certifications.updated_at >= ?", 7.days.ago)
+        .where("ship_certifications.updated_at >= ?", week_start)
         .group("users.id", "users.display_name", "users.email")
         .order("COUNT(ship_certifications.id) DESC")
         .limit(20)
@@ -139,6 +143,13 @@ module Admin
       returned_by_ids = @ship_certifications.map(&:ysws_returned_by_id).compact.uniq
       @returned_by_users = User.where(id: returned_by_ids).index_by(&:id) if returned_by_ids.any?
 
+      # Get weekly leaderboard positions for tiered payment rates
+      weekly_positions = {}
+      @leaderboard_week.each_with_index do |(name, email, count), index|
+        user_key = name || email
+        weekly_positions[user_key] = index + 1
+      end
+
       # Calculate payment stats for reviewers including pending requests
       @payment_stats = User.joins("INNER JOIN ship_certifications ON users.id = ship_certifications.reviewer_id")
         .joins("LEFT JOIN payouts ON users.id = payouts.user_id AND payouts.reason LIKE 'Ship certification review payment:%'")
@@ -151,11 +162,26 @@ module Admin
         .map do |stat|
           name = stat.display_name
           email = stat.email
+          user_key = name || email
+
+          # Determine payment rate based on weekly leaderboard position
+          position = weekly_positions[user_key]
+          shells_per_review = case position
+          when 1..3
+            1.5  # 1st to 3rd place
+          when 4..7
+            1.0  # 4th to 7th place
+          else
+            0.75 # 8th place onward
+          end
+
+          total_earned = stat.review_count.to_i * shells_per_review
           total_paid = stat.total_paid.to_f
+          total_owed = [ total_earned - total_paid, 0 ].max
           pending_amount = stat.pending_amount.to_f
           review_count = stat.review_count.to_i
-          shells_per_review = review_count > 0 ? (total_paid / review_count).round(2) : 0.0
-          [ name, email, total_paid, shells_per_review, pending_amount ]
+
+          [ name, email, total_owed, shells_per_review, pending_amount ]
         end
     end
 
