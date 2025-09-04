@@ -203,14 +203,14 @@
                 <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Status:</label>
                 <div style="display: flex; gap: 1rem; align-items: center;">
                   <label style="display: flex; align-items: center; cursor: pointer;">
-                    <%= form.check_box "devlog_approvals[#{devlog.id}][approved]", 
-                        { checked: devlog.ysws_review_approval&.approved?, 
+                    <%= form.check_box "devlog_approvals[#{devlog.id}][approved]",
+                        { checked: devlog.ysws_review_approval&.approved?,
                           style: "margin-right: 0.5rem;" },
                         "1", "0" %>
                     Approve
                   </label>
                   <label style="display: flex; align-items: center; cursor: pointer;">
-                    <%= form.check_box "devlog_approvals[#{devlog.id}][rejected]", 
+                    <%= form.check_box "devlog_approvals[#{devlog.id}][rejected]",
                         { checked: devlog.ysws_review_approval&.approved? == false,
                           style: "margin-right: 0.5rem;" },
                         "1", "0" %>
@@ -363,12 +363,12 @@ document.addEventListener('DOMContentLoaded', function() {
       const devlogId = e.target.name.match(/devlog_approvals\[(\d+)\]/)[1];
       const approveCheckbox = document.querySelector(`input[name="devlog_approvals[${devlogId}][approved]"]`);
       const rejectCheckbox = document.querySelector(`input[name="devlog_approvals[${devlogId}][rejected]"]`);
-      
+
       // If approve is checked, uncheck reject
       if (e.target.name.includes('[approved]') && e.target.checked) {
         if (rejectCheckbox) rejectCheckbox.checked = false;
       }
-      
+
       // If reject is checked, uncheck approve and set minutes to 0
       if (e.target.name.includes('[rejected]') && e.target.checked) {
         if (approveCheckbox) approveCheckbox.checked = false;
@@ -381,7 +381,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Approve all functionality with toggle
   approveAllBtn.addEventListener('click', function() {
     const isCurrentlyApproved = approveAllBtn.textContent.includes('✓');
-    
+
     if (isCurrentlyApproved) {
       // Clear all selections
       const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
@@ -390,7 +390,7 @@ document.addEventListener('DOMContentLoaded', function() {
           checkbox.checked = false;
         }
       });
-      
+
       // Reset button
       approveAllBtn.textContent = 'Approve All Devlogs';
       approveAllBtn.style.backgroundColor = '';
@@ -401,7 +401,7 @@ document.addEventListener('DOMContentLoaded', function() {
       approveCheckboxes.forEach(function(checkbox) {
         if (checkbox.name.includes('[approved]')) {
           checkbox.checked = true;
-          
+
           // Uncheck corresponding reject checkbox
           const devlogId = checkbox.name.match(/devlog_approvals\[(\d+)\]/)[1];
           const rejectCheckbox = document.querySelector(`input[name="devlog_approvals[${devlogId}][rejected]"]`);
@@ -412,7 +412,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // Update button text to indicate action was performed
       approveAllBtn.textContent = 'All Devlogs Approved ✓';
       approveAllBtn.style.backgroundColor = 'var(--color-success)';
-      
+
       // Reset reject all button if it was active
       rejectAllBtn.textContent = 'Reject All Devlogs';
       rejectAllBtn.style.backgroundColor = '';
@@ -422,14 +422,14 @@ document.addEventListener('DOMContentLoaded', function() {
   // Reject all functionality with toggle
   rejectAllBtn.addEventListener('click', function() {
     const isCurrentlyRejected = rejectAllBtn.textContent.includes('✓');
-    
+
     if (isCurrentlyRejected) {
       // Clear all selections and restore original minutes
       const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
       allCheckboxes.forEach(function(checkbox) {
         if (checkbox.name.includes('[approved]') || checkbox.name.includes('[rejected]')) {
           checkbox.checked = false;
-          
+
           // If it was a reject checkbox, restore original minutes
           if (checkbox.name.includes('[rejected]')) {
             const devlogId = checkbox.name.match(/devlog_approvals\[(\d+)\]/)[1];
@@ -447,7 +447,7 @@ document.addEventListener('DOMContentLoaded', function() {
           }
         }
       });
-      
+
       // Reset button
       rejectAllBtn.textContent = 'Reject All Devlogs';
       rejectAllBtn.style.backgroundColor = '';
@@ -458,12 +458,12 @@ document.addEventListener('DOMContentLoaded', function() {
       rejectCheckboxes.forEach(function(checkbox) {
         if (checkbox.name.includes('[rejected]')) {
           checkbox.checked = true;
-          
+
           // Uncheck corresponding approve checkbox and set minutes to 0
           const devlogId = checkbox.name.match(/devlog_approvals\[(\d+)\]/)[1];
           const approveCheckbox = document.querySelector(`input[name="devlog_approvals[${devlogId}][approved]"]`);
           if (approveCheckbox) approveCheckbox.checked = false;
-          
+
           const minutesField = document.getElementById(`approved_minutes_${devlogId}`);
           if (minutesField) minutesField.value = 0;
         }
@@ -472,7 +472,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // Update button text to indicate action was performed
       rejectAllBtn.textContent = 'All Devlogs Rejected ✓';
       rejectAllBtn.style.backgroundColor = 'var(--color-error)';
-      
+
       // Reset approve all button if it was active
       approveAllBtn.textContent = 'Approve All Devlogs';
       approveAllBtn.style.backgroundColor = '';
