@@ -194,9 +194,23 @@
               <div style="margin-bottom: 1rem;">
                 <%= form.label "devlog_approvals_#{devlog.id}_approved_seconds", "Approved Seconds:",
                     style: "display: block; margin-bottom: 0.5rem; font-weight: bold;" %>
-                <%= form.number_field "devlog_approvals[#{devlog.id}][approved_seconds]",
-                    value: devlog.ysws_review_approval&.approved_seconds || devlog.duration_seconds || 0,
-                    style: "width: 100%; padding: 0.5rem; border: 1px solid var(--color-border); border-radius: 4px;" %>
+                <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem;">
+                  <%= form.number_field "devlog_approvals[#{devlog.id}][approved_seconds]",
+                      value: devlog.ysws_review_approval&.approved_seconds || devlog.duration_seconds || 0,
+                      id: "approved_seconds_#{devlog.id}",
+                      style: "flex: 1; padding: 0.5rem; border: 1px solid var(--color-border); border-radius: 4px;" %>
+                </div>
+
+                <div style="display: flex; gap: 0.25rem; flex-wrap: wrap; margin-bottom: 0.5rem;">
+                  <button type="button" class="pill pill-orange" style="font-size: 0.7em; padding: 0.25rem 0.5rem; cursor: pointer; border: none;"
+                          onclick="adjustTime(<%= devlog.id.to_json %>, 'half')">50%</button>
+                  <button type="button" class="pill pill-orange" style="font-size: 0.7em; padding: 0.25rem 0.5rem; cursor: pointer; border: none;"
+                          onclick="adjustTime(<%= devlog.id.to_json %>, 'quarter')">25%</button>
+                  <button type="button" class="pill pill-red" style="font-size: 0.7em; padding: 0.25rem 0.5rem; cursor: pointer; border: none;"
+                          onclick="adjustTime(<%= devlog.id.to_json %>, 'minus30')">-30min</button>
+                  <button type="button" class="pill pill-red" style="font-size: 0.7em; padding: 0.25rem 0.5rem; cursor: pointer; border: none;"
+                          onclick="adjustTime(<%= devlog.id.to_json %>, 'minus1hr')">-1hr</button>
+                </div>
               </div>
 
               <div style="margin-bottom: 1rem;">
@@ -268,6 +282,30 @@
 </div>
 
 <script>
+// Time adjustment function
+function adjustTime(devlogId, adjustment) {
+  const input = document.getElementById(`approved_seconds_${devlogId}`);
+  const currentValue = parseInt(input.value) || 0;
+  let newValue = currentValue;
+
+  switch(adjustment) {
+    case 'half':
+      newValue = Math.floor(currentValue * 0.5);
+      break;
+    case 'quarter':
+      newValue = Math.floor(currentValue * 0.25);
+      break;
+    case 'minus30':
+      newValue = Math.max(0, currentValue - 1800); // 30 minutes = 1800 seconds
+      break;
+    case 'minus1hr':
+      newValue = Math.max(0, currentValue - 3600); // 1 hour = 3600 seconds
+      break;
+  }
+
+  input.value = newValue;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   const approveAllBtn = document.getElementById('approve-all-btn');
   const returnToCertifierBtn = document.getElementById('return-to-certifier-btn');
