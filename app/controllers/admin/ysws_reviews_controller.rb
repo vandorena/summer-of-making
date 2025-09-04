@@ -103,8 +103,15 @@ module Admin
         approval_params[:approved_seconds].to_i
       end
 
+      # Determine approval status from checkboxes
+      is_approved = approval_params[:approved] == "1"
+      is_rejected = approval_params[:rejected] == "1"
+      
+      # If both are checked or neither is checked, use approved (default behavior)
+      final_approved = is_approved || !is_rejected
+
       approval.assign_attributes(
-        approved: approval_params[:approved] == "1",
+        approved: final_approved,
         approved_seconds: approved_seconds,
         notes: approval_params[:notes],
         reviewed_at: Time.current

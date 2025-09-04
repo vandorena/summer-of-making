@@ -201,13 +201,22 @@
 
               <div style="margin-bottom: 1rem;">
                 <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Status:</label>
-                <%= form.radio_button "devlog_approvals[#{devlog.id}][approved]", "1",
-                    checked: devlog.ysws_review_approval&.approved? %>
-                <%= form.label "devlog_approvals_#{devlog.id}_approved_1", "Approve",
-                    style: "margin-right: 1rem;" %>
-                <%= form.radio_button "devlog_approvals[#{devlog.id}][approved]", "0",
-                    checked: devlog.ysws_review_approval&.approved? == false %>
-                <%= form.label "devlog_approvals_#{devlog.id}_approved_0", "Reject" %>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                  <label style="display: flex; align-items: center; cursor: pointer;">
+                    <%= form.check_box "devlog_approvals[#{devlog.id}][approved]", 
+                        { checked: devlog.ysws_review_approval&.approved?, 
+                          style: "margin-right: 0.5rem;" },
+                        "1", "0" %>
+                    Approve
+                  </label>
+                  <label style="display: flex; align-items: center; cursor: pointer;">
+                    <%= form.check_box "devlog_approvals[#{devlog.id}][rejected]", 
+                        { checked: devlog.ysws_review_approval&.approved? == false,
+                          style: "margin-right: 0.5rem;" },
+                        "1", "0" %>
+                    Reject
+                  </label>
+                </div>
               </div>
 
               <div style="margin-bottom: 1rem;">
@@ -348,23 +357,40 @@ document.addEventListener('DOMContentLoaded', function() {
   const cancelReturnBtn = document.getElementById('cancel-return-btn');
   const returnForm = document.getElementById('return-form');
 
+  // Checkbox mutual exclusivity logic
+  document.addEventListener('change', function(e) {
+    if (e.target.type === 'checkbox' && (e.target.name.includes('[approved]') || e.target.name.includes('[rejected]'))) {
+      const devlogId = e.target.name.match(/devlog_approvals\[(\d+)\]/)[1];
+      const approveCheckbox = document.querySelector(`input[name="devlog_approvals[${devlogId}][approved]"]`);
+      const rejectCheckbox = document.querySelector(`input[name="devlog_approvals[${devlogId}][rejected]"]`);
+      
+      // If approve is checked, uncheck reject
+      if (e.target.name.includes('[approved]') && e.target.checked) {
+        if (rejectCheckbox) rejectCheckbox.checked = false;
+      }
+      
+      // If reject is checked, uncheck approve and set minutes to 0
+      if (e.target.name.includes('[rejected]') && e.target.checked) {
+        if (approveCheckbox) approveCheckbox.checked = false;
+        const minutesField = document.getElementById(`approved_minutes_${devlogId}`);
+        if (minutesField) minutesField.value = 0;
+      }
+    }
+  });
+
   // Approve all functionality
   approveAllBtn.addEventListener('click', function() {
-    // Find all approve radio buttons and check them
-    const approveRadios = document.querySelectorAll('input[type="radio"][value="1"]');
+    // Find all approve checkboxes and check them
+    const approveCheckboxes = document.querySelectorAll('input[type="checkbox"]');
 
-    approveRadios.forEach(function(radio) {
-      if (radio.name.includes('[approved]')) {
-        radio.checked = true;
-
-        // For each approved devlog, ensure the minutes field has the correct value
-        const devlogId = radio.name.match(/devlog_approvals\[(\d+)\]/)[1];
-        const minutesField = document.querySelector(`input[name="devlog_approvals[${devlogId}][approved_minutes]"]`);
-
-        if (minutesField && !minutesField.value) {
-          // Keep the current value or use the default that's already there
-          // The field should already have the original duration converted to minutes
-        }
+    approveCheckboxes.forEach(function(checkbox) {
+      if (checkbox.name.includes('[approved]')) {
+        checkbox.checked = true;
+        
+        // Uncheck corresponding reject checkbox
+        const devlogId = checkbox.name.match(/devlog_approvals\[(\d+)\]/)[1];
+        const rejectCheckbox = document.querySelector(`input[name="devlog_approvals[${devlogId}][rejected]"]`);
+        if (rejectCheckbox) rejectCheckbox.checked = false;
       }
     });
 
@@ -381,20 +407,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Reject all functionality
   rejectAllBtn.addEventListener('click', function() {
-    // Find all reject radio buttons and check them
-    const rejectRadios = document.querySelectorAll('input[type="radio"][value="0"]');
+    // Find all reject checkboxes and check them
+    const rejectCheckboxes = document.querySelectorAll('input[type="checkbox"]');
 
-    rejectRadios.forEach(function(radio) {
-      if (radio.name.includes('[approved]')) {
-        radio.checked = true;
-
-        // For rejected devlogs, set approved minutes to 0
-        const devlogId = radio.name.match(/devlog_approvals\[(\d+)\]/)[1];
-        const minutesField = document.querySelector(`input[name="devlog_approvals[${devlogId}][approved_minutes]"]`);
+    rejectCheckboxes.forEach(function(checkbox) {
+      if (checkbox.name.includes('[rejected]')) {
+        checkbox.checked = true;
         
-        if (minutesField) {
-          minutesField.value = 0;
-        }
+        // Uncheck corresponding approve checkbox and set minutes to 0
+        const devlogId = checkbox.name.match(/devlog_approvals\[(\d+)\]/)[1];
+        const approveCheckbox = document.querySelector(`input[name="devlog_approvals[${devlogId}][approved]"]`);
+        if (approveCheckbox) approveCheckbox.checked = false;
+        
+        const minutesField = document.getElementById(`approved_minutes_${devlogId}`);
+        if (minutesField) minutesField.value = 0;
       }
     });
 
