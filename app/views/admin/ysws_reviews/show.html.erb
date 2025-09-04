@@ -166,13 +166,25 @@
                       target: "_blank" %>
                   <% if @project.repo_link.present? %>
                     <%
-                      # Extract GitHub repo info and create commits URL with date filter
+                      # Extract GitHub repo info and create commits URL between this devlog and the previous one
                       repo_match = @project.repo_link.match(/github\.com\/([^\/]+\/[^\/]+)/)
                       if repo_match
                         repo_path = repo_match[1].sub(/\.git$/, '')
-                        devlog_date = devlog.created_at.strftime("%Y-%m-%d")
-                        next_day = (devlog.created_at + 1.day).strftime("%Y-%m-%d")
-                        commits_url = "https://github.com/#{repo_path}/commits?since=#{devlog_date}&until=#{next_day}"
+
+                        # Find previous devlog for this project (created before current devlog)
+                        previous_devlog = @project.devlogs.where("created_at < ?", devlog.created_at).order(created_at: :desc).first
+
+                        if previous_devlog
+                          since_time = previous_devlog.created_at.utc.iso8601
+                          until_time = devlog.created_at.utc.iso8601
+                          commits_url = "https://github.com/#{repo_path}/commits?since=#{since_time}&until=#{until_time}"
+                          commits_title = "View GitHub commits between #{previous_devlog.created_at} and #{devlog.created_at}"
+                        else
+                          # No previous devlog: show all commits before the first devlog
+                          until_time = devlog.created_at.utc.iso8601
+                          commits_url = "https://github.com/#{repo_path}/commits?until=#{until_time}"
+                          commits_title = "View all GitHub commits before #{devlog.created_at}"
+                        end
                       end
                     %>
                     <% if commits_url %>
@@ -180,7 +192,7 @@
                           class: "pill pill-blue",
                           style: "text-decoration: none; padding: 0.2rem 0.5rem; margin-left: 0.25rem;",
                           target: "_blank",
-                          title: "View GitHub commits for #{devlog_date}" %>
+                          title: commits_title %>
                     <% end %>
                   <% end %>
                 </span>
