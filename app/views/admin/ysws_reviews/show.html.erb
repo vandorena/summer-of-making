@@ -166,24 +166,27 @@
                       target: "_blank" %>
                   <% if @project.repo_link.present? %>
                     <%
-                      # Extract GitHub repo info and create commits URL between this devlog and the previous one
+                      # Extract GitHub repo info and create commits URL
                       repo_match = @project.repo_link.match(/github\.com\/([^\/]+\/[^\/]+)/)
                       if repo_match
                         repo_path = repo_match[1].sub(/\.git$/, '')
 
+                        # Find the first (initial) devlog for this project
+                        first_devlog = @project.devlogs.order(created_at: :asc).first
                         # Find previous devlog for this project (created before current devlog)
                         previous_devlog = @project.devlogs.where("created_at < ?", devlog.created_at).order(created_at: :desc).first
 
-                        if previous_devlog
-                          since_time = previous_devlog.created_at.utc.iso8601
-                          until_time = devlog.created_at.utc.iso8601
+                        if previous_devlog && first_devlog != devlog
+                          # Show commits between the initial devlog and the one before current devlog
+                          since_time = first_devlog.created_at.utc.iso8601
+                          until_time = previous_devlog.created_at.utc.iso8601
                           commits_url = "https://github.com/#{repo_path}/commits?since=#{since_time}&until=#{until_time}"
-                          commits_title = "View GitHub commits between #{previous_devlog.created_at} and #{devlog.created_at}"
+                          commits_title = "View GitHub commits between initial devlog (#{first_devlog.created_at}) and previous devlog (#{previous_devlog.created_at})"
                         else
-                          # No previous devlog: show all commits before the first devlog
+                          # This is the first devlog: show all commits before it
                           until_time = devlog.created_at.utc.iso8601
                           commits_url = "https://github.com/#{repo_path}/commits?until=#{until_time}"
-                          commits_title = "View all GitHub commits before #{devlog.created_at}"
+                          commits_title = "View all GitHub commits before first devlog (#{devlog.created_at})"
                         end
                       end
                     %>
