@@ -102,10 +102,9 @@ module Admin
       @no_type_count = no_type_base.where(projects: { certification_type: [ nil ] }).count
 
       # Calculate this week's Sunday in EST
-      est_zone = ActiveSupport::TimeZone.new('America/New_York')
+      est_zone = ActiveSupport::TimeZone.new("America/New_York")
       current_est = Time.current.in_time_zone(est_zone)
       week_start = current_est.beginning_of_week(:sunday)
-      
       @leaderboard_week = User.joins("INNER JOIN ship_certifications ON users.id = ship_certifications.reviewer_id")
         .where.not(ship_certifications: { reviewer_id: nil })
         .where("ship_certifications.updated_at >= ?", week_start)
@@ -164,7 +163,7 @@ module Admin
           name = stat.display_name
           email = stat.email
           user_key = name || email
-          
+
           # Determine payment rate based on weekly leaderboard position
           position = weekly_positions[user_key]
           shells_per_review = case position
@@ -175,13 +174,13 @@ module Admin
           else
             0.75 # 8th place onward
           end
-          
+
           total_earned = stat.review_count.to_i * shells_per_review
           total_paid = stat.total_paid.to_f
-          total_owed = [total_earned - total_paid, 0].max
+          total_owed = [ total_earned - total_paid, 0 ].max
           pending_amount = stat.pending_amount.to_f
           review_count = stat.review_count.to_i
-          
+
           [ name, email, total_owed, shells_per_review, pending_amount ]
         end
     end
