@@ -164,6 +164,25 @@
                       class: "pill pill-gray",
                       style: "text-decoration: none; padding: 0.2rem 0.5rem;",
                       target: "_blank" %>
+                  <% if @project.repo_link.present? %>
+                    <%
+                      # Extract GitHub repo info and create commits URL with date filter
+                      repo_match = @project.repo_link.match(/github\.com\/([^\/]+\/[^\/]+)/)
+                      if repo_match
+                        repo_path = repo_match[1].sub(/\.git$/, '')
+                        devlog_date = devlog.created_at.strftime("%Y-%m-%d")
+                        next_day = (devlog.created_at + 1.day).strftime("%Y-%m-%d")
+                        commits_url = "https://github.com/#{repo_path}/commits?since=#{devlog_date}&until=#{next_day}"
+                      end
+                    %>
+                    <% if commits_url %>
+                      <%= link_to "Commits", commits_url,
+                          class: "pill pill-blue",
+                          style: "text-decoration: none; padding: 0.2rem 0.5rem; margin-left: 0.25rem;",
+                          target: "_blank",
+                          title: "View GitHub commits for #{devlog_date}" %>
+                    <% end %>
+                  <% end %>
                 </span>
               </h4>
               <div style="max-height: 200px; overflow-y: auto; background: var(--color-background-subtle); padding: 1rem; border-radius: 4px; margin: 0.5rem 0;">
