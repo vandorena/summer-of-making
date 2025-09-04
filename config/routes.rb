@@ -177,6 +177,24 @@ class AdminConstraint
   end
 end
 
+class ShipCertifierConstraint
+  def self.matches?(request)
+    return false unless request.session[:user_id]
+
+    user = User.find_by(id: request.session[:user_id])
+    user&.admin_or_ship_certifier?
+  end
+end
+
+class FraudTeamConstraint
+  def self.matches?(request)
+    return false unless request.session[:user_id]
+
+    user = User.find_by(id: request.session[:user_id])
+    user&.is_admin? || user&.fraud_team_member?
+  end
+end
+
 Rails.application.routes.draw do
   # Temporary flash testing routes (remove after testing)
   if Rails.env.development?
@@ -357,22 +375,22 @@ Rails.application.routes.draw do
   get "/s", to: "static_pages#s", as: :stt
 
   namespace :admin do
-    constraints AdminConstraint do
-      mount MissionControl::Jobs::Engine, at: "jobs"
-      mount AhoyCaptain::Engine, at: "ahoy_captain"
-      mount Blazer::Engine, at: "blazer"
-      mount Flipper::UI.app(Flipper), at: "flipper"
-      # mount_avo
-      get "/", to: "static_pages#index", as: :root
-      resources :view_analytics, only: [ :index ]
-      resources :voting_dashboard, only: [ :index ]
-      resources :payouts_dashboard, only: [ :index ]
+    constraints ShipCertifierConstraint do
+      resources :ship_certifications, only: [ :index, :edit, :update ] do
+        collection do
+          get :logs
+        end
+      end
       resources :low_quality_dashboard, only: [ :index ] do
         collection do
           post :mark_low_quality
           post :mark_ok
         end
       end
+    end
+
+    constraints FraudTeamConstraint do
+      get "/", to: "static_pages#index", as: :root
       resources :fraud_reports, only: [ :index, :show ] do
         member do
           get :resolve
@@ -381,21 +399,20 @@ Rails.application.routes.draw do
           patch :unresolve
         end
       end
-      resources :ship_certifications, only: [ :index, :edit, :update ] do
+      resources :fulfillment_dashboard, only: [ :index ]
+      resources :shop_orders do
         collection do
-          get :logs
+          get :pending
+          get :awaiting_fulfillment
         end
-      end
-      resources :ship_reviewer_payout_requests, only: [ :index, :show ] do
         member do
-          patch :approve
-          patch :reject
-        end
-      end
-      resources :readme_certifications, only: [ :index, :edit, :update ]
-      resources :ysws_reviews, only: [ :index, :show, :update ] do
-        member do
-          patch :return_to_certifier
+          post :internal_notes
+          post :approve
+          post :reject
+          post :place_on_hold
+          post :take_off_hold
+          post :mark_fulfilled
+          post :convert_to_preauth
         end
       end
       resources :users, only: [ :index, :show ] do
@@ -420,6 +437,29 @@ Rails.application.routes.draw do
           post :flip
         end
       end
+    end
+
+    constraints AdminConstraint do
+      mount MissionControl::Jobs::Engine, at: "jobs"
+      mount AhoyCaptain::Engine, at: "ahoy_captain"
+      mount Blazer::Engine, at: "blazer"
+      mount Flipper::UI.app(Flipper), at: "flipper"
+      # mount_avo
+      resources :view_analytics, only: [ :index ]
+      resources :voting_dashboard, only: [ :index ]
+      resources :payouts_dashboard, only: [ :index ]
+      resources :ship_reviewer_payout_requests, only: [ :index, :show ] do
+        member do
+          patch :approve
+          patch :reject
+        end
+      end
+      resources :readme_certifications, only: [ :index, :edit, :update ]
+      resources :ysws_reviews, only: [ :index, :show, :update ] do
+        member do
+          patch :return_to_certifier
+        end
+      end
       resources :special_access_users, only: [ :index ]
       resources :shop_items
       resources :projects, only: [] do
@@ -428,23 +468,7 @@ Rails.application.routes.draw do
           patch :restore
         end
       end
-      resources :shop_orders do
-        collection do
-          get :pending
-          get :awaiting_fulfillment
-        end
-        member do
-          post :internal_notes
-          post :approve
-          post :reject
-          post :place_on_hold
-          post :take_off_hold
-          post :mark_fulfilled
-          post :convert_to_preauth
-        end
-      end
       resources :shop_card_grants, only: [ :index, :show ]
-      resources :fulfillment_dashboard, only: [ :index ]
       resources :caches, path: "cache", only: [ :index ] do
         member do
           delete :zap
