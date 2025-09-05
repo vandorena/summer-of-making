@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_05_151713) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_03_171043) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -349,7 +349,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_05_151713) do
     t.datetime "updated_at", null: false
     t.string "reason"
     t.boolean "escrowed", default: false, null: false
-    t.decimal "multiplier", precision: 4, scale: 2, default: "1.0"
     t.index ["created_at", "amount"], name: "index_payouts_on_created_at_and_amount"
     t.index ["created_at", "payable_type", "amount"], name: "index_payouts_on_date_type_amount"
     t.index ["created_at"], name: "index_payouts_on_created_at"
@@ -478,7 +477,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_05_151713) do
     t.integer "decisions_count"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.decimal "multiplier", precision: 4, scale: 2, default: "1.0"
     t.index ["approved_by_id"], name: "index_ship_reviewer_payout_requests_on_approved_by_id"
     t.index ["reviewer_id"], name: "index_ship_reviewer_payout_requests_on_reviewer_id"
   end
