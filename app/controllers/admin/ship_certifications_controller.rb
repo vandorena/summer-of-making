@@ -172,7 +172,6 @@ module Admin
           else
             1.0  # Everyone else gets 1.0x multiplier
           end
-          
           shells_per_review = 0.5  # Standard rate of 0.5 shells per review
           effective_rate = shells_per_review * multiplier
 
