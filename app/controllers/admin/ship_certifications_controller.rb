@@ -164,24 +164,25 @@ module Admin
           email = stat.email
           user_key = name || email
 
-          # Determine payment rate based on weekly leaderboard position
+          # Determine multiplier based on weekly leaderboard position
           position = weekly_positions[user_key]
-          shells_per_review = case position
+          multiplier = case position
           when 1..3
-            1.5  # 1st to 3rd place
-          when 4..7
-            1.0  # 4th to 7th place
+            1.5  # 1st to 3rd place get 1.5x multiplier
           else
-            0.75 # 8th place onward
+            1.0  # Everyone else gets 1.0x multiplier
           end
+          
+          shells_per_review = 0.5  # Standard rate of 0.5 shells per review
+          effective_rate = shells_per_review * multiplier
 
-          total_earned = stat.review_count.to_i * shells_per_review
+          total_earned = stat.review_count.to_i * effective_rate
           total_paid = stat.total_paid.to_f
           total_owed = [ total_earned - total_paid, 0 ].max
           pending_amount = stat.pending_amount.to_f
           review_count = stat.review_count.to_i
 
-          [ name, email, total_owed, shells_per_review, pending_amount ]
+          [ name, email, total_owed, effective_rate, pending_amount, multiplier ]
         end
     end
 
