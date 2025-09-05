@@ -6,6 +6,7 @@
 #  amount          :decimal(, )
 #  approved_at     :datetime
 #  decisions_count :integer
+#  multiplier      :decimal(4, 2)    default(1.0)
 #  requested_at    :datetime
 #  status          :integer
 #  created_at      :datetime         not null
@@ -39,8 +40,9 @@ class ShipReviewerPayoutRequest < ApplicationRecord
   scope :for_reviewer, ->(user) { where(reviewer: user) }
   scope :pending_requests, -> { where(status: :pending) }
 
-  def self.calculate_amount_for_decisions(decisions_count)
-    (decisions_count / 2) * 0.5
+  def self.calculate_amount_for_decisions(decisions_count, multiplier = 1.0)
+    base_amount = (decisions_count / 2) * ShipReviewerMultiplierService::BASE_SHELLS_PER_REVIEW
+    base_amount * multiplier
   end
 
   def approve!(approver)

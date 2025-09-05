@@ -138,11 +138,12 @@
               <th style="text-align: left;">Shipwright</th>
               <th style="text-align: right;">Total Shells Owed</th>
               <th style="text-align: right;">Shells per Review</th>
+              <th style="text-align: center;">Multiplier</th>
               <th style="text-align: center;">Payout request</th>
             </tr>
           </thead>
           <tbody>
-            <% @payment_stats.each do |name, email, total_paid, shells_per_review, pending_amount| %>
+            <% @payment_stats.each do |name, email, total_paid, shells_per_review, pending_amount, multiplier| %>
               <% reviewer = User.find_by(display_name: name) || User.find_by(email: email) %>
               <tr>
                 <td>
@@ -153,6 +154,13 @@
                 </td>
                 <td style="text-align: right;"><%= total_paid %></td>
                 <td style="text-align: right;"><%= shells_per_review %></td>
+                <td style="text-align: center;">
+                  <% if multiplier == 1.5 %>
+                    <span class="pill pill-green" style="font-size: 0.8rem;">1.5x</span>
+                  <% else %>
+                    <span style="color: var(--color-text-muted);">1.0x</span>
+                  <% end %>
+                </td>
                 <td style="text-align: center;">
                   <% if reviewer == current_user && ShipReviewerPayoutService.can_request_payout?(current_user) %>
                     <%= button_to "Request Payout", ship_reviewer_payout_requests_path, method: :post, class: "pill pill-green", style: "border: none; padding: 0.3rem 0.6rem; cursor: pointer; font-size: 0.8rem;" %>
