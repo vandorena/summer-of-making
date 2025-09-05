@@ -478,7 +478,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_05_151713) do
     t.integer "decisions_count"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.decimal "multiplier", precision: 3, scale: 2, default: "1.0"
+    t.decimal "multiplier", precision: 4, scale: 2, default: "1.0"
     t.index ["approved_by_id"], name: "index_ship_reviewer_payout_requests_on_approved_by_id"
     t.index ["reviewer_id"], name: "index_ship_reviewer_payout_requests_on_reviewer_id"
   end

@@ -166,16 +166,9 @@ module Admin
 
           # Determine multiplier based on weekly leaderboard position
           position = weekly_positions[user_key]
-          multiplier = case position
-          when 1..3
-            1.5  # 1st to 3rd place get 1.5x multiplier
-          else
-            1.0  # Everyone else gets 1.0x multiplier
-          end
-          shells_per_review = 0.5  # Standard rate of 0.5 shells per review
-          effective_rate = shells_per_review * multiplier
-
-          total_earned = stat.review_count.to_i * effective_rate
+          multiplier = ShipReviewerMultiplierService.calculate_multiplier_for_position(position)
+          effective_rate = ShipReviewerMultiplierService.calculate_effective_rate(position)
+          total_earned = ShipReviewerMultiplierService.calculate_total_earned(stat.review_count.to_i, position)
           total_paid = stat.total_paid.to_f
           total_owed = [ total_earned - total_paid, 0 ].max
           pending_amount = stat.pending_amount.to_f
