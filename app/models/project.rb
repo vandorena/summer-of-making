@@ -13,7 +13,7 @@
 #  hackatime_project_keys :string           default([]), is an Array
 #  is_deleted             :boolean          default(FALSE)
 #  is_shipped             :boolean          default(FALSE)
-#  is_sinkening_ship      :boolean
+#  is_sinkening_ship      :boolean          default(FALSE)
 #  rating                 :integer
 #  readme_link            :string
 #  repo_link              :string
@@ -82,6 +82,7 @@ class Project < ApplicationRecord
   has_one :project_language, dependent: :destroy
 
   has_many :timer_sessions
+  after_commit :bust_user_projects_devlogs_cache
 
   coordinate_min = 0
   coordinate_max = 100
@@ -668,6 +669,10 @@ class Project < ApplicationRecord
   end
 
   private
+
+  def bust_user_projects_devlogs_cache
+    Rails.cache.delete(User.project_devlog_cache_key(user_id)) if user_id
+  end
 
   def link_check
     urls = [ readme_link, demo_link, repo_link ]
