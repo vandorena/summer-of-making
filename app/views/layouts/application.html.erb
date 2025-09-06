@@ -79,7 +79,7 @@
 
         <%= render "new_tutorial/tutorial" %>
 
-        <% if current_user.tutorial_progress.completed? && !mobile_device? %>
+        <% if current_user.tutorial_completed? && !mobile_device? %>
           <div data-controller="todo">
             <button
               data-todo-target="todoButton"
@@ -91,7 +91,7 @@
             </button>
             <!-- Todo Modal, but lazy loaded! -->
             <div data-todo-target="modal" data-fetch-url="<%= tutorial_todo_modal_path %>" data-loading-img="<%= asset_path('compassloading.gif') %>" class="fixed bottom-4 right-4 w-96 rounded-lg shadow-2xl border border-[#7c4a331a] z-50 transform translate-x-full transition-transform duration-300 ease-in-out" style="display: none;"></div>
-            <% if !current_page?(campfire_path) && !current_user.tutorial_progress.soft_step_completed?("todo") && current_user.tutorial_progress.completed? && current_user.projects.empty? %>
+            <% if !current_page?(campfire_path) && !current_user.tutorial_progress.soft_step_completed?("todo") && current_user.tutorial_completed? && current_user.projects.empty? %>
               <div class="absolute inset-0 z-40 text-white cursor-pointer bg-black/75" data-todo-target="overlay" data-action="click->todo#completeAndHideOverlay">
                 <div class="absolute bottom-24 right-24">
                   <p class="pb-4 pr-8 text-3xl">Check your todo list here!</p>

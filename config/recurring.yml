@@ -10,12 +10,10 @@
 #     schedule: at 5am every day
 
 production:
-  15_minutes_hackatime_refresh:
+  30_minutes_hackatime_refresh:
     class: UserHackatimeDataRefreshJob
-    command: perform_unique
-    queue: default
-    concurrency: 1
-    schedule: every 15 minutes
+    queue: literally_whenever
+    schedule: every 30 minutes
     description: "Refresh Hackatime stats for all users with Hackatime enabled"
 
   # generate_stonk_reports:

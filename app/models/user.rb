@@ -719,6 +719,17 @@ class User < ApplicationRecord
     devlogs.exists?(for_sinkening: true) || ship_events.exists?(for_sinkening: true)
   end
 
+  def self.tutorial_completed_cache_key(user_id)
+    "user:#{user_id}:tutorial_completed:v1"
+  end
+
+  def tutorial_completed?
+    Rails.cache.fetch(self.class.tutorial_completed_cache_key(id), expires_in: 6.hour) do # kinda don't need to check it that much. either people go through it or js leave.
+      completed_at = TutorialProgress.where(user_id: id).limit(1).pluck(:completed_at).first
+      completed_at.present?
+    end
+  end
+
   private
 
   def should_mock_verification
