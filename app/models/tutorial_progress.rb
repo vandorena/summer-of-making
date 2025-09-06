@@ -29,7 +29,9 @@ class TutorialProgress < ApplicationRecord
   NEW_TUTORIAL_PROGRESS = %w[hackatime identity free_stickers ship shipped vote].freeze
 
   after_initialize :setup_default_progress, if: :new_record?
-  after_initialize :auto_backfill_new_tutorial_steps!, unless: :new_record?
+
+  after_commit :auto_backfill_new_tutorial_steps!, on: :create
+  after_commit :bust_user_tutorial_cache
 
   def complete_step!(step_name)
     return unless TUTORIAL_STEPS.include?(step_name.to_s)
@@ -117,7 +119,7 @@ class TutorialProgress < ApplicationRecord
   end
 
   def auto_backfill_new_tutorial_steps!
-    if user&.ship_events&.any?
+    if user&.ship_events&.exists?
       unless new_tutorial_step_completed?("ship")
         complete_new_tutorial_step!("ship")
       end
@@ -149,5 +151,9 @@ class TutorialProgress < ApplicationRecord
     self.new_tutorial_progress = NEW_TUTORIAL_PROGRESS.index_with { {} }
 
     auto_backfill_new_tutorial_steps!
+  end
+
+  def bust_user_tutorial_cache
+    Rails.cache.delete(User.tutorial_completed_cache_key(user_id)) if user_id
   end
 end

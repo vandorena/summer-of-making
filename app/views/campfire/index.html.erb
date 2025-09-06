@@ -15,7 +15,7 @@
       # this is a hack to get erb_lint to stfu about .html_safe:
       definition: ActiveSupport::SafeBuffer.new("Heidi and Explorpheus have resolved to fully explore their island continent and conduct a grand survey — but they need your help! 100 locations call out for a developer with a creative spirit to play their part in constructing a massive point-and-click adventure. Shells, stickers, and special prizes will go to those who participate in this spectacular finale to the Summer of Making. Click <a href='https://hackclub.slack.com/archives/C09DQ3EB40L' target='_blank' class='underline'>here</a> for details!") %>
   </div>
-<% elsif current_user.tutorial_progress.completed? %>
+<% elsif current_user.tutorial_completed? %>
   <div class="mb-8">
     <%= render "shared/definition",
       term: "⚠️ THE SUMMER OF MAKING HAS BEEN EXTENDED! 🏝️",
@@ -43,7 +43,7 @@
   <% end %>
 
   <!-- Todo list -->
-  <% if current_user.tutorial_progress.completed? %>
+  <% if current_user.tutorial_completed? %>
     <div class="mb-8">
       <%= render "shared/card" do %>
         <div class="text-som-dark flex flex-col xl:flex-row space-y-5 xl:space-y-0">
@@ -154,7 +154,7 @@
   <% end %>
 
   <!-- Hackatime Dashboard Section -->
-  <% if current_user.tutorial_progress.completed? && @account_status[:hackatime_setup] %>
+  <% if current_user.tutorial_completed? && @account_status[:hackatime_setup] %>
     <div class="mb-8 color-forest">
       <%= render "shared/card", data: { controller: "hackatime-dashboard" } do %>
         <div class="text-som-dark">
@@ -232,7 +232,7 @@
     </div>
   <% end %>
 
-  <% if !current_user.tutorial_progress.completed? %>
+  <% if !current_user.tutorial_completed? %>
     <!-- Set up your account! Section -->
     <div class="mb-4">
       <h2 class="text-2xl mb-4 flex gap-2 items-center">
@@ -252,7 +252,7 @@
 
       <div class="space-y-4">
         <!-- Step 1: Hackatime -->
-        <%= render "shared/card", data: { step: "hackatime", controller: "hackatime-status", hackatime_status_tutorial_active_value: !current_user.tutorial_progress.completed? } do %>
+        <%= render "shared/card", data: { step: "hackatime", controller: "hackatime-status", hackatime_status_tutorial_active_value: !current_user.tutorial_completed? } do %>
           <div class="flex items-start gap-4 mb-2">
             <div class="flex-shrink-0">
               <% if @account_status[:hackatime_projects] %>
@@ -398,7 +398,7 @@
     </div>
   <% end %>
 
-  <% if current_user.tutorial_progress.completed? %>
+  <% if current_user.tutorial_completed? %>
     <!-- Announcements Section -->
     <% if @announcements.any? %>
       <div class="mb-8">
@@ -513,7 +513,7 @@
   <% end %>
 
   <!-- Onboarding Video Modal -->
-  <% if current_user.tutorial_progress.completed? && !current_user.tutorial_video_seen? %>
+  <% if current_user.tutorial_completed? && !current_user.tutorial_video_seen? %>
     <div data-controller="onboarding-video-modal"
       data-onboarding-video-modal-target="modal"
       data-action="click->onboarding-video-modal#closeOnBackgroundClick"
