@@ -65,6 +65,8 @@ class Devlog < ApplicationRecord
   after_destroy_commit :recalculate_project_devlogs
   after_update_commit :recalculate_project_devlogs, if: :saved_change_to_deleted_at?
 
+  after_commit :bust_user_projects_devlogs_cache
+
   def formatted_text
     ApplicationController.helpers.markdown(text)
   end
@@ -250,6 +252,10 @@ class Devlog < ApplicationRecord
   def recalculate_project_devlogs
     return unless project_id
     RecalculateProjectDevlogTimesJob.perform_later(project_id)
+  end
+
+  def bust_user_projects_devlogs_cache
+    Rails.cache.delete(User.project_devlog_cache_key(user_id)) if user_id
   end
 
   def recalculate_devlogs_if_new_key_used

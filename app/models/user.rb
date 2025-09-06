@@ -697,6 +697,24 @@ class User < ApplicationRecord
     devlogs.any? && projects.any? && votes.any? && shop_orders.joins(:shop_item).where.not(shop_items: { type: "ShopItem::FreeStickers" }).any?
   end
 
+  def self.project_devlog_cache_key(user_id)
+    "user:#{user_id}:proj_devlog_stats:v1"
+  end
+
+  def project_and_devlog_counts
+    Rails.cache.fetch(self.class.project_devlog_cache_key(id), expires_in: 2.hours) do
+      {
+        projects_count: Project.where(user_id: id).count,
+        devlogs_count: Devlog.where(user_id: id).count
+      }
+    end
+  end
+
+  def needs_projects_attention?
+    counts = project_and_devlog_counts
+    counts[:projects_count] == 0 || (counts[:projects_count] == 1 && counts[:devlogs_count] == 0)
+  end
+
   def sinkening_participation?
     devlogs.exists?(for_sinkening: true) || ship_events.exists?(for_sinkening: true)
   end
