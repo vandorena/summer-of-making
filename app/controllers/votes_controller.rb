@@ -264,7 +264,12 @@ class VotesController < ApplicationController
 
     @ship_events = @vote_queue.current_ship_events
 
+    ActiveRecord::Associations::Preloader
+      .new(records: @projects, associations: [ :banner_attachment, { devlogs: [ :user, :file_attachment ] } ])
+      .call
+
     # what in the vibe code did rowan do here before :skulk:
+
     @project_ai_used = {}
     @projects.each do |project|
       ai_used = if project.respond_to?(:ai_used?)
