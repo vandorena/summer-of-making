@@ -56,12 +56,9 @@ class UserVoteQueue < ApplicationRecord
     return [] unless current_pair
     Rails.logger.info("current pair #{current_pair}")
 
-    ShipEvent.where(id: current_pair).includes(
-      project: [
-        :banner_attachment,
-        devlogs: [ :user, :file_attachment ]
-      ]
-    ).order(:id)
+    @current_ship_events ||= ShipEvent.where(id: current_pair)
+                                      .includes(:project)
+                                      .order(:id)
   end
 
   def current_projects
@@ -70,7 +67,7 @@ class UserVoteQueue < ApplicationRecord
       return tutorial_projects
     end
 
-    voted_se_ids = user.votes.distinct.pluck(:ship_event_1_id, :ship_event_2_id).flatten.compact
+    voted_se_ids = voted_ship_event_ids
 
     loop do
       ship_events = current_ship_events
@@ -102,14 +99,12 @@ class UserVoteQueue < ApplicationRecord
 
       # skip if either ship event in the pair has already been voted on by the user
       if current_pair && (voted_se_ids.include?(current_pair[0]) || voted_se_ids.include?(current_pair[1]))
-        next if replace_current_pair!
         advance_position!
         next
       end
 
       # voting queue might get stale and we might have two paid projects
       if both_paid?(ship_events)
-        next if replace_current_pair!
         advance_position!
         next
       end
@@ -141,8 +136,11 @@ class UserVoteQueue < ApplicationRecord
     result = increment!(:current_position)
     Rails.logger.info "After increment: current_position = #{current_position}, increment result = #{result}"
 
+    @current_ship_events = nil
+
     if needs_refill?
-        refill_queue!
+      RefillUserVoteQueueJob.perform_later(user_id)
+      refill_queue!(1)
     end
 
     true
@@ -220,12 +218,9 @@ class UserVoteQueue < ApplicationRecord
   end
 
   def tutorial_projects
-    ship_events = ShipEvent.where(id: TUTORIAL_PAIR).includes(
-      project: [
-        :banner_attachment,
-        devlogs: [ :user, :file_attachment ]
-      ]
-    ).order(:id)
+    ship_events = ShipEvent.where(id: TUTORIAL_PAIR)
+                           .includes(:project)
+                           .order(:id)
 
     ship_events.map(&:project).compact
   end
@@ -253,7 +248,7 @@ class UserVoteQueue < ApplicationRecord
   end
 
   def generate_matchup
-    voted_ship_event_ids = user.votes.distinct.pluck(:ship_event_1_id, :ship_event_2_id).flatten.compact
+    voted_ship_event_ids = self.voted_ship_event_ids
 
     # Exclude tutorial pair from regular voting
     excluded_ship_event_ids = voted_ship_event_ids + TUTORIAL_PAIR
@@ -261,7 +256,6 @@ class UserVoteQueue < ApplicationRecord
     projects_with_latest_ship = Project
                                   .joins(:ship_events)
                                   .joins(:ship_certifications)
-                                  .includes(ship_events: :payouts)
                                   .where(ship_certifications: { judgement: :approved })
                                   .where.not(user_id: user_id)
                                   .where(
@@ -273,14 +267,17 @@ class UserVoteQueue < ApplicationRecord
                                     }
                                   )
                                   .distinct
-
-    return nil if projects_with_latest_ship.count < 2
+    # a pretty neat way to avoid count on thousdand of recrods :)
+    project_ids = projects_with_latest_ship.limit(2).pluck(:id)
+    return nil if project_ids.length < 2
 
     eligible_projects = projects_with_latest_ship.to_a
 
-    latest_ship_event_ids = eligible_projects.map { |project|
-      project.ship_events.where(excluded_from_pool: false).max_by(&:created_at)&.id
-    }.compact
+    latest_by_project = ShipEvent.where(project_id: eligible_projects.map(&:id), excluded_from_pool: false)
+                                 .group(:project_id)
+                                 .maximum(:id)
+
+    latest_ship_event_ids = latest_by_project.values.compact
 
     # Exclude tutorial pair from regular voting
     latest_ship_event_ids -= TUTORIAL_PAIR
@@ -296,21 +293,28 @@ class UserVoteQueue < ApplicationRecord
       .group("ship_events.id")
       .sum(:duration_seconds)
 
+    paid_ids = Payout.where(payable_type: "ShipEvent", payable_id: latest_ship_event_ids)
+                     .distinct
+                     .pluck(:payable_id)
+                     .to_set
+
     projects_with_time = eligible_projects.map do |project|
-      latest_ship_event = project.ship_events.max_by(&:created_at)
-      total_time_seconds = total_times_by_ship_event[latest_ship_event.id] || 0
-      is_paid = latest_ship_event.payouts.any?
+      latest_id = latest_by_project[project.id]
+      next unless latest_id
+      ship_event = ShipEvent.new(id: latest_id) # placeholder object to carry id/date when needed
+      total_time_seconds = total_times_by_ship_event[latest_id] || 0
+      is_paid = paid_ids.include?(latest_id)
 
       {
         project: project,
         total_time: total_time_seconds,
-        ship_event: latest_ship_event,
+        ship_event: ship_event,
         is_paid: is_paid,
-        ship_date: latest_ship_event.created_at
+        ship_date: project.ship_events.maximum(:created_at)
       }
     end
 
-    projects_with_time = projects_with_time.select { |p| p[:total_time] > 0 }
+    projects_with_time = projects_with_time.compact.select { |p| p[:total_time] > 0 }
 
     # sort by ship date – disabled until genesis
     projects_with_time.sort_by! { |p| p[:ship_date] }
@@ -416,24 +420,10 @@ class UserVoteQueue < ApplicationRecord
     projects.first
   end
 
-  def replace_current_pair!
-    return false if queue_exhausted? || current_pair.nil?
-
-    used_ship_event_ids = ship_event_pairs.each_with_index.flat_map { |p, idx| idx == current_position ? [] : p }.to_set
-    # Also exclude tutorial pair from replacements
-    used_ship_event_ids += TUTORIAL_PAIR
-
-    10.times do
-      pair = generate_matchup
-      next unless pair
-      next if used_ship_event_ids.include?(pair[0]) || used_ship_event_ids.include?(pair[1])
-
-      new_pairs = ship_event_pairs.dup
-      new_pairs[current_position] = pair
-      update!(ship_event_pairs: new_pairs, last_generated_at: Time.current)
-      return true
-    end
-
-    false
+  def voted_ship_event_ids
+    @voted_ship_event_ids ||= user.votes.distinct
+                                  .pluck(:ship_event_1_id, :ship_event_2_id)
+                                  .flatten
+                                  .compact
   end
 end

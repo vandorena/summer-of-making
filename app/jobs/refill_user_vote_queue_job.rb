@@ -5,6 +5,13 @@ class RefillUserVoteQueueJob < ApplicationJob
   include UniqueJob
 
   def perform(user_id)
-    Rails.logger.info "RefillUserVoteQueueJob is deprecated"
+    user = User.find_by(id: user_id)
+    return unless user
+
+    queue = user.user_vote_queue || user.build_user_vote_queue.tap(&:save!)
+
+    return unless queue.needs_refill?
+
+    queue.refill_queue!(UserVoteQueue::QUEUE_SIZE)
   end
 end
