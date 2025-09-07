@@ -240,18 +240,22 @@ class VotesController < ApplicationController
   end
 
   def set_projects
-    @vote_queue = current_user.user_vote_queue || current_user.build_user_vote_queue.tap do |queue|
-      queue.save!
-      queue.with_lock do
-        if queue.queue_exhausted?
-          queue.refill_queue!(UserVoteQueue::QUEUE_SIZE)
-        end
+    @vote_queue = current_user.user_vote_queue || current_user.build_user_vote_queue.tap(&:save!)
+
+    @vote_queue.with_lock do
+      if @vote_queue.queue_exhausted?
+        # speed up the web req: matchup generation is expensive and per matchup it takes ~400ms
+        @vote_queue.refill_queue!(1)
+        RefillUserVoteQueueJob.perform_later(current_user.id)
+      elsif @vote_queue.needs_refill?
+        RefillUserVoteQueueJob.perform_later(current_user.id)
       end
     end
 
     Rails.logger.info("bc js work #{@vote_queue.inspect}")
 
-    @projects = @vote_queue.current_projects
+    @projects = @vote_queue.current_projects # hey hacker! i know you can load ship events first and pluck projects from this, but
+    # please don't do that. this ensures we check if project's are not stale and stuff. just so you know
 
     if @projects.size < 2
       @projects = []
