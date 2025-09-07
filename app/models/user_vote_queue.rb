@@ -256,7 +256,6 @@ class UserVoteQueue < ApplicationRecord
     projects_with_latest_ship = Project
                                   .joins(:ship_events)
                                   .joins(:ship_certifications)
-                                  .includes(ship_events: :payouts)
                                   .where(ship_certifications: { judgement: :approved })
                                   .where.not(user_id: user_id)
                                   .where(
@@ -268,14 +267,17 @@ class UserVoteQueue < ApplicationRecord
                                     }
                                   )
                                   .distinct
-
-    return nil if projects_with_latest_ship.count < 2
+    # a pretty neat way to avoid count on thousdand of recrods :)
+    project_ids = projects_with_latest_ship.limit(2).pluck(:id)
+    return nil if project_ids.length < 2
 
     eligible_projects = projects_with_latest_ship.to_a
 
-    latest_ship_event_ids = eligible_projects.map { |project|
-      project.ship_events.where(excluded_from_pool: false).max_by(&:created_at)&.id
-    }.compact
+    latest_by_project = ShipEvent.where(project_id: eligible_projects.map(&:id), excluded_from_pool: false)
+                                 .group(:project_id)
+                                 .maximum(:id)
+
+    latest_ship_event_ids = latest_by_project.values.compact
 
     # Exclude tutorial pair from regular voting
     latest_ship_event_ids -= TUTORIAL_PAIR
@@ -291,21 +293,28 @@ class UserVoteQueue < ApplicationRecord
       .group("ship_events.id")
       .sum(:duration_seconds)
 
+    paid_ids = Payout.where(payable_type: "ShipEvent", payable_id: latest_ship_event_ids)
+                     .distinct
+                     .pluck(:payable_id)
+                     .to_set
+
     projects_with_time = eligible_projects.map do |project|
-      latest_ship_event = project.ship_events.max_by(&:created_at)
-      total_time_seconds = total_times_by_ship_event[latest_ship_event.id] || 0
-      is_paid = latest_ship_event.payouts.any?
+      latest_id = latest_by_project[project.id]
+      next unless latest_id
+      ship_event = ShipEvent.new(id: latest_id) # placeholder object to carry id/date when needed
+      total_time_seconds = total_times_by_ship_event[latest_id] || 0
+      is_paid = paid_ids.include?(latest_id)
 
       {
         project: project,
         total_time: total_time_seconds,
-        ship_event: latest_ship_event,
+        ship_event: ship_event,
         is_paid: is_paid,
-        ship_date: latest_ship_event.created_at
+        ship_date: project.ship_events.maximum(:created_at)
       }
     end
 
-    projects_with_time = projects_with_time.select { |p| p[:total_time] > 0 }
+    projects_with_time = projects_with_time.compact.select { |p| p[:total_time] > 0 }
 
     # sort by ship date – disabled until genesis
     projects_with_time.sort_by! { |p| p[:ship_date] }
