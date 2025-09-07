@@ -65,27 +65,33 @@ class VotesController < ApplicationController
       end
     end
 
-    ship_events = ShipEvent.where(id: [ ship_event_1_id, ship_event_2_id ]).includes(:project)
-    if ship_events.size != 2
+    se_rows = ShipEvent.where(id: [ ship_event_1_id, ship_event_2_id ])
+                       .select(:id, :project_id)
+                       .to_a
+    if se_rows.size != 2
       redirect_to new_vote_path, alert: "Invalid ship events selected"
       return
     end
-
-    @ship_events = ship_events.to_a
-    @projects = @ship_events.map(&:project)
+    se_by_id = se_rows.index_by(&:id)
+    project_1_id = se_by_id[ship_event_1_id]&.project_id
+    project_2_id = se_by_id[ship_event_2_id]&.project_id
+    if project_1_id.nil? || project_2_id.nil?
+      redirect_to new_vote_path, alert: "Invalid ship events selected"
+      return
+    end
 
     @vote = current_user.votes.build(vote_params.except(:ship_event_1_id, :ship_event_2_id, :signature))
     @vote.ship_event_1_id = ship_event_1_id
     @vote.ship_event_2_id = ship_event_2_id
     @vote.time_spent_voting_ms = time_spt_ms
 
-    @vote.project_1_id = @ship_events[0].project.id
-    @vote.project_2_id = @ship_events[1].project.id
+    @vote.project_1_id = project_1_id
+    @vote.project_2_id = project_2_id
     # Handle tie case
     @vote.winning_project_id = nil if @vote.winning_project_id == "tie"
     # Validate that winning project is one of the two projects (for now, until we remove client-side selection)
     if @vote.winning_project_id.present?
-      valid_project_ids = @projects.map(&:id)
+      valid_project_ids = [ project_1_id, project_2_id ]
       unless valid_project_ids.include?(@vote.winning_project_id.to_i)
         redirect_to new_vote_path, alert: "Invalid project selection"
         return
