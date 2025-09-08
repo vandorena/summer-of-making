@@ -80,11 +80,11 @@ production:
     concurrency: 1
     description: "CSV-sync non-free-stickers orders into Airtable"
 
-  shop_process_letter_mail_orders:
-    class: Shop::ProcessLetterMailOrdersJob
-    schedule: every 2 days
-    concurrency: 1
-    description: "Process pending letter mail orders and send to Theseus som-fulfillment queue"
+  # shop_process_letter_mail_orders:
+  #   class: Shop::ProcessLetterMailOrdersJob
+  #   schedule: every 2 days
+  #   concurrency: 1
+  #   description: "Process pending letter mail orders and send to Theseus som-fulfillment queue"
 
   shop_process_warehouse_orders:
     class: Shop::ProcessWarehouseOrdersJob
