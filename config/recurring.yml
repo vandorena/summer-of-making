@@ -118,6 +118,6 @@ production:
 
   sync_project_languages:
     class: SyncProjectLanguagesJob
-    schedule: every 5 minutes
+    schedule: every minute
     concurrency: 1
     description: "Sync GitHub language stats for projects under review"
