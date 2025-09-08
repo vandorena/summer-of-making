@@ -253,38 +253,22 @@ class UserVoteQueue < ApplicationRecord
     # Exclude tutorial pair from regular voting
     excluded_ship_event_ids = voted_ship_event_ids + TUTORIAL_PAIR
 
-    projects_with_latest_ship = Project
-                                  .joins(:ship_events)
-                                  .joins(:ship_certifications)
-                                  .where(ship_certifications: { judgement: :approved })
-                                  .where.not(user_id: user_id)
-                                  .where(
-                                    ship_events: {
-                                      id: ShipEvent.select("MAX(ship_events.id)")
-                                                  .where("ship_events.project_id = projects.id")
-                                                  .group("ship_events.project_id")
-                                                  .where.not(id: excluded_ship_event_ids)
-                                    }
-                                  )
-                                  .distinct
+    latest_eligible = ShipEvent
+                        .joins(project: :ship_certifications)
+                        .where(ship_certifications: { judgement: :approved })
+                        .where.not(projects: { user_id: user_id })
+                        .where(excluded_from_pool: false)
+                        .where.not(id: excluded_ship_event_ids)
+                        .select("DISTINCT ON (ship_events.project_id) ship_events.id, ship_events.project_id, ship_events.created_at")
+                        .order("ship_events.project_id, ship_events.id DESC")
+
     # a pretty neat way to avoid count on thousdand of recrods :)
-    project_ids = projects_with_latest_ship.limit(2).pluck(:id)
-    return nil if project_ids.length < 2
+    return nil if latest_eligible.first(2).length < 2
 
-    eligible_projects = projects_with_latest_ship.to_a
-
-    latest_by_project = ShipEvent.where(project_id: eligible_projects.map(&:id), excluded_from_pool: false)
-                                 .group(:project_id)
-                                 .maximum(:id)
-
-    latest_ship_event_ids = latest_by_project.values.compact
-
-    # Exclude tutorial pair from regular voting
-    latest_ship_event_ids -= TUTORIAL_PAIR
-
-    # don't generate matchups for low quality projects
-    flagged = FraudReport.unresolved.where(suspect_type: "ShipEvent", suspect_id: latest_ship_event_ids).where("reason LIKE ?", "LOW_QUALITY:%").group(:suspect_id).having("COUNT(*) >= 3").count.keys
-    latest_ship_event_ids -= flagged
+    latest_by_project = latest_eligible.pluck(:project_id, :id).to_h
+    ship_dates_by_project = latest_eligible.pluck(:project_id, :created_at).to_h
+    eligible_projects = Project.where(id: latest_by_project.keys).select(:id, :user_id, :repo_link)
+    latest_ship_event_ids = latest_by_project.values
 
     total_times_by_ship_event = Devlog
       .joins("INNER JOIN ship_events ON devlogs.project_id = ship_events.project_id")
@@ -310,7 +294,7 @@ class UserVoteQueue < ApplicationRecord
         total_time: total_time_seconds,
         ship_event: ship_event,
         is_paid: is_paid,
-        ship_date: project.ship_events.maximum(:created_at)
+        ship_date: ship_dates_by_project[project.id]
       }
     end
 
