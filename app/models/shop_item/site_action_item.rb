@@ -56,6 +56,7 @@ class ShopItem::SiteActionItem < ShopItem
     neon_flair: 4,
     channel_a: 5,
     channel_b: 6,
+    cheat_black_market_access: 7
   }
 
   def fulfill!(shop_order)
@@ -70,6 +71,8 @@ class ShopItem::SiteActionItem < ShopItem
       Slack::AddUserToChannelJob.perform_later(shop_order.user, CHANNEL_A)
     when "channel_b"
       Slack::AddUserToChannelJob.perform_later(shop_order.user, CHANNEL_B)
+    when "cheat_black_market_access"
+      shop_order.user.give_black_market!
     else
       raise "unknown site action: #{site_action.inspect}"
     end
