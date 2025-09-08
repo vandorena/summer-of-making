@@ -5,7 +5,7 @@ module BlockKitHelpers
         type: type,
         text: text,
         **defaults,
-        **options
+        **options,
       }.compact
     end
   end
@@ -14,14 +14,14 @@ module BlockKitHelpers
     define_method(name) do |*args, **options|
       base_block = {
         type: type,
-        block_id: options.delete(:block_id)
+        block_id: options.delete(:block_id),
       }.compact
 
       result = if block_given?
           instance_exec(base_block, *args, **options, &block)
-      else
+        else
           base_block.merge(options)
-      end
+        end
 
       if defined?(@blocks) && @blocks
         @blocks << result
@@ -35,7 +35,7 @@ module BlockKitHelpers
   def self.define_interactive_element(name, type, append_to_blocks: true, &block)
     define_method(name) do |*args, **options|
       base_element = {
-        type: type
+        type: type,
       }
 
       result = if block_given?
@@ -106,6 +106,14 @@ module BlockKitHelpers
     )
   end
 
+  define_interactive_element :image_element, "image", append_to_blocks: false do |element, image_url, alt_text, **options|
+    element.merge(
+      image_url: image_url,
+      alt_text: alt_text,
+      **options,
+    )
+  end
+
   define_block_element :image_block, "image" do |block, image_url, alt_text, **options|
     block.merge(
       image_url: image_url,
@@ -138,7 +146,7 @@ module BlockKitHelpers
       value: value,
       description: description ? plain_text(description) : nil,
       url: url,
-      **options
+      **options,
     }.compact
   end
 
