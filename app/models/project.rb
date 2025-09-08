@@ -14,6 +14,7 @@
 #  is_deleted             :boolean          default(FALSE)
 #  is_shipped             :boolean          default(FALSE)
 #  is_sinkening_ship      :boolean          default(FALSE)
+#  magicked_at            :datetime
 #  rating                 :integer
 #  readme_link            :string
 #  repo_link              :string
@@ -576,6 +577,15 @@ class Project < ApplicationRecord
 
       puts "PAYOUTCREASED(#{payout.id}) ship.id:#{ship.id} min:#{min} max:#{max} rating_at_vote_count:#{current_rating} pc:#{pc} mult:#{mult} hours:#{hours} amount:#{amount} current_payout_sum:#{current_payout_sum} current_payout_difference:#{current_payout_difference}"
     end
+  end
+
+  def magicked? = magicked_at.present?
+
+  def magic_happening!
+    return if magicked?
+
+    Project::PostToMagicJob.perform_later(self)
+    update!(magicked_at: Time.current)
   end
 
   private
