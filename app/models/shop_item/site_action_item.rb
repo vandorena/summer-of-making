@@ -56,7 +56,7 @@ class ShopItem::SiteActionItem < ShopItem
     neon_flair: 4,
     channel_a: 5,
     channel_b: 6,
-    cheat_black_market_access: 7,
+    cheat_black_market_access: 7
   }
 
   def fulfill!(shop_order)
