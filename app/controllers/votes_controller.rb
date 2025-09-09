@@ -289,7 +289,7 @@ class VotesController < ApplicationController
     if project_ids.any? && max_cutoff
       devlogs_scope = Devlog.where(project_id: project_ids)
                             .where("devlogs.created_at <= ?", max_cutoff)
-                            .includes(:user, { file_attachment: :blob })
+                            .includes({ user: :user_badges }, { file_attachment: :blob })
                             .order(:created_at)
 
       devlogs_scope.find_each(batch_size: 1000) do |devlog|
@@ -308,8 +308,12 @@ class VotesController < ApplicationController
                                    .distinct
                                    .pluck(:payable_id)
                                    .to_set
+      @reported_ship_event_ids = FraudReport.where(user_id: current_user.id, suspect_type: "ShipEvent", suspect_id: se_ids)
+                                            .pluck(:suspect_id)
+                                            .to_set
     rescue StandardError
       @paid_ship_event_ids = Set.new
+      @reported_ship_event_ids = Set.new
     end
 
     # what in the vibe code did rowan do here before :skulk:

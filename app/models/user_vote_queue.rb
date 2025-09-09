@@ -232,7 +232,15 @@ class UserVoteQueue < ApplicationRecord
   private
 
   def both_paid?(ship_events)
-    ship_events.all? { |se| se.payouts.exists? }
+    ids = ship_events.map(&:id)
+    return false if ids.empty?
+
+    paid_ids = Payout.where(payable_type: "ShipEvent", payable_id: ids)
+                     .distinct
+                     .pluck(:payable_id)
+                     .to_set
+
+    ship_events.all? { |se| paid_ids.include?(se.id) }
   end
 
   def zero_total_time_covered?(ship_events)
