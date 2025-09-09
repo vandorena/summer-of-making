@@ -1,1 +1,1 @@
-Mime::Type.register "application/json", :slack_blocks
+Mime::Type.register_alias "application/json", :slack_blocks
