@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_09_181222) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_09_183009) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -379,6 +379,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_09_181222) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.jsonb "language_stats", default: "{}"
+    t.index ["language_stats"], name: "index_project_languages_on_language_stats", using: :gin
     t.index ["last_synced_at"], name: "index_project_languages_on_last_synced_at"
     t.index ["project_id"], name: "index_project_languages_on_project_id_unique", unique: true
     t.index ["status"], name: "index_project_languages_on_status"
