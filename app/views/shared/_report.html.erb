@@ -2,7 +2,11 @@
   button_id = local_assigns[:id]
 %>
 
-<% if current_user && FraudReport.already_reported_by?(current_user, suspect) %>
+<% already_reported = local_assigns.fetch(:already_reported, nil) %>
+<% if already_reported.nil? && defined?(@reported_ship_event_ids) && suspect.is_a?(ShipEvent) %>
+  <% already_reported = @reported_ship_event_ids.include?(suspect.id) %>
+<% end %>
+<% if current_user && already_reported %>
   <%= render "shared/button",
       text: "Already Reported",
       icon: "flag.svg",

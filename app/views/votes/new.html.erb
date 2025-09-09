@@ -214,7 +214,7 @@
                         onclick: "event.stopPropagation()" %>
                   <% end %>
 
-                  <%= render "shared/report", id: index == 0 ? 'new-tutorial-vote-report' : nil, suspect: ship_event %>
+                  <%= render "shared/report", id: index == 0 ? 'new-tutorial-vote-report' : nil, suspect: ship_event, already_reported: @reported_ship_event_ids&.include?(ship_event.id) %>
                 </div>
               </div>
 
