@@ -271,8 +271,46 @@ class VotesController < ApplicationController
     @ship_events = @vote_queue.current_ship_events
 
     ActiveRecord::Associations::Preloader
-      .new(records: @projects, associations: [ :banner_attachment, { devlogs: [ :user, :file_attachment ] } ])
+      .new(records: @projects, associations: [ { banner_attachment: :blob } ])
       .call
+
+    # precomputed filtered devlogs for each project aka <= ship date with user and file blob
+    project_ids = @projects.map(&:id)
+    ship_cutoff_by_project_id = {}
+    @projects.each_with_index do |project, index|
+      ship_cutoff_by_project_id[project.id] = @ship_events[index]&.created_at
+    end
+
+    max_cutoff = ship_cutoff_by_project_id.values.compact.max
+
+    @ship_devlogs_by_project_id = Hash.new { |h, k| h[k] = [] }
+    @ship_time_seconds_by_project_id = Hash.new(0)
+
+    if project_ids.any? && max_cutoff
+      devlogs_scope = Devlog.where(project_id: project_ids)
+                            .where("devlogs.created_at <= ?", max_cutoff)
+                            .includes(:user, { file_attachment: :blob })
+                            .order(:created_at)
+
+      devlogs_scope.find_each(batch_size: 1000) do |devlog|
+        cutoff = ship_cutoff_by_project_id[devlog.project_id]
+        next unless cutoff && devlog.created_at <= cutoff
+
+        @ship_devlogs_by_project_id[devlog.project_id] << devlog
+        @ship_time_seconds_by_project_id[devlog.project_id] += (devlog.duration_seconds || 0)
+      end
+    end
+
+    # precompute which ship events are paid to avoid per-item payouts.exists?
+    begin
+      se_ids = @ship_events.map(&:id)
+      @paid_ship_event_ids = Payout.where(payable_type: "ShipEvent", payable_id: se_ids)
+                                   .distinct
+                                   .pluck(:payable_id)
+                                   .to_set
+    rescue StandardError
+      @paid_ship_event_ids = Set.new
+    end
 
     # what in the vibe code did rowan do here before :skulk:
 

@@ -6,7 +6,7 @@
   <% if @projects.present? && @ship_events.present? %>
     <% @projects.each_with_index do |project, index| %>
       <% ship_event = @ship_events[index] %>
-      <% ship_devlogs = project.devlogs.where("created_at < ?", ship_event.created_at) %>
+      <% ship_devlogs = @ship_devlogs_by_project_id[project.id] || [] %>
 
       <!-- Preload project banners -->
       <%= preload_link_tag url_for(project.banner), as: :image %>
@@ -145,8 +145,8 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-0 sm:gap-16 mobile-divide-dashed">
         <% @projects.each_with_index do |project, index| %>
           <% ship_event = @ship_events[index] %>
-          <% ship_devlogs = project.devlogs.where("created_at < ?", ship_event.created_at).order(created_at: :asc) %>
-          <% ship_time_seconds = ship_devlogs.sum(:duration_seconds) %>
+          <% ship_devlogs = (@ship_devlogs_by_project_id[project.id] || []) %>
+          <% ship_time_seconds = @ship_time_seconds_by_project_id[project.id] || 0 %>
           <div class="px-4 py-8 sm:py-4 bg-[#F6DBBA] sm:rounded-xl" data-project-index="<%= index %>">
             <div class="space-y-6 sm:space-y-8">
               <div class="flex items-start gap-3 sm:gap-4">
@@ -174,7 +174,7 @@
                       <span>•</span>
                       <span>Ship Date: <span class="text-black"><%= ship_event.created_at.strftime("%b %d") %></span></span>
                       <span>•</span>
-                      <span>Paid: <span class="text-black"><%= ship_event.payouts.exists? ? "Yes" : "No" %></span></span>
+                      <span>Paid: <span class="text-black"><%= @paid_ship_event_ids&.include?(ship_event.id) ? "Yes" : "No" %></span></span>
                       <span>•</span>
                       <span>Ship Event ID: <span class="text-black"><%= ship_event.id %></span></span>
                       <span>•</span>
