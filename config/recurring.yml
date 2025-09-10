@@ -131,3 +131,7 @@ production:
     class: Cache::CarouselPrizesJob
     schedule: every 1 hour
     args: [ { force: true } ]
+
+  update_badge_counter_caches:
+    class: User::UpdateBadgeCounterCachesJob
+    schedule: at 4am every day
