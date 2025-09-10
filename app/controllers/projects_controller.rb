@@ -670,9 +670,6 @@ end
         ship_events: [
           :payouts
         ],
-        stonks: [
-          :user
-        ],
         followers: :projects
       },
       { banner_attachment: :blob },
