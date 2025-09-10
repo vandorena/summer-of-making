@@ -2,9 +2,9 @@
 
 class VotesController < ApplicationController
   before_action :authenticate_user!
+  before_action :check_identity_verification
   before_action :ensure_voting_not_paused, only: %i[new create]
   before_action :set_projects, only: %i[new]
-  before_action :check_identity_verification
   before_action :set_tracking, only: %i[track_demo track_repo]
 
   def new
