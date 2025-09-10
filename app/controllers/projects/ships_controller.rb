@@ -4,9 +4,14 @@ class Projects::ShipsController < ApplicationController
   def create
     authorize @project, :ship?
 
-    return redirect_to project_path(@project) unless @project.can_ship?
+    # Verify all requirements are met
+    errors = @project.shipping_errors
+    if errors.any?
+      redirect_to project_path(@project), alert: "Cannot ship project: #{errors.join(' ')}"
+      return
+    end
 
-    if ShipEvent.create(project: @project)
+    if (ship_event = ShipEvent.create(project: @project)).persisted?
       is_first_ship = current_user.projects.joins(:ship_events).count == 1
       ahoy.track "tutorial_step_first_project_shipped", user_id: current_user.id, project_id: @project.id, is_first_ship: is_first_ship
       redirect_to project_path(@project), notice: "Your project has been shipped!"
@@ -14,7 +19,7 @@ class Projects::ShipsController < ApplicationController
       message = "Congratulations on shipping your project! Now thy project shall fight for blood :ultrafastparrot:"
       SendSlackDmJob.perform_later(@project.user.slack_id, message) if @project.user.slack_id.present?
     else
-      redirect_to project_path(@project)
+      redirect_to project_path(@project), alert: ship_event.errors.full_messages.to_sentence
     end
   end
 
