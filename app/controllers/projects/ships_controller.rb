@@ -4,12 +4,7 @@ class Projects::ShipsController < ApplicationController
   def create
     authorize @project, :ship?
 
-    # Verify all requirements are met
-    errors = @project.shipping_errors
-    if errors.any?
-      redirect_to project_path(@project), alert: "Cannot ship project: #{errors.join(' ')}"
-      return
-    end
+    return redirect_to project_path(@project) unless @project.can_ship?
 
     if ShipEvent.create(project: @project)
       is_first_ship = current_user.projects.joins(:ship_events).count == 1
@@ -19,7 +14,7 @@ class Projects::ShipsController < ApplicationController
       message = "Congratulations on shipping your project! Now thy project shall fight for blood :ultrafastparrot:"
       SendSlackDmJob.perform_later(@project.user.slack_id, message) if @project.user.slack_id.present?
     else
-      redirect_to project_path(@project), alert: "Could not ship project."
+      redirect_to project_path(@project)
     end
   end
 
