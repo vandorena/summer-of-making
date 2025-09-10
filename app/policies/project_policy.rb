@@ -70,4 +70,8 @@ class ProjectPolicy < ApplicationPolicy
   def can_follow_or_report?
     user && user != record.user
   end
+
+  def request_recertification?
+    user && user == record.user
+  end
 end

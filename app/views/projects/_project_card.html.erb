@@ -352,13 +352,7 @@
                 <p class="text-sm text-red-700 mb-3">
                   Your project didn't get certified. Check the feedback above.
                 </p>
-                <% if @project.can_request_recertification? %>
-                  <%= button_to request_recertification_project_path(@project),
-                      class: "som-button-primary px-4 py-2 text-sm",
-                      data: { confirm: "Request re-certification? Make sure you've fixed the issues mentioned in the feedback above." } do %>
-                    Request Re-certification
-                  <% end %>
-                <% end %>
+                <%= render "projects/recertification_button", project: @project %>
               </div>
             <% end %>
           </div>

@@ -265,12 +265,15 @@ Rails.application.routes.draw do
       end
     end
 
-    post "follow", to: "project_follows#create", as: :follow
-    delete "unfollow", to: "project_follows#destroy", as: :unfollow
+    # Projects::FollowsController
+    post "follow", to: "projects/follows#create", as: :follow
+    delete "unfollow", to: "projects/follows#destroy", as: :unfollow
+
+    # Projects::RecertificationsController
+    resource :recertification, only: [ :create ], controller: "projects/recertifications"
 
     member do
       patch :ship
-      post :request_recertification
       post :stake_stonks
       delete :unstake_stonks
       patch :update_coordinates
