@@ -270,7 +270,7 @@ Rails.application.routes.draw do
     delete "unfollow", to: "projects/follows#destroy", as: :unfollow
 
     # Projects::RecertificationsController
-    post "request_recertification", to: "projects/recertifications#create", as: :request_recertification
+    resource :recertification, only: [ :create ], controller: "projects/recertifications"
 
     member do
       patch :ship
