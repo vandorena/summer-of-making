@@ -51,5 +51,3 @@ class Projects::FollowsController < ApplicationController
     ]
   end
 end
-
-
