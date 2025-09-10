@@ -11,11 +11,7 @@ class Projects::ShipsController < ApplicationController
       return
     end
 
-    if ShipEvent.create(project: @project, for_sinkening: Flipper.enabled?(:sinkening, current_user))
-      if Flipper.enabled?(:sinkening, current_user)
-        @project.update!(is_sinkening_ship: true)
-      end
-
+    if ShipEvent.create(project: @project)
       is_first_ship = current_user.projects.joins(:ship_events).count == 1
       ahoy.track "tutorial_step_first_project_shipped", user_id: current_user.id, project_id: @project.id, is_first_ship: is_first_ship
       redirect_to project_path(@project), notice: "Your project has been shipped!"
