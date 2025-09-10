@@ -5,7 +5,7 @@ class ProjectsController < ApplicationController
   include ViewTrackable
   skip_before_action :verify_authenticity_token, only: [ :check_link ]
   before_action :set_project,
-                only: %i[show edit update ship stake_stonks unstake_stonks destroy update_coordinates unplace_coordinates request_recertification]
+                only: %i[show edit update ship stake_stonks unstake_stonks destroy update_coordinates unplace_coordinates]
   before_action :check_if_shipped, only: %i[edit update]
   before_action :authorize_user, only: [ :destroy ]
   before_action :require_hackatime, only: [ :create ]
@@ -232,19 +232,6 @@ class ProjectsController < ApplicationController
       SendSlackDmJob.perform_later(@project.user.slack_id, message) if @project.user.slack_id.present?
     else
       redirect_to project_path(@project), alert: "Could not ship project."
-    end
-  end
-
-  def request_recertification
-    unless current_user == @project.user
-      redirect_to project_path(@project), alert: "You can only request re-certification for your own project."
-      return
-    end
-
-    if @project.request_recertification!
-      redirect_to project_path(@project), notice: "Re-certification requested! Your project will be reviewed again."
-    else
-      redirect_to project_path(@project), alert: "Cannot request re-certification for this project."
     end
   end
 
@@ -664,7 +651,7 @@ end
         user: [ :user_hackatime_data, :user_badges ],
         devlogs: [
           { user: :user_badges },
-          { comments: :user },
+          { comments: { user: :user_badges } },
           { file_attachment: :blob }
         ],
         ship_events: [

@@ -269,9 +269,11 @@ Rails.application.routes.draw do
     post "follow", to: "projects/follows#create", as: :follow
     delete "unfollow", to: "projects/follows#destroy", as: :unfollow
 
+    # Projects::RecertificationsController
+    post "request_recertification", to: "projects/recertifications#create", as: :request_recertification
+
     member do
       patch :ship
-      post :request_recertification
       post :stake_stonks
       delete :unstake_stonks
       patch :update_coordinates
