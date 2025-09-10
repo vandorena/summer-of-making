@@ -1,4 +1,4 @@
-<% if @user.user_profile&.custom_css.present? && @user.has_badge?(:graphic_design_is_my_passion) && !current_user&.has_badge?(:sunglasses) %>
+<% if @user.user_profile&.custom_css.present? && @user.has_badge?(:graphic_design_is_my_passion) && !current_user_has_badge?(:sunglasses) %>
   <style>
     <%= sanitize_css(@user.user_profile.custom_css).html_safe %>
   </style>
@@ -111,7 +111,7 @@
             <p class="text-sm"><%= @user.created_at.strftime("%B %d, %Y") %></p>
           </div>
 
-          <% if current_user&.has_badge?(:pocket_watcher) %>
+          <% if current_user_has_badge?(:pocket_watcher) %>
             <div class="flex items-center space-x-2 border-2 border-yellow-300 bg-yellow-50/50 rounded-md p-2">
               <%= image_tag "pocket_watcher.png", class: "w-10 h-10 inline-block" %>
               <% unless @user.has_badge?(:offshore_bank_account) %>
@@ -122,7 +122,7 @@
             </div>
           <% end %>
 
-          <% if @user.user_profile&.custom_css.present? && @user.has_badge?(:graphic_design_is_my_passion) && current_user&.has_badge?(:sunglasses) %>
+          <% if @user.user_profile&.custom_css.present? && @user.has_badge?(:graphic_design_is_my_passion) && current_user_has_badge?(:sunglasses) %>
           <b> This user has custom CSS, but you're spared from it by your sunglasses.</b>
           <% end %>
         </div>

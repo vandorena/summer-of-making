@@ -22,10 +22,15 @@ class ApplicationController < ActionController::Base
   before_action :fetch_hackatime_data_if_needed
   after_action :track_page_view
 
-  helper_method :current_user, :user_signed_in?, :current_verification_status, :current_impersonator, :impersonating?
+  helper_method :current_user, :user_signed_in?, :current_verification_status, :current_impersonator, :impersonating?, :current_user_has_badge?
 
   def current_user
     @current_user ||= User.find_by(id: session[:user_id]) if session[:user_id]
+  end
+
+  def current_user_has_badge?(badge)
+    @current_user_badges ||= current_user&.badges
+    @current_user_badges&.include?(badge)
   end
 
   def current_impersonator
@@ -77,6 +82,7 @@ class ApplicationController < ActionController::Base
   end
 
   def user_for_paper_trail = current_impersonator&.id || current_user&.id
+
   def info_for_paper_trail = { extra_data: { impersonating: impersonating?, pretending_to_be: current_impersonator && current_user }.compact_blank }
 
   private
