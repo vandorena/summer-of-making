@@ -449,7 +449,7 @@ Rails.application.routes.draw do
 
     constraints AdminConstraint do
       mount MissionControl::Jobs::Engine, at: "jobs"
-      mount AhoyCaptain::Engine, at: "ahoy_captain"
+      # mount AhoyCaptain::Engine, at: "ahoy_captain"
       mount Flipper::UI.app(Flipper), at: "flipper"
       # mount_avo
       resources :view_analytics, only: [ :index ]
