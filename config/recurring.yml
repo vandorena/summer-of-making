@@ -126,8 +126,8 @@ production:
     class: Cache::MapPointsJob
     schedule: every 30 minutes
     args: [ { force: true } ]
-  
-  cache_landing_carousel_prizes:
-    class: Cache::LandingCarouselPrizesJob
+
+  cache_carousel_prizes:
+    class: Cache::CarouselPrizesJob
     schedule: every 1 hour
     args: [ { force: true } ]
