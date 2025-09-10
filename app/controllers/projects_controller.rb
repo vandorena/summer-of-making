@@ -5,7 +5,7 @@ class ProjectsController < ApplicationController
   include ViewTrackable
   skip_before_action :verify_authenticity_token, only: [ :check_link ]
   before_action :set_project,
-                only: %i[show edit update follow unfollow ship stake_stonks unstake_stonks destroy update_coordinates unplace_coordinates request_recertification]
+                only: %i[show edit update ship stake_stonks unstake_stonks destroy update_coordinates unplace_coordinates request_recertification]
   before_action :check_if_shipped, only: %i[edit update]
   before_action :authorize_user, only: [ :destroy ]
   before_action :require_hackatime, only: [ :create ]
@@ -197,90 +197,6 @@ class ProjectsController < ApplicationController
       { ship_events: :payouts },
       { devlogs: :file_attachment }
     ).order(created_at: :desc)
-  end
-
-  # Gotta say I love turbo frames and turbo streams and flashes in general
-  def follow
-    if current_user == @project.user
-      respond_to do |format|
-        format.html do
-          redirect_to request.referer || projects_path, alert: "You cannot follow your own project"
-        end
-        format.turbo_stream do
-          flash.now[:alert] = "You cannot follow your own project"
-          render turbo_stream: turbo_stream.update("flash-container", partial: "shared/flash")
-        end
-      end
-      return
-    end
-
-    @project_follow = current_user.project_follows.build(project: @project)
-
-    respond_to do |format|
-      if @project_follow.save
-        message = "Well, would you look at that! 💅 You've got a brand new follower on your project: *#{@project.title}*! :ultrafastparrot:"
-        SendSlackDmJob.perform_later(@project.user.slack_id, message) if @project.user.slack_id.present?
-
-        format.html do
-          redirect_to request.referer || projects_path, notice: "You are now following this project!"
-        end
-        format.turbo_stream do
-          flash.now[:notice] = "You are now following this project!"
-          render turbo_stream: [
-            turbo_stream.update("flash-container", partial: "shared/flash"),
-            turbo_stream.replace(dom_id(@project, :follow_button),
-                                 partial: "projects/follow_button",
-                                 locals: { project: @project, following: true })
-          ]
-        end
-      else
-        error_message = @project_follow.errors.full_messages.join(", ")
-        format.html do
-          redirect_to request.referer || projects_path, alert: "Could not follow project: #{error_message}"
-        end
-        format.turbo_stream do
-          flash.now[:alert] = "Could not follow project: #{error_message}"
-          render turbo_stream: [
-            turbo_stream.update("flash-container", partial: "shared/flash"),
-            turbo_stream.replace(dom_id(@project, :follow_button),
-                                 partial: "projects/follow_button",
-                                 locals: { project: @project, following: false })
-          ]
-        end
-      end
-    end
-  end
-
-  def unfollow
-    @project_follow = current_user.project_follows.find_by(project: @project)
-
-    respond_to do |format|
-      if @project_follow&.destroy
-        format.html do
-          redirect_to request.referer || projects_path, notice: "You have unfollowed this project."
-        end
-        format.turbo_stream do
-          flash.now[:notice] = "You have unfollowed this project."
-          render turbo_stream: [
-            turbo_stream.update("flash-container", partial: "shared/flash"),
-            turbo_stream.replace(dom_id(@project, :follow_button),
-                                 partial: "projects/follow_button",
-                                 locals: { project: @project, following: false })
-          ]
-        end
-      else
-        format.html { redirect_to request.referer || projects_path, alert: "Could not unfollow project." }
-        format.turbo_stream do
-          flash.now[:alert] = "Could not unfollow project."
-          render turbo_stream: [
-            turbo_stream.update("flash-container", partial: "shared/flash"),
-            turbo_stream.replace(dom_id(@project, :follow_button),
-                                 partial: "projects/follow_button",
-                                 locals: { project: @project, following: true })
-          ]
-        end
-      end
-    end
   end
 
   def ship

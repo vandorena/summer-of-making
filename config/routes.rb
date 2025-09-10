@@ -264,9 +264,11 @@ Rails.application.routes.draw do
         get :active
       end
     end
+
+    post "follow", to: "project_follows#create", as: :follow
+    delete "unfollow", to: "project_follows#destroy", as: :unfollow
+
     member do
-      post :follow
-      delete :unfollow
       patch :ship
       post :request_recertification
       post :stake_stonks
