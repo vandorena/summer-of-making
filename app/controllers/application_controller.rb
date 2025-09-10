@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
 
   before_action :set_paper_trail_whodunnit
 
-  # before_action :try_rack_mini_profiler_enable
+  before_action :try_rack_mini_profiler_enable
 
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   # allow_browser versions: :modern
@@ -69,7 +69,7 @@ class ApplicationController < ActionController::Base
   end
 
   def require_admin!
-    redirect_to "/" unless current_user && current_user.is_admin?
+    redirect_to "/" unless current_user&.is_admin?
   end
 
   def require_fraud_team!
