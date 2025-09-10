@@ -55,7 +55,7 @@ gem "skylight"
 # For call-stack profiling flamegraphs
 gem "stackprof"
 # Rack Mini Profiler [https://github.com/MiniProfiler/rack-mini-profiler]
-gem "rack-mini-profiler", require: false
+gem "rack-mini-profiler"
 # For memory profiling via RMP
 gem "memory_profiler"
 gem "flamegraph"
