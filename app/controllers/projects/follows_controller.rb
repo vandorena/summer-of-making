@@ -1,4 +1,4 @@
-class ProjectFollowsController < ApplicationController
+class Projects::FollowsController < ApplicationController
   include ActionView::RecordIdentifier
 
   before_action :authenticate_user!
@@ -51,3 +51,5 @@ class ProjectFollowsController < ApplicationController
     ]
   end
 end
+
+

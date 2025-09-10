@@ -265,8 +265,9 @@ Rails.application.routes.draw do
       end
     end
 
-    post "follow", to: "project_follows#create", as: :follow
-    delete "unfollow", to: "project_follows#destroy", as: :unfollow
+    # Projects::FollowsController
+    post "follow", to: "projects/follows#create", as: :follow
+    delete "unfollow", to: "projects/follows#destroy", as: :unfollow
 
     member do
       patch :ship
