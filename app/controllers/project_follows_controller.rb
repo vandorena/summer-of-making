@@ -45,9 +45,35 @@ class ProjectFollowsController < ApplicationController
     @project_follow = current_user.project_follows.find_by(project: @project)
 
     if @project_follow.destroy
-      redirect_to @project, notice: "You have unfollowed this project."
+      respond_to do |format|
+        format.html do
+          redirect_to @project, notice: "You have unfollowed this project."
+        end
+        format.turbo_stream do
+          flash.now[:notice] = "You have unfollowed this project."
+          render turbo_stream: [
+            turbo_stream.update("flash-container", partial: "shared/flash"),
+            turbo_stream.replace(dom_id(@project, :follow_button),
+                                  partial: "projects/follow_button",
+                                  locals: { project: @project, following: false })
+          ]
+        end
+      end
     else
-      redirect_to @project, alert: @project_follow.errors.full_messages.join(", ")
+      respond_to do |format|
+        format.html do
+          redirect_to @project, alert: @project_follow.errors.full_messages.join(", ")
+        end
+        format.turbo_stream do
+          flash.now[:alert] = @project_follow.errors.full_messages.join(", ")
+          render turbo_stream: [
+            turbo_stream.update("flash-container", partial: "shared/flash"),
+            turbo_stream.replace(dom_id(@project, :follow_button),
+                                  partial: "projects/follow_button",
+                                  locals: { project: @project, following: true })
+          ]
+        end
+      end
     end
   end
 
