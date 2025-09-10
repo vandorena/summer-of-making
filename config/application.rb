@@ -36,6 +36,7 @@ module Journey
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("app/models/shop_item")
     # config.autoload_paths << Rails.root.join("app/models/shop_item")
+    config.autoload_paths << Rails.root.join("app/presenters")
     config.after_initialize { eager_load! }
 
     # bring in game constants from yaml
