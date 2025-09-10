@@ -84,8 +84,7 @@ class ApplicationController < ActionController::Base
   def preload_current_user_associations
     return unless user_signed_in?
 
-    # Preload common associations to prevent N+1 queries in layouts and views
-    %w[user_badges payouts tutorial_progress user_hackatime_data].each do |association|
+    %w[user_badges payouts tutorial_progress].each do |association|
       next unless current_user.respond_to?(association) && current_user.class.reflect_on_association(association)
       next if current_user.association(association).loaded?
 
@@ -100,7 +99,12 @@ class ApplicationController < ActionController::Base
   end
 
   def fetch_hackatime_data_if_needed
-    return if !user_signed_in? || current_user.hackatime_projects.any?
+    return if session[:skip_hackatime_data] || !user_signed_in?
+
+    if current_user.hackatime_projects.any?
+      session[:skip_hackatime_data] = true
+      return
+    end
 
     Rails.cache.fetch("hackatime_fetch_#{current_user.id}", expires_in: 5.seconds) do
       current_user.refresh_hackatime_data_now
