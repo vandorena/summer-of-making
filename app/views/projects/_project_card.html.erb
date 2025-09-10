@@ -558,7 +558,7 @@
         </div>
       </div>
 
-      <%= form_with(model: @project, url: ship_project_path(@project), method: :patch, data: { ship_target: "form", action: "submit->ship#submit" }) do |form| %>
+      <%= form_with(model: @project, url: project_ship_path(@project), method: :post, data: { ship_target: "form", action: "submit->ship#submit" }) do |form| %>
         <div class="mt-6 flex justify-center space-x-4">
           <%=
             render "shared/button",

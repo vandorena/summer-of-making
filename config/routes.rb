@@ -272,8 +272,10 @@ Rails.application.routes.draw do
     # Projects::RecertificationsController
     resource :recertification, only: [ :create ], controller: "projects/recertifications"
 
+    # Projects::ShipsController
+    resource :ship, only: [ :create ], controller: "projects/ships"
+
     member do
-      patch :ship
       post :stake_stonks
       delete :unstake_stonks
       patch :update_coordinates

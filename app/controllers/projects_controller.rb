@@ -5,7 +5,7 @@ class ProjectsController < ApplicationController
   include ViewTrackable
   skip_before_action :verify_authenticity_token, only: [ :check_link ]
   before_action :set_project,
-                only: %i[show edit update ship stake_stonks unstake_stonks destroy update_coordinates unplace_coordinates]
+                only: %i[show edit update stake_stonks unstake_stonks destroy update_coordinates unplace_coordinates]
   before_action :check_if_shipped, only: %i[edit update]
   before_action :authorize_user, only: [ :destroy ]
   before_action :require_hackatime, only: [ :create ]
@@ -197,42 +197,6 @@ class ProjectsController < ApplicationController
       { ship_events: :payouts },
       { devlogs: :file_attachment }
     ).order(created_at: :desc)
-  end
-
-  def ship
-    unless current_user == @project.user
-      respond_to do |format|
-        format.html { redirect_to project_path(@project), alert: "You can only ship your own project." }
-        format.turbo_stream do
-          flash.now[:alert] = "You can only ship your own project."
-          render turbo_stream: turbo_stream.update("flash-container", partial: "shared/flash")
-        end
-      end
-      return
-    end
-
-    # Verify all requirements are met
-    errors = @project.shipping_errors
-
-    if errors.any?
-      redirect_to project_path(@project), alert: "Cannot ship project: #{errors.join(' ')}"
-      return
-    end
-
-    if ShipEvent.create(project: @project, for_sinkening: Flipper.enabled?(:sinkening, current_user))
-      if Flipper.enabled?(:sinkening, current_user)
-        @project.update!(is_sinkening_ship: true)
-      end
-
-      is_first_ship = current_user.projects.joins(:ship_events).count == 1
-      ahoy.track "tutorial_step_first_project_shipped", user_id: current_user.id, project_id: @project.id, is_first_ship: is_first_ship
-      redirect_to project_path(@project), notice: "Your project has been shipped!"
-
-      message = "Congratulations on shipping your project! Now thy project shall fight for blood :ultrafastparrot:"
-      SendSlackDmJob.perform_later(@project.user.slack_id, message) if @project.user.slack_id.present?
-    else
-      redirect_to project_path(@project), alert: "Could not ship project."
-    end
   end
 
   # Some AI generated code to check if a link is a valid repo or readme link
