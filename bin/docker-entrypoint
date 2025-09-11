@@ -20,7 +20,7 @@ if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
     mkdir -p /tmp/anacron-spool
     
     # Start anacron in background with custom config
-    anacron -s -t /rails/config/anacrontab -S /tmp/anacron-spool &
+    anacron -s -t /rails/config/anacrontab -S /tmp/anacron-spool -d > /tmp/anacron.log 2>&1 &
     echo "[MLD] Anacron started in background for memory monitoring"
   fi
 fi
