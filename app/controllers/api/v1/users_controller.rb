@@ -126,7 +126,7 @@ module Api
       end
 
       def me
-        user = current_user.includes(:user_profile, :user_hackatime_data, :user_badges, :projects)
+        user = current_user
         projects_with_ship_events = user.projects.joins(:ship_events).distinct.count
         render json: {
           id: user.id,
