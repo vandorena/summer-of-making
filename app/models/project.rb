@@ -654,6 +654,19 @@ class Project < ApplicationRecord
     (value - start) / (stop - start).to_f
   end
 
+  def cached_image_url
+    if banner.attached?
+      Rails.application.routes.url_helpers.cached_url_for(banner)
+    else
+      devlog_with_image = devlogs.find { |devlog| devlog.file.attached? && devlog.file.image? }
+      if devlog_with_image
+        Rails.application.routes.url_helpers.cached_url_for(devlog_with_image.file)
+      else
+        "https://hc-cdn.hel1.your-objectstorage.com/s/v3/42eb885e3ebc20bd5e94782b7b4bcb31bcc956d3_i.png"
+      end
+    end
+  end
+
   private
 
   def convert_github_blob_urls
