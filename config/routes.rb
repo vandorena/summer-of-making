@@ -291,7 +291,6 @@ Rails.application.routes.draw do
     end
   end
 
-  get "devlogs", to: "devlogs#index"
   resources :votes, only: [ :new, :create ] do
     collection do
       get :locked
