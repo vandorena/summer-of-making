@@ -1,0 +1,3 @@
+# Anacron configuration for memory leak debugging
+# period delay job-id command
+5 1 memory-check /rails/bin/rails runner /rails/config/memory_check.rb

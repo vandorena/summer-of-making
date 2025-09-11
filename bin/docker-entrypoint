@@ -14,17 +14,14 @@ if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
   
   # Start memory leak debugging if enabled
   if [ "${MEMORY_DEBUG_ENABLED}" = "true" ]; then
-    echo "[MLD] Starting memory leak debugging cron..."
+    echo "[MLD] Starting memory leak debugging with anacron..."
     
-    # Start cron daemon in background
-    cron -f &
-    echo "[MLD] Cron daemon started in background (PID $!)"
+    # Create anacron spool directory for this user
+    mkdir -p /tmp/anacron-spool
     
-    # Install crontab if exists
-    if [ -f /rails/config/crontab ]; then
-      crontab /rails/config/crontab
-      echo "[MLD] Crontab installed - memory checks will run every 5 minutes"
-    fi
+    # Start anacron in background with custom config
+    anacron -s -t /rails/config/anacrontab -S /tmp/anacron-spool &
+    echo "[MLD] Anacron started in background for memory monitoring"
   fi
 fi
 
