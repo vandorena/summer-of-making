@@ -269,6 +269,9 @@ Rails.application.routes.draw do
     post "follow", to: "projects/follows#create", as: :follow
     delete "unfollow", to: "projects/follows#destroy", as: :unfollow
 
+    # Projects::ReadmesController
+    get "readme", to: "projects/readmes#show", as: :readme
+
     # Projects::RecertificationsController
     resource :recertification, only: [ :create ], controller: "projects/recertifications"
 
@@ -280,7 +283,6 @@ Rails.application.routes.draw do
       delete :unstake_stonks
       patch :update_coordinates
       delete :unplace_coordinates
-      get :render_readme
       # patch :recover
       get "devlog/:devlog_id", action: :show, as: :devlog
     end
