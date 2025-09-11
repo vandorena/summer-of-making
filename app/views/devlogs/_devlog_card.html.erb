@@ -118,7 +118,7 @@
                  data-controller="video"
                  data-video-context-value="<%= context %>"
                  data-video-autoplay-value="<%= video_autoplay %>">
-              <%= video_tag url_for(devlog.file),
+              <%= video_tag devlog.cached_attachment_url,
                             class: video_classes,
                             data: { video_target: "video" },
                             **video_attributes do %>
@@ -132,7 +132,7 @@
             </div>
           <% elsif devlog.file.try(:audio?) %>
             <div class="w-full flex items-center justify-center py-4">
-              <%= audio_tag url_for(devlog.file), class: "w-full max-w-md", controls: true, controlslist: "nodownload" do %>
+              <%= audio_tag devlog.cached_attachment_url, class: "w-full max-w-md", controls: true, controlslist: "nodownload" do %>
                 Your browser does not support the audio tag.
               <% end %>
             </div>
