@@ -1,3 +1,3 @@
 # Anacron configuration for memory leak debugging
 # period delay job-id command
-5 1 memory-check /rails/bin/rails memory:check > /tmp/memory.log 2>&1 
+5 1 memory-check /rails/run_the_frickin_memory_check.sh> /tmp/memory.log 2>&1 
