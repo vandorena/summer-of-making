@@ -314,6 +314,7 @@
         style="padding: 1rem 2rem; font-size: 1.1em; cursor: pointer; border: none; text-decoration: none; background-color: #ff8a00;">
       Return to Ship Certifier
     </button>
+    <%= render "admin/projects/magic_happening_button", project: @project %>
     <%= form.submit "Complete Review",
         class: "pill pill-green",
         style: "padding: 1rem 2rem; font-size: 1.1em; cursor: pointer; border: none; text-decoration: none;" %>
@@ -346,7 +347,6 @@
         </button>
       </div>
     <% end %>
-    <%= render "admin/projects/magic_happening_button", project: @project %>
   </div>
 </div>
 
