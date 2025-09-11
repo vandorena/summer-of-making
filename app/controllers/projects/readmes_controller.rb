@@ -1,6 +1,6 @@
 class Projects::ReadmesController < ApplicationController
   include ActionView::Helpers::SanitizeHelper
-  
+
   layout false
 
   def show
