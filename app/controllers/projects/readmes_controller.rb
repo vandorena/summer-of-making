@@ -1,13 +1,15 @@
 class Projects::ReadmesController < ApplicationController
-  before_action :set_project
+  include ActionView::Helpers::SanitizeHelper
+  
+  layout false
 
   def show
+    @project = Project.find(params[:project_id])
+
     authorize @project, :show?
 
-    # Cache for 1 hour since README content doesn't change frequently
-    expires_in 1.hour, public: true
 
-    if @project.readme_link.blank?
+    if @project&.readme_link&.blank?
       @error_message = "No README link found"
       return
     end
@@ -34,7 +36,10 @@ class Projects::ReadmesController < ApplicationController
       if response.is_a?(Net::HTTPSuccess)
         renderer = Redcarpet::Render::HTML.new(filter_html: true, no_images: false, no_styles: true)
         markdown = Redcarpet::Markdown.new(renderer)
-        @readme_content = markdown.render(response.body)
+        rendered_html = markdown.render(response.body)
+        @readme_content = ActiveSupport::SafeBuffer.new(sanitize(rendered_html))
+
+        expires_in 1.minute, public: true
       else
         @error_message = "Failed to fetch README: Status #{response.code}"
       end
@@ -45,11 +50,5 @@ class Projects::ReadmesController < ApplicationController
     rescue StandardError => e
       @error_message = "Failed to fetch README: #{e.message}"
     end
-  end
-
-  private
-
-  def set_project
-    @project = Project.find(params[:project_id])
   end
 end
