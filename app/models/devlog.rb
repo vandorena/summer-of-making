@@ -277,4 +277,10 @@ class Devlog < ApplicationRecord
     # immeditately perform so we don't have 0 0 time
     RecalculateProjectDevlogTimesJob.perform_now(project_id)
   end
+
+  def cached_attachment_url
+    return nil unless file.attached?
+
+    Rails.application.routes.url_helpers.cached_url_for(file)
+  end
 end
