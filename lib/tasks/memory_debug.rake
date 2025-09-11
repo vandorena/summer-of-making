@@ -1,12 +1,23 @@
 namespace :memory do
   desc "Check memory usage once and trigger heap dumps if thresholds are exceeded"
   task check: :environment do
+
+    def write_log(message) = puts "[MLD] #{Time.now.strftime("%Y-%m-%d %H:%M:%S")} #{message}"
+
     threshold_mb = ENV.fetch("MEMORY_THRESHOLD_MB", "700").to_i
     dump_dir = ENV.fetch("DUMP_DIR", "/tmp")
 
     begin
+      write_log "Checking memory usage..."
       # In single container, look for puma/thrust processes
       puma_pids = `pgrep -f 'puma|thrust'`.split.map(&:to_i)
+
+      unless puma_pids.any?
+        write_log "No Puma processes found"
+        exit 1
+      end
+
+      write_log "Found Puma PIDs: #{puma_pids.join(', ')}"
 
       puma_pids.each do |pid|
         # Get memory usage in KB from /proc/pid/status
@@ -19,21 +30,21 @@ namespace :memory do
         memory_kb = vmrss_line.match(/(\d+)/)[1].to_i
         memory_mb = memory_kb / 1024
 
-        puts "[MLD] Puma PID #{pid}: #{memory_mb}MB"
+        write_log "Puma PID #{pid}: #{memory_mb}MB"
 
         if memory_mb > threshold_mb
-          puts "[MLD] Memory threshold exceeded for PID #{pid}! Triggering heap dump sequence..."
+          write_log "Memory threshold exceeded for PID #{pid}! Triggering heap dump sequence..."
 
           # Send signal to start tracing
           Process.kill("TTIN", pid)
-          puts "[MLD] Sent TTIN to PID #{pid} to start tracing"
+          write_log "Sent TTIN to PID #{pid} to start tracing"
 
           # Wait a bit for tracing to capture activity
           sleep 30
 
           # Take first heap dump
           Process.kill("TTOU", pid)
-          puts "[MLD] Sent TTOU to PID #{pid} for first heap dump"
+          write_log "Sent TTOU to PID #{pid} for first heap dump"
 
           sleep 5 # Allow dump to complete
 
@@ -42,7 +53,7 @@ namespace :memory do
 
           # Take second heap dump
           Process.kill("TTOU", pid)
-          puts "[MLD] Sent TTOU to PID #{pid} for second heap dump"
+          write_log "Sent TTOU to PID #{pid} for second heap dump"
 
           sleep 5 # Allow dump to complete
 
@@ -53,7 +64,7 @@ namespace :memory do
           if heap_files.any?
             zip_filename = "#{dump_dir}/memory-leak-dumps-#{Time.now.strftime('%Y%m%d-%H%M%S')}.zip"
             system("cd #{dump_dir} && zip #{zip_filename} #{heap_files.map { |f| File.basename(f) }.join(' ')}")
-            puts "[MLD] Created zip file: #{zip_filename}"
+            write_log "Created zip file: #{zip_filename}"
 
             # Upload to Cloudflare R2 using ActiveStorage
             begin
@@ -66,7 +77,7 @@ namespace :memory do
 
               # Get the URL for the uploaded file
               file_url = Rails.application.routes.url_helpers.rails_blob_url(blob, host: ENV.fetch("RAILS_HOST", "localhost"))
-              puts "[MLD] Uploaded to R2: #{file_url}"
+              write_log "Uploaded to R2: #{file_url}"
 
               # Send Slack notification
               if ENV["SLACK_WEBHOOK_URL"]
@@ -115,29 +126,29 @@ namespace :memory do
                 response = http.request(request)
 
                 if response.code == "200"
-                  puts "[MLD] Slack notification sent successfully"
+                  write_log "Slack notification sent successfully"
                 else
-                  puts "[MLD] Failed to send Slack notification: #{response.code}"
+                  write_log "Failed to send Slack notification: #{response.code}"
                 end
               end
 
               # Clean up local zip file
               File.delete(zip_filename)
-              puts "[MLD] Cleaned up local zip file"
+              write_log "Cleaned up local zip file"
 
             rescue => e
-              puts "[MLD] Failed to upload to R2: #{e.message}"
+              write_log "Failed to upload to R2: #{e.message}"
             end
 
             # Clean up individual dump files
             heap_files.each { |f| File.delete(f) }
-            puts "[MLD] Cleaned up individual dump files"
+            write_log "Cleaned up individual dump files"
           end
         end
       end
 
     rescue => e
-      puts "[MLD] Error in memory check: #{e.message}"
+      write_log "Error in memory check: #{e.message}"
     end
   end
 
@@ -146,14 +157,14 @@ namespace :memory do
     puma_pids = `pgrep -f 'puma|thrust'`.split.map(&:to_i)
 
     if puma_pids.empty?
-      puts "[MLD] No Puma processes found"
+        write_log "No Puma processes found"
       exit 1
     end
 
-    puts "[MLD] Found Puma PIDs: #{puma_pids.join(', ')}"
+    write_log "Found Puma PIDs: #{puma_pids.join(', ')}"
 
     puma_pids.each do |pid|
-      puts "[MLD] Taking heap dump for PID #{pid}..."
+      write_log "Taking heap dump for PID #{pid}..."
       Process.kill("TTOU", pid)
     end
   end
@@ -163,14 +174,14 @@ namespace :memory do
     puma_pids = `pgrep -f 'puma|thrust'`.split.map(&:to_i)
 
     if puma_pids.empty?
-      puts "[MLD] No Puma processes found"
+      write_log "No Puma processes found"
       exit 1
     end
 
-    puts "[MLD] Found Puma PIDs: #{puma_pids.join(', ')}"
+    write_log "Found Puma PIDs: #{puma_pids.join(', ')}"
 
     puma_pids.each do |pid|
-      puts "[MLD] Starting memory tracing for PID #{pid}..."
+      write_log "Starting memory tracing for PID #{pid}..."
       Process.kill("TTIN", pid)
     end
   end
