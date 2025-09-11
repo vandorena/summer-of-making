@@ -39,6 +39,8 @@ module Journey
     config.autoload_paths << Rails.root.join("app/presenters")
     config.after_initialize { eager_load! }
 
+    config.active_storage.urls_expire_in = 1.hour
+
     # bring in game constants from yaml
     config.game_constants = config_for(:game_constants)
 
