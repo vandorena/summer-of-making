@@ -11,8 +11,8 @@
         </div>
 
         <div class="p-4 md:p-6 overflow-y-auto flex-grow">
-            <%= turbo_frame_tag "readme-content-#{project.id}", 
-                src: project_readme_path(project), 
+            <%= turbo_frame_tag "readme-content-#{project.id}",
+                src: project_readme_path(project),
                 loading: "lazy" do %>
                 <div class="flex justify-center items-center h-64">
                     <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-forest"></div>
