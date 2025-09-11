@@ -148,7 +148,8 @@ class Project < ApplicationRecord
   }
 
   scope :for_gallery, -> {
-    includes(:user, :banner_attachment)
+    includes(:user)
+      .with_attached_banner
       .order(devlogs_count: :desc, created_at: :desc)
   }
 

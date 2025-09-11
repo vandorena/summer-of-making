@@ -69,16 +69,17 @@ class Devlog < ApplicationRecord
   after_commit :bust_user_projects_devlogs_cache
 
   scope :for_explore_feed, -> {
-    joins(:project)
-      .where(projects: { is_deleted: false })
-      .includes(:project, :file_attachment, :user)
+    joins(:project).where(projects: { is_deleted: false })
+      .with_attached_file
+      .includes(:project, :user)
       .order(created_at: :desc)
   }
 
   scope :for_user_following, ->(user_id) {
     joins(project: :project_follows)
+      .with_attached_file
+      .includes(:project, :user)
       .where(project_follows: { user_id: user_id }, projects: { is_deleted: false })
-      .includes(:project, :file_attachment, :user)
       .order(created_at: :desc)
   }
 
