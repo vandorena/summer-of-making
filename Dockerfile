@@ -9,7 +9,8 @@
 
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version
 ARG RUBY_VERSION=3.4.3
-FROM docker.io/library/ruby:$RUBY_VERSION-slim
+FROM docker.io/library/ruby:$RUBY_VERSION 
+# ^ temporary: no more -slim, gimme my frickin tools!
 
 # Rails app lives here
 WORKDIR /rails
