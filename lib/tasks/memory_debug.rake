@@ -1,7 +1,6 @@
 namespace :memory do
   desc "Check memory usage once and trigger heap dumps if thresholds are exceeded"
   task check: :environment do
-
     def write_log(message) = puts "[MLD] #{Time.now.strftime("%Y-%m-%d %H:%M:%S")} #{message}"
 
     threshold_mb = ENV.fetch("MEMORY_THRESHOLD_MB", "700").to_i
