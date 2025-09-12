@@ -247,7 +247,7 @@ class UsersController < ApplicationController
           banner_attachment: [ :blob ]  # For project thumbnails
         ] }
       )
-      scope = scope.where(user_profiles: { hide_from_logged_out: [ false, nil ] }) unless user_signed_in?
+      scope = scope.left_joins(:user_profile).where(user_profiles: { hide_from_logged_out: [ false, nil ] }) unless user_signed_in?
       scope.find(params[:id])
     end
   end
