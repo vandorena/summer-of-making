@@ -22,5 +22,9 @@ module HoneybadgerRateLimiter
     Rails.cache.write(day_key, day_count, expires_in: 1.day) if day_count == 1
 
     true
+  rescue => e
+    # If cache fails (e.g., Redis down), allow the error to be reported
+    # to prevent circular dependency where Redis errors can't be reported
+    true
   end
 end
