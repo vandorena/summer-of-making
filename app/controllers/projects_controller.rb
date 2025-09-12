@@ -14,7 +14,7 @@ class ProjectsController < ApplicationController
 
   def show
     authorize @project, :show?
-    track_view(@project)
+    # track_view(@project)
 
     if current_user
       current_user.user_badges.load

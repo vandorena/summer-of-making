@@ -11,7 +11,7 @@ class DevlogsController < ApplicationController
   before_action :authenticate_api_key, only: [ :api_create ]
   skip_before_action :verify_authenticity_token, only: [ :api_create ]
   def show
-    track_view(@devlog)
+    # track_view(@devlog)
   end
 
   def index
