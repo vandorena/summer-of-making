@@ -25,4 +25,4 @@ debug: false
 
 # Enable Honeybadger Insights
 insights:
-  enabled: false
+  enabled: true
