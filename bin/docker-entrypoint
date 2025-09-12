@@ -10,8 +10,6 @@ fi
 if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
   ./bin/rails db:prepare
   
-  ./bin/rails solid_queue:start &
-  
   # Start memory leak debugging if enabled
   if [ "${MEMORY_DEBUG_ENABLED}" = "true" ]; then
     echo "[MLD] Starting memory leak debugging with anacron..."
