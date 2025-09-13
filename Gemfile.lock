@@ -300,6 +300,8 @@ GEM
     listen (3.9.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
+    literal (1.8.1)
+      zeitwerk
     logger (1.7.0)
     loofah (2.24.1)
       crass (~> 1.0.2)
@@ -385,6 +387,12 @@ GEM
     pg (1.6.2-arm64-darwin)
     pg (1.6.2-x86_64-linux)
     pg (1.6.2-x86_64-linux-musl)
+    phlex (2.3.1)
+      zeitwerk (~> 2.7)
+    phlex-rails (2.3.1)
+      phlex (~> 2.3.0)
+      railties (>= 7.1, < 9)
+      zeitwerk (~> 2.7)
     pp (0.6.2)
       prettyprint
     prettyprint (0.2.0)
@@ -671,6 +679,7 @@ DEPENDENCIES
   jb (~> 0.8.2)
   jbuilder
   kamal
+  literal (~> 1.8)
   lz_string (~> 0.3.0)
   memory_profiler
   mini_magick (~> 5.2)
@@ -679,6 +688,7 @@ DEPENDENCIES
   pagy
   paper_trail
   pg (~> 1.1)
+  phlex-rails (~> 2.3)
   propshaft
   public_activity (~> 3.0)
   puma (>= 5.0)
