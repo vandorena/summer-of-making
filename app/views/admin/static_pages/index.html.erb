@@ -21,8 +21,8 @@
   <%= render partial: "tool", locals: { path: admin_blazer_path, label: "Blazer" } if @admin_signed_in %>
   <%= render partial: "tool", locals: { path: "/admin/flipper", label: "Flipper" } if @admin_signed_in %>
   <%= render partial: "tool", locals: { path: admin_mission_control_jobs_path, label: "Job Queue" } if @admin_signed_in %>
-  <%= render partial: "tool", locals: { path: "/admin/voting_dashboard", label: "Voting Dashboard" } if @admin_signed_in %>
-  <%= render partial: "tool", locals: { path: "/admin/payouts_dashboard", label: "Payouts Dashboard" } if @admin_signed_in %>
+  <%= render partial: "tool", locals: { path: "/admin/voting_dashboard", label: "Voting Dashboard" } %>
+  <%= render partial: "tool", locals: { path: "/admin/payouts_dashboard", label: "Payouts Dashboard" } %>
   <%= render partial: "tool", locals: { path: admin_low_quality_dashboard_index_path, label: "Low-quality Dashboard" } %>
   <%= render partial: "tool", locals: { path: "/admin/fraud_reports", label: "Reports Dashboard" } %>
   <%= render partial: "tool", locals: { path: admin_caches_path, label: "Global Caches" } if @admin_signed_in %>
