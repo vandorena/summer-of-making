@@ -448,6 +448,13 @@ Rails.application.routes.draw do
           post :flip
         end
       end
+      resources :projects, only: [ :show ] do
+        member do
+          delete :destroy
+          patch :restore
+          post :magic_is_happening
+        end
+      end
     end
 
     constraints AdminConstraint do
@@ -473,13 +480,6 @@ Rails.application.routes.draw do
       end
       resources :special_access_users, only: [ :index ]
       resources :shop_items
-      resources :projects, only: [ :show ] do
-        member do
-          delete :destroy
-          patch :restore
-          post :magic_is_happening
-        end
-      end
       resources :shop_card_grants, only: [ :index, :show ]
       resources :caches, path: "cache", only: [ :index ] do
         member do
