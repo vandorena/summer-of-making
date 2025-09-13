@@ -20,6 +20,7 @@ class C::StyledButton < C::Base
   prop :method, _Union?(String, Symbol)
   prop :onclick, _String?
   prop :id, _String?
+  prop :title, _String?
 
   # Pre-computed class combinations for zero allocations
   KIND_CLASSES = {
@@ -99,7 +100,8 @@ class C::StyledButton < C::Base
       data: @data,
       disabled: @disabled,
       onclick: @onclick,
-      id: @id
+      id: @id,
+      title: @title
     }
     attrs.compact
   end
@@ -110,7 +112,8 @@ class C::StyledButton < C::Base
       data: @data,
       target: @link_target.empty? ? nil : @link_target,
       onclick: @onclick,
-      id: @id
+      id: @id,
+      title: @title
     }
     attrs.compact
   end
