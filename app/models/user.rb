@@ -46,9 +46,9 @@
 class User < ApplicationRecord
   has_paper_trail
 
-  has_many :projects, counter_cache: true
-  has_many :devlogs, counter_cache: true
-  has_many :votes, counter_cache: true
+  has_many :projects
+  has_many :devlogs
+  has_many :votes
   has_one :user_vote_queue, dependent: :destroy
   has_many :project_follows
   has_many :followed_projects, through: :project_follows, source: :project

@@ -39,7 +39,7 @@ require "cgi"
 #
 class Devlog < ApplicationRecord
   include Balloonable
-  belongs_to :user
+  belongs_to :user, counter_cache: true
   belongs_to :project, counter_cache: { active: false }
   has_many :comments, -> { order(created_at: :desc) }, dependent: :destroy
   has_many :timer_sessions, dependent: :nullify

@@ -21,7 +21,7 @@ class ShipEvent < ApplicationRecord
   include AirtableSyncable
   include Balloonable
 
-  belongs_to :project
+  belongs_to :project, counter_cache: true
   has_one :user, through: :project
   has_one :ship_event_feedback
   has_many :payouts, as: :payable

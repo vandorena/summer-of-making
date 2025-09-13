@@ -49,7 +49,7 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class Vote < ApplicationRecord
-  belongs_to :user
+  belongs_to :user, counter_cache: true
   belongs_to :project_1, class_name: "Project", optional: true
   belongs_to :project_2, class_name: "Project", optional: true
   belongs_to :ship_event_1, class_name: "ShipEvent"
