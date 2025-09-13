@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_12_001640) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_13_210400) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -409,8 +409,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_12_001640) do
     t.float "y"
     t.boolean "is_sinkening_ship", default: false
     t.datetime "magicked_at"
+    t.integer "ship_events_count", default: 0, null: false
+    t.integer "followers_count", default: 0, null: false
+    t.index ["followers_count"], name: "index_projects_on_followers_count"
     t.index ["is_shipped"], name: "index_projects_on_is_shipped"
     t.index ["rating"], name: "index_projects_on_rating"
+    t.index ["ship_events_count"], name: "index_projects_on_ship_events_count"
     t.index ["user_id", "is_deleted"], name: "index_projects_on_user_id_and_is_deleted"
     t.index ["user_id"], name: "index_projects_on_user_id"
     t.index ["views_count"], name: "index_projects_on_views_count"
@@ -868,6 +872,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_12_001640) do
     t.boolean "is_banned", default: false
     t.boolean "fraud_team_member", default: false, null: false
     t.string "badges", default: [], array: true
+    t.integer "projects_count", default: 0, null: false
+    t.integer "devlogs_count", default: 0, null: false
+    t.integer "votes_count", default: 0, null: false
+    t.integer "ship_events_count", default: 0, null: false
+    t.index ["projects_count"], name: "index_users_on_projects_count"
+    t.index ["ship_events_count"], name: "index_users_on_ship_events_count"
+    t.index ["votes_count"], name: "index_users_on_votes_count"
   end
 
   create_table "versions", force: :cascade do |t|
