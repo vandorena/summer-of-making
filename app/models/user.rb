@@ -7,6 +7,7 @@
 #  id                                   :bigint           not null, primary key
 #  avatar                               :string
 #  badges                               :string           default([]), is an Array
+#  devlogs_count                        :integer          default(0), not null
 #  display_name                         :string
 #  email                                :string
 #  first_name                           :string
@@ -23,22 +24,31 @@
 #  is_banned                            :boolean          default(FALSE)
 #  last_name                            :string
 #  permissions                          :text             default([])
+#  projects_count                       :integer          default(0), not null
 #  shenanigans_state                    :jsonb
+#  ship_events_count                    :integer          default(0), not null
 #  synced_at                            :datetime
 #  timezone                             :string
 #  tutorial_video_seen                  :boolean          default(FALSE), not null
+#  votes_count                          :integer          default(0), not null
 #  ysws_verified                        :boolean          default(FALSE)
 #  created_at                           :datetime         not null
 #  updated_at                           :datetime         not null
 #  identity_vault_id                    :string
 #  slack_id                             :string
 #
+# Indexes
+#
+#  index_users_on_projects_count     (projects_count)
+#  index_users_on_ship_events_count  (ship_events_count)
+#  index_users_on_votes_count        (votes_count)
+#
 class User < ApplicationRecord
   has_paper_trail
 
-  has_many :projects
-  has_many :devlogs
-  has_many :votes
+  has_many :projects, counter_cache: true
+  has_many :devlogs, counter_cache: true
+  has_many :votes, counter_cache: true
   has_one :user_vote_queue, dependent: :destroy
   has_many :project_follows
   has_many :followed_projects, through: :project_follows, source: :project
