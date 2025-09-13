@@ -49,13 +49,13 @@ class Project < ApplicationRecord
 
   include PublicActivity::Model
 
-  belongs_to :user
+  belongs_to :user, counter_cache: true
   has_many :devlogs, counter_cache: :devlogs_count
   has_many :project_follows, counter_cache: :followers_count
   has_many :followers, through: :project_follows, source: :user
   has_many :stonks
   has_many :stakers, through: :stonks, source: :user
-  has_many :ship_events, counter_cache: true
+  has_many :ship_events
   has_one :stonk_tickler
   has_one_attached :banner
 
