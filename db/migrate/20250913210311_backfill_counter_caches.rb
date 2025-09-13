@@ -2,32 +2,23 @@ class BackfillCounterCaches < ActiveRecord::Migration[8.0]
   disable_ddl_transaction!
 
   def up
-    # Projects counter caches
-    Project.in_batches(of: 1000) do |batch|
-      batch.update_all(
-        "ship_events_count = (SELECT COUNT(*) FROM ship_events WHERE ship_events.project_id = projects.id),
-         followers_count = (SELECT COUNT(*) FROM project_follows WHERE project_follows.project_id = projects.id),
-         devlogs_count = (SELECT COUNT(*) FROM devlogs WHERE devlogs.project_id = projects.id)"
-      )
-    end
-
-    # Users counter caches
-    User.in_batches(of: 1000) do |batch|
-      batch.update_all(
-        "projects_count = (SELECT COUNT(*) FROM projects WHERE projects.user_id = users.id AND projects.is_deleted = false),
-         devlogs_count = (SELECT COUNT(*) FROM devlogs WHERE devlogs.user_id = users.id),
-         votes_count = (SELECT COUNT(*) FROM votes WHERE votes.user_id = users.id),
-         ship_events_count = (SELECT COUNT(*) FROM ship_events INNER JOIN projects ON ship_events.project_id = projects.id WHERE projects.user_id = users.id AND projects.is_deleted = false)"
-      )
+    safety_assured do
+      execute "SET lock_timeout = '60s'"
     end
 
     # Set default values first, then NOT NULL constraints
-    change_column_default :projects, :ship_events_count, from: nil, to: 0
-    change_column_default :projects, :followers_count, from: nil, to: 0
-    change_column_default :users, :projects_count, from: nil, to: 0
-    change_column_default :users, :devlogs_count, from: nil, to: 0
-    change_column_default :users, :votes_count, from: nil, to: 0
-    change_column_default :users, :ship_events_count, from: nil, to: 0
+    Project.unscoped.where(ship_events_count: nil).update_all(ship_events_count: 0)
+    change_column_default :projects, :ship_events_count, 0
+    Project.unscoped.where(followers_count: nil).update_all(followers_count: 0)
+    change_column_default :projects, :followers_count, 0
+    User.unscoped.where(projects_count: nil).update_all(projects_count: 0)
+    change_column_default :users, :projects_count, 0
+    User.unscoped.where(devlogs_count: nil).update_all(devlogs_count: 0)
+    change_column_default :users, :devlogs_count, 0
+    User.unscoped.where(votes_count: nil).update_all(votes_count: 0)
+    change_column_default :users, :votes_count, 0
+    User.unscoped.where(ship_events_count: nil).update_all(ship_events_count: 0)
+    change_column_default :users, :ship_events_count, 0
 
     # Safe to add NOT NULL since we backfilled and set defaults
     safety_assured do
@@ -38,8 +29,15 @@ class BackfillCounterCaches < ActiveRecord::Migration[8.0]
       change_column_null :users, :votes_count, false
       change_column_null :users, :ship_events_count, false
     end
+
+    safety_assured do
+      execute "SET lock_timeout = '3s'"
+    end
   end
 
   def down
+    safety_assured do
+      execute "SET lock_timeout = '3s'"
+    end
   end
 end
