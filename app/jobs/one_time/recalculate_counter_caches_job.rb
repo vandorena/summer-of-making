@@ -14,11 +14,11 @@ class OneTime::RecalculateCounterCachesJob < ApplicationJob
 
   def recalculate_project_counters
     Rails.logger.info "Recalculating project counter caches..."
-    
+
     i = 0
     Project.unscoped.in_batches(of: 1000) do |batch|
       Rails.logger.info "Processing projects batch #{i += 1}..."
-      
+
       batch.update_all(
         "ship_events_count = (SELECT COUNT(*) FROM ship_events WHERE ship_events.project_id = projects.id),
          followers_count = (SELECT COUNT(*) FROM project_follows WHERE project_follows.project_id = projects.id),
