@@ -58,12 +58,18 @@ class ShopItem::AdventSticker < ShopItem
 
   validates :unlock_on, presence: true
 
+  before_create :set_ticket_cost_to_zero
+
   scope :unlocked, ->(date = Date.current) { where("unlock_on <= ?", date) }
   scope :today, -> { where(unlock_on: Date.current) }
   scope :specials, -> { where(special: true) }
   scope :regulars, -> { where(special: false) }
 
   def campfire_only? = campfire_only
+
+  private
+
+  def set_ticket_cost_to_zero
+    self.ticket_cost = 0
+  end
 end
-
-
