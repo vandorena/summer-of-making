@@ -59,6 +59,20 @@ class CampfireController < ApplicationController
             { sticker: preloaded[today + 1], label: "Tomorrow", state: :upcoming, date: today + 1 }
           ]
         end
+
+        begin
+          seconds_left = Time.use_zone("America/New_York") do
+            now = Time.zone.now
+            (now.end_of_day - now).to_i
+          end
+          seconds_left = [ seconds_left, 0 ].max
+          hours = seconds_left / 3600
+          minutes = (seconds_left % 3600) / 60
+          time_left_text = "#{hours}h #{minutes}m left (EST)"
+          @advent_cards.each { |c| c[:time_left_text] = time_left_text if c[:state] == :today }
+        rescue => e
+          Rails.logger.warn("Failed to compute EST time left: #{e.message}")
+        end
       end
     end
 
