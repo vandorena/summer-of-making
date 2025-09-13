@@ -72,14 +72,5 @@ module Admin
         redirect_to root_path, alert: "whomp whomp"
       end
     end
-
-    def d(s)
-      return "--:--:--" unless s
-      h = s / 3600
-      m = (s % 3600) / 60
-      sec = s % 60
-      sprintf("%02d:%02d:%02d", h, m, sec)
-    end
-    helper_method :d
   end
 end

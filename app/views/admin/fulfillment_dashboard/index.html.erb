@@ -1,4 +1,4 @@
-<h1 style="color: var(--color-primary);margin-top: 0;">stuff go out the door dashboard:</h1>
+<h1 style="color: var(--color-primary);margin-top: 0;">going out the door:</h1>
 <div style="margin-bottom: 2em; padding: 1em; background: var(--color-darker); border-radius: 8px;">
   <div>
     <strong style="color: var(--color-text); display: block; margin-bottom: 0.5em;font-size: 1.2em;">
@@ -15,11 +15,11 @@
         </div>
         <div style="font-size: 0.8em; color: var(--color-text); margin-bottom: 0.2em;">avg waiting fd</div>
         <div style="font-family: monospace; font-weight: bold; color: <%= @s[:all][:aho] && @s[:all][:aho] > 172800 ? '#ff6b6b' : 'white' %>;">
-          <%= d(@s[:all][:aho]) %>
+          <%= format_seconds(@s[:all][:aho], include_days: true) %>
         </div>
         <div style="font-size: 0.8em; color: var(--color-text); margin-bottom: 0.2em;">avg avg awaiting fulfill check</div>
         <div style="font-family: monospace; font-weight: bold; color: <%= @s[:all][:ahf] && @s[:all][:ahf] > 172800 ? '#ff6b6b' : 'white' %>;">
-          <%= d(@s[:all][:ahf]) %>
+          <%= format_seconds(@s[:all][:ahf], include_days: true) %>
         </div>
       </div>
 
@@ -33,11 +33,11 @@
         </div>
         <div style="font-size: 0.8em; color: var(--color-text); margin-bottom: 0.2em;">avg waiting fd</div>
         <div style="font-family: monospace; font-weight: bold; color: <%= @s[:hq_mail][:aho] && @s[:hq_mail][:aho] > 172800 ? '#ff6b6b' : 'white' %>;">
-          <%= d(@s[:hq_mail][:aho]) %>
+          <%= format_seconds(@s[:hq_mail][:aho], include_days: true) %>
         </div>
         <div style="font-size: 0.8em; color: var(--color-text); margin-bottom: 0.2em;">avg avg awaiting fulfill check</div>
         <div style="font-family: monospace; font-weight: bold; color: <%= @s[:hq_mail][:ahf] && @s[:hq_mail][:ahf] > 172800 ? '#ff6b6b' : 'white' %>;">
-          <%= d(@s[:hq_mail][:ahf]) %>
+          <%= format_seconds(@s[:hq_mail][:ahf], include_days: true) %>
         </div>
       </div>
 
@@ -52,11 +52,11 @@
         </div>
         <div style="font-size: 0.8em; color: var(--color-text); margin-bottom: 0.2em;">avg waiting fd</div>
         <div style="font-family: monospace; font-weight: bold; color: <%= @s[:third_party][:aho] && @s[:third_party][:aho] > 172800 ? '#ff6b6b' : 'white' %>;">
-          <%= d(@s[:third_party][:aho]) %>
+          <%= format_seconds(@s[:third_party][:aho], include_days: true) %>
         </div>
         <div style="font-size: 0.8em; color: var(--color-text); margin-bottom: 0.2em;">avg avg awaiting fulfill check</div>
         <div style="font-family: monospace; font-weight: bold; color: <%= @s[:third_party][:ahf] && @s[:third_party][:ahf] > 172800 ? '#ff6b6b' : 'white' %>;">
-          <%= d(@s[:third_party][:ahf]) %>
+          <%= format_seconds(@s[:third_party][:ahf], include_days: true) %>
         </div>
       </div>
 
@@ -70,11 +70,11 @@
         </div>
         <div style="font-size: 0.8em; color: var(--color-text); margin-bottom: 0.2em;">avg waiting fd</div>
         <div style="font-family: monospace; font-weight: bold; color: <%= @s[:sinkening][:aho] && @s[:sinkening][:aho] > 172800 ? '#ff6b6b' : 'white' %>;">
-          <%= d(@s[:sinkening][:aho]) %>
+          <%= format_seconds(@s[:sinkening][:aho], include_days: true) %>
         </div>
         <div style="font-size: 0.8em; color: var(--color-text); margin-bottom: 0.2em;">avg avg awaiting fulfill check</div>
         <div style="font-family: monospace; font-weight: bold; color: <%= @s[:sinkening][:ahf] && @s[:sinkening][:ahf] > 172800 ? '#ff6b6b' : 'white' %>;">
-          <%= d(@s[:sinkening][:ahf]) %>
+          <%= format_seconds(@s[:sinkening][:ahf], include_days: true) %>
         </div>
       </div>
 
@@ -88,11 +88,11 @@
         </div>
         <div style="font-size: 0.8em; color: var(--color-text); margin-bottom: 0.2em;">avg waiting fd</div>
         <div style="font-family: monospace; font-weight: bold; color: <%= @s[:warehouse][:aho] && @s[:warehouse][:aho] > 172800 ? '#ff6b6b' : 'white' %>;">
-          <%= d(@s[:warehouse][:aho]) %>
+          <%= format_seconds(@s[:warehouse][:aho], include_days: true) %>
         </div>
         <div style="font-size: 0.8em; color: var(--color-text); margin-bottom: 0.2em;">avg avg awaiting fulfill check</div>
         <div style="font-family: monospace; font-weight: bold; color: <%= @s[:warehouse][:ahf] && @s[:warehouse][:ahf] > 172800 ? '#ff6b6b' : 'white' %>;">
-          <%= d(@s[:warehouse][:ahf]) %>
+          <%= format_seconds(@s[:warehouse][:ahf], include_days: true) %>
         </div>
       </div>
     </div>
@@ -161,12 +161,12 @@
           <div style="font-size: 0.8em;">
             <div style="color: var(--color-text); margin-bottom: 0.2em;">since order:</div>
             <div style="font-family: monospace; font-weight: bold; color: <%= hso > 172800 ? '#ff6b6b' : 'white' %>; margin-bottom: 0.3em;">
-              <%= d(hso) %>
+              <%= format_seconds(hso, include_days: true) %>
             </div>
             <% if hsf %>
               <div style="color: var(--color-text); margin-bottom: 0.2em;">time after fraud:</div>
               <div style="font-family: monospace; font-weight: bold; color: <%= hsf > 172800 ? '#ff6b6b' : 'white' %>;">
-                <%= d(hsf) %>
+                <%= format_seconds(hsf, include_days: true) %>
               </div>
             <% end %>
           </div>
