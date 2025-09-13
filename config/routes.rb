@@ -401,7 +401,6 @@ Rails.application.routes.draw do
     end
 
     constraints FraudTeamConstraint do
-      mount Blazer::Engine, at: "blazer"
       get "/", to: "static_pages#index", as: :root
       resources :fraud_reports, only: [ :index, :show ] do
         member do
@@ -454,6 +453,7 @@ Rails.application.routes.draw do
     constraints AdminConstraint do
       mount MissionControl::Jobs::Engine, at: "jobs"
       # mount AhoyCaptain::Engine, at: "ahoy_captain"
+      mount Blazer::Engine, at: "blazer"
       mount Flipper::UI.app(Flipper), at: "flipper"
       # mount_avo
       resources :view_analytics, only: [ :index ]
