@@ -455,6 +455,12 @@ Rails.application.routes.draw do
           post :magic_is_happening
         end
       end
+      resources :votes, only: [] do
+        member do
+          delete :invalidate
+          patch :uninvalidate
+        end
+      end
     end
 
     constraints AdminConstraint do

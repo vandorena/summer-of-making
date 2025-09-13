@@ -47,7 +47,7 @@
               and <%= link_to vote.project_2.title_with_id, admin_project_path(vote.project_2) %>:
             <% end %>
           </b> <br>
-          <div style="color: var(--color-muted); margin: 0.5em 0;"><%= vote.explanation %></div>
+          <div style="color: var(--color-muted); margin: 0.5em 0; overflow-wrap: anywhere; overflow: hidden;"><%= vote.explanation %></div>
           Took <%= vote.time_spent_voting_ms / 1000 %>s.
           Changed ELO of this project: <%= vote_change.elo_before %> -&gt; <%= vote_change.elo_after %> (delta <%= vote_change.elo_delta %>).
 
@@ -70,10 +70,25 @@
               They didn't look at <%= vote.project_2.title_with_id %>'s links.
           <% end %>
 
+          <br>
           <% if vote.invalid_reason %>
-            <br>
-            <b>Marked Invalid by <%= link_to vote.marked_invalid_by.display_name, admin_user_path(vote.marked_invalid_by) %>:</b>
+            <b>
+              <% if vote.marked_invalid_by %>
+                Marked Invalid by <%= link_to vote.marked_invalid_by.display_name, admin_user_path(vote.marked_invalid_by) %>:
+              <% else %>
+                Marked Invalid:
+              <% end %>
+            </b>
             <%= vote.invalid_reason %>
+            <%= button_to "unnuke", uninvalidate_admin_vote_path(vote), method: :patch, class: 'abtn primary', style: "width: auto; padding: 0.5rem 1rem; margin-top: 0.5em;" %>
+          <% else %>
+            <%= form_with url: invalidate_admin_vote_path(vote), method: :delete do |f| %>
+              <%= f.text_area :reason,
+                placeholder: "this is a terrible vote",
+                rows: 3,
+                style: "width: 100%; padding: 0.5em; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-darker); color: var(--color-text); margin-top: 1em;" %>
+              <%= f.submit "nuke it!", class: 'abtn primary', style: "width: auto; padding: 0.5rem 1rem;" %>
+            <% end %>
           <% end %>
         </li>
       <% end %>
