@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: shop_items
@@ -51,77 +53,23 @@
 #  idx_shop_items_type_enabled                (type,enabled)
 #  index_shop_items_on_unlock_on              (unlock_on)
 #
-class ShopItem::BadgeItem < ShopItem
-  def self.fulfill_immediately?
-    true
-  end
+class ShopItem::AdventSticker < ShopItem
+  has_one_attached :silhouette_image
 
-  validates :internal_description, presence: true,
-            format: { with: /\A[a-z_]+\z/, message: "must be a valid badge key (lowercase letters and underscores only)" }
+  validates :unlock_on, presence: true
 
-  def can_purchase?(user)
-    badge_key = internal_description.to_sym
-    return false if user.has_badge?(badge_key)
-    if badge_key == :gold_verified && !user.has_badge?(:verified)
-      return false
-    end
+  before_validation :set_ticket_cost_to_zero, on: :create
 
-    true
-  end
+  scope :unlocked, ->(date = Date.current) { where("unlock_on <= ?", date) }
+  scope :today, -> { where(unlock_on: Date.current) }
+  scope :specials, -> { where(special: true) }
+  scope :regulars, -> { where(special: false) }
 
-  def prereq(user)
-    badge_key = internal_description.to_sym
-
-    if badge_key == :gold_verified && !user.has_badge?(:verified)
-      "You have to get verified first!"
-    elsif user.has_badge?(badge_key)
-      "You already own this!"
-    else
-      nil
-    end
-  end
-
-  def fulfill!(shop_order)
-    badge_key = internal_description.to_sym
-
-    # Verify the badge exists
-    unless Badge.exists?(badge_key)
-      raise "Badge '#{badge_key}' does not exist"
-    end
-
-    if badge_key == :gold_verified && !shop_order.user.has_badge?(:verified)
-      raise "User must have the verified badge before purchasing the gold verified badge"
-    end
-
-    # Check if user already has this badge
-    if shop_order.user.has_badge?(badge_key)
-      Rails.logger.warn("User #{shop_order.user.id} already has badge '#{badge_key}' - skipping award")
-    else
-      # Award the badge directly (not through background job since this is immediate fulfillment)
-      shop_order.user.user_badges.create!(
-        badge_key: badge_key,
-        earned_at: Time.current
-      )
-
-      f(badge_key, shop_order.user)
-
-      # Send notification
-      badge_definition = Badge.find(badge_key)
-      Badge.send_badge_notification(shop_order.user, badge_key, badge_definition, backfill: false)
-
-      Rails.logger.info("Awarded badge '#{badge_key}' to user #{shop_order.user.id} via shop purchase")
-    end
-
-    shop_order.mark_fulfilled!("Badge awarded successfully.", nil, "System")
-  end
+  def campfire_only? = campfire_only
 
   private
 
-  def f(badge_key, user)
-    case badge_key
-    when :no_fun
-      Flipper.enable(:disable_sinkening_visuals, user)
-      Rails.logger.info("disable_sinkening_visuals true #{user.id}")
-    end
+  def set_ticket_cost_to_zero
+    self.ticket_cost = 0
   end
 end

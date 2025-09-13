@@ -27,6 +27,8 @@ class ShopItemsController < ApplicationController
 
     # Filter in memory
     filtered_items = all_shop_items.dup
+    # exlcude advent stickers from shop because they're not purchasable
+    filtered_items.reject! { |i| i.is_a?(ShopItem::AdventSticker) }
 
   # Filter by region availability (include XX items in all regions) - only if regionalization is enabled
   if @regionalization_enabled && @selected_region
