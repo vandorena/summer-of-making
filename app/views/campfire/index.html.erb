@@ -15,6 +15,10 @@
       definition: ActiveSupport::SafeBuffer.new("Heidi and Explorpheus have resolved to fully explore their island continent and conduct a grand survey — but they need your help! 100 locations call out for a developer with a creative spirit to play their part in constructing a massive point-and-click adventure. Shells, stickers, and special prizes will go to those who participate in this spectacular finale to the Summer of Making. Click <a href='https://hackclub.slack.com/archives/C09DQ3EB40L' target='_blank' class='underline'>here</a> for details!") %>
   </div>
 
+      <% if Flipper.enabled?(:advent_of_stickers, current_user) %>
+      <%= render "campfire/advent_strip" %>
+    <% end %>
+
   <% if current_user.is_banned? %>
     <%= render "shared/card", classes: "bg-red-50/80 border-red-400 mb-8" do %>
       <div class="flex items-start gap-3">
