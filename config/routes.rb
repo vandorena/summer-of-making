@@ -487,6 +487,7 @@ Rails.application.routes.draw do
         end
       end
       resources :sinkenings, only: [ :show, :update ], path: "sinkening"
+      resources :advent_stickers, only: [ :index, :new, :create, :edit, :update, :destroy ]
     end
   end
 
