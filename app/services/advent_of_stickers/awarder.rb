@@ -69,12 +69,8 @@ module AdventOfStickers
         # Channel announce
         channel_id = "C015M4L9AHW"
         if channel_id.present?
-          header = {
-            type: "section",
-            text: { type: "mrkdwn", text: "#{user.display_name} just unlocked today’s sticker: *#{target_sticker.name}*! :partyparrot:" }
-          }
-          blocks = image_url.present? ? [ header, { type: "image", image_url: image_url, alt_text: target_sticker.name } ] : [ header ]
-          SendSlackDmJob.perform_later(channel_id, nil, blocks: blocks)
+          text = "#{user.display_name} just unlocked today’s sticker: #{target_sticker.name}! :partyparrot:"
+          SendSlackDmJob.perform_later(channel_id, text)
         end
       end
     rescue => e
