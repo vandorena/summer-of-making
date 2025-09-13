@@ -60,26 +60,27 @@ module Admin
     end
 
     def generate_type_stats(scope)
-      pending_orders = scope.where(aasm_state: "pending")
-      awaiting_orders = scope.where(aasm_state: "awaiting_periodical_fulfillment")
+      results = scope.group(:aasm_state)
+                     .select(
+                       :aasm_state,
+                       "COUNT(*) as count",
+                       "AVG(EXTRACT(EPOCH FROM (NOW() - shop_orders.created_at))) as avg_hours_since_order",
+                       "AVG(EXTRACT(EPOCH FROM (NOW() - shop_orders.awaiting_periodical_fulfillment_at))) as avg_hours_since_fulfillment"
+                     )
+                     .map { |r| [ r.aasm_state, r ] }.to_h
+
+      pending = results["pending"]
+      awaiting = results["awaiting_periodical_fulfillment"]
 
       {
-        pc: pending_orders.count,
-        ac: awaiting_orders.count,
-        aho: calculate_average_wait_time_sql(pending_orders, :created_at),
-        ahf: calculate_average_wait_time_sql(awaiting_orders, :awaiting_periodical_fulfillment_at)
+        pc: pending&.count || 0,
+        ac: awaiting&.count || 0,
+        aho: pending&.avg_hours_since_order&.to_i || 0,
+        ahf: awaiting&.avg_hours_since_fulfillment&.to_i || 0
       }
     end
 
-    def calculate_average_wait_time_sql(scope, field)
-      # Use Arel to calculate average wait time in seconds
-      # EXTRACT(EPOCH FROM (NOW() - shop_orders.field)) gets the difference in seconds
-      table_name = ShopOrder.table_name
-      time_diff = Arel.sql("EXTRACT(EPOCH FROM (NOW() - #{table_name}.#{field}))")
 
-      result = scope.average(time_diff)
-      result ? result.to_i : 0
-    end
 
     def ensure_authorized_user
       unless current_user&.is_admin? || current_user&.fraud_team_member?
