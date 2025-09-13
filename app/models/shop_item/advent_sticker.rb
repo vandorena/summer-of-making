@@ -57,8 +57,8 @@ class ShopItem::AdventSticker < ShopItem
   has_one_attached :silhouette_image
 
   validates :unlock_on, presence: true
-
-  before_create :set_ticket_cost_to_zero
+  
+  before_validation :set_ticket_cost_to_zero, on: :create
 
   scope :unlocked, ->(date = Date.current) { where("unlock_on <= ?", date) }
   scope :today, -> { where(unlock_on: Date.current) }
