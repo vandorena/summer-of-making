@@ -1,0 +1,21 @@
+<%
+  padding      = local_assigns.fetch(:padding, 'md')
+  hover        = local_assigns.fetch(:hover, false)
+  shadow       = local_assigns.fetch(:shadow, 'md')
+  css_classes  = local_assigns[:css_classes] || local_assigns[:classes] || ""
+  data_attrs   = local_assigns[:data] || {}
+%>
+
+<%= render C::Card.new(
+      title: local_assigns[:title],
+      subtitle: local_assigns[:subtitle],
+      image: local_assigns[:image],
+      footer: local_assigns[:footer],
+      padding: padding,
+      hover: hover,
+      shadow: shadow,
+      css_classes: css_classes,
+      data: data_attrs
+    ) do %>
+  <%= yield %>
+<% end %>
