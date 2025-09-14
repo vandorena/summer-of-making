@@ -17,16 +17,20 @@ WORKDIR /rails
 
 # Install all packages (base + build dependencies)
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y \
+    DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
+        tzdata \
         curl libjemalloc2 libvips postgresql-client wget ffmpeg imagemagick \
         build-essential git libpq-dev libyaml-dev pkg-config anacron procps zip && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+RUN ln -snf /usr/share/zoneinfo/America/New_York /etc/localtime && echo America/New_York > /etc/timezone
 
 # Set production environment
 ENV RAILS_ENV="production" \
     BUNDLE_PATH="/usr/local/bundle" \
     RAILS_SERVE_STATIC_FILES="true" \
-    RAILS_LOG_TO_STDOUT="true"
+    RAILS_LOG_TO_STDOUT="true" \
+    TZ="America/New_York"
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./
